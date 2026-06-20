@@ -1,0 +1,23 @@
+{
+  "name": "widgetron-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @webreactiva/playground dev",
+    "build": "pnpm --filter @webreactiva/widgetron build",
+    "build:playground": "pnpm --filter @webreactiva/playground build",
+    "typecheck": "pnpm -r typecheck",
+    "registry:build": "pnpm --filter @webreactiva/registry build"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@tailwindcss/oxide"
+    ]
+  }
+}
