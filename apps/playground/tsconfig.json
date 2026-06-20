@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node", "react", "react-dom", "vite/client"],
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../../packages/widgets/src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

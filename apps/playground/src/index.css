@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Widgetron theme layer (token bridge + brand themes). Imported by relative
+   path so Tailwind's bundler also scans the library source for classes. */
+@import "../../../packages/widgets/src/styles/theme.css";
+
+/* Tell Tailwind to scan the library source (outside this app's root). */
+@source "../../../packages/widgets/src";
