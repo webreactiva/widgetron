@@ -1,0 +1,16 @@
+export {
+  ProfileProvider,
+  useProfile,
+  ProfileGate,
+  ProfileQuiz,
+  profileMatches,
+  DEFAULT_PROFILE_QUIZ_LABELS,
+  type Profile,
+  type ProfileProviderProps,
+  type ProfileCondition,
+  type ProfileGateProps,
+  type ProfileOption,
+  type ProfileQuestion,
+  type ProfileQuizProps,
+  type ProfileQuizLabels,
+} from "./profile-quiz";
