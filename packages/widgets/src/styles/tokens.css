@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Widgetron — Design tokens
+   --------------------------------------------------------------------------
+   Aseptic, brand-agnostic core (shadcn semantic tokens) on :root, plus an
+   opt-in brand theme via [data-theme="..."]. Widgets only ever reference
+   these CSS variables, never hard-coded colors — so the whole look is
+   customizable globally without touching a single widget.
+   ========================================================================== */
+
+:root {
+  /* --- shadcn semantic tokens (neutral / aseptic) --- */
+  --background: #ffffff;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #a1a1aa;
+
+  /* --- extra semantic states used by learning widgets --- */
+  --success: #16a34a;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #ffffff;
+  --info: #2563eb;
+  --info-foreground: #ffffff;
+
+  /* --- widget-specific tokens (--wgt-*) --- */
+  /* callout variants: insight / info / warning */
+  --wgt-callout-aha: #d97706;
+  --wgt-callout-info: #2563eb;
+  --wgt-callout-warning: #dc2626;
+  /* tint strength used to derive callout surfaces from the accent color */
+  --wgt-tint-surface: 8%;
+  --wgt-tint-border: 28%;
+
+  /* code surfaces (used by CodeTranslation, terminals, etc.) */
+  --wgt-code-bg: #18181b;
+  --wgt-code-fg: #e4e4e7;
+  --wgt-code-keyword: #c4b5fd;
+  --wgt-code-string: #86efac;
+  --wgt-code-function: #93c5fd;
+  --wgt-code-comment: #71717a;
+  --wgt-code-property: #fcd34d;
+  --wgt-code-number: #fdba74;
+
+  /* categorical chart palette (aseptic default) */
+  --chart-1: #6366f1;
+  --chart-2: #06b6d4;
+  --chart-3: #f59e0b;
+  --chart-4: #84cc16;
+  --chart-5: #ec4899;
+
+  /* signature shadow (soft in the aseptic theme) */
+  --wgt-shadow-color: rgb(0 0 0 / 0.1);
+  --wgt-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.06), 0 1px 3px 0 rgb(0 0 0 / 0.08);
+  --wgt-shadow-hover: 0 2px 4px 0 rgb(0 0 0 / 0.08), 0 4px 8px 0 rgb(0 0 0 / 0.08);
+
+  /* raw brand palette — exposed for widgets that need signature accents.
+     In the aseptic theme these intentionally fall back to neutral tones. */
+  --brand-1: var(--primary);
+  --brand-2: var(--muted-foreground);
+  --brand-3: var(--accent-foreground);
+
+  /* typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  --font-display: var(--font-sans);
+
+  /* radius */
+  --radius: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Dark mode (aseptic). Toggle with the `.dark` class on a wrapper/root.
+   -------------------------------------------------------------------------- */
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: rgb(255 255 255 / 0.12);
+  --input: rgb(255 255 255 / 0.16);
+  --ring: #52525b;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+
+  --wgt-code-bg: #000000;
+  --wgt-shadow-color: rgb(0 0 0 / 0.5);
+}
+
+/* ==========================================================================
+   Brand theme — Web Reactiva (opt-in: <html data-theme="webreactiva">)
+   Terracotta / lilac / mustard, sharp corners, solid offset shadows.
+   ========================================================================== */
+[data-theme="webreactiva"] {
+  --primary: #e56a54;          /* terracotta-500 */
+  --primary-foreground: #ffffff;
+  --secondary: #f0eef9;        /* lilac-100 — subtle, keeps shadcn semantics tasteful */
+  --secondary-foreground: #54377b;
+  --muted: #f2f2f2;
+  --muted-foreground: #6b7280;
+  --accent: #fff3c6;           /* mustard-100 */
+  --accent-foreground: #79350e;
+  --border: #e5e6e6;
+  --input: #e5e6e6;
+  --ring: #e56a54;
+  --destructive: #d14931;      /* terracotta-600 */
+
+  --success: #2d8b55;
+  --warning: #db7704;
+  --info: #774eb3;
+
+  --wgt-callout-aha: #fdc022;      /* mustard */
+  --wgt-callout-info: #9678d3;     /* lilac */
+  --wgt-callout-warning: #e56a54;  /* terracotta */
+
+  /* full brand palette */
+  --brand-1: #e56a54;  /* terracotta */
+  --brand-2: #9678d3;  /* lilac */
+  --brand-3: #fdc022;  /* mustard */
+  --brand-4: #56c2b7;  /* fountain blue */
+  --brand-5: #d064af;  /* mulberry */
+
+  /* charts use the brand palette under Web Reactiva */
+  --chart-1: #e56a54;
+  --chart-2: #9678d3;
+  --chart-3: #fdc022;
+  --chart-4: #56c2b7;
+  --chart-5: #d064af;
+
+  /* WR code identity: Catppuccin */
+  --wgt-code-bg: #1e1e2e;
+  --wgt-code-fg: #cdd6f4;
+  --wgt-code-keyword: #cba6f7;
+  --wgt-code-string: #a6e3a1;
+  --wgt-code-function: #89b4fa;
+  --wgt-code-comment: #6c7086;
+  --wgt-code-property: #f9e2af;
+  --wgt-code-number: #fab387;
+
+  /* solid, no-blur offset shadow — the WR signature */
+  --wgt-shadow-color: hsl(220 7% 83%);
+  --wgt-shadow: 0 3px 0 var(--wgt-shadow-color);
+  --wgt-shadow-hover: 0 6px 0 var(--wgt-shadow-color);
+
+  --font-display: "SculpinWebRegular", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* sharp corners */
+  --radius: 0rem;
+}
+
+[data-theme="webreactiva"].dark,
+[data-theme="webreactiva"] .dark {
+  --background: #1a1a22;
+  --foreground: #f0eef9;
+  --card: #232330;
+  --card-foreground: #f0eef9;
+  --muted: #2a2a36;
+  --muted-foreground: #b5a3e2;
+  --border: rgb(255 255 255 / 0.1);
+}

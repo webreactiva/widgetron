@@ -1,0 +1,7 @@
+/* Convenience entry: pulls in the Tailwind theme bridge (which imports the
+   tokens). Use this when you want the full Widgetron styling layer:
+
+     @import "tailwindcss";
+     @import "@webreactiva/widgetron/styles";
+*/
+@import "./theme.css";

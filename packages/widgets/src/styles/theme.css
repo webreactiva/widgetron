@@ -1,0 +1,123 @@
+/* ==========================================================================
+   Widgetron — Tailwind v4 theme bridge
+   --------------------------------------------------------------------------
+   Import order in a consuming app:
+
+     @import "tailwindcss";
+     @import "@webreactiva/widgetron/styles/theme.css";
+
+   This file maps the raw CSS variables from tokens.css onto Tailwind v4's
+   theme namespace so utilities like `bg-background`, `text-primary`,
+   `border-border`, `rounded-lg`, `font-display`, `shadow-wgt` work.
+   ========================================================================== */
+
+@import "./tokens.css";
+
+/* Dark mode driven by a `.dark` class on any ancestor. */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-brand-1: var(--brand-1);
+  --color-brand-2: var(--brand-2);
+  --color-brand-3: var(--brand-3);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-wgt: var(--wgt-shadow);
+  --shadow-wgt-hover: var(--wgt-shadow-hover);
+
+  /* Discreet motion — apply with the `motion-safe:` variant so it respects
+     prefers-reduced-motion. Soft easings that reinforce the message, never
+     distract. */
+  --animate-wgt-fade-in: wgt-fade-in 0.3s ease both;
+  --animate-wgt-fade-up: wgt-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-wgt-scale-in: wgt-scale-in 0.22s ease both;
+  --animate-wgt-pop: wgt-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes wgt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wgt-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wgt-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wgt-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--border);
+  }
+}
