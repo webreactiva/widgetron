@@ -501,6 +501,37 @@ export const catalog: CatalogEntry[] = [
           />
         ),
       },
+      {
+        label: "Long question + long options (mobile wrap stress)",
+        node: (
+          <Quiz
+            question="Your team ships a new endpoint to production and a small fraction of requests start returning 500 errors, but only for users with very long usernames containing accented characters and emoji — the rest of the traffic is fine, the logs show a database error about an invalid byte sequence, and the fix that worked locally doesn't reproduce because your local database has a different default encoding. What is the most likely root cause?"
+            options={[
+              {
+                text: "The database table is missing a primary key, which causes intermittent lock contention under write load and surfaces as a generic 500 for a subset of users.",
+                feedback:
+                  "Lock contention doesn't produce 'invalid byte sequence' errors, and it wouldn't correlate with username content.",
+              },
+              {
+                text: "The application is not normalizing usernames to UTF-8 before inserting, and the production database is configured with a non-UTF8 encoding (e.g. LATIN1) that rejects multi-byte characters.",
+                correct: true,
+                feedback:
+                  "Exactly — 'invalid byte sequence' plus correlation with accented/emoji usernames points to an encoding mismatch between the app (UTF-8) and the production database (non-UTF8). The local DB was UTF-8, which is why it never reproduced.",
+              },
+              {
+                text: "The load balancer is dropping requests with payloads over a certain size, and usernames with emoji happen to be longer in bytes.",
+                feedback:
+                  "A dropped request at the load balancer returns a 4xx or a gateway error, not a 500 with a database error in the logs.",
+              },
+              {
+                text: "The ORM is caching query plans and reusing a stale one that assumes ASCII-only column widths.",
+                feedback:
+                  "ORMs don't cache column-width assumptions; the error is coming from the database, not the ORM layer.",
+              },
+            ]}
+          />
+        ),
+      },
     ],
   },
   {
@@ -525,6 +556,23 @@ export const catalog: CatalogEntry[] = [
               {
                 front: "What is a database index?",
                 back: "A structure that speeds up lookups on a column, at the cost of slower writes and extra storage.",
+              },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Long-form cards (mobile flip stress)",
+        node: (
+          <Flashcards
+            cards={[
+              {
+                front: "Why does a query that was fast in staging suddenly become slow in production, even though the schema and the query text are identical?",
+                back: "Because the query planner picks execution plans from table statistics, and those statistics differ between environments — a staging table with a thousand rows will pick a seq scan that stays fast, while a production table with a hundred million rows and a stale analyze may pick the same seq scan and grind to a halt, or pick an index that's suddenly not selective. The fix is almost never the query; it's the statistics, the indexes, or the data shape.",
+              },
+              {
+                front: "What is the difference between a cold start and a warm start in a serverless function, and why does it matter for latency budgets?",
+                back: "A cold start is the full provisioning cycle: the platform allocates a container, downloads your code, boots the runtime, runs your initialization, and only then handles the request. A warm start reuses an already-initialized container and jumps straight to the handler. Cold starts can add hundreds of milliseconds to multiple seconds, so for latency-sensitive endpoints you either keep functions warm, move logic to the edge, or accept p99 latency that's dominated by cold-start outliers.",
               },
             ]}
           />
@@ -578,6 +626,24 @@ export const catalog: CatalogEntry[] = [
               <code>POST</code> when you need to send data.
             </CalloutBox>
           </div>
+        ),
+      },
+      {
+        label: "Long paragraph (mobile wrap stress)",
+        node: (
+          <CalloutBox variant="info">
+            When a database receives a query, it first parses the SQL into an
+            abstract syntax tree, then the planner explores multiple execution
+            strategies — full table scan versus index lookup versus hash join —
+            and estimates the cost of each based on table statistics gathered by
+            the analyzer. The cheapest plan wins, but the statistics can be
+            stale, and a plan that was optimal yesterday may degrade suddenly
+            after a data skew, a vacuum, or an analyze that hasn't run yet. This
+            is why "the query was fast in staging and slow in production" is
+            rarely about the query itself and almost always about the
+            statistics, the indexes, or the shape of the data — which differ
+            between environments even when the schema is identical.
+          </CalloutBox>
         ),
       },
     ],
@@ -983,6 +1049,53 @@ export const catalog: CatalogEntry[] = [
           />
         ),
       },
+      {
+        label: "Long prompts + long outcomes (mobile branch stress)",
+        node: (
+          <DecisionTree
+            start="start"
+            nodes={{
+              start: {
+                prompt:
+                  "Your p99 endpoint latency jumped from 180ms to 4 seconds overnight. There was no deploy, no traffic spike, and the dashboard shows the CPU graph is flat. Where do you look first?",
+                options: [
+                  { label: "Database / queries", to: "db" },
+                  { label: "External API calls", to: "api" },
+                  { label: "GC / memory pressure", to: "gc" },
+                ],
+              },
+              db: {
+                prompt:
+                  "The slow spans all end in a database call. The query text hasn't changed. What's the next thing you check?",
+                options: [
+                  { label: "Row counts and statistics", to: "dbstats" },
+                  { label: "Locks and blocking", to: "dblocks" },
+                ],
+              },
+              dbstats: {
+                prompt: "Statistics it is.",
+                outcome:
+                  "Run ANALYZE (or the equivalent) and check the last-analyzed timestamp on the affected tables. A large overnight import or a bulk delete can leave the planner working from stale statistics, and it will pick a plan that was correct yesterday and catastrophic today — a seq scan over a table that's now a hundred million rows, or an index that's no longer selective. Re-running ANALYZE usually restores the plan within minutes, but the underlying fix is automating ANALYZE on a schedule tied to data-volume changes, not just a nightly cron.",
+              },
+              dblocks: {
+                prompt: "Locks it is.",
+                outcome:
+                  "Query pg_locks (or the equivalent) for blocked PIDs and the blocking chain. A long-running transaction — often a forgotten analytical query, a manual psql session someone left open in a screen, or a migration that took a lock and stalled — will block everything downstream that touches the same rows. Kill the blocker and the latency drops immediately; the structural fix is statement timeouts on read-only connections and a lock monitor that alerts on wait times over a threshold.",
+              },
+              api: {
+                prompt: "External API it is.",
+                outcome:
+                  "Add per-downstream-service timeout and circuit-breaker metrics. The most common silent killer is a third-party endpoint that started returning 200s with a 3-second TTFB instead of failing fast — your retry and timeout configuration determines whether one slow dependency drags the whole fleet down or fails open. Look at the downstream's status page last; it's almost never the outage, it's the slow-degradation that the status page never mentions.",
+              },
+              gc: {
+                prompt: "GC it is.",
+                outcome:
+                  "Capture a heap dump and a GC log covering the slow window. A flat CPU graph with rising latency is a classic sign of a memory leak that hasn't OOMed yet — the runtime is spending increasing time in GC pauses trying to keep up, and the process is still technically 'up' so the health check passes. The fix is finding what's holding references (a cache without a bound, a listener that wasn't removed, a queue that grows under backpressure), but the operational fix is a memory limit and an alert on GC time, not on CPU.",
+              },
+            }}
+          />
+        ),
+      },
     ],
   },
   {
@@ -1021,6 +1134,34 @@ export const catalog: CatalogEntry[] = [
               { time: "1995", title: "JavaScript", description: "Brendan Eich writes the first version in ten days." },
               { time: "2015", title: "ES2015", description: "Modules, classes, arrow functions and promises — modern JS begins." },
               { time: "2020s", title: "Edge & islands", description: "Rendering moves to the edge; partial hydration takes off." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Long descriptions (mobile expand stress)",
+        node: (
+          <Timeline
+            defaultOpen={0}
+            items={[
+              {
+                time: "1991",
+                title: "The Web is born",
+                description:
+                  "Tim Berners-Lee, working at CERN, publishes the first website at info.cern.ch — a single page describing the World Wide Web project, hosted on a NeXT workstation, written in HTML and served over HTTP. The first browser was also the first editor, and the whole thing was designed so physicists could share documents without a central server. The simplicity of the original design — stateless requests, a single address space, plain-text formats — is exactly why it scaled to billions of pages.",
+              },
+              {
+                time: "1995",
+                title: "JavaScript",
+                description:
+                  "Brendan Eich, hired at Netscape on a tight deadline, writes the first version of JavaScript in ten days. It was originally called Mocha, then LiveScript, and the name 'Java' was bolted on as a marketing decision — there is almost nothing in common between Java and JavaScript. Despite the rush, the prototype-based object model and first-class functions were good instincts that the language is still leveraging thirty years later.",
+              },
+              {
+                time: "2015",
+                title: "ES2015",
+                description:
+                  "After a decade of stalled evolution, the spec jumps from ES5 to ES2015 and brings modules, classes, arrow functions, let/const, destructuring, default parameters, template literals, promises, Maps and Sets, and a standardized module system. This is the moment 'modern JavaScript' starts — and the moment the language moves to yearly releases instead of decade-long gaps.",
+              },
             ]}
           />
         ),
@@ -1144,6 +1285,42 @@ console.log("C");`}
               { x: 18, y: 24, title: "Browser", description: "Sends an HTTP request and renders the response." },
               { x: 50, y: 24, title: "Server", description: "Runs the business logic and talks to the database." },
               { x: 82, y: 24, title: "Database", description: "Stores and returns the system's data." },
+            ]}
+          >
+            <div className="flex h-48 items-stretch gap-3 bg-muted/40 p-4">
+              <div className="grid flex-1 place-items-center rounded-md border bg-card font-medium">Browser</div>
+              <div className="grid flex-1 place-items-center rounded-md border bg-card font-medium">Server</div>
+              <div className="grid flex-1 place-items-center rounded-md border bg-card font-medium">Database</div>
+            </div>
+          </Hotspots>
+        ),
+      },
+      {
+        label: "Long descriptions (mobile panel stress)",
+        node: (
+          <Hotspots
+            hotspots={[
+              {
+                x: 18,
+                y: 24,
+                title: "Browser",
+                description:
+                  "The browser is the user agent: it takes the URL you type, resolves it through DNS, opens a TCP/TLS connection to the server, sends an HTTP request, and once the response arrives it parses the HTML, builds the DOM, requests sub-resources, applies CSS, and executes JavaScript to produce the interactive page the user sees.",
+              },
+              {
+                x: 50,
+                y: 24,
+                title: "Server",
+                description:
+                  "The server receives the request, routes it to the correct handler (often through middleware that adds auth, logging, rate limiting and error handling), runs the business logic, talks to one or more databases or downstream services, serializes the result into HTML or JSON, and sends the response back with an appropriate status code and cache headers.",
+              },
+              {
+                x: 82,
+                y: 24,
+                title: "Database",
+                description:
+                  "The database persists the system's state across requests. It receives queries, uses its planner to pick an execution strategy based on indexes and table statistics, fetches and joins the rows, and returns them — or, on writes, applies the transaction, updates indexes, and flushes to durable storage before acknowledging.",
+              },
             ]}
           >
             <div className="flex h-48 items-stretch gap-3 bg-muted/40 p-4">
@@ -1283,6 +1460,25 @@ console.log("C");`}
       {
         label: "The script before the shoot",
         node: <GlossaryTextDemo />,
+      },
+      {
+        label: "Long prose with long definitions (mobile tooltip stress)",
+        node: (
+          <GlossaryProvider
+            terms={{
+              "edge function":
+                "A small piece of code that runs on a server close to the user (often at a CDN edge node) instead of in a single central region, so latency is lower and the cold-start cost is amortized across many geographies.",
+              "hydration":
+                "The process by which a browser-side framework attaches interactivity to HTML that was already rendered on the server, turning a static document into an interactive application without re-rendering the whole tree from scratch.",
+              "island":
+                "A self-contained interactive region embedded in an otherwise static page — the 'islands' architecture ships zero JS for the static shell and only hydrates the islands that actually need interactivity.",
+              "progressive enhancement":
+                "Building the core functionality so it works with plain HTML first, then layering JS and CSS on top to enrich the experience where the capabilities exist — the page degrades gracefully where they don't.",
+            }}
+          >
+            <GlossaryText text="A modern framework can render the page on the server, ship raw HTML to the browser, and then run [[hydration]] only where needed. If most of the page is static, you can ship it as [[island]] widgets inside an HTML shell served by an [[edge function]] close to the user. The whole approach is a form of [[progressive enhancement]]: the content arrives as readable HTML first, and interactivity is layered on top only for the parts that truly need it." />
+          </GlossaryProvider>
+        ),
       },
     ],
   },
