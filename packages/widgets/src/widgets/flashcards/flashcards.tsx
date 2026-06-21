@@ -135,8 +135,8 @@ export function Flashcards({
           )}
         >
           {/* Front */}
-          <div className="absolute inset-0 grid place-items-center rounded-lg border bg-card p-6 text-center shadow-wgt [backface-visibility:hidden] group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background">
-            <div>
+          <div className="absolute inset-0 grid overflow-y-auto rounded-lg border bg-card p-6 text-center shadow-wgt [backface-visibility:hidden] group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background">
+            <div className="m-auto">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {l.prompt}
               </p>
@@ -146,8 +146,8 @@ export function Flashcards({
             </div>
           </div>
           {/* Back */}
-          <div className="absolute inset-0 grid place-items-center rounded-lg border border-primary/40 bg-[color-mix(in_oklab,var(--primary)_6%,var(--card))] p-6 text-center shadow-wgt [backface-visibility:hidden] [transform:rotateY(180deg)]">
-            <div>
+          <div className="absolute inset-0 grid overflow-y-auto rounded-lg border border-primary/40 bg-[color-mix(in_oklab,var(--primary)_6%,var(--card))] p-6 text-center shadow-wgt [backface-visibility:hidden] [transform:rotateY(180deg)]">
+            <div className="m-auto">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
                 {l.answer}
               </p>
