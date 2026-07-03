@@ -50,6 +50,19 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     info: "Info",
     warning: "Cuidado",
   },
+  surprise: {
+    surprise: "Sorpresa",
+    reveal: "Revelar",
+  },
+  cta: {
+    emailPlaceholder: "tu@ejemplo.com",
+    emailLabel: "Tu correo",
+    privacyConsent: "Acepto la política de privacidad",
+    submit: "Apuntarme",
+    sending: "Enviando…",
+    success: "Listo — revisa tu bandeja de entrada.",
+    error: "Algo salió mal. Inténtalo de nuevo.",
+  },
   decisionTree: {
     restart: "Empezar de nuevo",
   },

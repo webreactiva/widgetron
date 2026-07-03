@@ -5,6 +5,9 @@ import type { WidgetMeta } from "@/lib/widget-meta";
 import { Icon } from "@/primitives/icon";
 import { quizMeta } from "@/widgets/quiz/quiz.meta";
 import { calloutBoxMeta } from "@/widgets/callout-box/callout-box.meta";
+import { surpriseMeta } from "@/widgets/surprise/surprise.meta";
+import { quoteMeta } from "@/widgets/quote/quote.meta";
+import { ctaMeta } from "@/widgets/cta/cta.meta";
 import { promptTemplateMeta } from "@/widgets/prompt-template/prompt-template.meta";
 import { storylineMeta } from "@/widgets/storyline/storyline.meta";
 import { flashcardsMeta } from "@/widgets/flashcards/flashcards.meta";
@@ -44,6 +47,9 @@ import { Quiz } from "@/widgets/quiz";
 import { Flashcards } from "@/widgets/flashcards";
 import { Checklist } from "@/widgets/checklist";
 import { CalloutBox } from "@/widgets/callout-box";
+import { Surprise } from "@/widgets/surprise";
+import { Quote } from "@/widgets/quote";
+import { Cta } from "@/widgets/cta";
 import { StepCards } from "@/widgets/step-cards";
 import { PatternCard } from "@/widgets/pattern-card";
 import { FlowDiagram } from "@/widgets/flow-diagram";
@@ -159,6 +165,29 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
   flashcards: { ...flashcardsMeta, component: Flashcards },
   checklist: { ...checklistMeta, component: Checklist },
   "callout-box": { ...calloutBoxMeta, component: CalloutBox },
+  surprise: {
+    ...surpriseMeta,
+    component: Surprise,
+    adapt: (p) => ({
+      ...p,
+      content: asContent(p.content),
+      teaser: asContent(p.teaser),
+    }),
+  },
+  quote: {
+    ...quoteMeta,
+    component: Quote,
+    adapt: (p) => ({ ...p, children: asContent(p.children) }),
+  },
+  cta: {
+    ...ctaMeta,
+    component: Cta,
+    adapt: (p) => ({
+      ...p,
+      title: asContent(p.title),
+      description: asContent(p.description),
+    }),
+  },
   "step-cards": { ...stepCardsMeta, component: StepCards },
   "pattern-card": {
     ...patternCardMeta,

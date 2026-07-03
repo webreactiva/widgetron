@@ -5,6 +5,7 @@ import {
   Checklist,
   CodeTranslation,
   CompareSlider,
+  Cta,
   DataChart,
   DecisionTree,
   DragAndDrop,
@@ -27,11 +28,13 @@ import {
   PromptTemplate,
   Prose,
   Quiz,
+  Quote,
   renderWidget,
   Scrubber,
   SectionHeader,
   SpotTheBug,
   StepCards,
+  Surprise,
   TangleText,
   TerminalSim,
   Timeline,
@@ -134,6 +137,26 @@ const requestScrolly: WidgetNode = {
   },
 };
 
+// A Surprise authored as JSON, wrapping a prompt-template node — proof that the
+// reveal payload is any widget node, resolved by renderWidget()'s `adapt`.
+const surpriseReveal: WidgetNode = {
+  type: "surprise",
+  version: 1,
+  props: {
+    teaser: "You reached the end. Here's a prompt to take with you.",
+    content: {
+      type: "prompt-template",
+      props: {
+        template:
+          "Act as a patient tutor for {{topic}}.\n" +
+          "Explain it to me as if I'm {{level}}, using one concrete example.\n" +
+          "Then quiz me with a single question.",
+        note: "Copy it, paste it into your AI.",
+      },
+    },
+  },
+};
+
 export interface CatalogEntry {
   id: string;
   name: string;
@@ -150,6 +173,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "prose",
       "glossary-text",
       "callout-box",
+      "quote",
       "step-cards",
       "timeline",
       "pattern-card",
@@ -167,6 +191,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "fill-in-the-blanks",
       "predict-output",
       "drag-and-drop",
+      "surprise",
     ],
   },
   {
@@ -195,6 +220,7 @@ export const categories: { title: string; ids: string[] }[] = [
     title: "AI & personalization",
     ids: ["prompt-template", "profile-quiz"],
   },
+  { title: "Conversion", ids: ["cta"] },
   { title: "Foundations", ids: ["icon"] },
   { title: "Compositions", ids: ["storyline", "scrollytelling"] },
 ];
@@ -1503,6 +1529,89 @@ console.log("C");`}
       {
         label: "How an HTTP request travels (JSON-driven)",
         node: renderWidget(requestScrolly),
+      },
+    ],
+  },
+  {
+    id: "quote",
+    name: "Quote",
+    summary:
+      "A highlighted pull-quote / testimonial that attributes words to a person. Semantic figure/blockquote/figcaption; the accent comes from the theme. No chrome to translate — the words come from children.",
+    demos: [
+      {
+        label: "Podcast pull-quote",
+        node: (
+          <Quote attribution="Grace Hopper" role="Episode guest">
+            The most dangerous phrase in the language is: we've always done it
+            this way.
+          </Quote>
+        ),
+      },
+      {
+        label: "No attribution",
+        node: (
+          <Quote>
+            Ship the smallest thing that teaches you something real.
+          </Quote>
+        ),
+      },
+    ],
+  },
+  {
+    id: "surprise",
+    name: "Surprise",
+    summary:
+      "A reveal wrapper: keeps a payload hidden until the reader opens it, with a small reveal moment. Perfect for a delight at the end of a guide — a bonus prompt, a quote, a video. Usable as a storyline screen.",
+    demos: [
+      {
+        label: "Reveal a copy-ready prompt (JSON-driven)",
+        node: renderWidget(surpriseReveal),
+      },
+      {
+        label: "Reveal a quote",
+        node: (
+          <Surprise
+            teaser="One line that stuck with us this episode."
+            content={
+              <Quote attribution="Ada Lovelace" role="Episode guest">
+                The best code is the code you never had to write. Delete before
+                you optimize.
+              </Quote>
+            }
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "cta",
+    name: "Cta",
+    summary:
+      "The single conversion moment of a guide (usually the last screen). The 'link' variant sends the reader to an external destination; 'email-form' captures an address behind a required privacy-consent checkbox and POSTs it as JSON. Copy is customizable/translatable.",
+    demos: [
+      {
+        label: "Link variant",
+        node: (
+          <Cta
+            variant="link"
+            title="Keep going"
+            description="The full course picks up right where this guide ends."
+            buttonLabel="Start the course"
+            url="https://example.com/course"
+          />
+        ),
+      },
+      {
+        label: "Email capture (with privacy consent)",
+        node: (
+          <Cta
+            variant="email-form"
+            title="Get the next guide"
+            description="One email when the next explorable ships. No spam, unsubscribe anytime."
+            privacyUrl="https://example.com/privacy"
+            submitEndpoint="https://example.com/subscribe"
+          />
+        ),
       },
     ],
   },
