@@ -9,6 +9,8 @@
   },
   "scripts": {
     "dev": "pnpm --filter @webreactiva/playground dev",
+    "dev:studio": "pnpm --filter @webreactiva/story-studio dev",
+    "story": "pnpm --filter @webreactiva/story-studio story",
     "build": "pnpm --filter @webreactiva/widgetron build",
     "build:playground": "pnpm --filter @webreactiva/playground build",
     "typecheck": "pnpm -r typecheck",

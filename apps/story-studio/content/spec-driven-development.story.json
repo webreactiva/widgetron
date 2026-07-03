@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Spec-Driven Development, a walk you can touch",
+    "slug": "spec-driven-development",
+    "lang": "en",
+    "theme": "webreactiva",
+    "description": "An interactive guide distilled from a podcast conversation: when to write a spec, when to vibe-code, and how a request really travels.",
+    "source": {
+      "type": "podcast",
+      "show": "wrp",
+      "episode": 315
+    }
+  },
+  "audio": {
+    "full": "https://api.spreaker.com/v2/episodes/placeholder/download.mp3",
+    "clips": [
+      {
+        "id": "clip-01",
+        "src": "https://api.spreaker.com/v2/episodes/placeholder-clip-01/download.mp3",
+        "transcriptSrc": "clips/clip-01.srt"
+      }
+    ]
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "You made it halfway. Something practical is hiding here.",
+          "content": {
+            "type": "prompt-template",
+            "props": {
+              "title": "Your first spec, drafted by AI",
+              "template": "Write a one-page spec for {{feature}}. Include: the user problem, what we will NOT build, and 3 acceptance checks a non-programmer could verify."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "One last thing before you go.",
+          "content": {
+            "type": "quote",
+            "props": {
+              "children": "Writing the spec first is not bureaucracy — it is the cheapest prototype you will ever build.",
+              "attribution": "Daniel Primo",
+              "role": "Web Reactiva, episode 315"
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "email-form",
+      "title": "Turn your podcast into interactive guides",
+      "description": "Get the next guides and the making-of in your inbox.",
+      "buttonLabel": "Count me in",
+      "privacyUrl": "https://webreactiva.com/privacidad",
+      "submitEndpoint": "https://hooks.example.com/story-studio/subscribe"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "version": 1,
+    "props": {
+      "glossary": {
+        "explorable explanation": "A document you learn from by manipulating it and seeing the consequences (Bret Victor).",
+        "spec": "A written description of intent — what to build and why — before any code.",
+        "SDD": "Spec-Driven Development: write the spec first, then let it drive the code.",
+        "vibe coding": "Coding by feel — describe what you want and let the AI improvise the details."
+      },
+      "modules": [
+        {
+          "title": "A walk you can touch",
+          "subtitle": "How this guide works.",
+          "screens": [
+            {
+              "type": "section-header",
+              "props": {
+                "icon": "book",
+                "eyebrow": "Start here",
+                "title": "The tour begins"
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "This guide blends a linear walkthrough with [[explorable explanation]] widgets. By the end you'll know when to write a [[spec]] and when to lean on [[vibe coding]]."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "Touching is allowed — click the diagrams and answer before you peek."
+              }
+            }
+          ]
+        },
+        {
+          "title": "The round trip",
+          "subtitle": "What happens between Enter and the page.",
+          "screens": [
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Browser",
+                    "active": true
+                  },
+                  {
+                    "label": "Server"
+                  },
+                  {
+                    "label": "Database"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "audio-clip",
+              "props": {
+                "src": "https://api.spreaker.com/v2/episodes/placeholder-clip-01/download.mp3",
+                "title": "Hear it from the episode (2 min)",
+                "transcript": [
+                  {
+                    "start": 0,
+                    "end": 6,
+                    "text": "The slow part is almost never your CSS — it is the round trip."
+                  },
+                  {
+                    "start": 6,
+                    "end": 13,
+                    "text": "Every request crosses the network, hits the server, maybe the database, and comes all the way back."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Same as code: an [[SDD]] flow writes the intention down before generating a single line."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Check yourself",
+          "subtitle": "One question before you go.",
+          "screens": [
+            {
+              "type": "quiz",
+              "props": {
+                "question": "An 8-second page load most likely comes from…",
+                "options": [
+                  {
+                    "text": "Complex CSS",
+                    "feedback": "Rarely seconds."
+                  },
+                  {
+                    "text": "Slow backend / queries",
+                    "correct": true,
+                    "feedback": "Exactly — backend bottlenecks."
+                  },
+                  {
+                    "text": "A slow framework",
+                    "feedback": "Not by itself."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
