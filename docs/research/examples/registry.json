@@ -1,0 +1,95 @@
+{
+  "_comment": "EXAMPLE widgetron root registry.json. Author this by hand, run `npx shadcn@latest build registry.json --output public/r`, which inlines each file's source into `content` and emits self-contained public/r/<name>.json served at https://widgetron.dev/r/<name>.json. Schemas: https://ui.shadcn.com/schema/registry.json + registry-item.json",
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "widgetron",
+  "homepage": "https://widgetron.dev",
+  "items": [
+    {
+      "name": "lib-widget-utils",
+      "type": "registry:lib",
+      "title": "Widget utils",
+      "description": "Shared cn() helper and widget primitives.",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        { "path": "registry/widgetron/lib/utils.ts", "type": "registry:lib" }
+      ]
+    },
+    {
+      "name": "use-roving-focus",
+      "type": "registry:hook",
+      "title": "useRovingFocus",
+      "description": "Roving-tabindex keyboard navigation for composite widgets (quiz options, carousel pickers).",
+      "files": [
+        { "path": "registry/widgetron/hooks/use-roving-focus.ts", "type": "registry:hook" }
+      ]
+    },
+    {
+      "name": "quiz",
+      "type": "registry:block",
+      "title": "Quiz",
+      "description": "Accessible single/multi answer quiz widget with container-query responsive controls.",
+      "categories": ["education", "interactive"],
+      "dependencies": ["radix-ui", "class-variance-authority", "lucide-react"],
+      "registryDependencies": [
+        "button",
+        "card",
+        "https://widgetron.dev/r/lib-widget-utils.json",
+        "https://widgetron.dev/r/use-roving-focus.json"
+      ],
+      "files": [
+        { "path": "registry/widgetron/widgets/quiz/quiz.tsx", "type": "registry:component" },
+        { "path": "registry/widgetron/widgets/quiz/quiz-option.tsx", "type": "registry:component" },
+        { "path": "registry/widgetron/widgets/quiz/quiz-controls.tsx", "type": "registry:component" },
+        { "path": "registry/widgetron/widgets/quiz/use-quiz.ts", "type": "registry:hook" }
+      ]
+    },
+    {
+      "name": "flashcard",
+      "type": "registry:component",
+      "title": "Flashcard",
+      "description": "Flip card built on the WAI-ARIA disclosure pattern; flip animation respects prefers-reduced-motion.",
+      "categories": ["education", "interactive"],
+      "dependencies": ["motion", "class-variance-authority"],
+      "registryDependencies": ["https://widgetron.dev/r/lib-widget-utils.json"],
+      "cssVars": {
+        "theme": { "--animate-flip": "flip 0.4s ease both" }
+      },
+      "css": {
+        "@keyframes flip": {
+          "from": { "transform": "rotateY(0deg)" },
+          "to": { "transform": "rotateY(180deg)" }
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          "[data-slot=flashcard-inner]": { "transition": "none", "animation": "none" }
+        }
+      },
+      "files": [
+        { "path": "registry/widgetron/widgets/flashcard/flashcard.tsx", "type": "registry:component" }
+      ]
+    },
+    {
+      "name": "theme-web-reactiva",
+      "type": "registry:theme",
+      "title": "Web Reactiva brand theme",
+      "description": "Opt-in Web Reactiva brand theme. Overrides semantic tokens under [data-theme=web-reactiva].",
+      "categories": ["theme"],
+      "cssVars": {
+        "theme": { "radius": "0.75rem" },
+        "light": {
+          "background": "oklch(0.99 0.005 95)",
+          "foreground": "oklch(0.2 0.02 265)",
+          "primary": "oklch(0.62 0.21 256)",
+          "primary-foreground": "oklch(0.99 0 0)",
+          "ring": "oklch(0.62 0.21 256)"
+        },
+        "dark": {
+          "background": "oklch(0.18 0.02 265)",
+          "foreground": "oklch(0.96 0.01 95)",
+          "primary": "oklch(0.7 0.18 256)",
+          "primary-foreground": "oklch(0.18 0.02 265)",
+          "ring": "oklch(0.7 0.18 256)"
+        }
+      }
+    }
+  ]
+}

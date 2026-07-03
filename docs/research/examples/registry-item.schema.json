@@ -1,0 +1,156 @@
+{
+  "_comment": "SOURCE (verbatim, fetched 2026-06-20): https://ui.shadcn.com/schema/registry-item.json — the canonical JSON schema for a single shadcn registry item. Note the expanded 2026 type enum (registry:base, registry:font, registry:item) and the cssVars (theme/light/dark) + css blocks used to ship Tailwind v4 tokens.",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the item. This is used to identify the item in the registry. It should be unique for your registry."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "registry:lib",
+        "registry:block",
+        "registry:component",
+        "registry:ui",
+        "registry:hook",
+        "registry:theme",
+        "registry:page",
+        "registry:file",
+        "registry:style",
+        "registry:base",
+        "registry:font",
+        "registry:item"
+      ],
+      "description": "The type of the item. This is used to determine the type and target path of the item when resolved for a project."
+    },
+    "description": {
+      "type": "string",
+      "description": "The description of the item. This is used to provide a brief overview of the item."
+    },
+    "title": {
+      "type": "string",
+      "description": "The human-readable title for your registry item. Keep it short and descriptive."
+    },
+    "author": {
+      "type": "string",
+      "description": "The author of the item. Recommended format: username <url>"
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "An array of NPM dependencies required by the registry item.",
+      "items": { "type": "string" }
+    },
+    "devDependencies": {
+      "type": "array",
+      "description": "An array of NPM dev dependencies required by the registry item.",
+      "items": { "type": "string" }
+    },
+    "registryDependencies": {
+      "type": "array",
+      "description": "An array of registry items that this item depends on. Use the name of the item to reference shadcn/ui components and urls to reference other registries.",
+      "items": { "type": "string" }
+    },
+    "files": {
+      "type": "array",
+      "description": "The main payload of the registry item. This is an array of files that are part of the registry item. Each file is an object with a path, content, type, and target.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "The path to the file relative to the registry root." },
+          "content": { "type": "string", "description": "The content of the file." },
+          "type": {
+            "type": "string",
+            "enum": [
+              "registry:lib",
+              "registry:block",
+              "registry:component",
+              "registry:ui",
+              "registry:hook",
+              "registry:theme",
+              "registry:page",
+              "registry:file",
+              "registry:style",
+              "registry:base",
+              "registry:item"
+            ],
+            "description": "The type of the file. This is used to determine the type of the file when resolved for a project."
+          },
+          "target": {
+            "type": "string",
+            "description": "The target path of the file. Supports placeholders @components/, @ui/, @lib/, @hooks/, which resolve to components.json aliases. Independent of the import prefix."
+          }
+        },
+        "if": { "properties": { "type": { "enum": ["registry:file", "registry:page"] } } },
+        "then": { "required": ["path", "type", "target"] },
+        "else": { "required": ["path", "type"] }
+      }
+    },
+    "tailwind": {
+      "type": "object",
+      "description": "DEPRECATED for Tailwind v4. The tailwind v3 config object. Use cssVars for Tailwind v4 projects.",
+      "properties": {
+        "config": {
+          "type": "object",
+          "properties": {
+            "content": { "type": "array", "items": { "type": "string" } },
+            "theme": { "type": "object", "additionalProperties": true },
+            "plugins": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "cssVars": {
+      "type": "object",
+      "description": "The css variables for the registry item. This will be merged with the project's css variables.",
+      "properties": {
+        "theme": { "type": "object", "description": "CSS variables for the @theme directive. Tailwind v4 only.", "additionalProperties": { "type": "string" } },
+        "light": { "type": "object", "description": "CSS variables for the light theme (merged into :root).", "additionalProperties": { "type": "string" } },
+        "dark": { "type": "object", "description": "CSS variables for the dark theme (merged into .dark).", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "css": {
+      "type": "object",
+      "description": "CSS definitions to be added to the project's CSS file. Supports at-rules, selectors, nested rules, utilities, layers (e.g. @layer, @utility, @keyframes, @plugin).",
+      "additionalProperties": { "$ref": "#/definitions/cssValue" }
+    },
+    "envVars": {
+      "type": "object",
+      "description": "Environment variables added to the project's .env file (existing keys are not overwritten).",
+      "additionalProperties": { "type": "string" }
+    },
+    "meta": { "type": "object", "description": "Arbitrary metadata.", "additionalProperties": true },
+    "docs": { "type": "string", "description": "Markdown documentation shown on install." },
+    "categories": { "type": "array", "items": { "type": "string" } },
+    "extends": { "type": "string", "description": "Name of registry:style to extend; 'none' to start fresh. registry:style only." },
+    "style": { "type": "string", "description": "registry:base only." },
+    "iconLibrary": { "type": "string", "description": "registry:base only." },
+    "baseColor": { "type": "string", "description": "registry:base only." },
+    "theme": { "type": "string", "description": "registry:base only." },
+    "font": {
+      "type": "object",
+      "description": "Font metadata. Required for registry:font type.",
+      "properties": {
+        "family": { "type": "string" },
+        "provider": { "type": "string", "enum": ["google"] },
+        "import": { "type": "string" },
+        "variable": { "type": "string" },
+        "weight": { "type": "array", "items": { "type": "string" } },
+        "subsets": { "type": "array", "items": { "type": "string" } },
+        "selector": { "type": "string" },
+        "dependency": { "type": "string" }
+      },
+      "required": ["family", "provider", "import", "variable"]
+    }
+  },
+  "required": ["name", "type"],
+  "definitions": {
+    "cssValue": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object", "additionalProperties": { "$ref": "#/definitions/cssValue" } }
+      ]
+    }
+  }
+}
