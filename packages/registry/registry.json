@@ -1,0 +1,858 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "widgetron",
+  "homepage": "https://widgetron.dev",
+  "items": [
+    {
+      "name": "widgetron-tokens",
+      "type": "registry:file",
+      "title": "Widgetron design tokens",
+      "description": "Aseptic semantic design tokens, the Tailwind v4 @theme bridge, animations, and the opt-in [data-theme=webreactiva] brand overrides. Install once; every widget renders against these.",
+      "files": [
+        {
+          "path": "../widgets/src/styles/tokens.css",
+          "type": "registry:file",
+          "target": "styles/widgetron-tokens.css"
+        },
+        {
+          "path": "../widgets/src/styles/theme.css",
+          "type": "registry:file",
+          "target": "styles/widgetron-theme.css"
+        }
+      ]
+    },
+    {
+      "name": "widgetron-utils",
+      "type": "registry:lib",
+      "title": "cn() utility",
+      "description": "clsx + tailwind-merge className helper used by every widget.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "widgetron-i18n",
+      "type": "registry:lib",
+      "title": "i18n provider",
+      "description": "WidgetronProvider + useLabels/useLocale — customizable, translatable widget copy.",
+      "files": [
+        {
+          "path": "../widgets/src/lib/i18n.tsx",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "widgetron-icons",
+      "type": "registry:lib",
+      "title": "Control icons",
+      "description": "Inline, dependency-free control SVGs (play, chevrons, check…).",
+      "files": [
+        {
+          "path": "../widgets/src/lib/icons.tsx",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "widgetron-formula",
+      "type": "registry:lib",
+      "title": "Formula eval",
+      "description": "Safe expression evaluation + number formatting for tangle-text / scrubber.",
+      "files": [
+        {
+          "path": "../widgets/src/lib/formula.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "widgetron-button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "cva Button with Radix Slot/asChild support.",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/primitives/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "widgetron-icon",
+      "type": "registry:ui",
+      "title": "Icon",
+      "description": "Universal Iconify icon; bare names resolve against the theme's icon set.",
+      "dependencies": [
+        "@iconify/react"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/primitives/icon.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "widgetron-tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "Lightweight tooltip primitive used by the glossary.",
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/primitives/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "audio-clip",
+      "type": "registry:component",
+      "title": "Audio Clip",
+      "description": "A custom audio player with an optional synced, clickable karaoke transcript.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/audio-clip/audio-clip.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "callout-box",
+      "type": "registry:component",
+      "title": "Callout Box",
+      "description": "Highlights a piece of information with an intent (insight, context, or caution).",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/callout-box/callout-box.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "checklist",
+      "type": "registry:component",
+      "title": "Checklist",
+      "description": "An actionable, persistent to-do list whose checked state survives reloads, with a progress bar.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/checklist/checklist.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "code-translation",
+      "type": "registry:component",
+      "title": "Code Translation",
+      "description": "Real code on one side, a numbered plain-language explanation on the other.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/code-translation/code-translation.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "compare-slider",
+      "type": "registry:component",
+      "title": "Compare Slider",
+      "description": "A before/after comparison with a draggable divider the reader sweeps to reveal each side.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/compare-slider/compare-slider.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "data-chart",
+      "type": "registry:component",
+      "title": "Data Chart",
+      "description": "Declarative bar, horizontal-bar, and line charts rendered as dependency-free, locale-formatted SVG.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/data-chart/data-chart.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "decision-tree",
+      "type": "registry:component",
+      "title": "Decision Tree",
+      "description": "A branching 'choose-your-own-path' explorable: pick a choice, follow a branch, and land on an outcome.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/decision-tree/decision-tree.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "drag-and-drop",
+      "type": "registry:component",
+      "title": "Drag And Drop",
+      "description": "A categorize/match exercise: place each item chip into its correct zone, then check.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/drag-and-drop/drag-and-drop.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "fill-in-the-blanks",
+      "type": "registry:component",
+      "title": "Fill In The Blanks",
+      "description": "Prose with inline dropdown blanks the reader fills in and then checks, graded inline.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/fill-in-the-blanks/fill-in-the-blanks.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "flashcards",
+      "type": "registry:component",
+      "title": "Flashcards",
+      "description": "A flip deck for active recall: reveal each card's answer, then self-grade it.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/flashcards/flashcards.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "flow-diagram",
+      "type": "registry:component",
+      "title": "Flow Diagram",
+      "description": "A linear 'A → B → C' flow whose steps can become a clickable walkthrough with per-step detail panels.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/flow-diagram/flow-diagram.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "frame-stepper",
+      "type": "registry:component",
+      "title": "Frame Stepper",
+      "description": "A state-timeline scrubber: a fixed stage of boxes and/or code, plus ordered frames that highlight parts and show a caption.",
+      "categories": [
+        "education",
+        "reactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/frame-stepper/frame-stepper.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "glossary",
+      "type": "registry:component",
+      "title": "Glossary",
+      "description": "An inline term with a dotted underline that reveals its definition in a tooltip.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-tooltip.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/glossary/glossary.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "group-chat",
+      "type": "registry:component",
+      "title": "Group Chat",
+      "description": "A paced chat thread: messages reveal one by one (with a typing indicator) so a flow reads as a dialogue between actors.",
+      "categories": [
+        "education",
+        "reactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/group-chat/group-chat.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "hotspots",
+      "type": "registry:component",
+      "title": "Hotspots",
+      "description": "An annotated figure: clickable points overlaid on an image or diagram reveal explanations in a detail panel.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/hotspots/hotspots.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "infographic",
+      "type": "registry:component",
+      "title": "Infographic",
+      "description": "Visual-metaphor templates (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs) rendered as dependency-free SVG.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/infographic/infographic.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "mermaid-diagram",
+      "type": "registry:component",
+      "title": "Mermaid Diagram",
+      "description": "Renders a Mermaid chart into the active theme, optionally zoomable and with clickable nodes that open detail overlays.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "dependencies": [
+        "mermaid"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/mermaid-diagram/mermaid-diagram.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "pattern-card",
+      "type": "registry:component",
+      "title": "Pattern Card",
+      "description": "A responsive auto-fit grid of icon + title + description cards.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/pattern-card/pattern-card.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "predict-output",
+      "type": "registry:component",
+      "title": "Predict Output",
+      "description": "Show code, ask the reader to predict what it prints, then reveal the actual output — with optional multiple-choice predictions.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/predict-output/predict-output.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "profile-quiz",
+      "type": "registry:component",
+      "title": "Profile Quiz",
+      "description": "A short onboarding quiz (one question at a time) that writes a reader profile used to personalize the rest of the page.",
+      "categories": [
+        "education",
+        "ai & personalization"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/profile-quiz/profile-quiz.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "prompt-template",
+      "type": "registry:component",
+      "title": "Prompt Template",
+      "description": "A copy-ready AI prompt with inline-editable {{slots}} and a copy button.",
+      "categories": [
+        "education",
+        "ai & personalization"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/prompt-template/prompt-template.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "prose",
+      "type": "registry:component",
+      "title": "Prose",
+      "description": "A static typographic container for free-form text: headings, paragraphs, lists, inline code, links.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/prose/prose.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "quiz",
+      "type": "registry:component",
+      "title": "Quiz",
+      "description": "Single-question multiple-choice with instant per-option feedback and an optional celebration.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "dependencies": [
+        "canvas-confetti"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/quiz/quiz.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "scrollytelling",
+      "type": "registry:component",
+      "title": "Scrollytelling",
+      "description": "The sticky-graphic pattern (NYT / The Pudding): narrative steps scroll while a graphic stays pinned and updates per step.",
+      "categories": [
+        "education",
+        "compositions"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/scrollytelling/scrollytelling.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "scrubber",
+      "type": "registry:component",
+      "title": "Scrubber",
+      "description": "A control-panel explorable explanation: labeled sliders for inputs and live-computed outputs shown as numbers and bars.",
+      "categories": [
+        "education",
+        "reactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-formula.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/scrubber/scrubber.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "section-header",
+      "type": "registry:component",
+      "title": "Section Header",
+      "description": "A section header: an optional eyebrow, a larger display title, and optional description / body.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-icon.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/section-header/section-header.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "spot-the-bug",
+      "type": "registry:component",
+      "title": "Spot The Bug",
+      "description": "A block of code where the learner clicks the line they think holds the bug, with an explanation on success.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/spot-the-bug/spot-the-bug.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "step-cards",
+      "type": "registry:component",
+      "title": "Step Cards",
+      "description": "An ordered sequence of numbered steps connected by a line.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/step-cards/step-cards.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "storyline",
+      "type": "registry:component",
+      "title": "Storyline",
+      "description": "The dispensa reading composition: a scroll-driven document of modules that assembles any widgets into a course.",
+      "categories": [
+        "education",
+        "compositions"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/glossary.json",
+        "https://widgetron.dev/r/profile-quiz.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/storyline/storyline.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "tangle-text",
+      "type": "registry:component",
+      "title": "Tangle Text",
+      "description": "A reactive paragraph (Bret Victor's 'Tangle') whose underlined numbers are draggable and whose computed values recalculate live.",
+      "categories": [
+        "education",
+        "reactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-formula.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/tangle-text/tangle-text.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "terminal-sim",
+      "type": "registry:component",
+      "title": "Terminal Sim",
+      "description": "A safe, simulated CLI: commands type themselves and print canned output, one per click at the learner's pace.",
+      "categories": [
+        "education",
+        "reactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/terminal-sim/terminal-sim.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "timeline",
+      "type": "registry:component",
+      "title": "Timeline",
+      "description": "A vertical sequence of milestones on a connector line; items with detail expand on click.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/timeline/timeline.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "video-clip",
+      "type": "registry:component",
+      "title": "Video Clip",
+      "description": "A responsive, privacy-friendly video embed (native file, or click-to-load YouTube / Vimeo).",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/video-clip/video-clip.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@webreactiva/registry",
+  "version": "0.0.1",
+  "private": true,
+  "description": "shadcn distribution registry for Widgetron — install widgets with `npx shadcn add`.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "generate": "node build-registry.mjs",
+    "build": "node build-registry.mjs && shadcn build registry.json --output public/r"
+  },
+  "devDependencies": {
+    "shadcn": "^2.5.0"
+  }
+}
