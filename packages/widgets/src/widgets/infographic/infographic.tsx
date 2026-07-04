@@ -1,6 +1,17 @@
 import * as React from "react";
 
+import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
+
+export interface InfographicLabels {
+  /** Default zone captions for `iceberg` ([visible, hidden]). */
+  icebergZones: [string, string];
+}
+
+export const DEFAULT_INFOGRAPHIC_LABELS: InfographicLabels = {
+  icebergZones: ["The visible", "The hidden"],
+};
 
 export interface InfographicItem {
   label: string;
@@ -18,7 +29,11 @@ export type InfographicLayout =
   | "target"
   | "hub"
   | "matrix"
-  | "stairs";
+  | "stairs"
+  | "milestones"
+  | "chevrons"
+  | "roadmap"
+  | "pillars";
 
 export interface InfographicProps extends React.HTMLAttributes<HTMLDivElement> {
   layout: InfographicLayout;
@@ -31,6 +46,7 @@ export interface InfographicProps extends React.HTMLAttributes<HTMLDivElement> {
   tilt?: "left" | "right" | "equal";
   /** Axis captions for `matrix` ({ x: [low, high], y: [low, high] }). */
   axes?: { x?: [string, string]; y?: [string, string] };
+  labels?: Partial<InfographicLabels>;
 }
 
 // Theme tokens — the infographic is aseptic: colors come from CSS variables.
@@ -104,6 +120,50 @@ function Chip({
       <Txt x={x + size / 2} y={y + size / 2 + 4.5} fill="var(--card)" size={12}>
         {i + 1}
       </Txt>
+    </g>
+  );
+}
+
+/**
+ * Colored circle with the item's icon centered (via foreignObject, so any
+ * `Icon` renders inside the SVG), or the 1-based number when there is none.
+ */
+function IconBadge({
+  x,
+  y,
+  i,
+  icon,
+  r = 26,
+  invert = false,
+}: {
+  x: number;
+  y: number;
+  i: number;
+  icon?: React.ReactNode;
+  r?: number;
+  /** Card-colored circle with the icon in the chip color — for badges sitting
+   * on an already chip-colored shape. */
+  invert?: boolean;
+}): React.ReactElement {
+  const bg = invert ? "var(--card)" : chipColor(i);
+  const fg = invert ? chipColor(i) : "var(--card)";
+  return (
+    <g>
+      <circle cx={r1(x)} cy={r1(y)} r={r} fill={bg} />
+      {icon != null ? (
+        <foreignObject x={r1(x - r)} y={r1(y - r)} width={r * 2} height={r * 2}>
+          <span
+            className="flex h-full w-full items-center justify-center"
+            style={{ fontSize: r, color: fg }}
+          >
+            {icon}
+          </span>
+        </foreignObject>
+      ) : (
+        <Txt x={x} y={y + 5} fill={fg} size={Math.max(12, r * 0.55)}>
+          {i + 1}
+        </Txt>
+      )}
     </g>
   );
 }
@@ -340,13 +400,21 @@ function venn(items: InfographicItem[], center?: string): Rendered {
   };
 }
 
-function iceberg(
-  items: InfographicItem[],
-  zones: [string, string] = ["Lo visible", "Lo oculto"],
-): Rendered {
-  const H = 432;
-  const waterY = 150;
+function iceberg(items: InfographicItem[], zones: [string, string]): Rendered {
+  // A tip above the waterline, the mass below. Number chips sit on the berg's
+  // axis; each label is set off to the RIGHT with a leader line, so long labels
+  // never collide and the layout scales to any number of items.
+  const cx = 250; // berg axis, shifted left to leave room for the side labels
+  const tipY = 44;
+  const waterY = 140;
   const hidden = items.slice(1);
+  const rowGap = 40;
+  const firstRowY = waterY + 52;
+  const lastRowY = firstRowY + Math.max(0, hidden.length - 1) * rowGap;
+  const bergBottom = lastRowY + 56;
+  const H = bergBottom + 16;
+  const bellyY = waterY + (bergBottom - waterY) * 0.4;
+  const labelX = cx + 150; // 400 — clears the berg's widest point (cx + 116)
 
   const water = (
     <>
@@ -368,44 +436,70 @@ function iceberg(
       />
     </>
   );
+
   const berg = (
     <polygon
-      points="320,46 386,150 410,212 396,302 320,396 244,300 230,210 254,150"
+      points={[
+        [cx, tipY - 4],
+        [cx + 74, waterY],
+        [cx + 116, bellyY],
+        [cx + 66, bergBottom - 10],
+        [cx, bergBottom],
+        [cx - 66, bergBottom - 10],
+        [cx - 116, bellyY],
+        [cx - 74, waterY],
+      ]
+        .map((p) => p.map(r1).join(","))
+        .join(" ")}
       fill="var(--card)"
       stroke={MUTED}
       strokeWidth={2}
     />
   );
 
-  const visible = items[0] ? (
-    <>
-      <Chip x={310} y={78} i={0} />
-      <Txt x={320} y={116} size={13}>
-        {items[0].label}
+  // One numbered chip on the axis + its label off to the right, leader-lined.
+  const row = (i: number, rowY: number, it: InfographicItem) => (
+    <g key={`r${i}`}>
+      <line
+        x1={cx + 12}
+        y1={r1(rowY)}
+        x2={labelX - 10}
+        y2={r1(rowY)}
+        stroke={GRID}
+        strokeWidth={2}
+      />
+      <Chip x={cx - 10} y={rowY - 10} i={i} />
+      <Txt x={labelX} y={rowY + 5} anchor="start" size={13}>
+        {it.label}
       </Txt>
-    </>
-  ) : null;
+    </g>
+  );
 
-  // Hidden chips between y=192 and y=296 keep every label inside the berg.
-  const step = hidden.length > 1 ? 104 / (hidden.length - 1) : 0;
-  const hiddenLabels = hidden.map((it, j) => {
-    const y = hidden.length > 1 ? 192 + step * j : 250;
-    return (
-      <g key={`h${j}`}>
-        <Chip x={310} y={y} i={j + 1} />
-        <Txt x={320} y={y + 38} size={13}>
-          {it.label}
-        </Txt>
-      </g>
-    );
-  });
+  const tip = items[0]
+    ? row(0, Math.round((tipY + waterY) / 2) + 4, items[0])
+    : null;
+  const rows = hidden.map((it, j) => row(j + 1, firstRowY + rowGap * j, it));
 
   const zoneLabels = (
     <>
-      <Txt x={628} y={86} anchor="end" size={11} fill={MUTED} spacing="0.1em">
+      <Txt
+        x={14}
+        y={waterY - 12}
+        anchor="start"
+        size={11}
+        fill={MUTED}
+        spacing="0.1em"
+      >
         {zones[0].toUpperCase()}
       </Txt>
-      <Txt x={628} y={188} anchor="end" size={11} fill={MUTED} spacing="0.1em">
+      <Txt
+        x={14}
+        y={waterY + 22}
+        anchor="start"
+        size={11}
+        fill={MUTED}
+        spacing="0.1em"
+      >
         {zones[1].toUpperCase()}
       </Txt>
     </>
@@ -416,8 +510,8 @@ function iceberg(
       <>
         {water}
         {berg}
-        {visible}
-        {hiddenLabels}
+        {tip}
+        {rows}
         {zoneLabels}
       </>
     ),
@@ -731,6 +825,7 @@ function stairs(items: InfographicItem[]): Rendered {
   const sw = total / n;
   const steps = items.map((it, i) => {
     const topY = baseY - ((i + 1) * 252) / n;
+    const cx = x0 + i * sw + (sw - 6) / 2;
     return (
       <g key={`st${i}`}>
         <rect
@@ -740,12 +835,10 @@ function stairs(items: InfographicItem[]): Rendered {
           height={r1(baseY - topY)}
           fill={chipColor(i)}
         />
-        <Txt
-          x={x0 + i * sw + (sw - 6) / 2}
-          y={topY + 26}
-          fill="var(--card)"
-          size={12}
-        >
+        {it.icon != null && (
+          <IconBadge x={cx} y={topY - 24} i={i} icon={it.icon} r={16} />
+        )}
+        <Txt x={cx} y={topY + 26} fill="var(--card)" size={12}>
           {it.label}
         </Txt>
       </g>
@@ -772,6 +865,217 @@ function stairs(items: InfographicItem[]): Rendered {
   };
 }
 
+function milestones(items: InfographicItem[]): Rendered {
+  const n = items.length;
+  const H = 400;
+  const axisY = 200;
+  const x0 = 24;
+  const total = 566;
+  const R = 30;
+  const drop = 88;
+
+  const marks = items.map((it, i) => {
+    const x = x0 + ((i + 0.5) * total) / n;
+    const up = i % 2 === 0;
+    const cy = up ? axisY - drop : axisY + drop;
+    const labelY = up ? cy - R - 16 : cy + R + 28;
+    return (
+      <g key={`ms${i}`}>
+        <line
+          x1={r1(x)}
+          y1={r1(up ? cy + R : cy - R)}
+          x2={r1(x)}
+          y2={axisY}
+          stroke={chipColor(i)}
+          strokeWidth={2.5}
+        />
+        <circle cx={r1(x)} cy={axisY} r={5} fill={chipColor(i)} />
+        <IconBadge x={x} y={cy} i={i} icon={it.icon} r={R} />
+        <Txt x={x} y={labelY} size={13}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  const axis = (
+    <g>
+      <defs>
+        <marker
+          id="ig-ms-arrow"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path d="M0,0 L10,5 L0,10 z" fill={MUTED} />
+        </marker>
+      </defs>
+      <line
+        x1={x0 - 10}
+        y1={axisY}
+        x2={x0 + total + 26}
+        y2={axisY}
+        stroke={MUTED}
+        strokeWidth={2}
+        markerEnd="url(#ig-ms-arrow)"
+      />
+    </g>
+  );
+
+  return {
+    body: (
+      <>
+        {axis}
+        {marks}
+      </>
+    ),
+    H,
+  };
+}
+
+function chevrons(items: InfographicItem[]): Rendered {
+  const n = items.length;
+  const hasIcons = items.some((it) => it.icon != null);
+  const x0 = 24;
+  const total = 592;
+  const tip = 20;
+  const bandH = 56;
+  const y0 = hasIcons ? 128 : 40;
+  const y1 = y0 + bandH;
+  const yc = (y0 + y1) / 2;
+  const bw = (total - tip) / n;
+
+  const bands = items.map((it, i) => {
+    const x = x0 + i * bw;
+    const notch = i > 0 ? `${r1(x + tip)},${r1(yc)} ` : "";
+    const points =
+      `${r1(x)},${y0} ${r1(x + bw)},${y0} ${r1(x + bw + tip)},${r1(yc)} ` +
+      `${r1(x + bw)},${y1} ${r1(x)},${y1} ${notch}`.trim();
+    const cx = x + tip / 2 + (bw - 6) / 2;
+    return (
+      <g key={`cv${i}`}>
+        <polygon points={points} fill={chipColor(i)} />
+        {it.icon != null && <IconBadge x={cx} y={y0 - 44} i={i} icon={it.icon} r={24} />}
+        <Txt x={cx} y={yc + 5} fill="var(--card)" size={12}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  return { body: bands, H: y1 + 28 };
+}
+
+function roadmap(items: InfographicItem[]): Rendered {
+  const n = items.length;
+  const H = 400;
+  const yTop = 110;
+  const yBottom = 290;
+  const xL = 60;
+  const xR = 540;
+  const R = 24;
+
+  // A serpentine: top lane left→right, a half-circle turn on the right,
+  // bottom lane right→left. Stops split between the two lanes.
+  const path = `M ${xL - 24} ${yTop} L ${xR} ${yTop} A ${(yBottom - yTop) / 2} ${(yBottom - yTop) / 2} 0 0 1 ${xR} ${yBottom} L ${xL - 24} ${yBottom}`;
+  const topCount = Math.ceil(n / 2);
+  const bottomCount = n - topCount;
+
+  const stops = items.map((it, i) => {
+    const onTop = i < topCount;
+    const laneIndex = onTop ? i : i - topCount;
+    const laneCount = onTop ? topCount : bottomCount;
+    const step = (xR - xL) / Math.max(laneCount, 1);
+    // Bottom lane runs right→left, continuing the journey.
+    const x = onTop
+      ? xL + (laneIndex + 0.5) * step
+      : xR - (laneIndex + 0.5) * step;
+    const y = onTop ? yTop : yBottom;
+    const labelY = onTop ? y - R - 14 : y + R + 26;
+    return (
+      <g key={`rm${i}`}>
+        <IconBadge x={x} y={y} i={i} icon={it.icon} r={R} />
+        <Txt x={x} y={labelY} size={13}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  return {
+    body: (
+      <>
+        <path
+          d={path}
+          fill="none"
+          stroke={GRID}
+          strokeWidth={10}
+          strokeLinecap="round"
+        />
+        <path
+          d={path}
+          fill="none"
+          stroke={MUTED}
+          strokeWidth={2}
+          strokeDasharray="2 10"
+          strokeLinecap="round"
+        />
+        {stops}
+      </>
+    ),
+    H,
+  };
+}
+
+function pillars(items: InfographicItem[]): Rendered {
+  const n = items.length;
+  const H = 400;
+  const x0 = 48;
+  const total = 544;
+  const gap = 18;
+  const cw = (total - gap * (n - 1)) / n;
+  const topY = 128;
+  const baseY = 338;
+
+  const roof = (
+    <polygon
+      points={`${x0 - 24},${topY - 24} 320,${topY - 84} ${x0 + total + 24},${topY - 24} ${x0 + total + 24},${topY - 12} ${x0 - 24},${topY - 12}`}
+      fill={FG}
+    />
+  );
+  const base = (
+    <rect x={x0 - 24} y={baseY} width={total + 48} height={8} fill={FG} />
+  );
+
+  const columns = items.map((it, i) => {
+    const x = x0 + i * (cw + gap);
+    const cx = x + cw / 2;
+    return (
+      <g key={`pl${i}`}>
+        <rect x={r1(x)} y={topY} width={r1(cw)} height={baseY - topY} fill={chipColor(i)} />
+        <IconBadge x={cx} y={topY + 34} i={i} icon={it.icon} r={20} invert />
+        <Txt x={cx} y={baseY + 32} size={12}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  return {
+    body: (
+      <>
+        {roof}
+        {columns}
+        {base}
+      </>
+    ),
+    H,
+  };
+}
+
 function render(
   layout: InfographicLayout,
   items: InfographicItem[],
@@ -787,7 +1091,10 @@ function render(
     case "venn":
       return venn(items, props.center);
     case "iceberg":
-      return iceberg(items, props.zones);
+      return iceberg(
+        items,
+        props.zones ?? DEFAULT_INFOGRAPHIC_LABELS.icebergZones,
+      );
     case "balance":
       return balance(items, props.tilt);
     case "target":
@@ -798,6 +1105,14 @@ function render(
       return matrix(items, props.axes);
     case "stairs":
       return stairs(items);
+    case "milestones":
+      return milestones(items);
+    case "chevrons":
+      return chevrons(items);
+    case "roadmap":
+      return roadmap(items);
+    case "pillars":
+      return pillars(items);
     default:
       return funnel(items);
   }
@@ -821,10 +1136,17 @@ export function Infographic({
   zones,
   tilt,
   axes,
+  labels,
   className,
   ...props
 }: InfographicProps) {
-  const { body, H } = render(layout, items, { center, zones, tilt, axes });
+  const l = useLabels("infographic", DEFAULT_INFOGRAPHIC_LABELS, labels);
+  const { body, H } = render(layout, items, {
+    center,
+    zones: zones ?? l.icebergZones,
+    tilt,
+    axes,
+  });
   const aria = `Infographic (${layout}): ${items.map((it) => it.label).join(", ")}`;
   const hasLegend = items.some((it) => it.description != null);
 
@@ -857,7 +1179,10 @@ export function Infographic({
                   {item.icon ?? i + 1}
                 </span>
                 <span>
-                  <strong>{item.label}.</strong> {item.description}
+                  <strong>
+                    <RichText>{item.label}</RichText>.
+                  </strong>{" "}
+                  <RichText>{item.description}</RichText>
                 </span>
               </li>
             ) : null,

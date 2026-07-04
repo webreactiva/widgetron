@@ -7,9 +7,9 @@ export const infographicMeta: WidgetMeta = {
   version: 1,
   category: "Diagrams & data",
   summary:
-    "Visual-metaphor templates (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs) rendered as dependency-free SVG.",
+    "Visual-metaphor templates (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs, milestones, chevrons, roadmap, pillars) rendered as dependency-free SVG.",
   whenToUse:
-    "Reach for this to turn a conceptual relationship into a memorable picture — pick the `layout` whose metaphor matches the idea: 'funnel' for narrowing stages, 'pyramid' for a layered hierarchy, 'cycle' for a repeating loop, 'venn' for overlap, 'iceberg' for visible-vs-hidden, 'balance' for a trade-off, 'target' for nested goals, 'hub' for a center-and-spokes, 'matrix' for a 2x2, 'stairs' for cumulative progress. Keep `items[].label` to 1–3 words and put longer text in `description` (it becomes a numbered legend). Prefer DataChart instead when you have actual numbers to compare, and FlowDiagram or MermaidDiagram when the point is a step-by-step process rather than a static metaphor.",
+    "Reach for this to turn a conceptual relationship into a memorable picture — pick the `layout` whose metaphor matches the idea: 'funnel' for narrowing stages, 'pyramid' for a layered hierarchy, 'cycle' for a repeating loop, 'venn' for overlap, 'iceberg' for visible-vs-hidden, 'balance' for a trade-off, 'target' for nested goals, 'hub' for a center-and-spokes, 'matrix' for a 2x2, 'stairs' for cumulative progress, 'milestones' for stages along a horizontal arrow (alternating icon medallions), 'chevrons' for a compact left-to-right process ribbon, 'roadmap' for a winding journey with stops, 'pillars' for the N pillars holding up one idea. The napkin-style layouts (stairs, milestones, chevrons, roadmap, pillars) render each item's `icon` in the graphic — give every item one; the rest show icons in the legend. Keep `items[].label` to 1–3 words and put longer text in `description` (it becomes a numbered legend). Prefer DataChart instead when you have actual numbers to compare, and FlowDiagram or MermaidDiagram when the point is a step-by-step process rather than a static metaphor.",
   schema: z.object({
     layout: z
       .enum([
@@ -23,6 +23,10 @@ export const infographicMeta: WidgetMeta = {
         "hub",
         "matrix",
         "stairs",
+        "milestones",
+        "chevrons",
+        "roadmap",
+        "pillars",
       ])
       .describe("The visual-metaphor template to render."),
     items: z
@@ -38,7 +42,7 @@ export const infographicMeta: WidgetMeta = {
             .string()
             .optional()
             .describe(
-              "Short symbol shown as the bullet (e.g. an emoji or single character). Rendered verbatim — NOT theme-resolved. Defaults to the item number.",
+              "Optional icon: an Iconify name ('lucide:rocket') or bare name resolved by the theme's icon set; an emoji also works (rendered verbatim). Drawn inside the shape for 'stairs'/'milestones' and in the legend chip elsewhere. Defaults to the item number.",
             ),
         }),
       )
