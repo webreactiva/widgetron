@@ -121,6 +121,17 @@ widget edits.
 > **Scrollytelling** (sticky graphic + scroll-driven steps, IntersectionObserver,
 > no scroll-snap) is built. A guided **Tour** is the next composition.
 
+## Analytics
+
+Widgets emit a single native `widgetron:event` CustomEvent (bubbling, always
+on, inert without listeners) for meaningful interactions — quiz answered,
+checklist completed, CTA clicked — and the Storyline composition reports
+`section_viewed`, `scroll_milestone` (25/50/75/100) and `completed`. Subscribe
+once on `document` (or via the typed `onWidgetronEvent` helper) and forward to
+Swetrix, GTM, or anywhere. Fully decoupled: widgets never know who listens.
+See [`docs/analytics.md`](docs/analytics.md) for the event contract and
+copy-paste host adapters.
+
 ## JSON config & AI generation
 
 Every widget is renderable from a serializable, **versioned** node — the format
