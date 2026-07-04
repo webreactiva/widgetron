@@ -1,6 +1,17 @@
 import * as React from "react";
 
+import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
+
+export interface HotspotsLabels {
+  /** Shown in the detail panel while nothing is selected. */
+  emptyHint: React.ReactNode;
+}
+
+export const DEFAULT_HOTSPOTS_LABELS: HotspotsLabels = {
+  emptyHint: "Select a point to learn more.",
+};
 
 export interface Hotspot {
   /** Horizontal position as a percentage (0–100) of the figure box. */
@@ -27,6 +38,7 @@ export interface HotspotsProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultSelected?: number;
   /** Shown in the detail panel while nothing is selected. */
   emptyHint?: React.ReactNode;
+  labels?: Partial<HotspotsLabels>;
 }
 
 /**
@@ -41,10 +53,15 @@ export function Hotspots({
   alt,
   hotspots,
   defaultSelected,
-  emptyHint = "Select a point to learn more.",
+  emptyHint,
+  labels,
   className,
   ...props
 }: HotspotsProps) {
+  const l = useLabels("hotspots", DEFAULT_HOTSPOTS_LABELS, {
+    ...labels,
+    ...(emptyHint !== undefined ? { emptyHint } : {}),
+  });
   const [selected, setSelected] = React.useState<number | null>(
     defaultSelected ?? null,
   );
@@ -117,15 +134,15 @@ export function Hotspots({
         {selectedHotspot ? (
           <div className="rounded-lg border bg-card p-4 text-card-foreground">
             <p className="font-display font-semibold leading-tight">
-              {selectedHotspot.title}
+              <RichText>{selectedHotspot.title}</RichText>
             </p>
             <div className="mt-1 text-sm text-muted-foreground">
-              {selectedHotspot.description}
+              <RichText>{selectedHotspot.description}</RichText>
             </div>
           </div>
         ) : (
           <p className="text-center text-xs text-muted-foreground">
-            {emptyHint}
+            {l.emptyHint}
           </p>
         )}
       </div>

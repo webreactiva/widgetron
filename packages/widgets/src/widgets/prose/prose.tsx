@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
 
 export interface ProseProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Render a trusted HTML string instead of (or alongside) children. */
@@ -56,9 +57,20 @@ export function Prose({
     );
   }
 
+  // A plain string is markdown-agnostic content: split blank-line-separated
+  // paragraphs and format each inline. JSX/nodes pass through as authored.
+  const body =
+    typeof children === "string"
+      ? children.split(/\n{2,}/).map((p, i) => (
+          <p key={i}>
+            <RichText>{p}</RichText>
+          </p>
+        ))
+      : children;
+
   return (
     <div data-slot="prose" className={classes} {...props}>
-      {children}
+      {body}
     </div>
   );
 }

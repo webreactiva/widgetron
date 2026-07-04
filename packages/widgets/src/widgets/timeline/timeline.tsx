@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
 
 export interface TimelineItem {
   /** Optional timestamp/label shown muted before the title. */
@@ -87,10 +88,10 @@ export function Timeline({
           <p className="font-display font-semibold leading-tight">
             {item.time != null && (
               <span className="mr-2 text-xs font-normal tabular-nums text-muted-foreground">
-                {item.time}
+                <RichText>{item.time}</RichText>
               </span>
             )}
-            {item.title}
+            <RichText>{item.title}</RichText>
           </p>
         );
 
@@ -116,7 +117,7 @@ export function Timeline({
               )}
               {hasDescription && isOpen && (
                 <div className="mt-1 text-sm text-muted-foreground motion-safe:animate-wgt-fade-up">
-                  {item.description}
+                  <RichText>{item.description}</RichText>
                 </div>
               )}
             </div>

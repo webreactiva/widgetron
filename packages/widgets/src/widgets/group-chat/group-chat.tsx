@@ -3,6 +3,7 @@ import { ChevronRight, Play, RotateCcw } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 
 export interface ChatMessage {
@@ -120,7 +121,7 @@ export function GroupChat({
     >
       {title != null && (
         <div className="border-b bg-muted px-4 py-2 text-sm font-medium">
-          {title}
+          <RichText>{title}</RichText>
         </div>
       )}
 
@@ -150,7 +151,7 @@ export function GroupChat({
                     : "rounded-bl-sm bg-muted text-foreground",
                 )}
               >
-                {message.text}
+                <RichText>{message.text}</RichText>
               </div>
             </div>
           );

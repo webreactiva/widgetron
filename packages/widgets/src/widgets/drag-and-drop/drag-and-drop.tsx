@@ -4,6 +4,7 @@ import { Check, RotateCcw, X } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
+import { RichText } from "@/primitives/rich-text";
 
 export interface DragItem {
   /** Unique id for this item. */
@@ -141,7 +142,9 @@ export function DragAndDrop({
       )}
       {...props}
     >
-      <p className="text-sm text-muted-foreground">{l.instructions}</p>
+      <p className="text-sm text-muted-foreground">
+        <RichText>{l.instructions}</RichText>
+      </p>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {poolItems.map((item) => (
@@ -161,7 +164,7 @@ export function DragAndDrop({
                 : "border-input bg-background hover:border-ring hover:bg-accent",
             )}
           >
-            {item.label}
+            <RichText>{item.label}</RichText>
           </button>
         ))}
         {poolItems.length === 0 && (
@@ -195,7 +198,7 @@ export function DragAndDrop({
               )}
             >
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {target.label}
+                <RichText>{target.label}</RichText>
               </span>
               <div className="flex flex-wrap gap-2">
                 {placedItems.map((item) => {
@@ -246,7 +249,7 @@ export function DragAndDrop({
                       {status === "wrong" && (
                         <X className="size-3.5 text-destructive" />
                       )}
-                      {item.label}
+                      <RichText>{item.label}</RichText>
                     </span>
                   );
                 })}

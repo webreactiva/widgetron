@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Icon } from "@/primitives/icon";
+import { RichText } from "@/primitives/rich-text";
 
 export interface SectionHeaderProps
   extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
@@ -81,7 +82,7 @@ export function SectionHeader({
         )}
         {eyebrow != null && (
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-primary">
-            {eyebrow}
+            <RichText>{eyebrow}</RichText>
           </p>
         )}
         <Heading
@@ -90,7 +91,7 @@ export function SectionHeader({
             TITLE_SIZE[level],
           )}
         >
-          {title}
+          <RichText>{title}</RichText>
         </Heading>
         {description != null && (
           <p
@@ -99,7 +100,7 @@ export function SectionHeader({
               centered && "mx-auto",
             )}
           >
-            {description}
+            <RichText>{description}</RichText>
           </p>
         )}
         {children != null && (

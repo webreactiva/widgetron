@@ -3,6 +3,7 @@ import { ChevronRight, RotateCcw } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 
 export interface DecisionOption {
@@ -98,7 +99,7 @@ export function DecisionTree({
                 />
               )}
               <span className="rounded-full border border-primary/40 bg-[color-mix(in_oklab,var(--primary)_12%,var(--card))] px-2.5 py-0.5 text-xs font-medium text-foreground">
-                {label}
+                <RichText>{label}</RichText>
               </span>
             </React.Fragment>
           ))}
@@ -106,7 +107,9 @@ export function DecisionTree({
       )}
 
       <div aria-live="polite" className="motion-safe:animate-wgt-fade-up">
-        <p className="font-display font-semibold leading-snug">{node.prompt}</p>
+        <p className="font-display font-semibold leading-snug">
+          <RichText>{node.prompt}</RichText>
+        </p>
 
         {node.options ? (
           <div className="mt-4 flex flex-col gap-2">
@@ -121,7 +124,9 @@ export function DecisionTree({
                   "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                 )}
               >
-                <span className="flex-1">{option.label}</span>
+                <span className="flex-1">
+                  <RichText>{option.label}</RichText>
+                </span>
                 <ChevronRight
                   aria-hidden
                   className="size-4 shrink-0 text-muted-foreground"
@@ -131,7 +136,7 @@ export function DecisionTree({
           </div>
         ) : isLeaf ? (
           <div className="mt-4 rounded-md border border-primary bg-[color-mix(in_oklab,var(--primary)_8%,var(--card))] p-3 text-sm text-card-foreground/90">
-            {node.outcome}
+            <RichText>{node.outcome}</RichText>
           </div>
         ) : null}
       </div>

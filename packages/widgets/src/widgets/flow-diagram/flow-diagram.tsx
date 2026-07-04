@@ -3,6 +3,7 @@ import { ArrowRight } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { useLabels } from "@/lib/i18n";
+import { RichText } from "@/primitives/rich-text";
 
 export interface FlowNodeDetail {
   title?: React.ReactNode;
@@ -111,10 +112,12 @@ export function FlowDiagram({
                     "cursor-pointer outline-none hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   )}
                 >
-                  {node.label}
+                  <RichText>{node.label}</RichText>
                 </button>
               ) : (
-                <span className={nodeClass}>{node.label}</span>
+                <span className={nodeClass}>
+                  <RichText>{node.label}</RichText>
+                </span>
               )}
               {index < nodes.length - 1 && (
                 <span aria-hidden className="text-muted-foreground">
@@ -132,7 +135,7 @@ export function FlowDiagram({
             <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-wgt">
               {selectedNode.detail.title != null && (
                 <p className="font-display font-semibold leading-tight">
-                  {selectedNode.detail.title}
+                  <RichText>{selectedNode.detail.title}</RichText>
                 </p>
               )}
               <div
@@ -141,7 +144,7 @@ export function FlowDiagram({
                   selectedNode.detail.title != null && "mt-1",
                 )}
               >
-                {selectedNode.detail.description}
+                <RichText>{selectedNode.detail.description}</RichText>
               </div>
             </div>
           ) : (

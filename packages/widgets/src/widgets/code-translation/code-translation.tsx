@@ -1,6 +1,17 @@
 import * as React from "react";
 
+import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+export interface CodeTranslationLabels {
+  codeLabel: string;
+  translationLabel: string;
+}
+
+export const DEFAULT_CODE_TRANSLATION_LABELS: CodeTranslationLabels = {
+  codeLabel: "Code",
+  translationLabel: "In plain words",
+};
 
 export interface CodeTranslationProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -11,8 +22,7 @@ export interface CodeTranslationProps
   code: React.ReactNode;
   /** Plain-language explanation lines, shown on the right. */
   translations: React.ReactNode[];
-  codeLabel?: string;
-  translationLabel?: string;
+  labels?: Partial<CodeTranslationLabels>;
 }
 
 /**
@@ -24,11 +34,15 @@ export interface CodeTranslationProps
 export function CodeTranslation({
   code,
   translations,
-  codeLabel = "Code",
-  translationLabel = "In plain words",
+  labels,
   className,
   ...props
 }: CodeTranslationProps) {
+  const l = useLabels(
+    "codeTranslation",
+    DEFAULT_CODE_TRANSLATION_LABELS,
+    labels,
+  );
   return (
     <div
       data-slot="code-translation"
@@ -42,7 +56,7 @@ export function CodeTranslation({
         {/* Code side */}
         <div className="bg-[var(--wgt-code-bg)] text-[var(--wgt-code-fg)]">
           <p className="border-b border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/50">
-            {codeLabel}
+            {l.codeLabel}
           </p>
           <pre className="overflow-x-auto p-4 font-mono text-sm leading-relaxed">
             {code}
@@ -51,7 +65,7 @@ export function CodeTranslation({
         {/* Explanation side */}
         <div className="border-t @md/ct:border-l @md/ct:border-t-0">
           <p className="border-b px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {translationLabel}
+            {l.translationLabel}
           </p>
           <ol className="flex flex-col gap-3 p-4 text-sm">
             {translations.map((line, index) => (

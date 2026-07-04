@@ -4,6 +4,7 @@ import { X } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
+import { RichText } from "@/primitives/rich-text";
 
 export interface MermaidNodeDetail {
   /** Node id in the chart whose rendered svg node opens this detail on click. */
@@ -504,10 +505,10 @@ export function MermaidDiagram({
               <X className="size-4" />
             </Button>
             <h4 className="mb-2 pr-8 text-lg font-bold text-primary">
-              {activeDetail.title}
+              <RichText>{activeDetail.title}</RichText>
             </h4>
             <p className="text-sm leading-relaxed">
-              {activeDetail.description}
+              <RichText>{activeDetail.description}</RichText>
             </p>
           </div>
         </div>

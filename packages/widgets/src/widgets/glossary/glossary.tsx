@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/primitives/tooltip";
+import { RichText } from "@/primitives/rich-text";
 
 /** Term → definition map shared via context. */
 export type GlossaryMap = Record<string, React.ReactNode>;
@@ -52,10 +53,10 @@ export function GlossaryTerm({
   const key = name ?? (typeof term === "string" ? term : undefined);
   const def = definition ?? (key != null ? glossary[key] : undefined);
 
-  if (def == null) return <>{term}</>;
+  if (def == null) return <RichText>{term}</RichText>;
 
   return (
-    <Tooltip content={def}>
+    <Tooltip content={<RichText>{def}</RichText>}>
       <button
         type="button"
         className={cn(
@@ -63,7 +64,7 @@ export function GlossaryTerm({
           className,
         )}
       >
-        {term}
+        <RichText>{term}</RichText>
       </button>
     </Tooltip>
   );
@@ -97,7 +98,7 @@ export function GlossaryText({ text, className, ...props }: GlossaryTextProps) {
         return match ? (
           <GlossaryTerm key={i} term={match[1]} name={match[1]} />
         ) : (
-          <React.Fragment key={i}>{part}</React.Fragment>
+          <RichText key={i}>{part}</RichText>
         );
       })}
     </p>

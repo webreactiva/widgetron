@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
 
 export interface QuoteProps
   extends Omit<React.HTMLAttributes<HTMLElement>, "role"> {
@@ -34,8 +35,8 @@ export function Quote({
       )}
       {...props}
     >
-      <blockquote className="font-display text-lg leading-relaxed text-balance [&_a]:font-medium [&_a]:text-primary [&_a]:underline">
-        {children}
+      <blockquote className="font-display text-lg leading-relaxed text-pretty [&_a]:font-medium [&_a]:text-primary [&_a]:underline">
+        <RichText>{children}</RichText>
       </blockquote>
       {(attribution != null || role != null) && (
         <figcaption className="mt-3 text-sm text-muted-foreground">

@@ -3,6 +3,7 @@ import { AlertTriangle, Info, Lightbulb } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { useLabels } from "@/lib/i18n";
+import { RichText } from "@/primitives/rich-text";
 
 export type CalloutVariant = "aha" | "info" | "warning";
 
@@ -78,7 +79,7 @@ export function CalloutBox({
         </span>
       </div>
       <div className="text-card-foreground/90 [&_a]:font-medium [&_a]:text-[var(--callout)] [&_a]:underline">
-        {children}
+        <RichText>{children}</RichText>
       </div>
     </div>
   );

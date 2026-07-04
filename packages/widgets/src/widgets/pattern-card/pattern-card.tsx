@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
 
 export interface Pattern {
   /** An emoji, a single character, or any React node (e.g. an icon). */
@@ -47,11 +48,11 @@ export function PatternCard({
             <div className="mb-2 text-2xl leading-none">{card.icon}</div>
           )}
           <p className="font-display font-semibold leading-tight">
-            {card.title}
+            <RichText>{card.title}</RichText>
           </p>
           {card.description != null && (
             <p className="mt-1 text-sm text-muted-foreground">
-              {card.description}
+              <RichText>{card.description}</RichText>
             </p>
           )}
         </div>
