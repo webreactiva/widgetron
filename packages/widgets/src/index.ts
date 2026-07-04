@@ -17,6 +17,15 @@ export {
 } from "@/lib/i18n";
 export { esLabels } from "@/locales/es";
 
+// Analytics (decoupled CustomEvent layer — see docs/analytics.md)
+export {
+  WIDGETRON_EVENT,
+  emitWidgetronEvent,
+  onWidgetronEvent,
+  type WidgetronEventDetail,
+  type WidgetronEvent,
+} from "@/lib/analytics";
+
 // Primitives (shadcn-compatible building blocks)
 export * from "@/primitives";
 
