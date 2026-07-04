@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Flashcards } from "@/widgets/flashcards";
+import {
+  onWidgetronEvent,
+  type WidgetronEventDetail,
+} from "@/lib/analytics";
 
 const cards = [
   { front: "Front 1", back: "Back 1" },
@@ -18,5 +22,25 @@ describe("Flashcards", () => {
 
     expect(screen.getByText("Deck complete")).toBeInTheDocument();
     expect(screen.getByText(/You knew 1 of 2 cards/)).toBeInTheDocument();
+  });
+
+  it("emits graded events and completed when the deck is done", async () => {
+    const received: WidgetronEventDetail[] = [];
+    const off = onWidgetronEvent((e) => received.push(e.detail));
+    render(<Flashcards cards={cards} />);
+
+    await userEvent.click(screen.getByText("Knew it"));
+    expect(received).toHaveLength(1);
+    expect(received[0]).toMatchObject({
+      widget: "flashcards",
+      action: "graded",
+      data: { index: 0, knew: true, graded: 1, total: 2 },
+    });
+
+    await userEvent.click(screen.getByText("Review"));
+    const completed = received.filter((d) => d.action === "completed");
+    expect(completed).toHaveLength(1);
+    expect(completed[0].data).toEqual({ known: 1, total: 2 });
+    off();
   });
 });

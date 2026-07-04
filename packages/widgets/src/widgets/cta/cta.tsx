@@ -3,7 +3,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
 import { ArrowRight, Check } from "@/lib/icons";
+import { RichText } from "@/primitives/rich-text";
 
 export type CtaVariant = "link" | "email-form";
 
@@ -79,6 +81,7 @@ export function Cta({
   ...props
 }: CtaProps) {
   const l = useLabels("cta", DEFAULT_CTA_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("cta");
   const emailId = React.useId();
   const consentId = React.useId();
 
@@ -102,13 +105,16 @@ export function Cta({
       });
       if (!res.ok) throw new Error(String(res.status));
       setStatus("success");
+      emit("submitted", { ok: true });
     } catch {
       setStatus("error");
+      emit("submitted", { ok: false });
     }
   }
 
   return (
     <div
+      ref={ref}
       data-slot="cta"
       data-variant={variant}
       className={cn(
@@ -118,11 +124,11 @@ export function Cta({
       {...props}
     >
       <div className="text-lg font-semibold tracking-tight text-foreground">
-        {title}
+        <RichText>{title}</RichText>
       </div>
       {description != null && (
         <div className="mt-1 text-sm text-muted-foreground [&_a]:font-medium [&_a]:text-primary [&_a]:underline">
-          {description}
+          <RichText>{description}</RichText>
         </div>
       )}
 
@@ -130,13 +136,20 @@ export function Cta({
         <div className="mt-4">
           {url ? (
             <Button asChild>
-              <a href={url} target="_blank" rel="noopener noreferrer">
-                {buttonLabel ?? l.submit}
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => emit("clicked", { variant: "link", url })}
+              >
+                <RichText>{buttonLabel ?? l.submit}</RichText>
                 <ArrowRight />
               </a>
             </Button>
           ) : (
-            <Button disabled>{buttonLabel ?? l.submit}</Button>
+            <Button disabled>
+              <RichText>{buttonLabel ?? l.submit}</RichText>
+            </Button>
           )}
         </div>
       ) : status === "success" ? (

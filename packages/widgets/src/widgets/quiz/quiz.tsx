@@ -3,7 +3,9 @@ import { Check, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
 
 export interface QuizOption {
   /** The answer text shown to the learner. */
@@ -94,6 +96,7 @@ export function Quiz({
   ...props
 }: QuizProps) {
   const l = useLabels("quiz", DEFAULT_QUIZ_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("quiz");
   const [selected, setSelected] = React.useState<number | null>(null);
   const answered = selected !== null;
   const selectedOption = selected !== null ? options[selected] : null;
@@ -104,11 +107,13 @@ export function Quiz({
     const option = options[index];
     setSelected(index);
     if (option.correct && celebrate) void fireConfetti();
+    emit("answered", { index, correct: Boolean(option.correct) });
     onAnswered?.(option, index, Boolean(option.correct));
   }
 
   return (
     <div
+      ref={ref}
       data-slot="quiz"
       data-answered={answered || undefined}
       className={cn(
@@ -127,7 +132,7 @@ export function Quiz({
       )}
 
       <p className="font-display text-lg font-semibold leading-snug @md/quiz:text-xl">
-        {question}
+        <RichText>{question}</RichText>
       </p>
 
       <div role="group" aria-label={l.options} className="mt-4 flex flex-col gap-2">
@@ -167,7 +172,9 @@ export function Quiz({
                 {status === "correct" && <Check className="size-3.5" />}
                 {status === "selected-wrong" && <X className="size-3.5" />}
               </span>
-              <span className="flex-1">{option.text}</span>
+              <span className="flex-1">
+                <RichText>{option.text}</RichText>
+              </span>
             </button>
           );
         })}
@@ -186,7 +193,9 @@ export function Quiz({
           <p className="mb-0.5 font-semibold">
             {isCorrect ? l.correct : l.incorrect}
           </p>
-          <p className="text-card-foreground/90">{selectedOption.feedback}</p>
+          <p className="text-card-foreground/90">
+            <RichText>{selectedOption.feedback}</RichText>
+          </p>
         </div>
       )}
 

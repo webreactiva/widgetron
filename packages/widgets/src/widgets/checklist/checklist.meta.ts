@@ -9,7 +9,7 @@ export const checklistMeta: WidgetMeta = {
   summary:
     "An actionable, persistent to-do list whose checked state survives reloads, with a progress bar.",
   whenToUse:
-    "Use this for a 'do this, then this' takeaway the learner works through over time — setup steps, a pre-flight list, or post-lesson actions — where checked progress should persist across visits. Prefer Checklist over DragAndDrop or FillInTheBlanks when there is no right/wrong grading, just tasks to tick off, and over plain prose when you want the steps to be trackable artifacts the learner can return to.",
+    "Use this for a 'do this, then this' takeaway the learner works through over time — setup steps, a pre-flight list, or post-lesson actions — where checked progress should persist across visits. Prefer Checklist over DragAndDrop or FillInTheBlanks when there is no right/wrong grading, just tasks to tick off, and over plain prose when you want the steps to be trackable artifacts the learner can return to. Give it a `completion` message so finishing the list pays off — a confetti burst fires by default when the last item is checked.",
   schema: z.object({
     id: z
       .string()
@@ -27,6 +27,15 @@ export const checklistMeta: WidgetMeta = {
       .boolean()
       .optional()
       .describe("Persist checked state across visits. Default: true. When false, state is in-memory only."),
+    completion: content()
+      .optional()
+      .describe(
+        "Payoff shown when every item is checked (recommended — people like a reward). Omit for a default acknowledgement; pass null to hide the banner.",
+      ),
+    celebrate: z
+      .boolean()
+      .optional()
+      .describe("Fire a confetti burst the moment the last item is checked. Default: true."),
   }),
   example: {
     type: "checklist",
@@ -37,6 +46,7 @@ export const checklistMeta: WidgetMeta = {
         { text: "Bump the version number" },
         { text: "Write the changelog entry" },
       ],
+      completion: "Nice — you're deploy-ready. 🚀",
     },
   },
 };

@@ -3,7 +3,9 @@ import { Check, ChevronLeft, ChevronRight, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
 
 export interface Flashcard {
   front: React.ReactNode;
@@ -63,6 +65,7 @@ export function Flashcards({
   ...props
 }: FlashcardsProps) {
   const l = useLabels("flashcards", DEFAULT_FLASHCARDS_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("flashcards");
   const [index, setIndex] = React.useState(0);
   const [flipped, setFlipped] = React.useState(false);
   const [grades, setGrades] = React.useState<Record<number, boolean>>({});
@@ -81,7 +84,19 @@ export function Flashcards({
   function gradeCard(knew: boolean) {
     const nextGrades = { ...grades, [index]: knew };
     setGrades(nextGrades);
+    emit("graded", {
+      index,
+      knew,
+      graded: Object.keys(nextGrades).length,
+      total,
+    });
     onGrade?.(index, knew);
+    if (Object.keys(nextGrades).length === total) {
+      emit("completed", {
+        known: Object.values(nextGrades).filter(Boolean).length,
+        total,
+      });
+    }
     const nextUngraded = findNextUngraded(index, nextGrades, total);
     setFlipped(false);
     if (nextUngraded !== null) setIndex(nextUngraded);
@@ -96,6 +111,7 @@ export function Flashcards({
   if (done) {
     return (
       <div
+        ref={ref}
         data-slot="flashcards"
         className={cn(
           "rounded-lg border bg-card p-6 text-center text-card-foreground shadow-wgt motion-safe:animate-wgt-pop",
@@ -117,6 +133,7 @@ export function Flashcards({
 
   return (
     <div
+      ref={ref}
       data-slot="flashcards"
       className={cn("flex flex-col items-center gap-4", className)}
       {...props}
@@ -141,7 +158,7 @@ export function Flashcards({
                 {l.prompt}
               </p>
               <div className="font-display text-lg font-semibold">
-                {card.front}
+                <RichText>{card.front}</RichText>
               </div>
             </div>
           </div>
@@ -151,7 +168,9 @@ export function Flashcards({
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
                 {l.answer}
               </p>
-              <div className="text-sm">{card.back}</div>
+              <div className="text-sm">
+                <RichText>{card.back}</RichText>
+              </div>
             </div>
           </div>
         </div>
