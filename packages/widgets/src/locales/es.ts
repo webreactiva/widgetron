@@ -26,6 +26,9 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     flipToReveal: "Mostrando la pregunta. Actívala para ver la respuesta.",
     flipBack: "Mostrando la respuesta. Actívala para volver.",
   },
+  checklist: {
+    done: "¡Completado!",
+  },
   tangleText: {
     hint: "↔ Arrastra los números subrayados, o enfócalos y usa las flechas.",
     variable: "Valor ajustable",
@@ -105,6 +108,12 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     seek: "Desplazar",
     transcript: "Transcripción",
     restart: "Reiniciar",
+    speed: "Velocidad de reproducción",
+    volume: "Volumen",
+    mute: "Silenciar",
+    unmute: "Activar sonido",
+    miniPlayer: "Mini reproductor",
+    close: "Cerrar mini reproductor",
   },
   videoClip: {
     play: "Reproducir vídeo",
@@ -114,6 +123,23 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     copy: "Copiar prompt",
     copied: "Copiado",
     copyFailed: "No se pudo copiar",
+  },
+  storyline: {
+    module: (n: number) => `Módulo ${String(n).padStart(2, "0")}`,
+    modulesNav: "Módulos",
+    resumePrompt: "¿Seguimos donde lo dejaste?",
+    resume: "Continuar",
+    startOver: "Empezar desde arriba",
+  },
+  codeTranslation: {
+    codeLabel: "Código",
+    translationLabel: "En palabras sencillas",
+  },
+  hotspots: {
+    emptyHint: "Selecciona un punto para saber más.",
+  },
+  infographic: {
+    icebergZones: ["Lo visible", "Lo oculto"],
   },
   profileQuiz: {
     step: (current: number, total: number) => `${current} / ${total}`,
