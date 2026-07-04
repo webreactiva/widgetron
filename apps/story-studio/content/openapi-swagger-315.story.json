@@ -1,0 +1,422 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Crear proyectos más rápido con OpenAPI y Swagger",
+    "slug": "openapi-swagger-315",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "Qué es OpenAPI, qué es Swagger, cómo generar código con un sistema automático inventado antes de la IA — y cómo rematar la jugada con ChatGPT.",
+    "source": {
+      "type": "podcast",
+      "show": "wrp",
+      "episode": 315,
+      "date": "2024-10-09"
+    }
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Vas por la mitad. Aquí se esconde la jugada inversa del episodio.",
+          "content": {
+            "type": "prompt-template",
+            "props": {
+              "title": "La tarea inversa: de la idea a la especificación",
+              "template": "Quiero que generes un OpenAPI de {{un acortador de URLs}}.",
+              "note": "El modelo ya sabe cómo son los acortadores de URL: ha leído un montón de código. Con una petición muy corta te devuelve la especificación entera — y a partir de ahí trabajar es mucho más fácil. Luego pégala en el editor y comprueba que compila."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Una última cosa antes de irte.",
+          "content": {
+            "type": "quote",
+            "props": {
+              "children": "Muchos tenéis la agenda soldada, pero con oro bien fuerte. Solo se puede abrir el cerrojo a golpes. Quizás hoy podamos darle un golpecito.",
+              "attribution": "Daniel Primo",
+              "role": "Web Reactiva Premium"
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "link",
+      "title": "¿Le damos otro golpecito al cerrojo?",
+      "description": "En Web Reactiva Premium seguimos con episodios prácticos como este, retos como el campeonato de astucia y una comunidad que programa contigo.",
+      "buttonLabel": "Entra en webreactiva.com",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "version": 1,
+    "props": {
+      "storageKey": "openapi-swagger-315",
+      "glossary": {
+        "OpenAPI": "Estándar y especificación que define cómo describir una API RESTful: endpoints, parámetros, respuestas, métodos HTTP, seguridad… Antes se llamaba SwaggerSpec; hoy vive bajo la Linux Foundation.",
+        "Swagger": "Ecosistema de herramientas para trabajar con APIs descritas con OpenAPI: Editor, UI, Codegen, Hub… Desarrollaron las primeras herramientas del estándar.",
+        "endpoint": "Ruta de la API a la que haces una llamada y de la que obtienes una respuesta, por ejemplo GET /users.",
+        "YAML": "Formato de texto en el que se suele escribir la especificación. La indentación le da la estructura: un tab de más y tienes un error de parseo.",
+        "contrato": "Un acuerdo formal entre dos partes — backend y frontend — al que ambas pueden mirar sin discutir. Que no sea un documento de Word ni un txt inventado.",
+        "JSON Placeholder": "API dummy abierta (jsonplaceholder.typicode.com) con la que puedes lanzar peticiones de verdad para probar que todo funciona."
+      },
+      "modules": [
+        {
+          "title": "Ganarle la partida al tiempo",
+          "subtitle": "Práctico, pero sin perder la parte motivacional.",
+          "screens": [
+            {
+              "type": "prose",
+              "props": {
+                "children": "Uno de tus mayores sueños por fin podría realizarse: ganarle la partida al tiempo, ser más rápido que los demás. Y puede que la pista la tengas hoy y aquí."
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "En este episodio vamos a ver qué es [[OpenAPI]], qué es [[Swagger]] y de qué va todo esto — con una pizquita de ChatGPT, aunque daría igual qué modelo usar. La idea: que en menos tiempo puedas centrarte en lo verdaderamente relevante del proyecto, en esos trozos que hacen que la lógica cobre todo el sentido. Incluso vas a ver cómo programa un sistema automático inventado antes que la IA."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "Te lo digo de antemano: solo son herramientas. Puedes usarlas o no. Puede que te cambien la vida o que simplemente te sirvan cuando te haga falta hacer una prueba. No están tan implementadas como parece, ni son tan conocidas."
+              }
+            }
+          ]
+        },
+        {
+          "title": "La batalla medieval",
+          "subtitle": "Por qué alguien tuvo que inventar OpenAPI.",
+          "screens": [
+            {
+              "type": "prose",
+              "props": {
+                "children": "En el mundo medieval había batallas encarnizadas donde el honor de los pueblos, de los duques y de cada castillo se batía en campos donde solo quedaba muerte y destrucción. Y si ha habido una batalla encarnizada durante siglos — al menos todos los que lleva existiendo la informática, que no son siglos pero como si lo parecieran — ha sido el duelo entre el backend y el frontend."
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "El campo de batalla",
+                "messages": [
+                  { "from": "Backend", "text": "No, esto se hace así.", "side": "left" },
+                  { "from": "Frontend", "text": "No, esto se hace de esta otra manera.", "side": "right" },
+                  { "from": "OpenAPI", "text": "¡Eh, bandera blanca! Vale, vale, ya, ya. No os peguéis más.", "side": "left" },
+                  { "from": "OpenAPI", "text": "Ya sabemos cuáles son vuestros propósitos. Tenemos que encontrar un punto de encuentro. No puede ser tan difícil: a fin de cuentas, todo son unos y ceros.", "side": "left" },
+                  { "from": "Backend", "text": "Vale. Pero que no sea un documento de Word.", "side": "right" },
+                  { "from": "Frontend", "text": "Ni un txt que te has inventado por ahí.", "side": "right" },
+                  { "from": "OpenAPI", "text": "Formalicémoslo para que todo el mundo siga estas reglas y, cuando cambiéis de equipo o de proyecto, no tengáis que volver a empezar de cero.", "side": "left" }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Esto es OpenAPI: un estándar, una especificación. Y me gusta decir que es un contrato, una forma de acuerdo entre dos partes.",
+                "attribution": "Daniel Primo",
+                "role": "Web Reactiva Premium"
+              }
+            }
+          ]
+        },
+        {
+          "title": "OpenAPI y Swagger no son lo mismo",
+          "subtitle": "Es fácil confundirlos porque uno viene del otro.",
+          "screens": [
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "El objetivo principal de [[OpenAPI]] es dar un formato estándar para documentar APIs: los [[endpoint]]s, los parámetros, las respuestas, los métodos HTTP, la seguridad… Es agnóstica del lenguaje — da igual en qué programes, son líneas de texto puestas de una manera determinada — y no está vinculada a ninguna herramienta concreta. ¿Y [[Swagger]]? Es el ecosistema de herramientas que facilita trabajar con APIs descritas con esa especificación."
+              }
+            },
+            {
+              "type": "pattern-card",
+              "props": {
+                "cards": [
+                  { "icon": "✏️", "title": "Swagger Editor", "description": "El editor en editor.swagger.io: definición a la izquierda, visualización a la derecha. Al abrirlo te recibe la API de demostración PetStore." },
+                  { "icon": "👀", "title": "Swagger UI", "description": "La visualización gráfica de tus endpoints en colorines según el método, con ejemplos de lo que viene y lo que va. Sale mágicamente de la definición." },
+                  { "icon": "🪄", "title": "Swagger Codegen", "description": "El primer punto mágico: genera código de servidor o cliente a partir de la especificación. Y esto existía antes de la IA." },
+                  { "icon": "☁️", "title": "Swagger Hub", "description": "La herramienta en la nube para gestionar equipos a través de OpenAPI. Las que usamos hoy son gratuitas; también hay ecosistema de pago." }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "¿Cuál describe mejor la relación entre OpenAPI y Swagger?",
+                "options": [
+                  {
+                    "text": "Son sinónimos: dos nombres para lo mismo.",
+                    "feedback": "Es fácil confundirlos porque uno viene del otro, pero no son lo mismo."
+                  },
+                  {
+                    "text": "OpenAPI es la especificación; Swagger, el ecosistema de herramientas para trabajar con ella.",
+                    "correct": true,
+                    "feedback": "Eso es. Y el término que más se ciñe a la realidad hoy es OpenAPI: antes era SwaggerSpec, ahora está bajo la Linux Foundation."
+                  },
+                  {
+                    "text": "Swagger es la versión moderna que sustituye a OpenAPI.",
+                    "feedback": "Al revés: el nombre antiguo era SwaggerSpec y evolucionó a OpenAPI."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Anatomía de una especificación",
+          "subtitle": "Es mucho más sencillo de lo que parece.",
+          "screens": [
+            {
+              "type": "code-translation",
+              "props": {
+                "code": "openapi: 3.0.0\ninfo:\n  title: Simple User API\n  version: 1.0.0\nservers:\n  - url: https://jsonplaceholder.typicode.com\npaths:\n  /users:\n    get:\n      summary: Get a list of users\n      responses:\n        \"200\":\n          description: List of users\n          content:\n            application/json:\n              schema:\n                type: array\n                items:\n                  type: object\n                  properties:\n                    id:\n                      type: integer\n                      example: 1\n                    name:\n                      type: string\n                      example: John Doe",
+                "translations": [
+                  "La versión de la especificación. Estamos con la 3.0; hay diferencias entre versiones, pero para una introducción basta.",
+                  "info es el parámetro raíz: un título y la versión de tu propia definición. El title ya sale destacado en el Swagger UI.",
+                  "servers identifica con una URL aquello a lo que te quieres conectar. Es opcional — y si apunta a un servidor de verdad, podrás lanzar peticiones reales.",
+                  "En paths vas generando todo el árbol de peticiones: /users con un GET, el método HTTP que en el editor visual sale en azul.",
+                  "El summary es la descripción. Todo queda mucho mejor con una, aunque sea evidente lo que hace el endpoint.",
+                  "En responses especificas cada respuesta por su código HTTP: el 200 es «todo está bien». El content dice que devuelve JSON — importante: no tiene por qué, a veces conviene un texto plano.",
+                  "Y aquí lo más mágico: el schema describe los datos que te van a llegar. Un array cuyos ítems son objetos con sus propiedades.",
+                  "Buena práctica: añade example en cada propiedad. Así todo el mundo sabe qué devuelve la API antes de tenerla funcionando."
+                ]
+              }
+            },
+            {
+              "type": "step-cards",
+              "props": {
+                "steps": [
+                  {
+                    "icon": "code",
+                    "title": "Añade parámetros",
+                    "description": "Define /users/{id} con el id entre llaves y un bloque parameters: dónde va (en el path), cómo se llama, si es requerido y qué esquema tiene. El UI lo marcará como obligatorio."
+                  },
+                  {
+                    "icon": "list",
+                    "title": "Prevé las respuestas",
+                    "description": "Además del 200, define el 404 para cuando el usuario no existe. Podrías definir más — el 500 de error de sistema, por ejemplo. Existen varias estrategias."
+                  },
+                  {
+                    "icon": "link",
+                    "title": "Reutiliza con $ref",
+                    "description": "Según crece el YAML, el fichero se hace enorme. Con $ref apuntas a components/schemas/User y no repites 50 líneas de esquema en cada endpoint."
+                  },
+                  {
+                    "icon": "lock",
+                    "title": "Protege con security",
+                    "description": "Declara un securityScheme (http bearer, formato JWT) y aplícalo al POST: aparece el botón Authorize con su candado. El GET de la lista puede quedarse público."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "mermaid-diagram",
+              "props": {
+                "chart": "flowchart TD\n  spec[\"openapi: 3.0\"] --> info[\"info · título y versión\"]\n  spec --> servers[\"servers · URL base\"]\n  spec --> paths\n  paths --> getu[\"GET /users\"]\n  paths --> getid[\"GET /users/{id}\"]\n  paths --> post[\"POST /users 🔒\"]\n  spec --> comp[components]\n  comp --> user[\"schemas/User\"]\n  comp --> sec[\"securitySchemes · bearer JWT\"]\n  getu -. \"$ref\" .-> user\n  getid -. \"$ref\" .-> user\n  post -. \"$ref\" .-> user\n  post -. security .-> sec",
+                "details": [
+                  { "id": "comp", "title": "components: escribe una vez, referencia siempre", "description": "Según crece el YAML el fichero se hace enorme. Aquí viven las definiciones reutilizables a las que apunta $ref." },
+                  { "id": "user", "title": "El esquema User", "description": "50 líneas de definición que, sin $ref, tendrías que repetir en cada endpoint que devuelve usuarios." },
+                  { "id": "sec", "title": "La seguridad también se declara", "description": "El POST exige un token bearer (JWT); el GET de la lista queda público. En el UI aparece el candado y el botón Authorize." }
+                ]
+              }
+            },
+            {
+              "type": "fill-in-the-blanks",
+              "props": {
+                "text": "El endpoint GET /users/{id} declara su parámetro en el bloque {{bloque}} y, si el usuario no existe, responde con un {{codigo}}.",
+                "blanks": {
+                  "bloque": {
+                    "options": ["parameters", "components", "servers"],
+                    "answer": "parameters"
+                  },
+                  "codigo": {
+                    "options": ["200", "404", "500"],
+                    "answer": "404"
+                  }
+                }
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "Una especificación sin control es lo de siempre: dibujos en la arena. Muy bonitos, pero también se acaba el verano. Hay que mantenerla dentro del proyecto como si fuera un linter o un test: oye, tú que dices que tu app cumple esta especificación… a ver si es verdad."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Código gratis, antes de la IA",
+          "subtitle": "El sistema automático que ya generaba proyectos.",
+          "screens": [
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Si tu server apunta a [[JSON Placeholder]], el propio Swagger UI se convierte en un banco de pruebas: pulsas «try it out», lanzas la ejecución de verdad y recibes un 200 con la lista de usuarios. Estamos acostumbrados a Postman o ThunderClient porque son más cómodas, pero aquí también se puede."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Tu esquema define solo id, name y email, pero JSON Placeholder devuelve usuarios con teléfono, dirección y empresa. Lanzas la petición. ¿Qué pasa?",
+                "options": [
+                  {
+                    "text": "Error: la respuesta no cumple el esquema.",
+                    "feedback": "No hay ningún proceso de validación en esta petición. La definición se queda corta y nadie protesta."
+                  },
+                  {
+                    "text": "Funciona sin quejarse: Swagger UI no valida la respuesta contra tu esquema.",
+                    "correct": true,
+                    "feedback": "Exacto — todo funciona aunque la definición sea más cortita de lo que debería. Validar que el contrato se cumple es una parte más avanzada, y también hay herramientas para eso."
+                  },
+                  {
+                    "text": "Devuelve un 404 porque el esquema no coincide.",
+                    "feedback": "El 404 es para recursos que no existen; aquí la petición responde 200 sin validar nada."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Especificación",
+                    "detail": {
+                      "title": "Tu fichero OpenAPI",
+                      "description": "El YAML que acabas de aprender a escribir. Es la única fuente: todo lo demás sale de aquí."
+                    }
+                  },
+                  {
+                    "label": "Generate server / client",
+                    "active": true,
+                    "detail": {
+                      "title": "Dos botones en editor.swagger.io",
+                      "description": "Generate server: Python, Scala, Go, Kotlin y un montón más. Generate client: HTML, JavaScript, TypeScript, Swift, PHP, C#… También existen herramientas para hacerlo desde tu propio código."
+                    }
+                  },
+                  {
+                    "label": "Código listo",
+                    "detail": {
+                      "title": "Un cliente TypeScript con Fetch",
+                      "description": "Interfaces como User (con Address y todo), métodos como usersIdGet, configuración con API Key… Verboso, pero es una base de conexión completa que existía antes de la IA."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "Ya se te está haciendo la conexión cerebral: si a partir de la especificación una herramienta de hace años genera todo esto, imagina lo fácil que es generar el código que haga las cosas cuando ya tienes una referencia de los modelos."
+              }
+            }
+          ]
+        },
+        {
+          "title": "ChatGPT entra en escena",
+          "subtitle": "Requisitos + modelos conocidos = su terreno favorito.",
+          "screens": [
+            {
+              "type": "prose",
+              "props": {
+                "children": "Tenemos algo que a ChatGPT le encanta: requisitos, modelos conocidos, sistemas que ya sabe cómo funcionan. Así que la jugada es directa: copia tu fichero OpenAPI — el mismo que usamos con Swagger Codegen hace un momento — y pídele el código."
+              }
+            },
+            {
+              "type": "prompt-template",
+              "props": {
+                "title": "De la especificación al código",
+                "template": "Quiero tener una aplicación en {{TypeScript}} que sea capaz de conectarse a esta OpenAPI. Genera el código necesario.\n\n{{pega aquí tu fichero OpenAPI}}",
+                "note": "El resultado es mucho más ligero que el de Swagger Codegen: las interfaces, un UserService que desacopla tu código de la conexión (getUsers, getUserById, createUser) y un ejemplo de consumo. Y puedes seguir pidiendo: «no me interesa Axios, créame un repositorio que vaya a base de datos»."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "La verificación es importante: copia el YAML o el código generado, llévalo al editor y comprueba que compila. Estamos verificando constantemente el resultado para que no nos engañe el jepeto. Cuidado con las versiones, y dile en qué idioma quieres las descripciones. Si tu especificación es buena, tendrás buenos resultados."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Tu golpecito al cerrojo",
+          "subtitle": "El mundo de OpenAPI no se acaba aquí.",
+          "screens": [
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "En openapi.tools hay una colección infinita — el scroll es larguísimo — de herramientas para documentar, validar y generar en un montón de lenguajes. Incluso puedes generar la [[OpenAPI]] desde el código que ya tienes: piensa en Laravel y en una herramienta que lee tus rutas y te dice «mira, esto es lo que tienes definido, te lo pinto en una OpenAPI»."
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "hub",
+                "center": "OpenAPI",
+                "items": [
+                  { "icon": "book", "label": "Documentar", "description": "La visualización del Swagger UI sale mágicamente de la definición." },
+                  { "icon": "check", "label": "Validar", "description": "Que la app cumpla la especificación, como un linter o un test." },
+                  { "icon": "code", "label": "Generar código", "description": "Servidor o cliente en tu lenguaje — y esto existía antes de la IA." },
+                  { "icon": "server", "label": "Simular", "description": "Levantar un servidor de mentira para lanzar peticiones siguiendo el esquema." },
+                  { "icon": "edit", "label": "Editar", "description": "Editores de texto, editores GUI y extensiones para cualquier IDE con un mínimo bagaje." },
+                  { "icon": "reload", "label": "Desde tu código", "description": "Herramientas que leen tus rutas (piensa en Laravel) y te pintan la OpenAPI." }
+                ]
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "openapi-primeros-pasos",
+                "items": [
+                  {
+                    "text": "Abre editor.swagger.io y pasea por la PetStore",
+                    "hint": "Definición a la izquierda, visualización a la derecha. Es compleja: mírala sin agobio."
+                  },
+                  {
+                    "text": "Escribe tu primera especificación mínima",
+                    "hint": "Un GET /users con su summary, su 200 y un schema con examples."
+                  },
+                  {
+                    "text": "Apunta el server a JSON Placeholder y dale a «try it out»",
+                    "hint": "Peticiones de verdad contra una API dummy abierta."
+                  },
+                  {
+                    "text": "Genera un cliente en tu lenguaje con Generate Client",
+                    "hint": "Verás el código que un sistema automático generaba antes de la IA."
+                  },
+                  {
+                    "text": "Pídele a ChatGPT el código desde tu especificación",
+                    "hint": "Y verifica que compila. Siempre."
+                  },
+                  {
+                    "text": "Explora openapi.tools",
+                    "hint": "La biblia: documentar, validar, generar… para casi cualquier lenguaje."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "No os quedéis solo con que esto es para gente que trabaja en entornos desacoplados. Va mucho más allá: genera código en base a una especificación, y luego tú haces lo que quieras con ello.",
+                "attribution": "Daniel Primo",
+                "role": "Web Reactiva Premium"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

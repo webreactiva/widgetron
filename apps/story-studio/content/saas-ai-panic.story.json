@@ -1,0 +1,532 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "¿La IA ha matado al SaaS? El pánico de los 2 billones, explicado",
+    "slug": "saas-ai-panic",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "Wall Street borró 2 billones en acciones de software convencido de que la IA clona cualquier suscripción con un par de prompts. Pero las empresas que 'agonizan' baten récords de beneficios. Aquí separas el miedo de los datos: qué es de verdad un foso defensivo, por qué una demo es solo el 10% de un SaaS y qué deberías hacer tú con tus suscripciones.",
+    "source": {
+      "type": "podcast",
+      "show": "HTML All The Things",
+      "title": "The $2 Trillion AI Panic — Is SaaS Really Dead?",
+      "hosts": ["Matt", "Mike"],
+      "lang": "en",
+      "note": "Traducido y adaptado al español a partir del transcript en inglés."
+    }
+  },
+  "audio": {
+    "full": "https://s385.podbean.com/pb/986c7fe6233c1c03613d23c083e64940/6a4831f2/data1/fs5/3133658/uploads/489_-_The_2_Trillion_AI_Panic_Is_SaaS_Really_Dead.mp3?pbss=8f8c7848-a004-5a63-9af7-7ac44dfcd6b1&"
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Vas por la mitad. Aquí tienes el reto que se lanzó a sí mismo el propio episodio.",
+          "content": {
+            "type": "prompt-template",
+            "props": {
+              "title": "Reto: ¿es reemplazable tu suscripción?",
+              "template": "Quiero auditar si puedo reemplazar {{nombre del SaaS}} con IA.\n\nLo que hace por mí: {{para qué lo uso}}\nIntegraciones que NO puedo perder: {{integraciones críticas}}\nUsuarios menos técnicos que lo tocan: {{quién más lo usa}}\n\nDime con honestidad: ¿qué parte es la 'demo del 10%' y qué parte es el 90% (soporte, migración, casos límite) que me tocaría sostener a mí?",
+              "note": "El reto del episodio: no prometas 'un one-shot'. Dedica un par de horas a ver si de verdad es reemplazable — y cuánto te ahorrarías."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Una última idea antes de irte.",
+          "content": {
+            "type": "quote",
+            "props": {
+              "children": "El SaaS ya tenía grietas por la fatiga de suscripciones. La IA no rompió el muro: solo fue quien llegó con el martillo y dio el golpe.",
+              "attribution": "Matt",
+              "role": "Presentador del episodio"
+            }
+          }
+        }
+      }
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "saas-ai-panic",
+      "modules": [
+        {
+          "title": "El pánico de los 2 billones",
+          "subtitle": "Wall Street borró 2 billones en software convencido de que la IA lo clona todo. Los datos cuentan otra historia.",
+          "screens": [
+            {
+              "type": "audio-clip",
+              "props": {
+                "src": "https://s385.podbean.com/pb/986c7fe6233c1c03613d23c083e64940/6a4831f2/data1/fs5/3133658/uploads/489_-_The_2_Trillion_AI_Panic_Is_SaaS_Really_Dead.mp3?pbss=8f8c7848-a004-5a63-9af7-7ac44dfcd6b1&",
+                "title": "Escucha el episodio completo mientras lees",
+                "storageKey": "saas-ai-panic-episode"
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "El gráfico potencialmente más aterrador de 2026 no mide ingresos: mide miedo.",
+                "attribution": "Matt",
+                "role": "Presentador del episodio"
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "balance",
+                "items": [
+                  {
+                    "label": "El miedo",
+                    "side": "left",
+                    "description": "Demos por todas partes: un prompt y aparece un clon de Notion. Titulares que dan el SaaS por muerto. Inversores que venden."
+                  },
+                  {
+                    "label": "Los ingresos",
+                    "side": "right",
+                    "description": "Las empresas 'moribundas' baten récords de beneficios y firman contratos millonarios. Su negocio está en su mejor momento."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "**La paradoja Salesforce.** Perdió casi un cuarto de su valor en bolsa este año… mientras firmaba un contrato de 5.500 millones de dólares con el gobierno y registraba beneficios récord. Si el negocio va tan bien, ¿por qué se hunde la acción? Porque la bolsa no está puntuando lo que ingresan, sino el miedo a lo que la IA podría hacerles."
+              }
+            },
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Demos con IA",
+                    "detail": {
+                      "title": "Aparecen los clones",
+                      "description": "Un ingeniero genera un clon de Notion en unos 30 minutos con un modelo nuevo. Los vídeos se viralizan."
+                    }
+                  },
+                  {
+                    "label": "Miedo inversor",
+                    "detail": {
+                      "title": "Los inversores se asustan",
+                      "description": "Si cualquiera clona un SaaS en una tarde, ¿dónde queda su ventaja? La pregunta de Shark Tank: ¿cuál es tu foso?"
+                    }
+                  },
+                  {
+                    "label": "Venta masiva",
+                    "active": true,
+                    "detail": {
+                      "title": "Venden acciones",
+                      "description": "El dinero sale de las empresas de software aunque sigan creciendo. La reacción va por delante de los datos."
+                    }
+                  },
+                  {
+                    "label": "−2 billones",
+                    "detail": {
+                      "title": "Se esfuman 2 billones",
+                      "description": "Es la magnitud del pánico acumulado en el sector del software en un solo año."
+                    }
+                  },
+                  {
+                    "label": "Titulares",
+                    "detail": {
+                      "title": "'El SaaS ha muerto'",
+                      "description": "El relato se cierra sobre sí mismo… pero las cuentas de las empresas dicen otra cosa."
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Qué es de verdad un foso",
+          "subtitle": "El pánico dice que la IA derriba la barrera de entrada. ¿Qué barrera es esa exactamente, y aguanta?",
+          "screens": [
+            {
+              "type": "flashcards",
+              "props": {
+                "cards": [
+                  {
+                    "front": "Foso (moat)",
+                    "back": "La ventaja que hace difícil que un competidor te copie: experiencia, patentes, integraciones, confianza, coste de construcción. En Shark Tank es LA pregunta: ¿qué impide que otro haga lo que tú haces?"
+                  },
+                  {
+                    "front": "SaaS",
+                    "back": "Software as a Service: pagas una suscripción por usar software alojado en la nube (Microsoft 365, Salesforce, Notion…) en vez de comprar una licencia única."
+                  },
+                  {
+                    "front": "Precio por asiento (per-seat)",
+                    "back": "Te cobran una cuota por cada usuario que añades, además del producto. En Vercel, por ejemplo, pagas el hosting y otros 20-30 $ al mes por cada desarrollador."
+                  },
+                  {
+                    "front": "Steel-man",
+                    "back": "La versión MÁS fuerte del argumento contrario, construida a propósito para rebatirla en su mejor forma. Lo opuesto al 'hombre de paja'."
+                  },
+                  {
+                    "front": "Mainframe",
+                    "back": "Grandes ordenadores centrales que aún sostienen bancos y logística. Son reemplazables, pero casi nadie migra: el coste y el riesgo del cambio superan al beneficio."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "El foso, según los inversores",
+                "messages": [
+                  {
+                    "from": "Inversor",
+                    "text": "¿Qué impide que Pepe, el de la esquina, haga exactamente lo que haces tú?",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Fundador",
+                    "text": "Hace falta un buen ingeniero, y no hay tantos capaces de construir esto.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "Inversor",
+                    "text": "Le pago 200.000 a un ingeniero de Apple y me lo construye en menos de un año.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Inversor",
+                    "text": "…y ahora, con IA, me lo hace en una semana.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Fundador",
+                    "text": "Entonces la ingeniería nunca fue mi foso de verdad.",
+                    "side": "right"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "El pánico dice que la IA borra 'el foso' de las empresas de software. ¿Qué foso derriba sobre todo?",
+                "options": [
+                  {
+                    "text": "El de las integraciones y el cumplimiento legal",
+                    "feedback": "No: eso sigue siendo durísimo. Impuestos por provincia, leyes que cambian cada año, integraciones con sistemas ajenos… ahí la IA todavía sufre."
+                  },
+                  {
+                    "text": "El de ingeniería: el tiempo y el coste de construir",
+                    "correct": true,
+                    "feedback": "Exacto. Y, como dicen en el episodio, ese nunca fue un gran foso: 'contrata a un ingeniero y que lo haga' ya era la respuesta de los inversores antes de la IA."
+                  },
+                  {
+                    "text": "El de la confianza y la marca",
+                    "feedback": "No: la base instalada y la confianza tardan años en construirse, y la IA no las genera de la nada."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "decision-tree",
+              "props": {
+                "start": "q1",
+                "nodes": {
+                  "q1": {
+                    "prompt": "¿Es un SaaS de 'fruta fácil' (notas, docs, un panel simple) o algo complejo (impuestos, integraciones, cumplimiento)?",
+                    "options": [
+                      { "label": "Fruta fácil", "to": "easy" },
+                      { "label": "Algo complejo", "to": "hard" }
+                    ]
+                  },
+                  "easy": {
+                    "prompt": "Fruta fácil.",
+                    "outcome": "Puede compensar construirlo: proyecto de hackathon interno, greenfield, mejor UX. Aun así, prepárate para mantenerlo tú a partir de ahora."
+                  },
+                  "hard": {
+                    "prompt": "Algo complejo.",
+                    "outcome": "No lo repliques. La demo es el 10%; el 90% son integraciones, leyes que cambian cada año y soporte. El foso sigue en pie."
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "Disrupción, no apocalipsis",
+          "subtitle": "Ya vivimos esto con los creadores de webs. Disruptivo, sí. ¿Apocalíptico? Depende de a qué te parezcas.",
+          "screens": [
+            {
+              "type": "pattern-card",
+              "props": {
+                "cards": [
+                  {
+                    "icon": "🧱",
+                    "title": "Creadores de webs",
+                    "description": "Democratizaron el diseño (Wix, WordPress, Webflow). Disruptivo, pero los desarrolladores siguieron ahí, empujando lo que las plataformas no llegan a hacer."
+                  },
+                  {
+                    "icon": "📄",
+                    "title": "Plantillas",
+                    "description": "Diseño profesional casi gratis. Cambió el juego, pero no fue un apocalipsis para nadie."
+                  },
+                  {
+                    "icon": "🐎",
+                    "title": "Caballos vs. coches",
+                    "description": "El contraejemplo: aquí la disrupción SÍ arrasó una industria entera. No toda disrupción es igual."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Aprende las herramientas que tienes hoy y sé lo más eficiente posible con ellas… sin volverte tonto por el camino.",
+                "attribution": "Mike",
+                "role": "Presentador del episodio"
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**Se democratizó la habilidad, no desapareció el oficio.** Con los creadores de webs, cualquiera pudo montarse una web decente… y aun así los desarrolladores siguieron en la trastienda, empujando las plataformas más allá de lo que hacen de serie. Disruptivo no es lo mismo que apocalíptico."
+              }
+            },
+            {
+              "type": "fill-in-the-blanks",
+              "props": {
+                "text": "La lección del precedente: la irrupción de los creadores de webs fue {{disruptiva}}, pero no {{apocaliptica}}. La habilidad se {{democratizo}}, y aun así los desarrolladores siguieron teniendo trabajo.",
+                "blanks": {
+                  "disruptiva": {
+                    "options": ["disruptiva", "irrelevante", "gratuita"],
+                    "answer": "disruptiva"
+                  },
+                  "apocaliptica": {
+                    "options": ["apocalíptica", "rentable", "obligatoria"],
+                    "answer": "apocalíptica"
+                  },
+                  "democratizo": {
+                    "options": ["democratizó", "encareció", "prohibió"],
+                    "answer": "democratizó"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "La fatiga del SaaS",
+          "subtitle": "El muro ya estaba agrietado antes de la IA. Suscripción sobre suscripción, asiento sobre asiento.",
+          "screens": [
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "stairs",
+                "items": [
+                  {
+                    "label": "+10 $/mes",
+                    "description": "Un plugin para quitar una limitación tonta de tu web."
+                  },
+                  {
+                    "label": "+20 $/mes",
+                    "description": "Otra limitación pequeña, otro plugin."
+                  },
+                  {
+                    "label": "+30 $/mes",
+                    "description": "Y un plugin de un plugin para que hablen entre ellos."
+                  },
+                  {
+                    "label": "+50 $/mes",
+                    "description": "Multiplícalo por cada herramienta: CRM, hosting, analítica, IA…"
+                  },
+                  {
+                    "label": "Fatiga",
+                    "description": "El goteo se vuelve una factura enorme. La gente está harta de suscripciones."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "**Ojo al precio por asiento.** Muchas plataformas te cobran el producto Y una cuota por cada usuario. En hosting como Vercel pagas el alojamiento y, encima, 20-30 $ al mes por cada desarrollador. Netlify ya reacciona bajando el precio por asiento… y subiendo el del hosting para compensar. El mercado nota la presión."
+              }
+            },
+            {
+              "type": "timeline",
+              "props": {
+                "items": [
+                  {
+                    "time": "2021",
+                    "title": "El crecimiento del SaaS empieza a caer",
+                    "description": "Antes de que la IA generativa fuera un tema. La fatiga de suscripciones ya era real."
+                  },
+                  {
+                    "time": "2022-2023",
+                    "title": "Llega la IA generativa",
+                    "description": "Aparecen los clones y las demos. El relato de 'SaaS ha muerto' encuentra su villano."
+                  },
+                  {
+                    "time": "2026",
+                    "title": "La IA, el que llegó con el martillo",
+                    "description": "El muro ya estaba agrietado por la fatiga. La IA no lo creó: solo dio el golpe que lo hizo visible."
+                  }
+                ],
+                "defaultOpen": 0
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Si la gente odia las suscripciones, ¿por qué el SaaS no vuelve a la licencia única de los 90?",
+                "options": [
+                  {
+                    "text": "Porque a las empresas les da pereza cambiar",
+                    "feedback": "No es pereza: es estructura de costes."
+                  },
+                  {
+                    "text": "Porque la infraestructura de servidores no se paga con un cobro único",
+                    "correct": true,
+                    "feedback": "Eso es. Miles de instancias en la nube necesitan ingresos recurrentes. Volver atrás obligaría a encoger las empresas: de 10.000 personas a micro-equipos de 100."
+                  },
+                  {
+                    "text": "Porque las leyes lo prohíben",
+                    "feedback": "No hay ninguna ley que lo impida; es pura economía de infraestructura."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Lo que la demo no te enseña",
+          "subtitle": "Una demo es el 10% de un SaaS. El otro 90% es lo que nadie graba: soporte, integraciones, migración.",
+          "screens": [
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "iceberg",
+                "items": [
+                  {
+                    "label": "La demo",
+                    "description": "Lo que ves en el vídeo: la interfaz bonita, el clon montado en 30 minutos. Apenas el 10%."
+                  },
+                  {
+                    "label": "Soporte",
+                    "description": "Cientos de personas atendiendo tickets y llamadas, incluidas las de las 3 de la mañana."
+                  },
+                  {
+                    "label": "Mantenimiento",
+                    "description": "Años de correcciones para casos límite que ni imaginas."
+                  },
+                  {
+                    "label": "Seguridad",
+                    "description": "Guardarraíles, permisos y cumplimiento por jurisdicción."
+                  },
+                  {
+                    "label": "Integraciones",
+                    "description": "El 'Bip-Bob-Jaboo' del que depende Juan del pasillo y sin el que no puede trabajar."
+                  },
+                  {
+                    "label": "Migración",
+                    "description": "Mover los datos, paridad 1:1, las mismas URLs. Aquí es donde casi todo se cae."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "El día después de sustituir tu SaaS",
+                "messages": [
+                  {
+                    "from": "Juan (del pasillo)",
+                    "text": "Oye, mi integración con el Bip-Bob-Jaboo no funciona en la herramienta nueva.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "Vale… ese conector todavía no existe. Lo monto.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "Otra compañera",
+                    "text": "Y mi calendario tampoco sincroniza como en Notion.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "CEO",
+                    "text": "Son las 3 de la mañana y no puedo abrir mi calendario. Esto nos cuesta millones por segundo. Arréglalo.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "…Empiezo a entender por qué Notion tiene cientos de personas solo para esto.",
+                    "side": "right"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "mermaid-diagram",
+              "props": {
+                "chart": "flowchart TD\n  A[Clonas Notion en 3 min] --> B{¿Migras los datos?}\n  B --> C[Paridad 1:1 de funciones]\n  C --> D[Mismas URLs que ya usa todo el mundo]\n  D --> E[Soporte 24/7 y guardarraíles]\n  E --> F{¿Merece la pena?}\n  F -->|Casi nunca| G[Pagas el SaaS y sigues]\n  F -->|Startup pequeña| H[Quizá sí: 10 personas, más flexibles]",
+                "details": [
+                  {
+                    "id": "B",
+                    "title": "Migrar no es copiar",
+                    "description": "Los datos reales, con toda su historia, no caben en una demo de tres minutos."
+                  },
+                  {
+                    "id": "D",
+                    "title": "Las URLs importan",
+                    "description": "Bill solo sabe entrar en notion.io. Cambiarle la URL es cambiarle la vida."
+                  },
+                  {
+                    "id": "F",
+                    "title": "Por eso siguen los mainframes",
+                    "description": "Son reemplazables, pero nadie migra: el riesgo supera al ahorro. El SaaS grande juega en la misma liga."
+                  },
+                  {
+                    "id": "H",
+                    "title": "La excepción: equipos pequeños",
+                    "description": "Con 10 personas, un clon interno puede salir bien. Ahí es donde el argumento del pánico tiene algo de razón."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**El mercado reacciona a la historia de las startups; las grandes empresas siguen creciendo.** Una startup de 10 personas quizá se monte su propia herramienta. Una Fortune 500 no va a 'vibe-codear' sus sistemas internos sin que dimita medio equipo de ingeniería. Por eso Salesforce sigue creciendo mientras su acción cae. Disrupción real, sí; apocalipsis, no."
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "antes-de-cancelar-un-saas",
+                "completion": "Ese es el filtro. La próxima vez que alguien grite «¡el SaaS ha muerto!», ya sabes qué preguntar antes de cancelar nada.",
+                "items": [
+                  {
+                    "text": "¿Hay integraciones críticas que nadie más replica?",
+                    "hint": "El 'Bip-Bob-Jaboo' del que depende alguien."
+                  },
+                  { "text": "¿Quién responde a las 3 de la mañana cuando se cae?" },
+                  { "text": "¿Puedes migrar los datos con paridad 1:1?" },
+                  { "text": "¿El usuario menos técnico sabrá usar el reemplazo?" },
+                  { "text": "¿El ahorro compensa las horas de mantenerlo tú?" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
