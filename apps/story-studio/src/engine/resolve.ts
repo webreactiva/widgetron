@@ -16,12 +16,18 @@ import type { CtaSettings, StoryDocument, WidgetNode } from "./schema";
  */
 export function resolveStory(doc: StoryDocument): WidgetNode {
   const story = structuredClone(doc.story) as WidgetNode;
+  if (story.type !== "storyline") return story; // reported by validate.ts
+
+  // The document's own metadata becomes the course cover: the storyline
+  // renders `title`/`description` as an opening section, so authors never
+  // duplicate meta.title inside the tree.
+  const props = (story.props ??= {});
+  props.title ??= doc.meta.title;
+  if (doc.meta.description) props.description ??= doc.meta.description;
+
   const surprises = doc.settings?.surprises;
   const cta = doc.settings?.cta;
   if (!surprises?.mid && !surprises?.end && !cta) return story;
-  if (story.type !== "storyline") return story; // reported by validate.ts
-
-  const props = (story.props ??= {});
   const modules = props.modules as Array<{ screens?: WidgetNode[] }> | undefined;
   if (!Array.isArray(modules) || modules.length === 0) return story;
   for (const m of modules) m.screens ??= [];

@@ -82,10 +82,7 @@ export function Player({
       labels={lang?.startsWith("es") ? esLabels : undefined}
       iconSet={themeIconSet(doc.meta.theme)}
     >
-      <article>
-        <h1 className="sr-only">{doc.meta.title}</h1>
-        {renderWidget(story)}
-      </article>
+      <article>{renderWidget(story)}</article>
     </WidgetronProvider>
   );
 }

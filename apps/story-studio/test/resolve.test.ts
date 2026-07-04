@@ -35,9 +35,26 @@ const modules = (story: WidgetNode) => story.props!.modules as Mod[];
 const flat = (story: WidgetNode) => modules(story).flatMap((m) => m.screens);
 
 describe("resolveStory (D-004: injection happens at build time)", () => {
-  it("returns the story untouched without settings", () => {
+  it("without settings only the cover metadata is injected", () => {
     const d = doc();
-    expect(resolveStory(d)).toEqual(d.story);
+    const resolved = resolveStory(d);
+    expect(resolved).toEqual({
+      ...d.story,
+      props: { ...d.story.props, title: d.meta.title },
+    });
+  });
+
+  it("injects meta.title/description as the storyline cover, without overriding explicit props", () => {
+    const d = doc();
+    d.meta.description = "Lead line";
+    expect(resolveStory(d).props).toMatchObject({
+      title: "T",
+      description: "Lead line",
+    });
+
+    const explicit = doc();
+    explicit.story.props!.title = "Custom cover";
+    expect(resolveStory(explicit).props!.title).toBe("Custom cover");
   });
 
   it("does not mutate the input document", () => {
