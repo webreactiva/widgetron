@@ -16,6 +16,9 @@ signature:
   intro: "El podcast privado de programación web y desarrollo profesional en el que también la tecnología es necesaria, pero las personas somos lo importante"
   outro: "Nos escuchamos en el próximo. Ciao."
   motto: "Nuestro superpoder es programar, pero no somos superhéroes"
+sources:
+  web: "https://www.webreactiva.com"
+  catalog: "huellas"
 ---
 
 # La voz de Web Reactiva Premium
@@ -46,3 +49,20 @@ personas son lo más importante; todos tenemos algo que aportar.
 - Promesas absolutas: la casa siempre matiza ("puede", "quizás", "depende").
 - Solemnidad motivacional vacía: la motivación aquí siempre va pegada a un
   paso práctico.
+
+## Fuentes
+
+Pozos perennes de la casa, siempre citables (no dependen de un episodio):
+
+- **La web, `webreactiva.com`** — hogar de la comunidad y destino natural del
+  CTA (unirse a la conversación, no una venta).
+- **La comunidad en Telegram** — el grupo donde sigue cada episodio. Enlázalo
+  como "sigue la conversación", no como recurso técnico.
+- **El catálogo en huellas (`catalog: huellas`)** — para "sigue explorando",
+  story-librarian puede recuperar momentos relacionados de OTROS episodios y
+  masterclasses (Web Reactiva, Premium, step) con su URL y minuto reales, vía
+  la skill `webreactiva-huellas-search` (`--source=internal`). Son enlaces
+  reales del propio catálogo: procedencia perfecta, cero invención.
+
+Qué evitar: no inventes rutas concretas (posts, newsletters) que no conozcas;
+si no tienes la URL real, déjala fuera y anótala como pendiente.
