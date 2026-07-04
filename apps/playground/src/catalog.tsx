@@ -9,6 +9,7 @@ import {
   DataChart,
   DecisionTree,
   DragAndDrop,
+  Figure,
   FillInTheBlanks,
   Flashcards,
   FlowDiagram,
@@ -32,6 +33,7 @@ import {
   Quiz,
   Quote,
   renderWidget,
+  ResourceList,
   Scrubber,
   SectionHeader,
   SpotTheBug,
@@ -182,6 +184,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "timeline",
       "pattern-card",
       "code-translation",
+      "resource-list",
     ],
   },
   {
@@ -219,7 +222,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "hotspots",
     ],
   },
-  { title: "Media", ids: ["audio-clip", "video-clip"] },
+  { title: "Media", ids: ["audio-clip", "video-clip", "figure"] },
   {
     title: "AI & personalization",
     ids: ["prompt-template", "profile-quiz", "profile-provider", "profile-gate"],
@@ -775,6 +778,75 @@ export const catalog: CatalogEntry[] = [
               { label: "Server" },
               { label: "Cache" },
               { label: "Database" },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "resource-list",
+    name: "ResourceList",
+    summary:
+      "A titled list of external links — 'keep exploring', further reading, or references. Each item carries a kind icon, an optional source + qualifier eyebrow, and a blurb. The home for material that comes from outside the source content, so every item is a real outbound URL. Emits `resource_opened` on click.",
+    demos: [
+      {
+        label: "Keep exploring (list)",
+        node: (
+          <ResourceList
+            title="Keep exploring"
+            items={[
+              {
+                label: "How the web loads a page",
+                href: "https://example.com/round-trip",
+                kind: "article",
+                source: "Web Reactiva",
+                meta: "8 min",
+                description:
+                  "The request/response round trip, from Enter to painted page.",
+              },
+              {
+                label: "The episode this guide is based on",
+                href: "https://example.com/episode-315",
+                kind: "episode",
+                source: "Web Reactiva Premium",
+                meta: "Ep. 315",
+              },
+              {
+                label: "OpenAPI specification",
+                href: "https://spec.openapis.org/oas/latest.html",
+                kind: "docs",
+                source: "spec.openapis.org",
+              },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "References (cards)",
+        node: (
+          <ResourceList
+            title="References"
+            layout="cards"
+            items={[
+              {
+                label: "Swagger Editor",
+                href: "https://editor.swagger.io",
+                kind: "tool",
+                source: "swagger.io",
+              },
+              {
+                label: "The repo with the examples",
+                href: "https://github.com/example/repo",
+                kind: "repo",
+                source: "GitHub",
+              },
+              {
+                label: "Watch the walkthrough",
+                href: "https://example.com/video",
+                kind: "video",
+                meta: "12:34",
+              },
             ]}
           />
         ),
@@ -1550,6 +1622,37 @@ console.log("C");`}
             src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
             poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg"
             title="Big Buck Bunny (MP4)"
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "figure",
+    name: "Figure",
+    summary:
+      "A standalone image with an optional caption and source credit. References the image by URL, lazy-loads it, and renders a real <figure>/<figcaption>. Crop to a fixed ratio with `aspect`, or leave it to keep the image's natural size; add `href` to link back to the source.",
+    demos: [
+      {
+        label: "Captioned, cropped to 16:9 with a credit",
+        node: (
+          <Figure
+            src="https://picsum.photos/seed/widgetron-figure/1200/675"
+            alt="An abstract placeholder illustration"
+            caption="The round trip every page load makes — request out, response back."
+            credit="Source: **Web Reactiva**"
+            aspect="16/9"
+          />
+        ),
+      },
+      {
+        label: "Natural ratio, linked to its source",
+        node: (
+          <Figure
+            src="https://picsum.photos/seed/widgetron-natural/900/520"
+            alt="A wide placeholder illustration"
+            caption="Click the image to open where it came from."
+            href="https://picsum.photos"
           />
         ),
       },
