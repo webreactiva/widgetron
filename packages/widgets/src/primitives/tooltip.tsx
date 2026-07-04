@@ -7,6 +7,12 @@ export interface TooltipProps {
   content: React.ReactNode;
   /** The trigger (should be focusable for keyboard users — e.g. a button). */
   children: React.ReactNode;
+  /**
+   * Which side of the trigger the popover opens on. Use "left" for triggers
+   * pinned to the right edge of a clipping container (e.g. nav rails), where
+   * the default top-centered popover would be cut off. Default: "top".
+   */
+  side?: "top" | "left";
   /** Extra classes for the inline wrapper. */
   className?: string;
 }
@@ -18,9 +24,10 @@ export interface TooltipProps {
  *
  * Positioning: the tooltip is centered on the trigger by default, but on small
  * viewports it shifts so it never overflows the window horizontally — measured
- * with a layout effect while open.
+ * with a layout effect while open. With `side="left"` it opens to the left of
+ * the trigger, vertically centered (no shift measuring needed).
  */
-export function Tooltip({ content, children, className }: TooltipProps) {
+export function Tooltip({ content, children, side = "top", className }: TooltipProps) {
   const [open, setOpen] = React.useState(false);
   const [shift, setShift] = React.useState(0);
   const id = React.useId();
@@ -28,7 +35,7 @@ export function Tooltip({ content, children, className }: TooltipProps) {
   const tipRef = React.useRef<HTMLSpanElement>(null);
 
   React.useLayoutEffect(() => {
-    if (!open) return;
+    if (!open || side !== "top") return;
     const wrapper = wrapperRef.current;
     const tip = tipRef.current;
     if (!wrapper || !tip) return;
@@ -65,8 +72,17 @@ export function Tooltip({ content, children, className }: TooltipProps) {
           ref={tipRef}
           role="tooltip"
           id={id}
-          style={{ transform: `translate(calc(-50% + ${shift}px), 0)` }}
-          className="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md border bg-popover px-3 py-2 text-left text-sm font-normal leading-snug text-popover-foreground shadow-wgt motion-safe:animate-wgt-fade-in"
+          style={
+            side === "top"
+              ? { transform: `translate(calc(-50% + ${shift}px), 0)` }
+              : undefined
+          }
+          className={cn(
+            "absolute z-50 w-max max-w-xs rounded-md border bg-popover px-3 py-2 text-left text-sm font-normal leading-snug text-popover-foreground shadow-wgt motion-safe:animate-wgt-fade-in",
+            side === "top"
+              ? "bottom-full left-1/2 mb-2"
+              : "right-full top-1/2 mr-2 -translate-y-1/2",
+          )}
         >
           {content}
         </span>

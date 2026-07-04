@@ -9,8 +9,18 @@ export const storylineMeta: WidgetMeta = {
   summary:
     "The dispensa reading composition: a scroll-driven document of modules that assembles any widgets into a course.",
   whenToUse:
-    "This is the top-level container for generating a whole dispensa/lesson. Use it to sequence many widgets into modules the reader scrolls through (progress bar, module dots, reveal-on-scroll). Put atomic widgets in each module's `screens`. Add `glossary` for [[term]] tooltips across the course, and `profile` to personalize it (with ProfileQuiz/ProfileGate screens). Prefer Scrollytelling instead when you need a single graphic that stays pinned while text scrolls past it.",
+    "This is the top-level container for generating a whole dispensa/lesson. Use it to sequence many widgets into modules the reader scrolls through (progress bar, module dots with title tooltips, reveal-on-scroll). Put atomic widgets in each module's `screens`. Add `glossary` for [[term]] tooltips across the course, `profile` to personalize it (with ProfileQuiz/ProfileGate screens), and `storageKey` so the course remembers the reading position and offers to resume on the next visit. Prefer Scrollytelling instead when you need a single graphic that stays pinned while text scrolls past it.",
   schema: z.object({
+    title: z
+      .string()
+      .optional()
+      .describe(
+        "Course title, rendered as a cover section before the first module. Don't repeat it as a section-header screen.",
+      ),
+    description: z
+      .string()
+      .optional()
+      .describe("Cover lead line under the title."),
     modules: z
       .array(
         z.object({
@@ -36,6 +46,12 @@ export const storylineMeta: WidgetMeta = {
       .optional()
       .describe(
         "Enable reader personalization. Pass a string to persist the profile under that localStorage key, or true for in-memory only.",
+      ),
+    storageKey: z
+      .string()
+      .optional()
+      .describe(
+        "Persist the reading position in localStorage under this key; on return the course offers to resume where the reader left off. Use the document slug.",
       ),
   }),
   example: {
