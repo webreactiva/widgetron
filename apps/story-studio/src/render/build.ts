@@ -1,4 +1,5 @@
 import * as fs from "node:fs";
+import { createRequire } from "node:module";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "vite";
@@ -6,6 +7,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 import { validateEnvelope, resolveStory, type StoryDocument } from "../engine/core";
+import { BUILT_IN_THEME_ICON_SETS, parseDesign } from "../engine/theme";
 
 /**
  * `story render <slug>`: content/<slug>.story.json → dist/<slug>/, a
@@ -42,7 +44,14 @@ export async function renderStory(
   const doc = envelope.document;
   const resolved = resolveStory(doc);
 
-  const widgetsSrc = path.resolve(root, "../../packages/widgets/src");
+  // Resolve widgetron through its package `exports`, never through the
+  // monorepo layout: the workspace resolves to src/index.ts, an installed
+  // package to dist/index.js. Both carry the Tailwind classes @source needs.
+  // (createRequire, not import.meta.resolve: the latter is unavailable under
+  // Vitest's SSR transform.)
+  const widgetronEntry = resolvePackagePath("@webreactiva/widgetron");
+  const widgetronDir = path.dirname(widgetronEntry);
+  const widgetronIsSource = widgetronEntry.endsWith(".ts");
   const renderDir = path.join(root, ".render", slug);
   const outDir = path.join(root, "dist", slug);
   fs.rmSync(renderDir, { recursive: true, force: true });
@@ -53,8 +62,11 @@ export async function renderStory(
     JSON.stringify({ meta: doc.meta, audio: doc.audio ?? null, story: resolved }, null, 2),
   );
   fs.writeFileSync(path.join(renderDir, "index.html"), htmlShell(doc));
-  fs.writeFileSync(path.join(renderDir, "main.tsx"), MAIN_TSX);
-  fs.writeFileSync(path.join(renderDir, "styles.css"), stylesCss(doc, root, widgetsSrc));
+  fs.writeFileSync(
+    path.join(renderDir, "main.tsx"),
+    mainTsx(resolveThemeIconSet(doc.meta.theme, root)),
+  );
+  fs.writeFileSync(path.join(renderDir, "styles.css"), stylesCss(doc, root, widgetronDir));
 
   await build({
     configFile: false,
@@ -63,7 +75,16 @@ export async function renderStory(
     base: "./",
     plugins: [react(), tailwindcss()],
     resolve: {
-      alias: [{ find: /^@\//, replacement: `${widgetsSrc}/` }],
+      alias: [
+        // Pin the package to the entry node resolved, so the inner build
+        // works no matter where renderDir sits relative to node_modules.
+        { find: /^@webreactiva\/widgetron$/, replacement: widgetronEntry },
+        // The library's internal `@/` alias only exists in its TS source;
+        // the built dist is already self-contained.
+        ...(widgetronIsSource
+          ? [{ find: /^@\//, replacement: `${widgetronDir}/` }]
+          : []),
+      ],
     },
     build: { outDir, emptyOutDir: true },
   });
@@ -114,8 +135,30 @@ ${summary}
 `;
 }
 
+/**
+ * theme name → Iconify collection, resolved at build time: the theme's
+ * design.md frontmatter (`iconSet:`) wins, then the library's built-in map.
+ * Mirrors the app-side resolver (src/app/theme-icon-set.ts) in node.
+ */
+function resolveThemeIconSet(
+  theme: string | undefined,
+  appRoot: string,
+): string | undefined {
+  if (!theme) return undefined;
+  const designPath = path.join(appRoot, "src", "themes", `${theme}.design.md`);
+  if (fs.existsSync(designPath)) {
+    try {
+      const design = parseDesign(fs.readFileSync(designPath, "utf8"));
+      if (design.iconSet) return design.iconSet;
+    } catch {
+      // Invalid design.md — `story theme` is the command that reports it.
+    }
+  }
+  return BUILT_IN_THEME_ICON_SETS[theme];
+}
+
 /** The hydration entry (compiled by the inner Vite build). */
-const MAIN_TSX = `import { createRoot } from "react-dom/client";
+const mainTsx = (iconSet: string | undefined) => `import { createRoot } from "react-dom/client";
 import { WidgetronProvider, renderWidget, esLabels } from "@webreactiva/widgetron";
 import doc from "./document.json";
 import "./styles.css";
@@ -135,7 +178,7 @@ createRoot(document.getElementById("root")!).render(
   <WidgetronProvider
     locale={lang}
     labels={isSpanish ? esLabels : undefined}
-    iconSet={doc.meta.theme === "webreactiva" ? "pixelarticons" : undefined}
+    iconSet={${JSON.stringify(iconSet)}}
   >
     {renderWidget(story)}
   </WidgetronProvider>,
@@ -143,10 +186,13 @@ createRoot(document.getElementById("root")!).render(
 `;
 
 /** Tailwind bridge + widgetron theme layer + optional compiled brand theme. */
-function stylesCss(doc: StoryDocument, appRoot: string, widgetsSrc: string): string {
+function stylesCss(doc: StoryDocument, appRoot: string, widgetronDir: string): string {
+  const themeCss = resolvePackagePath(
+    "@webreactiva/widgetron/styles/theme.css",
+  );
   let css = `@import "tailwindcss";
-@import "${widgetsSrc.replaceAll("\\", "/")}/styles/theme.css";
-@source "${widgetsSrc.replaceAll("\\", "/")}";
+@import "${themeCss.replaceAll("\\", "/")}";
+@source "${widgetronDir.replaceAll("\\", "/")}";
 
 html, body, #root { margin: 0; background: var(--background); color: var(--foreground); }
 `;
@@ -159,6 +205,11 @@ html, body, #root { margin: 0; background: var(--background); color: var(--foreg
     }
   }
   return css;
+}
+
+/** Node-resolve a specifier through package `exports`, from this module. */
+function resolvePackagePath(specifier: string): string {
+  return createRequire(import.meta.url).resolve(specifier);
 }
 
 function escapeHtml(value: string): string {

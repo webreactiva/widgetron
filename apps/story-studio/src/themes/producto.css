@@ -24,6 +24,7 @@
   --wgt-shadow-hover: 0 4px 12px 0 var(--wgt-shadow-color);
   --font-display: Georgia, 'Times New Roman', serif;
   --radius: 0.75rem;
+  --wgt-icon-set: ph;
 }
 
 [data-theme="producto"].dark,

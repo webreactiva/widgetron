@@ -10,6 +10,13 @@
 
 export interface ThemeDesign {
   name: string;
+  /**
+   * Iconify collection for bare icon names under this theme (e.g.
+   * "pixelarticons", "ph", "tabler"). Widgets receive it via
+   * WidgetronProvider; it also lands in the CSS as `--wgt-icon-set` for
+   * inspection. Omitted → the library default ("lucide").
+   */
+  iconSet?: string;
   /** Light tokens: css-var name (without `--`) → value. */
   tokens: Record<string, string>;
   /** Dark-mode overrides. */
@@ -18,6 +25,7 @@ export interface ThemeDesign {
 
 export interface CompiledTheme {
   name: string;
+  iconSet?: string;
   css: string;
   /** Token names not in the known contract (possible typos). */
   warnings: string[];
@@ -41,6 +49,15 @@ export const KNOWN_TOKENS = new Set([
   "font-sans", "font-mono", "font-display", "radius",
 ]);
 
+/**
+ * Icon sets for themes that ship inside the widgetron library (no design.md
+ * here to declare them). Themes compiled from a design.md declare their own
+ * via the `iconSet:` frontmatter key.
+ */
+export const BUILT_IN_THEME_ICON_SETS: Record<string, string> = {
+  webreactiva: "pixelarticons",
+};
+
 /** Parse the design.md frontmatter (--- fenced, YAML subset). */
 export function parseDesign(markdown: string): ThemeDesign {
   const m = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -48,6 +65,7 @@ export function parseDesign(markdown: string): ThemeDesign {
   const lines = m[1].split(/\r?\n/);
 
   let name = "";
+  let iconSet: string | undefined;
   const sections: Record<string, Record<string, string>> = { tokens: {}, dark: {} };
   let current: Record<string, string> | null = null;
 
@@ -68,6 +86,7 @@ export function parseDesign(markdown: string): ThemeDesign {
       } else {
         current = null;
         if (key === "name") name = value;
+        else if (key === "iconSet") iconSet = value;
         else throw new Error(`design.md: unknown top-level key "${key}"`);
       }
     } else {
@@ -81,12 +100,17 @@ export function parseDesign(markdown: string): ThemeDesign {
   if (!/^[a-z0-9-]+$/.test(name)) {
     throw new Error(`design.md: theme name "${name}" must be kebab-case`);
   }
-  return { name, tokens: sections.tokens, dark: sections.dark };
+  if (iconSet !== undefined && !/^[a-z0-9-]+$/.test(iconSet)) {
+    throw new Error(
+      `design.md: iconSet "${iconSet}" must be a lowercase Iconify collection id`,
+    );
+  }
+  return { name, iconSet, tokens: sections.tokens, dark: sections.dark };
 }
 
 /** Compile a parsed design into the [data-theme] CSS block(s). */
 export function compileTheme(design: ThemeDesign): CompiledTheme {
-  const { name, tokens, dark } = design;
+  const { name, iconSet, tokens, dark } = design;
   if (Object.keys(tokens).length === 0) {
     throw new Error("design.md: `tokens:` section is empty");
   }
@@ -99,14 +123,20 @@ export function compileTheme(design: ThemeDesign): CompiledTheme {
       .map(([k, v]) => `  --${k}: ${v};`)
       .join("\n")}\n}`;
 
+  // The icon set is runtime config (WidgetronProvider), but it is also emitted
+  // as a CSS custom property so a compiled theme is fully self-describing.
+  const lightVars = iconSet
+    ? { ...tokens, "wgt-icon-set": iconSet }
+    : tokens;
+
   let css = `/* Generated from design.md — do not edit by hand. Regenerate with:\n   pnpm --filter @webreactiva/story-studio story theme <design.md> */\n`;
-  css += block(`[data-theme="${name}"]`, tokens);
+  css += block(`[data-theme="${name}"]`, lightVars);
   if (Object.keys(dark).length > 0) {
     css +=
       "\n\n" +
       block(`[data-theme="${name}"].dark,\n[data-theme="${name}"] .dark`, dark);
   }
-  return { name, css: css + "\n", warnings };
+  return { name, iconSet, css: css + "\n", warnings };
 }
 
 /** design.md text → compiled CSS (convenience). */

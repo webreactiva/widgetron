@@ -1,5 +1,6 @@
 ---
 name: producto
+iconSet: ph
 tokens:
   primary: "#0f766e"
   primary-foreground: "#ffffff"

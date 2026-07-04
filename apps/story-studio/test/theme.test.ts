@@ -43,6 +43,19 @@ describe("theme compiler (design.md → [data-theme])", () => {
     expect(warnings[0]).toContain('"primry"');
   });
 
+  it("parses and emits the theme's icon set", () => {
+    const { iconSet, css } = compileDesignMarkdown(
+      '---\nname: x\niconSet: ph\ntokens:\n  primary: "#fff"\n---\n',
+    );
+    expect(iconSet).toBe("ph");
+    expect(css).toContain("  --wgt-icon-set: ph;");
+    expect(() =>
+      compileDesignMarkdown(
+        '---\nname: x\niconSet: Not Valid\ntokens:\n  primary: "#fff"\n---\n',
+      ),
+    ).toThrow(/iconSet/);
+  });
+
   it("rejects a design without name or frontmatter", () => {
     expect(() => compileDesignMarkdown("no frontmatter")).toThrow(/frontmatter/);
     expect(() =>

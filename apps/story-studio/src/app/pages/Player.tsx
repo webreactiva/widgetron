@@ -7,6 +7,7 @@ import {
 
 import { validateStoryDocument } from "../../engine/validate";
 import type { StoryDocument, WidgetNode } from "../../engine/core";
+import { themeIconSet } from "../theme-icon-set";
 
 /**
  * Reads a document and renders its RESOLVED tree — the same `resolveStory`
@@ -79,7 +80,7 @@ export function Player({
     <WidgetronProvider
       locale={lang}
       labels={lang?.startsWith("es") ? esLabels : undefined}
-      iconSet={doc.meta.theme === "webreactiva" ? "pixelarticons" : undefined}
+      iconSet={themeIconSet(doc.meta.theme)}
     >
       <article>
         <h1 className="sr-only">{doc.meta.title}</h1>

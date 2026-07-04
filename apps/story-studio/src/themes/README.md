@@ -12,6 +12,18 @@ The file needs a frontmatter with `name`, a `tokens:` section (light) and an
 optional `dark:` section. Every key becomes `--<key>`. The body of the markdown
 is yours — design notes, rationale, links; the compiler only reads the frontmatter.
 
+## Icon set (`iconSet:`)
+
+A theme can also pick its icon *style* with a top-level `iconSet:` — any
+Iconify collection id (`lucide`, `ph`, `tabler`, `pixelarticons`, `mdi`…, see
+https://icones.js.org). Bare icon names in content (`"icon": "rocket"`) resolve
+against it, so the same document changes icon style with the theme; no npm
+dependency per set (icons load on demand via Iconify). Omitted → `lucide`.
+Fully-qualified names (`mdi:database`) always win over the theme. The player,
+the editor preview and `story render` all resolve it from this frontmatter
+(the library's built-in `webreactiva` theme maps to `pixelarticons` in code),
+and the compiled CSS records it as `--wgt-icon-set` for inspection.
+
 ## Tokens widgets consume
 
 Semantic (shadcn): `background`, `foreground`, `card`, `card-foreground`,

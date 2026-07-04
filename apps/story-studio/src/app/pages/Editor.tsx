@@ -7,6 +7,7 @@ import {
 
 import { validateStoryDocument } from "../../engine/validate";
 import type { WidgetNode } from "../../engine/core";
+import { themeIconSet } from "../theme-icon-set";
 
 /**
  * The authoring screen (decision D-003): dev-server only, no auth, no editKey.
@@ -165,7 +166,7 @@ function PreviewPane({
       <WidgetronProvider
         locale={lang}
         labels={lang?.startsWith("es") ? esLabels : undefined}
-        iconSet={theme === "webreactiva" ? "pixelarticons" : undefined}
+        iconSet={themeIconSet(theme)}
       >
         {renderWidget(story)}
       </WidgetronProvider>
