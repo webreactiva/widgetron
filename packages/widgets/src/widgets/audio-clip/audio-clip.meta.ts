@@ -31,6 +31,18 @@ export const audioClipMeta: WidgetMeta = {
       .describe(
         "URL to a .json / .vtt / .srt transcript fetched on mount (used when no inline transcript is given).",
       ),
+    storageKey: z
+      .string()
+      .optional()
+      .describe(
+        "Stable key for persisting the resume position across visits. Defaults to `src`; set it when the URL isn't stable (e.g. a signed CDN link).",
+      ),
+    sticky: z
+      .boolean()
+      .optional()
+      .describe(
+        "Show a sticky corner mini-player once playback starts and the main player scrolls out of view. Default: true.",
+      ),
   }),
   example: {
     type: "audio-clip",

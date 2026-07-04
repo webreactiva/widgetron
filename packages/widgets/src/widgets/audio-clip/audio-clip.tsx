@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Play, Pause, RotateCcw, type IconProps } from "@/lib/icons";
+import { createPortal } from "react-dom";
+import { Play, Pause, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
@@ -19,6 +20,16 @@ export interface AudioClipLabels {
   seek: string;
   transcript: React.ReactNode;
   restart: string;
+  /** Accessible label for the playback-speed control. */
+  speed: string;
+  /** Accessible label for the volume slider. */
+  volume: string;
+  mute: string;
+  unmute: string;
+  /** Accessible label for the mini-player region. */
+  miniPlayer: string;
+  /** Accessible label for the mini-player close button. */
+  close: string;
 }
 
 export const DEFAULT_AUDIO_CLIP_LABELS: AudioClipLabels = {
@@ -27,7 +38,35 @@ export const DEFAULT_AUDIO_CLIP_LABELS: AudioClipLabels = {
   seek: "Seek",
   transcript: "Transcript",
   restart: "Restart",
+  speed: "Playback speed",
+  volume: "Volume",
+  mute: "Mute",
+  unmute: "Unmute",
+  miniPlayer: "Mini player",
+  close: "Close mini player",
 };
+
+/** Playback rates the speed control cycles through. */
+const RATES = [1, 1.25, 1.5, 1.75, 2] as const;
+/** Speed and volume are global reader preferences, shared across clips. */
+const RATE_KEY = "widgetron-audio-rate";
+const VOL_KEY = "widgetron-audio-volume";
+/** Resume position is per-track. */
+const POS_PREFIX = "widgetron-audio-pos:";
+const SAVE_THROTTLE_MS = 4000;
+
+// --- Single-active-clip coordination -------------------------------------
+// Widget instances are independent, but only one clip should ever play — and
+// only one mini-player should show — at a time. Each instance registers a
+// listener; when one starts playing it becomes the active clip and notifies the
+// rest, which pause themselves and hide their sticky.
+let activeClipId: string | null = null;
+const activeClipListeners = new Set<() => void>();
+function activateClip(id: string) {
+  if (activeClipId === id) return;
+  activeClipId = id;
+  activeClipListeners.forEach((notify) => notify());
+}
 
 export interface AudioClipProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -41,11 +80,28 @@ export interface AudioClipProps
   transcript?: TranscriptCue[];
   /** URL to a .json / .vtt / .srt transcript fetched on mount. */
   transcriptSrc?: string;
+  /**
+   * Stable key for persisting the resume position across visits. Defaults to
+   * `src` — set it when the URL isn't stable (e.g. a signed CDN link) so resume
+   * survives re-signing.
+   */
+  storageKey?: string;
+  /**
+   * Show a sticky mini-player in the corner once playback starts and the main
+   * player scrolls out of view. Default: true.
+   */
+  sticky?: boolean;
   labels?: Partial<AudioClipLabels>;
 }
 
-/** Volume / speaker glyph (inline, no icon dependency). */
-function Volume({ className, ...props }: IconProps) {
+/** Speaker glyph (inline, no icon dependency) — crossed out when muted. */
+function VolumeGlyph({
+  muted,
+  className,
+}: {
+  muted?: boolean;
+  className?: string;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -59,15 +115,20 @@ function Volume({ className, ...props }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
       className={className}
-      {...props}
     >
       <path d="M11 5 6 9H2v6h4l5 4z" />
-      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+      {muted ? (
+        <path d="M22 9l-6 6M16 9l6 6" />
+      ) : (
+        <>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+        </>
+      )}
     </svg>
   );
 }
-Volume.displayName = "Volume";
+VolumeGlyph.displayName = "VolumeGlyph";
 
 function prefersReducedMotion(): boolean {
   return (
@@ -84,6 +145,30 @@ function formatTime(seconds: number): string {
   const m = Math.floor(total / 60);
   const s = total % 60;
   return `${m}:${s < 10 ? "0" : ""}${s}`;
+}
+
+/** "1×", "1.5×". */
+function formatRate(rate: number): string {
+  return `${rate}×`;
+}
+
+function readNumber(key: string, min: number, max: number): number | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const v = Number(window.localStorage.getItem(key));
+    return Number.isFinite(v) && v >= min && v <= max ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeNumber(key: string, value: number): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, String(value));
+  } catch {
+    /* storage may be unavailable (private mode) */
+  }
 }
 
 function parseTimestamp(value: string): number | null {
@@ -170,13 +255,132 @@ function findActiveCueIndex(cues: TranscriptCue[], currentTime: number): number 
   return active;
 }
 
+/** A filled range input — used for both the seek bar and the volume slider. */
+function FilledRange({
+  value,
+  max,
+  step,
+  onChange,
+  label,
+  valueText,
+  className,
+}: {
+  value: number;
+  max: number;
+  step: number | "any";
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  valueText?: string;
+  className?: string;
+}) {
+  const fill = max > 0 ? Math.min(1, Math.max(0, value / max)) : 0;
+  return (
+    <input
+      type="range"
+      min={0}
+      max={max}
+      step={step}
+      value={value}
+      onChange={onChange}
+      aria-label={label}
+      aria-valuetext={valueText}
+      className={cn(
+        "cursor-pointer touch-none accent-[var(--primary)] outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        className,
+      )}
+      style={{
+        background: `linear-gradient(to right, var(--primary) ${
+          fill * 100
+        }%, var(--muted) ${fill * 100}%)`,
+      }}
+    />
+  );
+}
+
+/** Compact text button that cycles playback speed. */
+function SpeedButton({
+  rate,
+  onCycle,
+  label,
+  className,
+}: {
+  rate: number;
+  onCycle: () => void;
+  label: string;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onCycle}
+      aria-label={`${label} (${formatRate(rate)})`}
+      className={cn(
+        "shrink-0 rounded-md border px-2 py-1 text-xs font-semibold tabular-nums text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        rate !== 1 && "border-primary/40 text-foreground",
+        className,
+      )}
+    >
+      {formatRate(rate)}
+    </button>
+  );
+}
+
+/**
+ * Volume control — a mute-toggle speaker icon plus a slider that reveals on
+ * hover/focus, so it stays out of the way until wanted (YouTube-style). The
+ * icon click mutes/unmutes; the slider fine-tunes the level.
+ */
+function VolumeControl({
+  volume,
+  muted,
+  onToggle,
+  onChange,
+  toggleLabel,
+  volumeLabel,
+}: {
+  volume: number;
+  muted: boolean;
+  onToggle: () => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  toggleLabel: string;
+  volumeLabel: string;
+}) {
+  const level = muted ? 0 : volume;
+  return (
+    <div className="group/vol flex shrink-0 items-center">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-label={toggleLabel}
+        className="grid size-8 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <VolumeGlyph muted={level === 0} className="size-4" />
+      </button>
+      <FilledRange
+        value={level}
+        max={1}
+        step={0.05}
+        onChange={onChange}
+        label={volumeLabel}
+        valueText={`${Math.round(level * 100)}%`}
+        className="h-1.5 w-0 opacity-0 transition-[width,opacity] duration-200 group-hover/vol:ml-1 group-hover/vol:w-14 group-hover/vol:opacity-100 group-focus-within/vol:ml-1 group-focus-within/vol:w-14 group-focus-within/vol:opacity-100"
+      />
+    </div>
+  );
+}
+
 /**
  * AudioClip — a custom audio player with an optional synced transcript. Plays a
  * hidden <audio> through custom controls (play/pause, a clickable seek bar,
- * mm:ss times). If a transcript is supplied inline or fetched from
- * `transcriptSrc` (.json array / .vtt / .srt), it renders below the controls,
- * highlighting and auto-scrolling each cue as it plays (karaoke); clicking a
- * cue seeks to its start. Honors `prefers-reduced-motion` for smooth scroll.
+ * mm:ss times, a volume control and a playback-speed cycle). If a transcript is
+ * supplied inline or fetched from `transcriptSrc` (.json array / .vtt / .srt),
+ * it renders below the controls, highlighting and auto-scrolling each cue as it
+ * plays (karaoke); clicking a cue seeks to its start.
+ *
+ * Once playback starts, scrolling the main player out of view reveals a sticky
+ * mini-player in the corner (play/pause, seek, volume, speed, close) driving the
+ * same audio element. Preferred speed and volume, plus the resume position,
+ * persist to localStorage; honors `prefers-reduced-motion`.
  */
 export function AudioClip({
   src,
@@ -184,12 +388,15 @@ export function AudioClip({
   poster,
   transcript,
   transcriptSrc,
+  storageKey,
+  sticky = true,
   labels,
   className,
   ...props
 }: AudioClipProps) {
   const l = useLabels("audioClip", DEFAULT_AUDIO_CLIP_LABELS, labels);
   const audioRef = React.useRef<HTMLAudioElement>(null);
+  const rootRef = React.useRef<HTMLDivElement>(null);
   const scrollBoxRef = React.useRef<HTMLDivElement>(null);
   const activeCueRef = React.useRef<HTMLButtonElement>(null);
 
@@ -197,16 +404,59 @@ export function AudioClip({
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
+  const [rate, setRate] = React.useState(1);
+  const [volume, setVolume] = React.useState(1);
+  const [muted, setMuted] = React.useState(false);
+
+  // Sticky mini-player state.
+  const clipId = React.useId();
+  const [isActive, setIsActive] = React.useState(false); // driving playback / the sticky?
+  const [inView, setInView] = React.useState(true); // is the main player visible?
+  const [dismissed, setDismissed] = React.useState(false); // mini closed by reader
+
+  // Keep the latest values available to <audio> event handlers without
+  // re-subscribing (the events effect runs once).
+  const rateRef = React.useRef(1);
+  const volumeRef = React.useRef(1);
+  const mutedRef = React.useRef(false);
+  const posKey = storageKey ?? src;
+  const posKeyRef = React.useRef(posKey);
+  posKeyRef.current = posKey;
+  const restoredRef = React.useRef(false);
+  const lastSaveRef = React.useRef(0);
 
   // Inline transcript wins; otherwise use whatever we fetched.
   const cues = React.useMemo<TranscriptCue[]>(
-    () =>
-      transcript && transcript.length > 0
-        ? transcript
-        : fetchedCues,
+    () => (transcript && transcript.length > 0 ? transcript : fetchedCues),
     [transcript, fetchedCues],
   );
   const hasTranscript = cues.length > 0;
+
+  // Restore the reader's global preferences (speed, volume) on mount.
+  React.useEffect(() => {
+    const savedRate = readNumber(RATE_KEY, 0.25, 4);
+    if (savedRate) {
+      rateRef.current = savedRate;
+      setRate(savedRate);
+    }
+    const savedVol = readNumber(VOL_KEY, 0, 1);
+    if (savedVol != null) {
+      volumeRef.current = savedVol;
+      setVolume(savedVol);
+    }
+  }, []);
+
+  // Mirror speed/volume/mute onto the audio element whenever they change.
+  React.useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.playbackRate = rate;
+    audio.volume = volume;
+    audio.muted = muted;
+    rateRef.current = rate;
+    volumeRef.current = volume;
+    mutedRef.current = muted;
+  }, [rate, volume, muted]);
 
   // Fetch the transcript on mount if a URL is given and no inline cues exist.
   React.useEffect(() => {
@@ -248,11 +498,45 @@ export function AudioClip({
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () =>
+    const savePosition = (t: number) => writeNumber(POS_PREFIX + posKeyRef.current, t);
+
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      const now = Date.now();
+      if (now - lastSaveRef.current >= SAVE_THROTTLE_MS) {
+        lastSaveRef.current = now;
+        savePosition(audio.currentTime);
+      }
+    };
+    const onLoadedMetadata = () => {
       setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
+      // Re-assert preferences (some browsers reset them on load).
+      audio.playbackRate = rateRef.current;
+      audio.volume = volumeRef.current;
+      audio.muted = mutedRef.current;
+      // Restore the saved position once, if it's not effectively the end.
+      if (!restoredRef.current) {
+        restoredRef.current = true;
+        const saved = readNumber(POS_PREFIX + posKeyRef.current, 0, Infinity);
+        if (
+          saved != null &&
+          saved > 0 &&
+          (!Number.isFinite(audio.duration) || saved < audio.duration - 5)
+        ) {
+          audio.currentTime = saved;
+          setCurrentTime(saved);
+        }
+      }
+    };
+    const onPlay = () => {
+      setIsPlaying(true);
+      setDismissed(false);
+      activateClip(clipId);
+    };
+    const onPause = () => {
+      setIsPlaying(false);
+      savePosition(audio.currentTime);
+    };
     const onEnded = () => setIsPlaying(false);
 
     audio.addEventListener("timeupdate", onTimeUpdate);
@@ -272,6 +556,36 @@ export function AudioClip({
     };
   }, []);
 
+  // Track whether the main player is on screen (drives the sticky mini-player).
+  React.useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !sticky || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sticky]);
+
+  // Single-active-clip coordination: only the active clip plays and shows a
+  // sticky. When another clip takes over, pause this one and step aside.
+  React.useEffect(() => {
+    const onActiveChange = () => {
+      const active = activeClipId === clipId;
+      setIsActive(active);
+      if (!active) {
+        const audio = audioRef.current;
+        if (audio && !audio.paused) audio.pause();
+      }
+    };
+    activeClipListeners.add(onActiveChange);
+    return () => {
+      activeClipListeners.delete(onActiveChange);
+      if (activeClipId === clipId) activeClipId = null;
+    };
+  }, [clipId]);
+
   const activeIdx = hasTranscript ? findActiveCueIndex(cues, currentTime) : -1;
 
   // Auto-scroll the active cue into view within the scroll box.
@@ -279,11 +593,9 @@ export function AudioClip({
     const box = scrollBoxRef.current;
     const cue = activeCueRef.current;
     if (!box || !cue) return;
-    const top = cue.offsetTop - box.offsetTop - box.clientHeight / 2 + cue.clientHeight / 2;
-    box.scrollTo({
-      top,
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
-    });
+    const top =
+      cue.offsetTop - box.offsetTop - box.clientHeight / 2 + cue.clientHeight / 2;
+    box.scrollTo({ top, behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }, [activeIdx]);
 
   function togglePlay() {
@@ -308,7 +620,10 @@ export function AudioClip({
   function seekTo(seconds: number) {
     const audio = audioRef.current;
     if (!audio) return;
-    const clamped = Math.max(0, duration > 0 ? Math.min(seconds, duration) : seconds);
+    const clamped = Math.max(
+      0,
+      duration > 0 ? Math.min(seconds, duration) : seconds,
+    );
     audio.currentTime = clamped;
     setCurrentTime(clamped);
   }
@@ -317,10 +632,36 @@ export function AudioClip({
     seekTo(event.currentTarget.valueAsNumber);
   }
 
-  const progress = duration > 0 ? Math.min(1, currentTime / duration) : 0;
+  function cycleRate() {
+    const idx = RATES.indexOf(rate as (typeof RATES)[number]);
+    const next = RATES[(idx + 1) % RATES.length] ?? 1;
+    setRate(next);
+    writeNumber(RATE_KEY, next);
+  }
+
+  function toggleMute() {
+    if (muted) {
+      setMuted(false);
+      if (volume === 0) setVolume(0.5);
+    } else {
+      setMuted(true);
+    }
+  }
+
+  function onVolume(event: React.ChangeEvent<HTMLInputElement>) {
+    const v = event.currentTarget.valueAsNumber;
+    setVolume(v);
+    setMuted(v <= 0);
+    writeNumber(VOL_KEY, v);
+  }
+
+  const effectiveMuted = muted || volume === 0;
+  const volumeToggleLabel = effectiveMuted ? l.unmute : l.mute;
+  const showMini = sticky && isActive && !inView && !dismissed;
 
   return (
     <div
+      ref={rootRef}
       data-slot="audio-clip"
       className={cn(
         "overflow-hidden rounded-lg border bg-card text-card-foreground shadow-wgt",
@@ -331,16 +672,12 @@ export function AudioClip({
       <audio ref={audioRef} src={src} preload="metadata" className="hidden" />
 
       <div className="flex items-center gap-4 p-4">
-        {poster ? (
+        {poster && (
           <img
             src={poster}
             alt=""
             className="size-16 shrink-0 rounded-md border object-cover"
           />
-        ) : (
-          <div className="grid size-16 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground">
-            <Volume className="size-6" />
-          </div>
         )}
 
         <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -358,26 +695,30 @@ export function AudioClip({
               {isPlaying ? <Pause /> : <Play />}
             </Button>
 
-            <input
-              type="range"
-              min={0}
+            <FilledRange
+              value={currentTime}
               max={duration > 0 ? duration : 1}
               step="any"
-              value={currentTime}
               onChange={onSeek}
-              aria-label={l.seek}
-              aria-valuetext={`${formatTime(currentTime)} / ${formatTime(duration)}`}
-              className="h-6 min-w-0 flex-1 cursor-pointer touch-none accent-[var(--primary)] outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              style={{
-                background: `linear-gradient(to right, var(--primary) ${
-                  progress * 100
-                }%, var(--muted) ${progress * 100}%)`,
-              }}
+              label={l.seek}
+              valueText={`${formatTime(currentTime)} / ${formatTime(duration)}`}
+              className="h-6 min-w-0 flex-1"
             />
 
             <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
+
+            <VolumeControl
+              volume={volume}
+              muted={effectiveMuted}
+              onToggle={toggleMute}
+              onChange={onVolume}
+              toggleLabel={volumeToggleLabel}
+              volumeLabel={l.volume}
+            />
+
+            <SpeedButton rate={rate} onCycle={cycleRate} label={l.speed} />
 
             <Button
               type="button"
@@ -425,6 +766,77 @@ export function AudioClip({
           </div>
         </div>
       )}
+
+      {showMini &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            role="region"
+            aria-label={l.miniPlayer}
+            data-slot="audio-clip-mini"
+            className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-md items-center gap-2 rounded-xl border bg-card p-2.5 text-card-foreground shadow-lg motion-safe:animate-wgt-fade-up sm:inset-x-auto sm:right-4 sm:left-auto sm:w-96"
+          >
+            {poster && (
+              <img
+                src={poster}
+                alt=""
+                className="size-9 shrink-0 rounded-md border object-cover"
+              />
+            )}
+            <Button
+              type="button"
+              size="icon"
+              className="size-9 shrink-0"
+              aria-label={isPlaying ? l.pause : l.play}
+              onClick={togglePlay}
+            >
+              {isPlaying ? (
+                <Pause className="size-4" />
+              ) : (
+                <Play className="size-4" />
+              )}
+            </Button>
+
+            <FilledRange
+              value={currentTime}
+              max={duration > 0 ? duration : 1}
+              step="any"
+              onChange={onSeek}
+              label={l.seek}
+              valueText={`${formatTime(currentTime)} / ${formatTime(duration)}`}
+              className="h-1.5 min-w-0 flex-1"
+            />
+
+            <span className="shrink-0 text-[10px] tabular-nums text-muted-foreground">
+              {formatTime(currentTime)}
+            </span>
+
+            <VolumeControl
+              volume={volume}
+              muted={effectiveMuted}
+              onToggle={toggleMute}
+              onChange={onVolume}
+              toggleLabel={volumeToggleLabel}
+              volumeLabel={l.volume}
+            />
+
+            <SpeedButton rate={rate} onCycle={cycleRate} label={l.speed} />
+
+            <button
+              type="button"
+              onClick={() => {
+                const audio = audioRef.current;
+                if (audio && !audio.paused) audio.pause();
+                setDismissed(true);
+              }}
+              aria-label={l.close}
+              className="grid size-7 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <X className="size-4" />
+            </button>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
