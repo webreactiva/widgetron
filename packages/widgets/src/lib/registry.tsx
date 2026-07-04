@@ -37,6 +37,8 @@ import { codeTranslationMeta } from "@/widgets/code-translation/code-translation
 import { timelineMeta } from "@/widgets/timeline/timeline.meta";
 import { audioClipMeta } from "@/widgets/audio-clip/audio-clip.meta";
 import { videoClipMeta } from "@/widgets/video-clip/video-clip.meta";
+import { figureMeta } from "@/widgets/figure/figure.meta";
+import { resourceListMeta } from "@/widgets/resource-list/resource-list.meta";
 import { glossaryTermMeta } from "@/widgets/glossary/glossary-term.meta";
 import { glossaryTextMeta } from "@/widgets/glossary/glossary-text.meta";
 import { profileQuizMeta } from "@/widgets/profile-quiz/profile-quiz.meta";
@@ -76,6 +78,8 @@ import { Hotspots } from "@/widgets/hotspots";
 import { GroupChat } from "@/widgets/group-chat";
 import { AudioClip } from "@/widgets/audio-clip";
 import { VideoClip } from "@/widgets/video-clip";
+import { Figure } from "@/widgets/figure";
+import { ResourceList } from "@/widgets/resource-list";
 import { PromptTemplate } from "@/widgets/prompt-template";
 import {
   ProfileProvider,
@@ -269,6 +273,36 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
   "group-chat": { ...groupChatMeta, component: GroupChat },
   "audio-clip": { ...audioClipMeta, component: AudioClip },
   "video-clip": { ...videoClipMeta, component: VideoClip },
+  figure: {
+    ...figureMeta,
+    component: Figure,
+    adapt: (p) => ({
+      ...p,
+      caption: asContent(p.caption),
+      credit: asContent(p.credit),
+    }),
+  },
+  "resource-list": {
+    ...resourceListMeta,
+    component: ResourceList,
+    adapt: (p) => ({
+      ...p,
+      title: asContent(p.title),
+      items: Array.isArray(p.items)
+        ? p.items.map((item) =>
+            item && typeof item === "object"
+              ? {
+                  ...item,
+                  label: asContent((item as { label?: unknown }).label),
+                  description: asContent(
+                    (item as { description?: unknown }).description,
+                  ),
+                }
+              : item,
+          )
+        : p.items,
+    }),
+  },
   "prompt-template": { ...promptTemplateMeta, component: PromptTemplate },
   "profile-quiz": { ...profileQuizMeta, component: ProfileQuiz },
   "profile-provider": {

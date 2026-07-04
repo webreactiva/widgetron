@@ -118,6 +118,9 @@ export const esLabels: Record<string, Record<string, unknown>> = {
   videoClip: {
     play: "Reproducir vídeo",
   },
+  resourceList: {
+    newTab: "se abre en una pestaña nueva",
+  },
   promptTemplate: {
     eyebrow: "PROMPT — edita los huecos y copia",
     copy: "Copiar prompt",

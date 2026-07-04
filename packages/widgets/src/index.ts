@@ -61,9 +61,13 @@ export * from "@/widgets/drag-and-drop";
 export * from "@/widgets/hotspots";
 export * from "@/widgets/group-chat";
 
-// Media embeds (audio with transcript karaoke, video)
+// Media embeds (audio with transcript karaoke, video, captioned image)
 export * from "@/widgets/audio-clip";
 export * from "@/widgets/video-clip";
+export * from "@/widgets/figure";
+
+// External material (further reading / references / "keep exploring")
+export * from "@/widgets/resource-list";
 
 // AI-teaching artifacts (copy-ready prompt, profile personalization + gating)
 export * from "@/widgets/prompt-template";
