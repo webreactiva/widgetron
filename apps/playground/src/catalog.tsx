@@ -14,6 +14,7 @@ import {
   FlowDiagram,
   FrameStepper,
   GlossaryProvider,
+  GlossaryTerm,
   GlossaryText,
   GroupChat,
   Hotspots,
@@ -22,6 +23,7 @@ import {
   MermaidDiagram,
   PatternCard,
   PredictOutput,
+  ProfileCard,
   ProfileGate,
   ProfileProvider,
   ProfileQuiz,
@@ -172,9 +174,11 @@ export const categories: { title: string; ids: string[] }[] = [
       "section-header",
       "prose",
       "glossary-text",
+      "glossary-term",
       "callout-box",
       "quote",
       "step-cards",
+      "profile-card",
       "timeline",
       "pattern-card",
       "code-translation",
@@ -218,7 +222,7 @@ export const categories: { title: string; ids: string[] }[] = [
   { title: "Media", ids: ["audio-clip", "video-clip"] },
   {
     title: "AI & personalization",
-    ids: ["prompt-template", "profile-quiz"],
+    ids: ["prompt-template", "profile-quiz", "profile-provider", "profile-gate"],
   },
   { title: "Conversion", ids: ["cta"] },
   { title: "Foundations", ids: ["icon"] },
@@ -337,6 +341,46 @@ function GlossaryTextDemo() {
 // ProfileQuiz is a personalization SYSTEM (provider + quiz + gates), so the demo
 // composes them: answering the quiz writes a profile that the gates below read,
 // and the tailored callouts appear. Untagged content would always show.
+// Minimal profile family, in-memory (no storageKey): the provider is the
+// context boundary; the gate shows its fallback until the quiz writes a match.
+function ProfileFamilyDemo({ withFallback }: { withFallback?: boolean }) {
+  return (
+    <ProfileProvider>
+      <div className="flex flex-col gap-4">
+        <ProfileQuiz
+          intro="One question — the block below reacts. In-memory only: reload and it forgets."
+          questions={[
+            {
+              id: "role",
+              question: "What describes you best?",
+              options: [
+                { value: "backend", label: "Backend" },
+                { value: "frontend", label: "Frontend" },
+              ],
+            },
+          ]}
+        />
+        <ProfileGate
+          when={{ role: ["backend"] }}
+          fallback={
+            withFallback ? (
+              <CalloutBox variant="info">
+                <strong>Fallback content.</strong> Shown until the profile
+                matches — answer "Backend" above to swap me out.
+              </CalloutBox>
+            ) : undefined
+          }
+        >
+          <CalloutBox variant="aha">
+            <strong>Backend track.</strong> This block only exists for backend
+            people — the gate read the profile the quiz just wrote.
+          </CalloutBox>
+        </ProfileGate>
+      </div>
+    </ProfileProvider>
+  );
+}
+
 function ProfileQuizDemo() {
   return (
     <ProfileProvider storageKey="widgetron-demo-profile">
@@ -934,6 +978,64 @@ export const catalog: CatalogEntry[] = [
           />
         ),
       },
+      {
+        label: "Milestones (icons)",
+        node: (
+          <Infographic
+            layout="milestones"
+            items={[
+              { icon: <Icon icon="book" />, label: "Literature review" },
+              { icon: <Icon icon="edit" />, label: "Hypothesis" },
+              { icon: <Icon icon="server" />, label: "Data collection" },
+              { icon: <Icon icon="chart-bar" />, label: "Analysis" },
+              { icon: <Icon icon="mail" />, label: "Submission" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Chevrons (icons)",
+        node: (
+          <Infographic
+            layout="chevrons"
+            items={[
+              { icon: <Icon icon="lightbulb" />, label: "Idea" },
+              { icon: <Icon icon="code" />, label: "Build" },
+              { icon: <Icon icon="check" />, label: "Test" },
+              { icon: <Icon icon="upload" />, label: "Ship" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Roadmap (icons)",
+        node: (
+          <Infographic
+            layout="roadmap"
+            items={[
+              { icon: <Icon icon="map" />, label: "Kickoff" },
+              { icon: <Icon icon="book" />, label: "Learn" },
+              { icon: <Icon icon="code" />, label: "Prototype" },
+              { icon: <Icon icon="users" />, label: "Feedback" },
+              { icon: <Icon icon="redo" />, label: "Iterate" },
+              { icon: <Icon icon="trophy" />, label: "Launch" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Pillars (icons)",
+        node: (
+          <Infographic
+            layout="pillars"
+            items={[
+              { icon: <Icon icon="lock" />, label: "Security" },
+              { icon: <Icon icon="zap" />, label: "Performance" },
+              { icon: <Icon icon="users" />, label: "Community" },
+            ]}
+          />
+        ),
+      },
     ],
   },
   {
@@ -1386,7 +1488,7 @@ console.log("C");`}
     id: "audio-clip",
     name: "AudioClip",
     summary:
-      "An audio player with a synced transcript. Custom play/seek controls; if a transcript is present, each cue highlights as it plays (karaoke) and clicking a cue seeks there. Pass cues inline or fetch them from a URL (JSON / .vtt / .srt).",
+      "An audio player with a synced transcript. Custom play/seek controls, a volume control and a speed cycle (both remembered), optional cover art, and a sticky corner mini-player once you scroll past it while it plays. If a transcript is present, each cue highlights as it plays (karaoke) and clicking a cue seeks there. Pass cues inline or fetch them from a URL (JSON / .vtt / .srt). Only one clip on a page plays at a time.",
     demos: [
       {
         label: "With a synced transcript",
@@ -1410,6 +1512,16 @@ console.log("C");`}
           <AudioClip
             title="A short clip"
             src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+          />
+        ),
+      },
+      {
+        label: "With cover art (poster from the feed)",
+        node: (
+          <AudioClip
+            title="Episode cover pulled from the RSS feed"
+            poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
           />
         ),
       },
@@ -1505,6 +1617,108 @@ console.log("C");`}
             <GlossaryText text="A modern framework can render the page on the server, ship raw HTML to the browser, and then run [[hydration]] only where needed. If most of the page is static, you can ship it as [[island]] widgets inside an HTML shell served by an [[edge function]] close to the user. The whole approach is a form of [[progressive enhancement]]: the content arrives as readable HTML first, and interactivity is layered on top only for the parts that truly need it." />
           </GlossaryProvider>
         ),
+      },
+    ],
+  },
+  {
+    id: "profile-card",
+    name: "ProfileCard",
+    summary:
+      "People cards: avatar (image or auto-initials on a theme accent), name, role and bio. Several people stack into container-aware columns; 'list' keeps one horizontal card per row.",
+    demos: [
+      {
+        label: "Team grid (initials + one photo)",
+        node: (
+          <ProfileCard
+            people={[
+              {
+                name: "Ada Lovelace",
+                role: "Episode guest",
+                bio: "Wrote the first published algorithm — a century before hardware could run it.",
+                href: "https://es.wikipedia.org/wiki/Ada_Lovelace",
+              },
+              {
+                name: "Grace Hopper",
+                role: "Compiler pioneer",
+                avatar:
+                  "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Commodore_Grace_M._Hopper%2C_USN_%28covered%29.jpg/256px-Commodore_Grace_M._Hopper%2C_USN_%28covered%29.jpg",
+                bio: "Believed programming should read like language, then built the tools to prove it.",
+              },
+              {
+                name: "Margaret Hamilton",
+                role: "Software engineering",
+                bio: "Coined the term while writing the code that landed on the Moon.",
+              },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Single host (list layout)",
+        node: (
+          <ProfileCard
+            layout="list"
+            people={[
+              {
+                name: "Alan Turing",
+                role: "Host",
+                bio: "Asked whether machines can think, and gave us the vocabulary to keep arguing about it. This layout gives longer bios a full row to breathe.",
+              },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "glossary-term",
+    name: "GlossaryTerm",
+    summary:
+      "A single inline term with a dotted-underline definition tooltip — the one-off sibling of GlossaryText for definitions that aren't in the shared glossary.",
+    demos: [
+      {
+        label: "Inline definition (no provider)",
+        node: (
+          <Prose>
+            <p>
+              Behind every fast page there is a well-placed{" "}
+              <GlossaryTerm
+                term="cache"
+                definition="A copy of already-computed work kept close by, so the next request skips the slow path entirely."
+              />{" "}
+              and a short round trip to the{" "}
+              <GlossaryTerm
+                term="origin"
+                definition="The server that owns the canonical data — the place every cache is ultimately trying to avoid bothering."
+              />
+              .
+            </p>
+          </Prose>
+        ),
+      },
+    ],
+  },
+  {
+    id: "profile-provider",
+    name: "ProfileProvider",
+    summary:
+      "The context boundary of the profile family: wraps a section so ProfileQuiz (writer) and ProfileGate (readers) share one profile. Pass storageKey to persist; omit it for in-memory previews. Storyline's `profile` prop adds this for you.",
+    demos: [
+      {
+        label: "In-memory boundary (no persistence)",
+        node: <ProfileFamilyDemo />,
+      },
+    ],
+  },
+  {
+    id: "profile-gate",
+    name: "ProfileGate",
+    summary:
+      "The reader half of the profile family: wraps content that only appears when the profile matches its `when` condition, with an optional fallback for everyone else.",
+    demos: [
+      {
+        label: "Gate with fallback",
+        node: <ProfileFamilyDemo withFallback />,
       },
     ],
   },
