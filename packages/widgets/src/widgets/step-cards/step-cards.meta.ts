@@ -17,6 +17,12 @@ export const stepCardsMeta: WidgetMeta = {
           description: content()
             .optional()
             .describe("Optional supporting detail shown under the title."),
+          icon: z
+            .string()
+            .optional()
+            .describe(
+              "Optional icon shown in the step badge instead of the number. Iconify name, e.g. 'lucide:route', or a bare name resolved by the theme's icon set.",
+            ),
         }),
       )
       .min(1)

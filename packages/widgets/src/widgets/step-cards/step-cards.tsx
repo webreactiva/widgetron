@@ -1,10 +1,13 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
 
 export interface Step {
   title: string;
   description?: React.ReactNode;
+  /** Optional icon rendered inside the step badge instead of the number. */
+  icon?: React.ReactNode;
 }
 
 export interface StepCardsProps extends React.HTMLAttributes<HTMLOListElement> {
@@ -43,18 +46,18 @@ export function StepCards({
                 aria-hidden
                 className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground shadow-wgt"
               >
-                {start + index}
+                {step.icon ?? start + index}
               </span>
               {!isLast && <span className="w-px flex-1 bg-border" />}
             </div>
             {/* Content */}
             <div className={cn("pt-1", isLast ? "pb-0" : "pb-6")}>
               <p className="font-display font-semibold leading-tight">
-                {step.title}
+                <RichText>{step.title}</RichText>
               </p>
               {step.description != null && (
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {step.description}
+                  <RichText>{step.description}</RichText>
                 </p>
               )}
             </div>

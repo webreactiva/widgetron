@@ -30,6 +30,7 @@ import { compareSliderMeta } from "@/widgets/compare-slider/compare-slider.meta"
 import { hotspotsMeta } from "@/widgets/hotspots/hotspots.meta";
 import { sectionHeaderMeta } from "@/widgets/section-header/section-header.meta";
 import { proseMeta } from "@/widgets/prose/prose.meta";
+import { profileCardMeta } from "@/widgets/profile-card/profile-card.meta";
 import { stepCardsMeta } from "@/widgets/step-cards/step-cards.meta";
 import { patternCardMeta } from "@/widgets/pattern-card/pattern-card.meta";
 import { codeTranslationMeta } from "@/widgets/code-translation/code-translation.meta";
@@ -50,6 +51,7 @@ import { CalloutBox } from "@/widgets/callout-box";
 import { Surprise } from "@/widgets/surprise";
 import { Quote } from "@/widgets/quote";
 import { Cta } from "@/widgets/cta";
+import { ProfileCard } from "@/widgets/profile-card";
 import { StepCards } from "@/widgets/step-cards";
 import { PatternCard } from "@/widgets/pattern-card";
 import { FlowDiagram } from "@/widgets/flow-diagram";
@@ -139,9 +141,18 @@ function asContent(value: unknown): unknown {
   return value;
 }
 
-/** Wrap an icon-name string in <Icon> (theme-aware); pass nodes through. */
+/**
+ * Wrap an icon-name string in <Icon> (theme-aware); pass everything else
+ * through. Only strings shaped like Iconify names ("rocket", "lucide:rocket")
+ * are wrapped — emojis and other literals render verbatim.
+ */
+const ICON_NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*(?::[a-z0-9]+(?:-[a-z0-9]+)*)?$/;
 function asIcon(value: unknown): unknown {
-  return typeof value === "string" ? <Icon icon={value} /> : value;
+  return typeof value === "string" && ICON_NAME_RE.test(value) ? (
+    <Icon icon={value} />
+  ) : (
+    value
+  );
 }
 
 /** Map an array prop, converting each item's icon-name field to <Icon>. */
@@ -188,7 +199,29 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
       description: asContent(p.description),
     }),
   },
-  "step-cards": { ...stepCardsMeta, component: StepCards },
+  "step-cards": {
+    ...stepCardsMeta,
+    component: StepCards,
+    adapt: adaptIconList("steps"),
+  },
+  "profile-card": {
+    ...profileCardMeta,
+    component: ProfileCard,
+    adapt: (p) => ({
+      ...p,
+      people: Array.isArray(p.people)
+        ? p.people.map((person) =>
+            person && typeof person === "object"
+              ? {
+                  ...person,
+                  role: asContent((person as { role?: unknown }).role),
+                  bio: asContent((person as { bio?: unknown }).bio),
+                }
+              : person,
+          )
+        : p.people,
+    }),
+  },
   "pattern-card": {
     ...patternCardMeta,
     component: PatternCard,
@@ -206,7 +239,11 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
   "section-header": { ...sectionHeaderMeta, component: SectionHeader },
   prose: { ...proseMeta, component: Prose },
   "data-chart": { ...dataChartMeta, component: DataChart },
-  infographic: { ...infographicMeta, component: Infographic },
+  infographic: {
+    ...infographicMeta,
+    component: Infographic,
+    adapt: adaptIconList("items"),
+  },
   "mermaid-diagram": { ...mermaidDiagramMeta, component: MermaidDiagram },
   scrubber: { ...scrubberMeta, component: Scrubber },
   "spot-the-bug": { ...spotTheBugMeta, component: SpotTheBug },
@@ -216,7 +253,11 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
     component: CompareSlider,
     adapt: (p) => ({ ...p, before: asContent(p.before), after: asContent(p.after) }),
   },
-  timeline: { ...timelineMeta, component: Timeline },
+  timeline: {
+    ...timelineMeta,
+    component: Timeline,
+    adapt: adaptIconList("items"),
+  },
   "fill-in-the-blanks": { ...fillInTheBlanksMeta, component: FillInTheBlanks },
   "predict-output": { ...predictOutputMeta, component: PredictOutput },
   "drag-and-drop": { ...dragAndDropMeta, component: DragAndDrop },

@@ -37,6 +37,7 @@ export * from "@/widgets/callout-box";
 export * from "@/widgets/quote";
 export * from "@/widgets/surprise";
 export * from "@/widgets/cta";
+export * from "@/widgets/profile-card";
 export * from "@/widgets/step-cards";
 export * from "@/widgets/pattern-card";
 export * from "@/widgets/flow-diagram";
