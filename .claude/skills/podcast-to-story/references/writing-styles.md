@@ -33,6 +33,10 @@ Faithful to the transcript's voice (and the podcast profile if loaded).
   more `quote` widgets.
 - **Widget bias**: quote, prose in the speaker's cadence, group-chat replaying
   real exchanges.
+- **Guardrail**: fidelity never beats comprehension. The reader never heard the
+  audio, so a verbatim joke, metaphor or aside that only works with the spoken
+  delivery must be given context or cut — never left cryptic on the page (SKILL
+  content rule 7 + the cold-reader read-back step).
 
 ### `sobrio`
 Cheat-sheet energy: minimum words, maximum signal.
@@ -50,6 +54,9 @@ resolve it explicitly at the end (last module, before the CTA).
   ("aún no puedes responder esto — sigue"); the closing screen answers it
   verbatim and names the loop closed. A final quiz can BE the resolution.
 - **Check**: if you delete the last module, the guide must feel unfinished.
+- **Title is a loop too**: if the cover/title makes a provocative promise (a
+  word like "mienten"), the body must pay it off explicitly, or soften the
+  title — a hook the guide never develops reads as bait.
 
 ### `viaje-del-heroe`
 The reader is the hero; the episode's tool/idea is the sword.
@@ -59,6 +66,10 @@ The reader is the hero; the episode's tool/idea is the sword.
   project). Module subtitles carry the arc.
 - **Widget bias**: timeline for the arc, terminal-sim/frame-stepper as trials,
   checklist as the elixir brought home.
+- **Guardrail**: DECLARE the frame on the cover ("está contada como un viaje en
+  cinco actos…") so its vocabulary (umbral, elixir) doesn't jar a reader who
+  wasn't told; and avoid metaphor words that collide with tech terms ("elixir"
+  vs the Elixir language → use "el botín").
 
 ### `caso-practico`
 One running example built end-to-end across the whole guide.
@@ -66,6 +77,9 @@ One running example built end-to-end across the whole guide.
   artifact (the same API, the same app); no disconnected examples.
 - **Widget bias**: code-translation, terminal-sim, step-cards, spot-the-bug on
   the case's own code.
+- **Guardrail**: NAME the running example explicitly before the first widget
+  that uses it — a reader who never met "the CMS" is lost by module 2 (see the
+  cold-reader review). Introduce it on a screen AND in `meta.description`.
 
 ### `socratico`
 Question first, explanation after — the reader commits before learning.

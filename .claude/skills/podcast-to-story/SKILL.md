@@ -112,6 +112,40 @@ can review them first.
    `meta.source`; they never appear in titles, eyebrows or screens. Naming the
    show, hosts or community is allowed ONLY when a podcast profile is loaded
    (`--podcast`) and the transcript backs the reference.
+7. **It must stand alone for a non-listener.** The reader never heard the
+   audio; anything that only lands with the spoken delivery is a bug, and the
+   fix is to ADD context, not delete the content (faithful-but-uncontextualized
+   still fails). The recurring smells, all caught by the read-back (step 6):
+   - **Ownerless quote.** A first-person `quote` with no `attribution` reads as
+     "who is saying this — me, the author, an expert?" and the reader can't
+     calibrate it. A name with no `role` fails the same way ("who is Daniel
+     Primo, why trust him?"). Every quote needs an owner; with no `--podcast`
+     profile to license a name, use a neutral source label (`attribution: "La
+     voz del episodio"` + a `role` that gives the stance) so it is clearly a
+     real line from the source; with a profile, give a real credential `role`
+     (a person's stance, not the show name).
+   - **Unanchored metaphor / nickname.** A vivid name lifted from the audio
+     ("el ojo de Sauron" for a level) must be EXPLAINED the first time it
+     appears, or it is just a wink only listeners get.
+   - **Sourceless numbers.** A chart or stat needs a word of provenance, and if
+     the figures are partial or don't add up, say why on the screen.
+   - **Unglossed external reference.** A tool, product or "el matiz de X"
+     dropped by name gets a one-line gloss the first time (or a `[[glossary]]`
+     term).
+   - **Audio-only joke / aside.** Give it context, mark it clearly as a joke,
+     or cut it (clarity beats `voz-original`).
+   - **Widget with no set-up.** An interactive check (quiz, `decision-tree`)
+     needs the idea it tests stated on a PRIOR screen, without spoiling the
+     answer.
+   - **Provenance leak.** No "en el vídeo / en el episodio / en su caso" in the
+     body — rewrite to 2nd person or "en el ejemplo".
+
+   Three whole-guide cousins: a running example must be NAMED before its first
+   use (or the reader spends modules reconstructing it); a narrative frame
+   (`viaje-del-heroe`…) must be DECLARED so its vocabulary doesn't jar; and a
+   provocative title must be PAID OFF in the body (or softened). Worked
+   before→after examples for every smell above:
+   [references/cold-reader-review.md](references/cold-reader-review.md).
 
 ## Structure rules (the dispensa shape, aggressively visual)
 
@@ -170,13 +204,28 @@ gets cut or converted into an exercise.
 5. **Draft** `apps/story-studio/content/<slug>.story.json`. For long episodes,
    draft modules in parallel with subagents — each gets its transcript chunk,
    the manifest path, the rules above, and returns only its module object.
-6. **Validate and self-correct** until clean:
+6. **Read-back as a cold reader** (do NOT skip). Reread the whole draft as
+   someone who never heard the audio: every screen must explain, make the reader
+   practice, or make an idea stick ON ITS OWN. Hunt the seven smells in content
+   rule 7 (ownerless quotes, unanchored metaphors, sourceless numbers, unglossed
+   names, audio-only jokes, un-set-up widgets, provenance leaks) and fix them by
+   ADDING context, trading `voz-original` fidelity for clarity. For the rigorous
+   version — you wrote it, so you have the curse of knowledge and auto-fill the
+   gaps a real reader can't — extract ONLY the reader-facing text (strip
+   `meta.source`, ids and the transcript; e.g. dump every visible string per
+   screen in order) and hand THAT to a fresh subagent role-playing the target
+   reader, forbidden from reading any file, told to flag every point it gets
+   lost, every quote whose speaker it can't name, every widget that lands
+   without set-up. Its confusion list is your fix list. This pass catches what
+   fidelity + variety + validation miss. Worked before→after examples for each
+   smell: [references/cold-reader-review.md](references/cold-reader-review.md).
+7. **Validate and self-correct** until clean:
    ```bash
    pnpm --filter @webreactiva/story-studio story validate <slug>
    ```
    Errors come with node paths (`storyline.modules[2].screens[1].quiz → …`);
    fix exactly what they point at.
-7. **Preview**: `pnpm dev:studio` → `http://localhost:5173/s/<slug>` (player)
+8. **Preview**: `pnpm dev:studio` → `http://localhost:5173/s/<slug>` (player)
    and `/s/<slug>/editar` (editor). Hand off to the user for review.
-8. **Export** only when the user asks: `pnpm story render <slug>` →
+9. **Export** only when the user asks: `pnpm story render <slug>` →
    `apps/story-studio/dist/<slug>/` (self-contained, uploadable anywhere).
