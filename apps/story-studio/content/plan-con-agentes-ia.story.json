@@ -1,0 +1,509 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Patrones y trucos para un buen plan con agentes de IA",
+    "slug": "plan-con-agentes-ia",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "Un buen plan es el artefacto que separa 'pedirle cosas al chat a lo loco' de construir de verdad con agentes de IA. Aquí tienes el flujo completo, visto sobre un caso real (planificar un CMS a medida con agentes): arrancar pidiéndole que te interrogue, esconder trampas para ver cómo de lista es, estresar el plan poniéndolo en tu contra, soltarle agentes que protegen el proyecto y cerrarlo en un markdown listo para ejecutar. Trucos y patrones que aplicas en modo plan… y en casi todo lo demás.",
+    "source": {
+      "type": "podcast",
+      "show": "Web Reactiva Premium",
+      "number": 353,
+      "title": "Patrones y trucos para crear un buen plan con agentes IA",
+      "lang": "es"
+    }
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Vas por la mitad. Aquí tienes los dos prompts 'malos' que más juego dan.",
+          "content": {
+            "type": "prompt-template",
+            "props": {
+              "template": "Eres el abogado del diablo. Defiende todo lo que está en contra de lo que dice este plan, para que se activen otras formas y otros recursos de ese pensamiento.\n\n---\n\nEres un tech lead con muy poca paciencia y muchos años de experiencia. Encuéntrale problemas a este plan.",
+              "note": "Lánzalos en la misma conversación, en modo plan. Que trabaje la IA el pensamiento en contra para que no lo tengas que pensar tú. Y recuerda: tecla escape para no saltar a implementar."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Una idea para llevarte.",
+          "content": {
+            "type": "quote",
+            "props": {
+              "children": "Si queremos tener diez agentes a la vez, cada uno haciendo lo suyo, necesitamos planes más sólidos.",
+              "attribution": "Daniel Primo",
+              "role": "creador de Web Reactiva"
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "link",
+      "title": "Sigue la conversación en Web Reactiva",
+      "description": "Estos trucos salieron de los directos y del propio grupo. Cuéntame cuál es el tuyo y sigue la conversación con la comunidad.",
+      "buttonLabel": "Entra en Web Reactiva",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "plan-con-agentes-ia",
+      "modules": [
+        {
+          "title": "Antes de teclear nada",
+          "subtitle": "El plan es el artefacto al que quieres llegar. Antes de pedirlo, aclárate tú y elige tus armas.",
+          "screens": [
+            {
+              "type": "quiz",
+              "props": {
+                "question": "¿Hace falta activar el 'modo plan' (ese en el que la IA planifica en vez de ejecutar) para poder generar un plan?",
+                "options": [
+                  {
+                    "text": "Sí, sin modo plan no hay plan.",
+                    "feedback": "Es lo intuitivo, pero no. El chat con el LLM es tan abierto que **puedes generar un plan aunque no estés en modo plan**. Curioso, ¿verdad?"
+                  },
+                  {
+                    "text": "No: el chat es tan abierto que puedes generar un plan aunque no estés en modo plan.",
+                    "correct": true,
+                    "feedback": "Eso es. Hay muy pocas restricciones, incluso aunque parezca que las haya. El modo plan ayuda a centrar el tiro, pero esa libertad total también te puede llevar por malos caminos."
+                  },
+                  {
+                    "text": "Solo con herramientas de pago.",
+                    "feedback": "No. Esto lo puedes hacer hasta con un modelo gratuito como Qwen: los resultados son más cortos y hay que insistir más, pero se llega a la misma sensación."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**Un caso para toda la guía.** Todo lo que viene lo seguimos sobre un mismo proyecto: planificar con agentes de IA **un CMS a medida** —el gestor de contenidos de un blog—, tal como se hizo en un directo. Así que cuando más adelante aparezcan «el CMS», «María» o «las trampas del contenido», es este caso."
+              }
+            },
+            {
+              "type": "pattern-card",
+              "props": {
+                "cards": [
+                  {
+                    "icon": "wrench",
+                    "title": "Un agente que planifique",
+                    "description": "Una herramienta con un agente de IA con capacidad de planificación. No necesitas nada más raro que eso."
+                  },
+                  {
+                    "icon": "command",
+                    "title": "El modo plan",
+                    "description": "Se suele activar con **Mayús + Tab**, que va cambiando de modo: plan, build, edit… El nombre baila, pero el modo plan casi siempre está."
+                  },
+                  {
+                    "icon": "cpu",
+                    "title": "Los mejores modelos",
+                    "description": "Los mejores que tengas a mano. En el ejemplo, Claude Code (con Opus 4.6 y un millón de contexto) y Codex (con GPT-5.4), dos asistentes de IA con modo agente. Hasta uno gratis como Qwen sirve."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Lo que sí hay que tener claro es qué quieres hacer. No puedes lanzar un plan así sin más.",
+                "attribution": "Daniel Primo",
+                "role": "creador de Web Reactiva"
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**El plan es el artefacto.** No es un paso previo que se tira: es un fichero **markdown**, accesible en tu repositorio, que funciona como un guión para que la IA sepa qué tiene que hacer. El markdown se ha vuelto casi el nuevo lenguaje de estos modelos: lo entienden y lo generan bien, y con títulos, listas y tablas te basta."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Interrógame (y esconde trampas)",
+          "subtitle": "El primer prompt no le pide código: le pide preguntas. Y tú dejas errores a propósito para ver cómo de lista es.",
+          "screens": [
+            {
+              "type": "prompt-template",
+              "props": {
+                "template": "Quiero que montemos un plan entre los dos, pero vamos a ir paso a paso y me vas haciendo preguntas. Interrógame.\n\nEl plan es para crear {{qué quieres construir}} con un stack {{tu stack}}.\nEs para {{el alcance real}}, no para {{lo que queda fuera}}.",
+                "note": "El truco está en 'Interrógame'. Quieres que la IA deduzca lo que no tiene resuelto y te pregunte. Al principio cansa un poco, pero ahí está la gracia."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Te quiero contar algunas cosas que la IA no sabe. No es que no pueda saberlas: es que hay trampas.",
+                "attribution": "Daniel Primo",
+                "role": "creador de Web Reactiva"
+              }
+            },
+            {
+              "type": "drag-and-drop",
+              "props": {
+                "items": [
+                  { "id": "i1", "label": "Una fecha en otro formato", "target": "trampa" },
+                  { "id": "i2", "label": "Un slug que no coincide con el fichero", "target": "trampa" },
+                  { "id": "i3", "label": "Categorías definidas de dos maneras", "target": "trampa" },
+                  { "id": "i4", "label": "Una ruta de imagen que no existe", "target": "trampa" },
+                  { "id": "i5", "label": "Que hay estados: borrador y publicado", "target": "asume" },
+                  { "id": "i6", "label": "Que el contenido acabará publicándose", "target": "asume" }
+                ],
+                "targets": [
+                  { "id": "trampa", "label": "Trampa que escondí a propósito" },
+                  { "id": "asume", "label": "Lo que un CMS debería asumir solo" }
+                ]
+              }
+            },
+            {
+              "type": "mermaid-diagram",
+              "props": {
+                "chart": "flowchart TD\n  file[\"Fichero .md\"] --> fm[\"Front Matter\"]\n  file --> body[\"Cuerpo\"]\n  fm --> meta[\"Metadatos\"]\n  body --> comp[\"Componentes ocultos\"]\n  body --> embed[\"Embebidos\"]",
+                "details": [
+                  {
+                    "id": "fm",
+                    "title": "El Front Matter",
+                    "description": "Va arriba, separado por tres guiones, en formato **YAML**: clave-valor. No es el contenido en sí, lo categoriza e identifica. Es una estructura de datos."
+                  },
+                  {
+                    "id": "meta",
+                    "title": "Aquí están las trampas",
+                    "description": "Una fecha en otro formato, algún contenido **sin slug** o con un slug que no coincide con el nombre del fichero, y categorías definidas de dos maneras distintas."
+                  },
+                  {
+                    "id": "comp",
+                    "title": "Lo que la IA no suele ver",
+                    "description": "En el cuerpo hay campos encerrados entre **comentarios de HTML** que luego se sustituyen por un componente. No es markdown puro; debería al menos notar que están ahí."
+                  },
+                  {
+                    "id": "embed",
+                    "title": "Más markdown impuro",
+                    "description": "Algún iframe y algún vídeo embebido. Y, ya que estamos, una ruta de imagen que no coincide con ninguna de las que hay en las carpetas."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Estresa el plan",
+          "subtitle": "La IA es complaciente: da por bueno casi todo hasta que la contradices. Ponla en tu contra… pero que trabaje ella.",
+          "screens": [
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Tras la primera pasada del plan, ¿cuántas de tus trampas habrá pillado la IA?",
+                "options": [
+                  {
+                    "text": "Todas: para eso ha explorado los ficheros.",
+                    "feedback": "Ojalá, pero no. En la práctica se le escapan casi todas en la primera vuelta."
+                  },
+                  {
+                    "text": "Casi ninguna: como mucho, una.",
+                    "correct": true,
+                    "feedback": "Eso pasó: solo pilló la de las categorías. ¿Por qué? Porque no la dejamos **solo explorar**: ya le pedimos que tomara decisiones a la vez. Todo tiene un trade-off."
+                  },
+                  {
+                    "text": "Ninguna: la IA no explora ficheros.",
+                    "feedback": "No es eso: estos modelos exploran muy bien con sus herramientas de búsqueda. El problema es pedirle decidir mientras explora."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Si tiras de un lado de la manta, se te queda el culo al aire. Con la IA pasa igual: lo que tiene de bueno también lo tiene de malo.",
+                "attribution": "Daniel Primo",
+                "role": "creador de Web Reactiva"
+              }
+            },
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Lanzas un subagente",
+                    "detail": {
+                      "title": "Con una tarea propia",
+                      "description": "El agente principal es con quien tú chateas. Los subagentes se lanzan con una tarea (y hasta una 'personalidad') propia."
+                    }
+                  },
+                  {
+                    "label": "Contexto a cero",
+                    "detail": {
+                      "title": "Empiezan casi vírgenes",
+                      "description": "Su ventana de contexto arranca a cero. Como ya hay trabajo hecho, se les pasa el plan, así que no será tan amplia."
+                    }
+                  },
+                  {
+                    "label": "Hacen su tarea",
+                    "active": true,
+                    "detail": {
+                      "title": "A lo suyo",
+                      "description": "Procesan lo que tienen encargado. Rara vez preguntan: su misión es completar la tarea y devolver el resultado."
+                    }
+                  },
+                  {
+                    "label": "Devuelven el resultado",
+                    "detail": {
+                      "title": "De vuelta al principal",
+                      "description": "El subagente entrega lo que ha averiguado al agente principal."
+                    }
+                  },
+                  {
+                    "label": "El principal consolida",
+                    "detail": {
+                      "title": "Junta todo",
+                      "description": "'Consolidar' es otra palabra que le encanta a la IA: reúne lo que viene de todos los subagentes en un único plan."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "pattern-card",
+              "props": {
+                "cards": [
+                  {
+                    "icon": "git-branch",
+                    "title": "Planificación especulativa",
+                    "description": "Varios agentes en paralelo, cada uno explorando un camino (backend, interfaz, datos), para poder comparar soluciones."
+                  },
+                  {
+                    "icon": "gavel",
+                    "title": "El abogado del diablo",
+                    "description": "Un agente que defiende todo lo contrario a tu plan, para que aflore lo que la IA quiso ignorar."
+                  },
+                  {
+                    "icon": "user",
+                    "title": "El tech lead impaciente",
+                    "description": "«Con muy poca paciencia y muchos años de experiencia» para encontrarle problemas al plan. Seguro que conoces a alguien así."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Los agentes que protegen tu plan",
+          "subtitle": "Cuatro guardianes que buscan lo que a ti se te escapa: el desastre futuro, el usuario real, lo que no dijiste y tu punto flaco. Y, además, unos agentes 'informativos' que traen datos duros: librerías, tests y dependencias.",
+          "screens": [
+            {
+              "type": "quiz",
+              "props": {
+                "question": "¿Qué le pides a un subagente 'pre-mortem'?",
+                "options": [
+                  {
+                    "text": "Que documente un fallo que ya ocurrió.",
+                    "feedback": "Eso es un **post-mortem**: lo que publican las empresas cuando algo se cayó. El pre-mortem se adelanta al fallo."
+                  },
+                  {
+                    "text": "Que imagine que han pasado seis meses, el proyecto fracasó, y explique por qué.",
+                    "correct": true,
+                    "feedback": "Exacto. Se pone en el futuro, abre un hilo de razonamiento sobre por qué pudo salir mal… y te saca más pegas que ahora mismo no ves."
+                  },
+                  {
+                    "text": "Que escriba los tests automatizados.",
+                    "feedback": "No: eso es un encargo informativo distinto. El pre-mortem solo imagina el desastre para prevenirlo."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "step-cards",
+              "props": {
+                "steps": [
+                  {
+                    "title": "Pre-mortem",
+                    "icon": "alert-triangle",
+                    "description": "«Han pasado seis meses y el proyecto que planificas fracasó. ¿Por qué?»"
+                  },
+                  {
+                    "title": "User Journey",
+                    "icon": "user",
+                    "description": "«A las 9 de la mañana, María entra a gestionar el contenido. ¿Qué hace paso a paso?» Saca todo lo visual y de producto que no habías pensado."
+                  },
+                  {
+                    "title": "Inventario de decisiones implícitas",
+                    "icon": "list",
+                    "description": "«Revisa el plan buscando todo lo que dice que se hace X, pero no especifica cómo se hace exactamente.»"
+                  },
+                  {
+                    "title": "Tu punto débil",
+                    "icon": "shield",
+                    "description": "El tuyo, sea cual sea. Si tu flaco es lo visual, por ejemplo, tira de una skill de diseño frontend (una capacidad especializada que le enchufas al agente) para que te diga qué mejorar en el plan."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "El subagente User Journey se pone a currar",
+                "messages": [
+                  {
+                    "from": "Tú",
+                    "side": "right",
+                    "text": "Imagina que a las 9 de la mañana María entra a gestionar el contenido. ¿Qué hace, paso a paso?"
+                  },
+                  {
+                    "from": "Subagente",
+                    "side": "left",
+                    "text": "Abre la app y busca su artículo en **borrador**… ¿pero dónde ve cuáles están en borrador y cuáles publicados?"
+                  },
+                  {
+                    "from": "Subagente",
+                    "side": "left",
+                    "text": "Arrastra una imagen al editor. ¿Se sube? ¿A qué carpeta? ¿Y si la ruta no existe?"
+                  },
+                  {
+                    "from": "Subagente",
+                    "side": "left",
+                    "text": "Guarda. ¿Eso escribe en el sistema de ficheros de `/content` o en una base de datos?"
+                  },
+                  {
+                    "from": "Tú",
+                    "side": "right",
+                    "text": "Media pantalla de decisiones visuales que no habíamos tocado. Justo lo que buscaba."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "flashcards",
+              "props": {
+                "cards": [
+                  {
+                    "front": "Library Researcher",
+                    "back": "Busca —y hasta descarga— librerías que hagan justo lo que pides. En el ejemplo, la IA leyó por su cuenta TINA CMS y KeyStatic —dos CMS de referencia— para inspirarse (una tirando de `gh`, la CLI de GitHub; la otra con `git clone`)."
+                  },
+                  {
+                    "front": "Plan de test",
+                    "back": "Que describa qué tests hará y cómo se llamarán. Más fino: pídeselo automatizado y a tres capas —unitarios, integración y end-to-end—. Cuanto más específico, menos sorpresas."
+                  },
+                  {
+                    "front": "Mapa de dependencias",
+                    "back": "Un diagrama de dependencias entre ficheros; marca la arquitectura interna sin haberla definido. Ojo: tiende a la sobreingeniería y a diagramas ilegibles."
+                  },
+                  {
+                    "front": "Firmas de funciones",
+                    "back": "Las firmas exactas de las funciones clave —`createArticle`, `editArticle`…— con su tipado de entrada y de salida. Para eso usas un lenguaje tipado."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Cierra el plan y ejecuta",
+          "subtitle": "Guárdalo en un markdown, conviértelo en checklist… y decide cuándo dejar de planificar y empezar a construir.",
+          "screens": [
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Dos modelos top, la misma tarea. ¿Cuánto contexto acabó gastando cada plan?",
+                "options": [
+                  {
+                    "text": "Uno muchísimo más que el otro.",
+                    "feedback": "Pues no: quedaron muy parejos, con resultados distintos pero un gasto casi calcado."
+                  },
+                  {
+                    "text": "Muy parecidos: unos 150.000 tokens cada uno.",
+                    "correct": true,
+                    "feedback": "Eso: 150.000 y 160.000. Opus, con su millón de contexto, ni se enteró; a Codex con GPT-5.4 aún le quedaba algo de margen."
+                  },
+                  {
+                    "text": "Imposible saberlo.",
+                    "feedback": "Sí se sabe: lo miras en el propio contexto de la herramienta. Ojo, que además hay tokens de caché que en el log se cuentan por millones."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "data-chart",
+              "props": {
+                "chartType": "hbar",
+                "unit": " tokens",
+                "data": [
+                  { "label": "Claude Code · Opus 4.6", "value": 150000 },
+                  { "label": "Codex · GPT-5.4", "value": 160000 }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "**¿Cuál de los dos planes era mejor?** Daniel pidió a la propia IA que puntuara cada plan con un modo semáforo (verde, amarillo, rojo). Lo curioso: Claude dio como ganador al plan de Claude, y Codex (el de OpenAI), al suyo. La diferencia fue mínima… aunque a Claude le restó no llevar los tests automatizados en el plan. Lo ideal habría sido fundir los dos."
+              }
+            },
+            {
+              "type": "decision-tree",
+              "props": {
+                "start": "q1",
+                "nodes": {
+                  "q1": {
+                    "prompt": "¿Cómo te gusta trabajar con la IA?",
+                    "options": [
+                      { "label": "Metido en la faena", "to": "faena" },
+                      { "label": "Que lo haga y me lo entregue", "to": "auto" }
+                    ]
+                  },
+                  "faena": {
+                    "prompt": "Metido en la faena.",
+                    "outcome": "Ejecuta el plan y ve mejorándolo con lo que ves en el diff y en sus resúmenes. Tu aporte es sólido… pero implica estar pendiente."
+                  },
+                  "auto": {
+                    "prompt": "Que lo haga y te lo entregue.",
+                    "options": [
+                      { "label": "Sí, quiero varios agentes a la vez", "to": "solido" },
+                      { "label": "No, con uno me vale", "to": "directo" }
+                    ]
+                  },
+                  "solido": {
+                    "prompt": "Varios agentes a la vez.",
+                    "outcome": "Entonces necesitas planes **más sólidos**: si diez agentes trabajan en paralelo, el plan es lo único que los mantiene alineados."
+                  },
+                  "directo": {
+                    "prompt": "Con uno basta.",
+                    "outcome": "Si es algo pequeño y directo, no le des más vueltas: lánzate a ejecutar aprovechando el contexto que ya tienes de la planificación."
+                  }
+                }
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "plan-con-agentes-ia-cierre",
+                "items": [
+                  {
+                    "text": "¿Le pediste que te interrogara antes de planificar?",
+                    "hint": "«Interrógame»: una línea que lo cambia todo."
+                  },
+                  { "text": "¿Has estresado el plan (especulativa, abogado del diablo, tech lead)?" },
+                  { "text": "¿Pasaron los agentes protectores (pre-mortem, user journey, decisiones implícitas, tu punto débil)?" },
+                  {
+                    "text": "¿Has ido escapando del modo plan para mejorarlo en vez de saltar a implementar?",
+                    "hint": "Los modelos siempre tiran de 'ya puedes ejecutar'. Tecla escape y a seguir."
+                  },
+                  { "text": "¿Está el plan escrito en un markdown de tu repo, con su checklist paso a paso?" }
+                ],
+                "completion": "Ese es el patrón. La próxima vez que abras el chat, no le sueltes 'hazme un CMS' a lo loco: monta el plan, estrésalo y guárdalo. Luego, a ejecutar."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,557 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Cómo hacer bien el vibe coding (sin que te explote en la cara)",
+    "slug": "vibe-coding-bien",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "Le pediste a la IA una pantalla de login, funcionó, y tres días después alguien la abrió de verdad. El problema nunca fue el vibe coding: fue no saber cuándo parar. Aquí tienes el delta de garantías, los tres niveles para programar con IA según lo que te juegues, la checklist de 10 preguntas y los errores que cometemos todos. Aprende a subir o bajar las garantías con criterio y a dirigir a la IA en vez de aceptar sin más lo que escupe.",
+    "source": {
+      "type": "post",
+      "site": "Web Reactiva",
+      "title": "Cómo hacer bien vibe coding",
+      "author": "Daniel Primo",
+      "lang": "es",
+      "url": "https://www.webreactiva.com/blog/como-vibe-coding"
+    }
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Vas por la mitad. Guárdate esta para los días de prisa.",
+          "content": {
+            "type": "callout-box",
+            "props": {
+              "variant": "aha",
+              "children": "Un cambio que no entiendes es deuda técnica que aún no sabes que tienes. Si solo te llevas una idea de todo esto: avanza en pasos pequeños y commitea a menudo."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Una última idea para llevarte.",
+          "content": {
+            "type": "quote",
+            "props": {
+              "children": "El diferenciador entre hacer el tonto con la IA y hacer ingeniería con la IA no es la herramienta que usas. Es cuánta estructura le pones alrededor. El mismo agente sirve para las dos cosas.",
+              "attribution": "La voz de la guía"
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "link",
+      "placement": "end",
+      "title": "Sigue subiendo tu delta de garantías",
+      "description": "Cada domingo, developers reciben en su correo lo que de verdad funciona al programar con IA. Gratis.",
+      "buttonLabel": "Entra en Web Reactiva",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "vibe-coding-bien",
+      "glossary": {
+        "vibe coding": "Programar describiéndole a una IA lo que quieres en lenguaje natural y aceptando el código que devuelve, muchas veces sin leerlo a fondo.",
+        "delta de garantías": "Todo lo que añades entre «parece que funciona» y «me atrevo a mantenerlo»: contexto, tests, evals, revisión humana y revisión de seguridad.",
+        "ingeniería agéntica": "La versión disciplinada del vibe coding. El mismo agente, pero rodeado de specs, tests, verificación y criterio humano.",
+        "evals": "Comprobaciones que verifican lo que los tests no pueden: si el agente tomó el camino correcto, no solo si el resultado final pasa.",
+        "harness": "La maquinaria que rodea al modelo de IA: contexto, herramientas y ciclo de trabajo. El motor es el modelo; el harness es el resto del coche.",
+        "slopsquatting": "Cuando la IA alucina el nombre de un paquete que no existe y un atacante lo registra en el repositorio con código malicioso dentro."
+      },
+      "modules": [
+        {
+          "title": "El día que la IA te dejó tirado",
+          "subtitle": "Le pediste una pantalla de login. Funcionó. Tres días después, alguien la abrió de verdad.",
+          "screens": [
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "El login que funcionaba… hasta que no",
+                "messages": [
+                  {
+                    "from": "Tú",
+                    "text": "IA, móntame una pantalla de login.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "IA",
+                    "text": "Aquí la tienes en treinta segundos. Arranca y hace lo que pides. ✅",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "Perfecto. Commit. A otra cosa.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "Un compañero, tres días después",
+                    "text": "Oye… esto no funciona y tu código es como raro.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "Construí algo que no entiendo. Y ahora me toca pagar la factura.",
+                    "side": "right"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "No el vibe coding de «soy un mago que construye apps sin saber programar», sino el de «construí algo que no entiendo y ahora me toca pagar la factura».",
+                "attribution": "La voz de la guía"
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Ese login es [[vibe coding]] de manual: le describiste lo que querías, pegaste lo que te devolvió y a otra cosa. El dolor tiene nombre y es medible: [[delta de garantías]] cero. No pusiste **nada** entre «parece que funciona» y «me atrevo a mantenerlo»."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**No tienes que elegir entre velocidad y cordura.** El problema nunca fue el vibe coding: fue no distinguir entre un experimento que vas a tirar mañana y un servicio del que dependen usuarios reales. Hay un punto intermedio, y de eso va esta guía."
+              }
+            }
+          ]
+        },
+        {
+          "title": "El motor no es el coche",
+          "subtitle": "El vibe coding te da el motor. Lo que decide si el código aguanta es todo lo que le pones alrededor.",
+          "screens": [
+            {
+              "type": "data-chart",
+              "props": {
+                "chartType": "hbar",
+                "unit": "%",
+                "data": [
+                  {
+                    "label": "Developers que usan agentes de IA",
+                    "value": 85
+                  },
+                  {
+                    "label": "Los usan a diario",
+                    "value": 51
+                  },
+                  {
+                    "label": "Del código nuevo lo genera la IA",
+                    "value": 41
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "label": "De dónde salen estos números",
+                "children": "Datos del informe **«The New SDLC With Vibe Coding»** de Google (Addy Osmani, Shubham Saboo y Sokratis Kartakis, mayo de 2026), sobre developers profesionales a principios de 2026: el 85% usa agentes con regularidad, el 51% a diario y el 41% del código nuevo lo genera la IA."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Dejarte llevar por las vibes, abrazar los exponenciales y olvidarte de que el código existe.",
+                "attribution": "Andrej Karpathy",
+                "role": "Acuñó el término «vibe coding» en febrero de 2025"
+              }
+            },
+            {
+              "type": "frame-stepper",
+              "props": {
+                "boxes": [
+                  {
+                    "id": "motor",
+                    "label": "El modelo",
+                    "icon": "cpu"
+                  },
+                  {
+                    "id": "harness",
+                    "label": "El harness",
+                    "icon": "settings"
+                  },
+                  {
+                    "id": "coche",
+                    "label": "El producto",
+                    "icon": "box"
+                  }
+                ],
+                "frames": [
+                  {
+                    "caption": "El modelo de IA es el motor. Potente, sí, pero un motor suelto no es un coche.",
+                    "active": ["motor"]
+                  },
+                  {
+                    "caption": "El harness es la maquinaria que lo rodea: correas, engranajes, sensores de seguridad y una línea de montaje.",
+                    "active": ["motor", "harness"]
+                  },
+                  {
+                    "caption": "Ahí vive el 90% del valor. En Terminal Bench 2.0 —un ranking público de agentes de IA en tareas de terminal— un equipo pasó de fuera del Top 30 al Top 5 sin cambiar el modelo, solo afinando el harness.",
+                    "active": ["harness"],
+                    "badges": {
+                      "harness": "Top 30 → Top 5"
+                    }
+                  },
+                  {
+                    "caption": "Motor + harness = un coche que aguanta la carretera. Ese es el salto del vibe coding a la ingeniería.",
+                    "active": ["motor", "harness", "coche"]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "scenario": "Ese login que pegaste sin leer no falló por el modelo. Falló por lo que le faltaba alrededor.",
+                "question": "¿Qué separa «hacer el tonto con la IA» de «hacer ingeniería con la IA»?",
+                "options": [
+                  {
+                    "text": "El agente o el modelo que elijas",
+                    "feedback": "No. El mismo agente sirve para las dos cosas; cambiar de herramienta no te saca del vibe coding por sí solo."
+                  },
+                  {
+                    "text": "Cuánta estructura, verificación y criterio humano le pones alrededor",
+                    "correct": true,
+                    "feedback": "Exacto. El diferenciador no es la herramienta, es cuánta estructura rodea al output de la IA. La misma IA hace el tonto o hace ingeniería según lo que le montes alrededor."
+                  },
+                  {
+                    "text": "Pagar por el plan más caro",
+                    "feedback": "No. En Terminal Bench 2.0 subieron del puesto 30+ al Top 5 sin cambiar el modelo, solo mejorando el harness. El motor era el mismo."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "El delta de garantías y los tres niveles",
+          "subtitle": "Sube o baja las garantías según lo que te juegues. Tu login vive en los tres niveles, no en uno.",
+          "screens": [
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "El [[delta de garantías]] es todo lo que añades entre «parece que funciona» y «me atrevo a mantenerlo». Súbelo y cruzas del vibe coding a la [[ingeniería agéntica]]: contexto, tests, [[evals]] y revisión. No es todo o nada; lo ajustas según el riesgo."
+              }
+            },
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Parece que funciona",
+                    "detail": {
+                      "title": "Delta cero",
+                      "description": "Vibe coding puro: le pides algo a la IA, arranca, hace lo que tiene que hacer y te lo crees. Nada verifica que sea de verdad correcto."
+                    }
+                  },
+                  {
+                    "label": "Contexto",
+                    "detail": {
+                      "title": "Escribe el contexto",
+                      "description": "Un `AGENTS.md` —el fichero donde le escribes a la IA el contexto del proyecto— breve y concreto vale más que un `/init` genérico, algo que respalda un estudio de la ETH de Zúrich (Gloaguen et al., feb 2026). En las pruebas de Vercel, un índice de documentación comprimido llevó la tasa de acierto del 53% al 100%."
+                    }
+                  },
+                  {
+                    "label": "Tests y evals",
+                    "detail": {
+                      "title": "El contrato con la IA",
+                      "description": "Escribir los tests y las evals **antes** del código le dice a la IA qué significa «correcto» y le da una forma de verificarse sola. Eso es lo que lo acerca a la ingeniería."
+                    }
+                  },
+                  {
+                    "label": "Revisión humana",
+                    "detail": {
+                      "title": "Tu criterio entra aquí",
+                      "description": "Revisas las rutas críticas —y en producción, cada línea— más la seguridad. Cada parámetro que llega de fuera es territorio enemigo hasta que demuestres lo contrario."
+                    }
+                  },
+                  {
+                    "label": "Me atrevo a mantenerlo",
+                    "active": true,
+                    "detail": {
+                      "title": "Delta al máximo",
+                      "description": "Ya no es «parece que funciona». Es código que te atreves a sostener dentro de seis meses porque cada garantía que añadiste te cubre las espaldas."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "step-cards",
+              "props": {
+                "steps": [
+                  {
+                    "title": "Nivel 1 · Prototipa el login",
+                    "icon": "🚀",
+                    "description": "Vibe coding puro para ver si la idea cuaja. Desechable, sin tests, sin culpa. Velocidad total y verificación opcional: el coste de equivocarte es ridículo. La única regla es saber que estás en este nivel."
+                  },
+                  {
+                    "title": "Nivel 2 · Conviértelo en feature fiable",
+                    "icon": "🔧",
+                    "description": "Prompt con contexto, criterios de aceptación antes de pedir nada, pasos pequeños y commits frecuentes. Revisas las rutas críticas y no aceptas cambios masivos que no entiendes. La IA implementa, tú decides."
+                  },
+                  {
+                    "title": "Nivel 3 · Auth a producción",
+                    "icon": "🛡️",
+                    "description": "El login maneja datos sensibles: specs, tests, evals, CI, revisión de cada línea, revisión de seguridad, rollback y permisos limitados. La verificación deja de ser opcional y se vuelve sistemática."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "decision-tree",
+              "props": {
+                "start": "q1",
+                "nodes": {
+                  "q1": {
+                    "prompt": "¿Ese login va a llegar a usuarios reales o va a manejar datos sensibles?",
+                    "options": [
+                      {
+                        "label": "No: es una prueba que voy a tirar",
+                        "to": "n1"
+                      },
+                      {
+                        "label": "Sí, tarde o temprano",
+                        "to": "q2"
+                      }
+                    ]
+                  },
+                  "q2": {
+                    "prompt": "¿Vive dentro de un proyecto real, pero un fallo tiene consecuencias que no son catastróficas?",
+                    "options": [
+                      {
+                        "label": "Sí, es una feature más",
+                        "to": "n2"
+                      },
+                      {
+                        "label": "No: si falla, es dinero o datos comprometidos",
+                        "to": "n3"
+                      }
+                    ]
+                  },
+                  "n1": {
+                    "prompt": "Prueba desechable.",
+                    "outcome": "Nivel 1: vibe coding puro, sin culpa. Velocidad total y verificación opcional. La única regla es saber que estás aquí y no dejar que el experimento se disfrace de producto."
+                  },
+                  "n2": {
+                    "prompt": "Feature dentro de un proyecto real.",
+                    "outcome": "Nivel 2: el punto medio del espectro. Prompt con contexto, criterios de aceptación, pasos pequeños y commits frecuentes. La IA implementa, tu criterio entra en los puntos clave."
+                  },
+                  "n3": {
+                    "prompt": "Producción con usuarios reales.",
+                    "outcome": "Nivel 3: specs, tests, evals, CI, revisión humana de cada línea, revisión de seguridad, rollback y permisos limitados. Un bug aquí es dinero, datos o una llamada a las tres de la mañana."
+                  }
+                }
+              }
+            },
+            {
+              "type": "fill-in-the-blanks",
+              "props": {
+                "text": "La única regla del nivel 1 es {{saber}} en qué nivel estás. El desastre empieza cuando un {{experimento}} se disfraza de {{producto}}.",
+                "blanks": {
+                  "saber": {
+                    "options": ["saber", "acelerar", "olvidar"],
+                    "answer": "saber"
+                  },
+                  "experimento": {
+                    "options": ["experimento", "proyecto", "script"],
+                    "answer": "experimento"
+                  },
+                  "producto": {
+                    "options": ["producto", "juguete", "borrador"],
+                    "answer": "producto"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "La checklist antes de dar por bueno nada",
+          "subtitle": "Los errores que cometemos todos, yo el primero, y las diez preguntas que los cazan.",
+          "screens": [
+            {
+              "type": "pattern-card",
+              "props": {
+                "cards": [
+                  {
+                    "icon": "🐘",
+                    "title": "Pides features enormes",
+                    "description": "«Hazme el login completo con OAuth, recuperación de contraseña y dos factores» y esperas magia. La IA escupe una montaña de código plausible que nadie ha pensado. Descompón: pide trozos pequeños que puedas revisar."
+                  },
+                  {
+                    "icon": "🎁",
+                    "title": "Aceptas el primer output",
+                    "description": "El primero que llega rara vez es el bueno. Desconfía de lo que parezca «demasiado listo»: suele esconder supuestos que no se sostienen."
+                  },
+                  {
+                    "icon": "🦊",
+                    "title": "Dejas que la IA se autoverifique",
+                    "description": "Pedirle al agente que compruebe si su código está bien es como pedirle al zorro que vigile el gallinero. Necesitas tests que vivan fuera de su criterio."
+                  },
+                  {
+                    "icon": "📦",
+                    "title": "No lees los imports",
+                    "description": "Riesgo con nombre propio: slopsquatting. La IA alucina un paquete que no existe y alguien lo registra con código malicioso dentro. Comprueba que cada import apunta a un paquete real."
+                  },
+                  {
+                    "icon": "🎭",
+                    "title": "Conviertes una demo en producto",
+                    "description": "El error de los errores. Una demo demuestra una idea; un producto aguanta el mundo real. Arrancan igual, pero no son lo mismo."
+                  },
+                  {
+                    "icon": "↩️",
+                    "title": "No tienes rollback",
+                    "description": "Si no sabes cómo deshacer un despliegue malo, no estás listo para desplegar. Punto."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "mermaid-diagram",
+              "props": {
+                "chart": "flowchart TD\n  A[Copias el error] --> B[Lo pegas en el prompt]\n  B --> C[Aceptas el parche]\n  C --> D{¿Funciona?}\n  D -->|Sí, por ahora| A\n  D -->|Ya no, y no entiendes nada| E[Deuda técnica]",
+                "details": [
+                  {
+                    "id": "A",
+                    "title": "El bucle cómodo",
+                    "description": "Copiar el error, pegarlo, aceptar el parche, repetir. Funciona… hasta que deja de funcionar."
+                  },
+                  {
+                    "id": "D",
+                    "title": "El punto de no retorno",
+                    "description": "Cuando el bucle se rompe, ya no entiendes nada de lo que tienes delante. Diagnostica la causa aunque sea una sola vez."
+                  },
+                  {
+                    "id": "E",
+                    "title": "La factura",
+                    "description": "Un cambio que no entiendes es deuda técnica que aún no sabes que tienes. Y cada retry quema tokens: quemar más no es producir más."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "scenario": "La IA te sugiere instalar un paquete que no habías oído nunca para tu login: `npm i auth-turbo-secure`.",
+                "question": "¿Qué haces antes de instalarlo?",
+                "options": [
+                  {
+                    "text": "Lo instalo: si la IA lo sugiere, por algo será",
+                    "feedback": "Peligro. Esto es slopsquatting: la IA alucina nombres de paquetes que no existen y un atacante los registra con malware dentro. Instalarlo a ciegas es ejecutar código ajeno."
+                  },
+                  {
+                    "text": "Compruebo yo que el paquete existe de verdad y es el que dice ser",
+                    "correct": true,
+                    "feedback": "Eso es. Cada import es territorio a verificar. Comprueba que apunta a un paquete real antes de que llegue a tu proyecto."
+                  },
+                  {
+                    "text": "Le pido a la misma IA que confirme que el paquete es seguro",
+                    "feedback": "No. Pedirle al agente que verifique su propio trabajo es como pedirle al zorro que vigile el gallinero. Necesitas comprobación fuera de su criterio."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "checklist-vibe-coding",
+                "completion": "Ese es el filtro. Si estás en el nivel 1 puedes responder «no» a casi todas y dormir tranquilo. Pero si respondes «sí» a la última y «no» a la mayoría, tu vibe coding se está pasando de listo.",
+                "items": [
+                  { "text": "¿Tengo una spec mínima de lo que quería construir?" },
+                  { "text": "¿Sé qué archivos ha tocado el agente?" },
+                  { "text": "¿He revisado las dependencias nuevas que ha añadido?" },
+                  { "text": "¿Hay tests que cubran lo importante?" },
+                  { "text": "¿He pensado en los casos límite?" },
+                  { "text": "¿Puedo explicar lo que hace este código a otra persona?" },
+                  { "text": "¿Sé cómo revertir el cambio si sale mal?" },
+                  { "text": "¿He probado errores reales, no solo el camino feliz?" },
+                  { "text": "¿Hay datos sensibles de por medio?" },
+                  { "text": "¿Esto va a llegar a usuarios reales?" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "El 80% que hace la IA y el 20% que te hace a ti",
+          "subtitle": "La IA multiplica lo que ya eres. Tu criterio es el otro 20%, y es donde está tu valor.",
+          "screens": [
+            {
+              "type": "tangle-text",
+              "props": {
+                "text": "El llamado problema del 80%: la IA te genera con facilidad el {ia} % del código de una feature. El {=tuyo} % que queda —casos límite, manejo de errores, seguridad, decisiones de arquitectura— exige un contexto que los modelos de hoy no tienen. Ese trozo es tuyo.",
+                "variables": {
+                  "ia": {
+                    "value": 80,
+                    "min": 50,
+                    "max": 95
+                  }
+                },
+                "outputs": {
+                  "tuyo": {
+                    "formula": "100 - ia"
+                  }
+                },
+                "note": "Arrastra el número: aunque la IA suba al 90 %, ese 10 % restante sigue siendo el trabajo difícil, el que pesa."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "**Los errores de la IA han cambiado de forma.** Ya no son fallos de sintaxis que saltan a la vista: son conceptuales —supuestos equivocados sobre la lógica de negocio, casos límite olvidados, decisiones de arquitectura que generan deuda—. Cuesta pillarlos porque el código «parece correcto» y hasta pasa los tests básicos. No extraña que en la Stack Overflow Developer Survey de 2025 el 66% citara como su mayor frustración las «soluciones de IA que casi aciertan, pero no del todo», y que la confianza en el output cayera al 29%, once puntos menos que en 2024."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "La IA es un multiplicador. Multiplica tus fortalezas y, con la misma alegría, tus debilidades.",
+                "attribution": "La voz de la guía"
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Con IA, ¿cuál es la habilidad que más pesa ahora?",
+                "options": [
+                  {
+                    "text": "Escribir más código y más rápido, aceptando todo el output",
+                    "feedback": "No. Un estudio de METR —un laboratorio que mide el impacto de las herramientas de IA— de febrero de 2026 encontró developers con experiencia un 19% MÁS lentos en ciertas tareas, sobre todo por el tiempo de verificar y corregir. Aceptarlo todo no te hace más rápido."
+                  },
+                  {
+                    "text": "Dirigir mejor a quien escribe el código: revisar, guiar y verificar",
+                    "correct": true,
+                    "feedback": "Eso es. La IA no elimina el trabajo de implementación: lo transforma de escribir a revisar y guiar. La habilidad nueva no es escribir más código, sino dirigir mejor a quien lo escribe."
+                  },
+                  {
+                    "text": "Memorizar más sintaxis para depender menos de la IA",
+                    "feedback": "No va por ahí. La IA amplifica la cultura de ingeniería en la que aterriza; el valor está en el criterio, no en recordar sintaxis."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "prompt-template",
+              "props": {
+                "title": "Tu spec de nivel 2, lista para pegar",
+                "template": "Actúa como un desarrollador senior. Vamos a construir «{{la feature, p. ej. login con OAuth}}» dentro de {{el proyecto y su stack}}.\n\nCriterios de aceptación (qué significa «correcto»):\n- {{criterio 1}}\n- {{criterio 2}}\n- Casos límite que hay que cubrir: {{casos límite}}\n\nReglas del encargo:\n- Avanza en pasos pequeños y párate después de cada uno para que revise.\n- Escribe primero los tests que definen el comportamiento.\n- No añadas ninguna dependencia sin listarla y decirme para qué es.\n\nEmpieza solo por: {{el primer paso pequeño}}",
+                "note": "Rellena los {{huecos}} y pégalo en tu agente. Esto es subir el delta sin frenar: contexto, criterios y pasos pequeños desde el primer mensaje."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

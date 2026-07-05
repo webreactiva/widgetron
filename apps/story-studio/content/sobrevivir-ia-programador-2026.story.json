@@ -1,0 +1,532 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Cómo sobrevivir a la IA como programador en 2026",
+    "slug": "sobrevivir-ia-programador-2026",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "El mercado está feo: despidos, contrataciones congeladas y una IA que te pisa los talones en cada tarea. Pero hay una grieta a tu favor: la IA todavía no puede sostener una aplicación de verdad, con sus integraciones, su seguridad y sus casos límite. Esta guía convierte ese hueco en un plan. Vas a recorrer el camino de quien deja de sentirse reemplazable: ser un generalista con filo, meterte en el código que nadie quiere tocar, aprender a integrar IA y construir conexiones reales en vez de seguidores. No es tiempo de prosperar; es de sobrevivir con cabeza. Está contada como un viaje en cinco actos, del mundo que te aprieta hasta que vuelves a casa con lo aprendido. Empieza el viaje.",
+    "source": {
+      "type": "podcast",
+      "show": "HTML All The Things",
+      "title": "How Engineers Stand Out in 2026 (Skills That Actually Matter Now)",
+      "lang": "en",
+      "note": "Traducido y adaptado al español a partir del transcript en inglés. Las citas están traducidas del original."
+    }
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Vas por la mitad del camino. Aquí tienes una herramienta para dar el primer paso de verdad.",
+          "content": {
+            "type": "prompt-template",
+            "props": {
+              "template": "Quiero analizar el mercado de desarrollo de {{tu ciudad o zona}} para decidir en qué reciclarme profesionalmente.\n\nMi stack actual: {{lo que ya sabes}}\nLo que veo repetirse en las ofertas locales: {{lenguajes o tecnologías que más se piden}}\n\nAyúdame a: (1) detectar qué lenguaje o área domina las ofertas de mi zona, (2) elegir un proyecto open source robusto en esa tecnología para levantarlo en local y (3) trazar un plan para reconstruir yo una app que ya hice, sin dejar que la IA la escriba por mí.",
+              "note": "El consejo del episodio: analiza TU mercado local, no el de los titulares. Quizá toque renunciar al remoto y currar en local por un tiempo."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Una última idea para el camino de vuelta.",
+          "content": {
+            "type": "quote",
+            "props": {
+              "children": "Esto quizá no sea tiempo de prosperar, sino de sobrevivir. Por ahora.",
+              "attribution": "Del episodio",
+              "role": "El cierre"
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "link",
+      "title": "Sigue afilando tu criterio",
+      "description": "En Web Reactiva tienes más para no quedarte en la superficie mientras el mercado se recoloca.",
+      "buttonLabel": "Ir a Web Reactiva",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "sobrevivir-ia-programador-2026",
+      "glossary": {
+        "RAG": "Retrieval-Augmented Generation: montas una base de datos vectorial con tus documentos para que el modelo recupere de ahí la información en vez de leerla entera. Hace un año era el estándar.",
+        "frameworks agénticos": "El conjunto de SDKs y herramientas con las que construyes agentes de IA: un SDK de agentes (como el de Vercel), un router de modelos (como OpenRouter) y demás. El agente busca por su cuenta lo que necesita en las fuentes que le das.",
+        "vibe coding": "Programar describiéndole a una IA en lenguaje natural lo que quieres y aceptando lo que te devuelve."
+      },
+      "modules": [
+        {
+          "title": "Te has despertado en un mundo raro",
+          "subtitle": "El mundo ordinario del héroe: despidos, congelaciones y una IA pisándote los talones. El viaje empieza aquí, en la incomodidad de sentirte reemplazable.",
+          "screens": [
+            {
+              "type": "quote",
+              "props": {
+                "children": "Es un momento rarísimo para dedicarse a esto. He tenido la misma conversación con más de una docena de compañeros de empresas distintas, y todos decíamos lo mismo: esto está feo.",
+                "attribution": "Del episodio",
+                "role": "La conversación que se repite"
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "hub",
+                "center": "Tú, en 2026",
+                "items": [
+                  {
+                    "label": "Despidos",
+                    "icon": "briefcase",
+                    "description": "Rondas de despidos que no paran desde los recortes masivos post-COVID."
+                  },
+                  {
+                    "label": "Contratación helada",
+                    "icon": "snowflake",
+                    "description": "Puestos congelados: cuesta cambiar de trabajo y cuesta entrar."
+                  },
+                  {
+                    "label": "La IA en los talones",
+                    "icon": "bot",
+                    "description": "La IA pisándote los talones en tareas que antes solo hacías tú."
+                  },
+                  {
+                    "label": "CEOs con PRs",
+                    "icon": "git-pull-request",
+                    "description": "Directivos abriendo pull requests directamente en tu código."
+                  },
+                  {
+                    "label": "Producto picando código",
+                    "icon": "users",
+                    "description": "Managers de producto empujados a mandar código hecho con IA."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Con la IA puedes hacer [[vibe coding]] y sacar adelante algo sencillo en un rato."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**Pero la IA todavía no puede sostener una app de verdad.** Una que usan cientos de miles de personas trae integraciones, dependencias, vulnerabilidades, autenticación, almacenamiento de datos… Eso pide criterio y conocimiento de dominio acumulado durante años. Y hay algo más: la IA suele dar ideas genéricas, del montón. Tu intuición y tu forma de idear son justo lo que te diferencia."
+              }
+            },
+            {
+              "type": "pattern-card",
+              "props": {
+                "cards": [
+                  {
+                    "icon": "plug",
+                    "title": "Integraciones",
+                    "description": "Conectores con otros sistemas de los que depende medio equipo."
+                  },
+                  {
+                    "icon": "package",
+                    "title": "Dependencias",
+                    "description": "Librerías y servicios que hay que mantener y actualizar."
+                  },
+                  {
+                    "icon": "shield",
+                    "title": "Seguridad",
+                    "description": "Vulnerabilidades y permisos que la IA se salta si la prompteas mal."
+                  },
+                  {
+                    "icon": "key",
+                    "title": "Autenticación",
+                    "description": "Quién entra, a qué y con qué garantías."
+                  },
+                  {
+                    "icon": "database",
+                    "title": "Almacenamiento",
+                    "description": "Datos reales, con toda su historia. No caben en una demo."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "¿Junior, mid, senior? Da igual la etiqueta. Eres ingeniero: estás aquí para resolver problemas y para hacerlo bien. Esas etiquetas que nos colgamos significan cosas distintas en cada empresa.",
+                "attribution": "Del episodio",
+                "role": "El cambio de mentalidad"
+              }
+            }
+          ]
+        },
+        {
+          "title": "El umbral: la navaja suiza con filo",
+          "subtitle": "Cruzas el umbral y coges tu primera arma. Ser generalista no es ser superficial: es dominar lo que a la IA se le escapa —seguridad, rendimiento, coste, infraestructura.",
+          "screens": [
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "pillars",
+                "items": [
+                  {
+                    "label": "Seguridad",
+                    "icon": "shield",
+                    "description": "Cerrar vulnerabilidades y permisos que un PR hecho con IA suele dejar abiertos."
+                  },
+                  {
+                    "label": "Rendimiento",
+                    "icon": "gauge",
+                    "description": "Que la app no solo funcione, sino que aguante en producción."
+                  },
+                  {
+                    "label": "Coste",
+                    "icon": "coins",
+                    "description": "La IA no sabe que estás en serverless y te dispara la factura; tú sí."
+                  },
+                  {
+                    "label": "Infraestructura",
+                    "icon": "server",
+                    "description": "Lo que hace que una app pase de 'mola' a robusta y lista para producción."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**El generalista no es superficial: es peligroso, en el buen sentido.** Tocas backend y frontend, algo de TypeScript, algo de Rust… sin ser el más profundo en nada, pero con una base sólida en todo. El filo está en esas cuatro áreas poco vistosas que la IA se salta. Con eso construyes un sistema robusto de punta a punta, y eso te hace más valioso, más difícil de despedir y más fácil de contratar. **Tu paso hoy:** elige una de las cuatro y ponte a fondo con ella."
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "Cuando cae un PR 'vibe-codeado' en tu bandeja",
+                "messages": [
+                  {
+                    "from": "Manager",
+                    "text": "Esta feature la ha montado producto con IA. Necesito que salga hoy.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "Dame diez minutos y la reviso antes de que toque producción.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "Vale: le falta un control de acceso (por ahí se colaba una vulnerabilidad) y, en serverless, esta consulta nos dispara el coste.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "Manager",
+                    "text": "…no había pensado en nada de eso.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "Por eso hago yo la revisión. Producto propone; yo me aseguro de que aguante.",
+                    "side": "right"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "step-cards",
+              "props": {
+                "steps": [
+                  {
+                    "title": "Cuéntalo cuando hablen de diseño",
+                    "icon": "pencil",
+                    "description": "Si te preguntan cómo diseñarías algo, di en voz alta que lo harías de forma segura, probada y sin disparar el coste."
+                  },
+                  {
+                    "title": "Trae una historia real",
+                    "icon": "message-circle",
+                    "description": "Explica una vez que corregiste un PR hecho con IA: qué fallaba y qué cambiaste tú. Esto, en concreto, te separa del resto."
+                  },
+                  {
+                    "title": "Ponlo en tu web",
+                    "icon": "globe",
+                    "description": "Anúncialo en tu portfolio: que quede claro que eres quien deja el desastre listo para producción. A veces te abren la entrevista por eso."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Las pruebas: métete donde nadie quiere entrar",
+          "subtitle": "El camino se pone cuesta arriba: código legacy, pipelines de hace diez años, muros que no terminan. Si te cuesta, buena señal: ahí es donde casi nadie se mete.",
+          "screens": [
+            {
+              "type": "quote",
+              "props": {
+                "children": "Meterte en estos código base no es fácil, ni debería serlo. Y si te está costando, bien: significa que lo estás consiguiendo. Si te resulta pan comido, busca uno más difícil.",
+                "attribution": "Del episodio",
+                "role": "La prueba"
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "**¿Por qué el código legacy paga?** Reescribir es caro y casi nunca hace falta, así que las empresas necesitan gente que mantenga sistemas de hace diez años. Java está entre lo más pedido justo por eso: montañas de sistemas legacy y pocos ingenieros nuevos que lo dominen. Hay quien saca gente de la jubilación para tocar mainframes. **Tu paso hoy:** mira qué lenguaje domina las ofertas de TU zona, no las de internet."
+              }
+            },
+            {
+              "type": "step-cards",
+              "props": {
+                "steps": [
+                  {
+                    "title": "Domina los fundamentos del lenguaje que piden",
+                    "icon": "book",
+                    "description": "Reconstruye en ese lenguaje (Java, por ejemplo) una app que ya hiciste en otro. Hazla tú; apóyate un poco en la IA, pero no dejes que la escriba por ti."
+                  },
+                  {
+                    "title": "Elige un open source que cueste levantar",
+                    "icon": "package",
+                    "description": "Uno robusto, no un 'hola mundo'. El reto es justo ponerlo en marcha."
+                  },
+                  {
+                    "title": "Pelea con el entorno",
+                    "icon": "wrench",
+                    "description": "Variables de entorno, dependencias en local, muro tras muro. Ahí aprendes de verdad cómo funciona un sistema legacy."
+                  },
+                  {
+                    "title": "Únete a la comunidad y manda un PR",
+                    "icon": "git-pull-request",
+                    "description": "Pregunta, deja que te mentoricen y aguanta la crítica del PR sin tomártelo a mal: cada corrección es una lección."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "decision-tree",
+              "props": {
+                "start": "q1",
+                "nodes": {
+                  "q1": {
+                    "prompt": "¿Hay ofertas de un lenguaje legacy (Java y compañía) en tu zona?",
+                    "options": [
+                      { "label": "Sí, unas cuantas", "to": "learn" },
+                      { "label": "Casi todo pide remoto o stacks modernos", "to": "remote" }
+                    ]
+                  },
+                  "learn": {
+                    "prompt": "Hay demanda local.",
+                    "outcome": "Perfecto: aprende los fundamentos y levanta un open source robusto en esa tecnología. Va a costar —Jenkins de hace diez años, microservicios, despliegues de una hora— y por eso necesitan gente que aguante ahí."
+                  },
+                  "remote": {
+                    "prompt": "Poca demanda local que encaje.",
+                    "options": [
+                      { "label": "Puedo renunciar al remoto por un tiempo", "to": "local" },
+                      { "label": "Necesito quedarme donde estoy", "to": "plugin" }
+                    ]
+                  },
+                  "local": {
+                    "prompt": "Con flexibilidad para moverte.",
+                    "outcome": "El remoto puede ser un lujo de otro mercado. Currar en local, aunque no te apetezca, te abre muchas más puertas ahora mismo."
+                  },
+                  "plugin": {
+                    "prompt": "Sin moverte de sitio.",
+                    "outcome": "Mete el pie por otra puerta: haz un plugin para una herramienta veterana que todavía se usa (un Moodle, un Drupal…). Resuelves un problema real y ganas experiencia en código que arrastra años."
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "La recompensa: ponte encima de lo que más se mueve",
+          "subtitle": "Llega el momento de la victoria. Coges el arma que casi nadie afila: integrar IA en aplicaciones de verdad y estar al día de lo que cambia cada semana.",
+          "screens": [
+            {
+              "type": "quote",
+              "props": {
+                "children": "El premio no es saberlo todo. Es ser quien está encima de una de las cosas que más rápido se mueven. Eso, hoy, te diferencia.",
+                "attribution": "Del episodio",
+                "role": "La recompensa"
+              }
+            },
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Eliges un SDK",
+                    "detail": {
+                      "title": "Un framework agéntico",
+                      "description": "El SDK de agentes (como el de Vercel) más un router de modelos (como OpenRouter). No hace falta un máster: es bastante directo."
+                    }
+                  },
+                  {
+                    "label": "Conectas el modelo",
+                    "detail": {
+                      "title": "Enchufas el LLM",
+                      "description": "Le das acceso al modelo desde tu aplicación, nueva o legacy."
+                    }
+                  },
+                  {
+                    "label": "Le das tus fuentes",
+                    "active": true,
+                    "detail": {
+                      "title": "Aquí está la clave",
+                      "description": "Le pasas las fuentes de datos: el agente irá a buscar por su cuenta lo que necesite de ahí."
+                    }
+                  },
+                  {
+                    "label": "El agente extrae lo justo",
+                    "detail": {
+                      "title": "Contexto bajo demanda",
+                      "description": "En vez de tragárselo todo, el agente saca solo la información que le hace falta en cada momento."
+                    }
+                  },
+                  {
+                    "label": "Responde en tu app",
+                    "detail": {
+                      "title": "De vuelta al producto",
+                      "description": "El resultado se integra en tu aplicación. Ponlo en tu CV: muchas empresas piden exactamente esto."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Hace un año, en las entrevistas todo el mundo hablaba de [[RAG]]. Hoy se lleva más el enfoque de [[frameworks agénticos]]: en lugar de montar una base de datos vectorial con todos tus documentos, el modelo lee las fuentes que le das y saca lo que necesita. No es que RAG haya dejado de funcionar; es que los modelos han mejorado tanto que muchas veces sale más a cuenta leer los documentos directamente."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "En una entrevista para construir sistemas con IA, ¿qué te hace destacar hoy?",
+                "options": [
+                  {
+                    "text": "Presentar RAG como lo último de lo último",
+                    "feedback": "Cuidado: hace un año RAG era EL tema, pero si es lo único que mencionas hoy, para quien contrata es una señal de alarma (amarilla, no roja: no te tumba la entrevista, pero preocupa que no sigas uno de los espacios que más rápido cambian)."
+                  },
+                  {
+                    "text": "Contar que has notado el salto a frameworks que leen los datos directamente",
+                    "correct": true,
+                    "feedback": "Exacto. No hace falta dominarlo todo: basta con demostrar que estás encima. Además, el sistema se está simplificando: RAG te obligaba a montar una base de datos vectorial; ahora, con modelos mejores, muchas veces basta con que lean los documentos."
+                  },
+                  {
+                    "text": "Dejar claro que no tocas IA hasta que se estabilice",
+                    "feedback": "Entendible como escepticismo, pero si el puesto es para construir cosas con IA, quedarte fuera te resta justo donde te podrías diferenciar."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Vuelve a casa con el botín",
+          "subtitle": "Regresas a tu mundo con lo aprendido y lo aplicas a lo que importa: tu carrera. Conexiones en vez de seguidores, un plan por fases y un paso a paso que puedes empezar hoy.",
+          "screens": [
+            {
+              "type": "quote",
+              "props": {
+                "children": "No te obsesiones con los seguidores. Obsesiónate con las conexiones. Da igual que tengas cinco: ¿has ayudado a alguien de verdad? ¿Harías que te recomendaran para un puesto?",
+                "attribution": "Del episodio",
+                "role": "El botín"
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "**El juego del 'influencer' no es para el 99% de la gente.** Solo compensa si de verdad te encanta enseñar y ponerte delante; si no, acabas persiguiendo un puesto de dev rel (developer relations: divulgación técnica para developers) que no querías. Lo que sí funciona para todos: construir comunidad. Entra en un Discord, en un taller o en una charla de cafetería, ayuda a alguien y ya está. Quedarte en tu burbuja, sin nadie con quien contrastar ideas, es lo que de verdad te frena. **Tu paso hoy:** entra en una comunidad y ayuda a una persona esta semana."
+              }
+            },
+            {
+              "type": "timeline",
+              "props": {
+                "items": [
+                  {
+                    "time": "Ahora",
+                    "title": "Sobrevive, no corras",
+                    "icon": "anchor",
+                    "description": "No es tiempo de prosperar, sino de aguantar con cabeza. Quédate en tu puesto, transiciona sin dramas y evita montar ruido."
+                  },
+                  {
+                    "time": "3–5 años",
+                    "title": "Busca terreno estable",
+                    "icon": "briefcase",
+                    "description": "Trabajos más seguros —administración pública, empresas 'tech-adjacent' tradicionales (con producto tecnológico pero que no son puramente tech)— con más estabilidad y conciliación, aunque el sueldo no sea el de big tech."
+                  },
+                  {
+                    "time": "Cuando el mercado rebote",
+                    "title": "Salta a lo arriesgado",
+                    "icon": "rocket",
+                    "description": "Si la industria se recupera, ahí es cuando das el salto a una empresa más 'tech', con más riesgo y mejor pagada."
+                  }
+                ],
+                "defaultOpen": 0
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "El mercado está durísimo. ¿Cuál es la jugada más fiable para que te contraten?",
+                "options": [
+                  {
+                    "text": "Aplicar en frío a todo lo que se mueva",
+                    "feedback": "Es una lotería: cada oferta recibe entre 300 y 500 candidatos, un ATS —el filtro automático de currículums— criba por ti y pierde buenos perfiles por el camino. Tu solicitud acaba siendo una tirada de dados."
+                  },
+                  {
+                    "text": "Volverte influencer con 10.000 seguidores",
+                    "feedback": "Para el 99% es la jugada equivocada: eso es aspirar a dev rel, no a tu puesto. Los números no te contratan."
+                  },
+                  {
+                    "text": "Construir conexiones reales que te recomienden por dentro",
+                    "correct": true,
+                    "feedback": "Eso es. Contratar está roto y las empresas huyen hacia dentro: 'a ver si alguien recomienda a alguien' para saltarse quince entrevistas. Una recomendación te mete por esa puerta."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "plan-sobrevivir-ia-2026",
+                "items": [
+                  {
+                    "text": "Elige un área de alto valor y ponte a fondo",
+                    "hint": "Seguridad, rendimiento, coste o infraestructura: lo que la IA se salta."
+                  },
+                  {
+                    "text": "Averigua qué tecnología domina las ofertas de tu zona",
+                    "hint": "Tu mercado local, no el de los titulares."
+                  },
+                  {
+                    "text": "Levanta en local un open source que cueste arrancar",
+                    "hint": "El reto es justo ponerlo en marcha, muro tras muro."
+                  },
+                  {
+                    "text": "Cacharrea con un SDK de IA y ponlo en tu CV",
+                    "hint": "OpenRouter, el SDK de Vercel… con integrarlo una vez ya puedes hablarlo en una entrevista."
+                  },
+                  {
+                    "text": "Construye tres conexiones reales esta semana",
+                    "hint": "Ayuda a alguien en un Discord, un taller o un evento local."
+                  },
+                  {
+                    "text": "Prepara tu historia de entrevista",
+                    "hint": "Un PR hecho con IA que corregiste: qué fallaba y qué cambiaste tú."
+                  }
+                ],
+                "completion": "Ese es tu equipo de supervivencia. Y ni se te ocurra hacerlo todo a la vez: elige una casilla y ve a por ella, un poco al día, un poco a la semana."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

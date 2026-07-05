@@ -1,0 +1,416 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Los agentes de IA mienten y tú cada vez lees menos su código",
+    "slug": "agentes-ia-mienten-niveles",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "Cinco niveles para trabajar con IA, y en la cima ocurre algo incómodo: dejas de leer el código que la máquina escribe por ti. ¿Locura o futuro inevitable? Sube peldaño a peldaño, descubre en cuál estás tú y por qué —leas o no leas— sigues siendo el responsable de todo lo que sale con tu nombre.",
+    "source": {
+      "type": "podcast",
+      "show": "Web Reactiva",
+      "number": 340,
+      "title": "La filtración de Claude Code y los cinco niveles de adopción de la IA",
+      "lang": "es"
+    }
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Vas por la mitad. ¿Quieres saber en qué peldaño estás tú exactamente?",
+          "content": {
+            "type": "prompt-template",
+            "props": {
+              "title": "¿En qué nivel estás tú?",
+              "template": "Estoy trabajando con IA en este proyecto: {{describe el proyecto}}.\n\nAhora mismo yo: {{escribo el código / no lo escribo pero lo leo / ya casi no lo leo}}.\nLa responsabilidad última del proyecto es: {{solo mía / de un cliente o un equipo}}.\n\nDime en qué nivel de los cinco encajo, qué guardarraíles (tests, revisiones, agentes) me faltan para subir un peldaño sin perder el control, y qué riesgo asumo si dejo de leer el código.",
+              "note": "Cópialo en tu asistente. La idea no es subir por subir: es saber qué red de seguridad necesitas en cada peldaño."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Una última para el camino.",
+          "content": {
+            "type": "callout-box",
+            "props": {
+              "variant": "aha",
+              "children": "**¿Y por encima del nivel 5?** Si el 5 es dejar de leer, el chiste inevitable es imaginar un 'nivel 6': soltarlo todo y que la IA decida sola, sin nadie mirando. Una bomba nuclear de la que nadie sabe qué esperar —hoy más broma que realidad—. Pero, al ritmo que vamos… ya veremos quién se atreve a subir."
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "link",
+      "title": "Sigue subiendo peldaños",
+      "description": "En Web Reactiva seguimos contando cómo trabajar con IA sin soltar el control.",
+      "buttonLabel": "Ir a Web Reactiva",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "agentes-ia-mienten-niveles",
+      "glossary": {
+        "asistente de código": "La IA integrada en tu editor: le preguntas y sugiere o escribe código sin que salgas del IDE.",
+        "vibecoding": "Programar dejando que la IA genere mientras tú vas viendo el resultado y corriges, sin volver atrás a leerlo línea a línea. El término lo popularizó Andrej Karpathy, con cierta ironía.",
+        "guardarraíles": "El armazón de pruebas, revisiones automáticas, agentes y validaciones que rodea al código generado para atrapar lo que la IA hace mal.",
+        "campana de Gauss": "La curva en forma de campana: la mayoría de los casos se agrupa en el centro y quedan pocos en los extremos.",
+        "prueba de concepto": "Una versión rápida y desechable de una idea para ver si funciona, sin pretender que sea el producto final."
+      },
+      "modules": [
+        {
+          "title": "Cinco peldaños hacia el ojo de Sauron",
+          "subtitle": "Simon Willison, el creador de Django, dibujó cinco niveles para trabajar con IA. En cada uno le cedes más… hasta que la cima da vértigo.",
+          "screens": [
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**Hay una escalera de cinco peldaños para trabajar con IA.** La dibujó Simon Willison, el creador de Django. En cada peldaño le cedes más trabajo… y en la cima pasa algo que da vértigo: ya ni lees el código que escribe por ti. Antes de subir, quédate con esta pregunta: si la IA se equivoca y tú no lo lees, ¿quién responde? La contestamos al final."
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "stairs",
+                "items": [
+                  {
+                    "label": "Solo chat",
+                    "description": "Le haces preguntas a un chat de IA y ya está. El peldaño de entrada."
+                  },
+                  {
+                    "label": "En tu editor",
+                    "description": "El mismo asistente, pero dentro de tu IDE. Le preguntas sin salir de tu código."
+                  },
+                  {
+                    "label": "Escribe por ti",
+                    "description": "Ya no solo pregunta: la IA monta funcionalidades enteras. Escribe más que tú."
+                  },
+                  {
+                    "label": "No escribes",
+                    "description": "Le dices qué quieres —'hazme esto, lánzame los test'— y lo hace. Tú no tecleas el código."
+                  },
+                  {
+                    "label": "No lees",
+                    "description": "Sale el código, haces tus pruebas… pero ya no lo lees. Lo llamamos la cima bajo el ojo de Sauron: lo ves todo funcionar desde arriba, pero ya no bajas a mirar el código por dentro."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Fíjate en lo que se mueve al subir cada peldaño. Primero le preguntas a un chat; luego ese chat baja a tu editor y se vuelve un [[asistente de código]]; después escribe más que tú; más arriba dejas de escribir; y en la cima dejas de leer. Son dos fronteras distintas —escribir y leer— y las cruzas en momentos diferentes. Ese último peldaño roza el [[vibecoding]], y por eso incomoda: sin leer el código, todo depende de los [[guardarraíles]] que montes alrededor."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**¿Y lo de \"mienten\" del título?** La IA no te miente a propósito. Pero te devuelve código que *parece* correcto: compila, hasta pasa una prueba rápida… y puede estar mal por dentro. El problema no es que mienta: es que cuanto más subes en la escalera, menos lo lees para pillarlo. De eso va esta guía."
+              }
+            }
+          ]
+        },
+        {
+          "title": "El salto que da vértigo",
+          "subtitle": "El nivel 5 no es escribir menos: es dejar de leer. Y esa frontera lo cambia todo.",
+          "screens": [
+            {
+              "type": "flashcards",
+              "props": {
+                "cards": [
+                  {
+                    "front": "Nivel 1",
+                    "back": "Solo chat: le haces preguntas a un chat de IA y ya está."
+                  },
+                  {
+                    "front": "Nivel 2",
+                    "back": "Asistente en tu editor: le preguntas, pero ya dentro de tu IDE."
+                  },
+                  {
+                    "front": "Nivel 3",
+                    "back": "Escribe por ti: la IA ya monta funcionalidades enteras. Escribe más que tú."
+                  },
+                  {
+                    "front": "Nivel 4",
+                    "back": "No escribes el código: le dices 'quiero esto, hazme lo otro, lánzame los test' y lo hace."
+                  },
+                  {
+                    "front": "Nivel 5",
+                    "back": "No lees el código: sale, haces tus pruebas, pero ya no lees lo que se ha generado. La cima."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "Nivel 4 en directo",
+                "messages": [
+                  {
+                    "from": "Tú",
+                    "text": "Móntame el login con email y contraseña. Y lánzame los test.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "La IA",
+                    "text": "Hecho. Funcionalidad completa y los tests en verde.",
+                    "side": "left"
+                  },
+                  {
+                    "from": "Tú",
+                    "text": "Ni una línea he escrito yo. Reviso el resultado y sigo.",
+                    "side": "right"
+                  },
+                  {
+                    "from": "La IA",
+                    "text": "Da un paso más y ni siquiera lo lees. Eso ya es el nivel 5.",
+                    "side": "left"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Si no leo el código, entonces mi trabajo, ¿cuál es?",
+                "attribution": "La voz del episodio",
+                "role": "la pregunta incómoda que plantea"
+              }
+            }
+          ]
+        },
+        {
+          "title": "¿Dónde está todo el mundo?",
+          "subtitle": "Una encuesta informal entre gente que ya trabaja con IA dibujó dónde está el grueso. Pero el peldaño que te conviene a ti no lo marca la media: lo marca quién responde si algo sale mal.",
+          "screens": [
+            {
+              "type": "data-chart",
+              "props": {
+                "chartType": "bar",
+                "unit": "%",
+                "data": [
+                  {
+                    "label": "1 · Solo chat",
+                    "value": 10
+                  },
+                  {
+                    "label": "3 · Escribe por ti",
+                    "value": 26
+                  },
+                  {
+                    "label": "4 · No escribes",
+                    "value": 32
+                  },
+                  {
+                    "label": "5 · No lees",
+                    "value": 13
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "**La campana engaña.** El pico está entre el nivel 3 y el 4: casi nadie dice vivir en los extremos. Pero ojo con la trampa: quien se siente 'atrasado' tiende a no responder estas encuestas, así que los niveles bajos pesan más de lo que ves. Y el nivel 2, el del asistente en el editor, aquí ni se llegó a medir —por eso los porcentajes no suman cien—."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "En función de la responsabilidad que tengo sobre el proyecto: si depende solo de mí, estoy más en el nivel 5; si es un proyecto de cliente, estoy más en el 4.",
+                "attribution": "La voz del episodio",
+                "role": "sobre su propio criterio"
+              }
+            },
+            {
+              "type": "decision-tree",
+              "props": {
+                "start": "q1",
+                "nodes": {
+                  "q1": {
+                    "prompt": "Aplícalo a lo tuyo: ¿de quién es la responsabilidad última del proyecto en el que trabajas?",
+                    "options": [
+                      { "label": "Solo mía (un proyecto personal)", "to": "solo" },
+                      { "label": "De un cliente o un equipo grande", "to": "cliente" }
+                    ]
+                  },
+                  "solo": {
+                    "prompt": "Solo tuya.",
+                    "outcome": "Puedes tirar hacia el nivel 5: si algo peta, lo pagas tú y aprendes. Aun así, monta tus guardarraíles antes de dejar de leer."
+                  },
+                  "cliente": {
+                    "prompt": "De un cliente o un equipo.",
+                    "outcome": "Quédate más cerca del nivel 4: sigues sin escribir cada línea, pero revisas más. En las empresas grandes casi nadie se plantea siquiera que nadie revise el código."
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "¿Vibecoding o algo con más criterio?",
+          "subtitle": "'El nivel 5 es vibecoding', suena la crítica. Sí y no: depende de si te quedas en la superficie.",
+          "screens": [
+            {
+              "type": "quote",
+              "props": {
+                "children": "Asumo que vamos a estar todos en el nivel 5 en algún momento, y empezaremos a abrir el ojo de Sauron que está arriba. Veremos a ver. Y si no nos come.",
+                "attribution": "La voz del episodio",
+                "role": "prediciendo el futuro, medio en broma"
+              }
+            },
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Pides algo",
+                    "detail": {
+                      "title": "Tú diriges",
+                      "description": "Le dices a la IA qué quieres. No abres el editor a escribirlo a mano."
+                    }
+                  },
+                  {
+                    "label": "La IA genera",
+                    "detail": {
+                      "title": "Sale el código",
+                      "description": "En el vibecoding más superficial —generadores de app por chat como V0 o Lovable— te quedarías aquí: chat, resultado, siguiente."
+                    }
+                  },
+                  {
+                    "label": "Miras el diff",
+                    "active": true,
+                    "detail": {
+                      "title": "Ver el diff, no leerlo todo",
+                      "description": "No lees todo el código, pero sí miras los **diff**: lo que cambia en cada paso. Ver sin leerlo entero."
+                    }
+                  },
+                  {
+                    "label": "Corriges hacia delante",
+                    "detail": {
+                      "title": "Nunca hacia atrás",
+                      "description": "Si algo no encaja, dices 'corrige'. No vuelves atrás a rehacerlo a mano: siempre hacia delante."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "pattern-card",
+              "props": {
+                "cards": [
+                  {
+                    "icon": "🚀",
+                    "title": "Más en menos tiempo",
+                    "description": "Más features, más software, menos horas. En el fondo, todos queremos eso."
+                  },
+                  {
+                    "icon": "📦",
+                    "title": "El backlog por fin",
+                    "description": "Eso que llevaba cinco años en el fondo de la lista, esperando su turno… y ahora, pum, ya está."
+                  },
+                  {
+                    "icon": "🧪",
+                    "title": "Pruebas de concepto",
+                    "description": "Ver una idea funcionando de verdad antes de comprometerte a construirla en serio."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "'Estoy en el nivel 5: ya no leo el código.' ¿Qué significa eso de verdad?",
+                "options": [
+                  {
+                    "text": "Que dejas que la IA haga lo que quiera y confías a ciegas.",
+                    "feedback": "No. Aunque no lo leas, sigues siendo el responsable de ese código. Confiar a ciegas es justo lo que el nivel 5 NO es."
+                  },
+                  {
+                    "text": "Que rodeas el código de tests, revisiones y agentes que lo vigilan por ti.",
+                    "correct": true,
+                    "feedback": "Eso es. No leer no es no controlar: montas un armazón de pruebas y guardarraíles porque la responsabilidad sigue siendo tuya."
+                  },
+                  {
+                    "text": "Que ya no hace falta saber programar.",
+                    "feedback": "Al contrario: para diseñar esos guardarraíles y decidir si el resultado vale, necesitas más criterio, no menos."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "¿Quién responde? (leas o no)",
+          "subtitle": "Cerramos la pregunta del principio. Subas al peldaño que subas, el código que sale con tu nombre sigue siendo tuyo.",
+          "screens": [
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**La pregunta del principio, contestada.** ¿Quién responde si la IA se equivoca y tú no lees el código? Tú. Siempre tú. Los cinco niveles nunca fueron sobre confiar a ciegas: son sobre qué parte del trabajo sueltas… y cuál te quedas para siempre. Por eso, cuanto más arriba subes, más importa el armazón que montas debajo. Bucle cerrado."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Tú sigues siendo el responsable de ese código que se produce, aunque no lo escribas tú y aunque no lo leas tú.",
+                "attribution": "La voz del episodio",
+                "role": "la conclusión que no cambia"
+              }
+            },
+            {
+              "type": "fill-in-the-blanks",
+              "props": {
+                "text": "No escribir el código no significa no estar {{preparado}}. Sigues siendo el {{responsable}} de lo que sale, así que lo rodeas de {{guardarraíles}} y pruebas.",
+                "blanks": {
+                  "preparado": {
+                    "options": ["preparado", "desconectado", "de vacaciones"],
+                    "answer": "preparado"
+                  },
+                  "responsable": {
+                    "options": ["responsable", "espectador", "becario"],
+                    "answer": "responsable"
+                  },
+                  "guardarraíles": {
+                    "options": ["guardarraíles", "atajos", "excusas"],
+                    "answer": "guardarraíles"
+                  }
+                }
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "antes-de-no-leer-el-codigo",
+                "completion": "Ese es el armazón. Sube al nivel que quieras: mientras esta red esté montada, el código que sale con tu nombre sigue estando bajo control.",
+                "items": [
+                  {
+                    "text": "Tienes pruebas que engloban lo que la IA genera",
+                    "hint": "Tests que fallan cuando algo se rompe, aunque tú no leas el diff."
+                  },
+                  {
+                    "text": "Hay guardarraíles y validaciones alrededor",
+                    "hint": "Revisiones automáticas, testeo visual, límites claros."
+                  },
+                  { "text": "Un agente o un PR revisa antes de que llegue lejos" },
+                  { "text": "Asumes que el código es tuyo aunque no lo escribas ni lo leas" },
+                  { "text": "Sabes decidir si el resultado vale (o mandar 'corrige')" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
