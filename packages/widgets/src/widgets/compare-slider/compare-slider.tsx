@@ -134,7 +134,7 @@ export function CompareSlider({
           aria-valuenow={Math.round(pos)}
           aria-orientation="horizontal"
           data-slot="compare-slider-handle"
-          className="pointer-events-auto absolute top-1/2 left-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none select-none place-items-center rounded-full border bg-card text-muted-foreground shadow-wgt outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+          className="pointer-events-auto absolute top-1/2 left-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none select-none place-items-center rounded-full border bg-card text-muted-foreground shadow-wgt outline-none before:absolute before:-inset-2 before:content-[''] hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
           onPointerDown={(e) => {
             e.preventDefault();
             e.stopPropagation();
