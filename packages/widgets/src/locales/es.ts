@@ -141,6 +141,10 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     tocClose: "Cerrar",
     minutesLeft: (minutes: number) => `Te quedan ~${minutes} min`,
   },
+  quote: {
+    saidAt: (timestamp: string) => `Dicho en el ${timestamp}`,
+    listen: "Escucha este momento",
+  },
   codeTranslation: {
     codeLabel: "Código",
     translationLabel: "En palabras sencillas",

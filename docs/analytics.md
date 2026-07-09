@@ -52,6 +52,7 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | widget | cta | `clicked` | `{ variant: "link", url }` |
 | widget | cta | `submitted` | `{ ok }` — **never the email** |
 | widget | resource-list | `resource_opened` | `{ kind, href, index }` |
+| widget | quote | `clip_opened` | `{ start? }` — reader expanded the audio of the quoted moment |
 | storyline | storyline | `section_viewed` | `{ index, total, title? }` — when the active module changes |
 | storyline | storyline | `scroll_milestone` | `{ percent: 25 \| 50 \| 75 \| 100 }` — monotonic, once per instance |
 | storyline | storyline | `completed` | `{}` — alongside the 100 milestone |
