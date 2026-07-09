@@ -111,11 +111,29 @@ function listStories(contentDir: string) {
       const slug = f.replace(/\.story\.json$/, "");
       try {
         const doc = JSON.parse(fs.readFileSync(path.join(contentDir, f), "utf8"));
-        return { slug, meta: doc?.meta ?? {}, error: null };
+        return {
+          slug,
+          meta: doc?.meta ?? {},
+          minutes: estimateMinutes(doc?.story),
+          error: null,
+        };
       } catch (error) {
         return { slug, meta: {}, error: String(error) };
       }
     });
+}
+
+// ponytail: counts every string in the story tree (urls/code included) at
+// 220 wpm — swap in per-widget weights if the estimate ever needs to be honest.
+function estimateMinutes(node: unknown): number {
+  let words = 0;
+  const walk = (v: unknown): void => {
+    if (typeof v === "string") words += v.split(/\s+/).length;
+    else if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === "object") Object.values(v).forEach(walk);
+  };
+  walk(node);
+  return Math.max(1, Math.round(words / 220));
 }
 
 function storyFile(contentDir: string, slug: string): string | null {
