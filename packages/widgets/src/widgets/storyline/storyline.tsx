@@ -108,6 +108,8 @@ export function Storyline({
   const l = useLabels("storyline", DEFAULT_STORYLINE_LABELS, labels);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const moduleRefs = React.useRef<(HTMLElement | null)[]>([]);
+  // Dot-nav buttons — roving tabindex + arrow keys walk the modules.
+  const dotRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const [progress, setProgress] = React.useState(0);
   const [active, setActive] = React.useState(0);
@@ -312,16 +314,40 @@ export function Storyline({
                 }
               >
                 <button
+                  ref={(el) => {
+                    dotRefs.current[i] = el;
+                  }}
                   type="button"
                   aria-label={
                     typeof m.title === "string" ? m.title : l.module(i + 1)
                   }
                   aria-current={i === active || undefined}
+                  // Roving tabindex: one Tab stop enters the nav at the active
+                  // module; ArrowUp/Down then walk between modules.
+                  tabIndex={i === active ? 0 : -1}
                   onClick={() =>
                     moduleRefs.current[i]?.scrollIntoView({
                       behavior: "smooth",
                     })
                   }
+                  onKeyDown={(e) => {
+                    const last = modules.length - 1;
+                    let next: number;
+                    if (e.key === "ArrowDown" || e.key === "ArrowRight")
+                      next = Math.min(i + 1, last);
+                    else if (e.key === "ArrowUp" || e.key === "ArrowLeft")
+                      next = Math.max(i - 1, 0);
+                    else if (e.key === "Home") next = 0;
+                    else if (e.key === "End") next = last;
+                    else return;
+                    e.preventDefault();
+                    moduleRefs.current[next]?.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                    // preventScroll: focusing the dot (in a sticky nav) would
+                    // otherwise scroll it into view and cancel the module scroll.
+                    dotRefs.current[next]?.focus({ preventScroll: true });
+                  }}
                   className={cn(
                     "block size-3 rounded-full border transition-colors",
                     i === active
