@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Flashcards } from "@/widgets/flashcards";
@@ -41,6 +41,19 @@ describe("Flashcards", () => {
     const completed = received.filter((d) => d.action === "completed");
     expect(completed).toHaveLength(1);
     expect(completed[0].data).toEqual({ known: 1, total: 2 });
+    off();
+  });
+
+  it("emits 'completed' once on a rapid double-click of the last grade", () => {
+    const received: WidgetronEventDetail[] = [];
+    const off = onWidgetronEvent((e) => received.push(e.detail));
+    render(<Flashcards cards={[{ front: "F", back: "B" }]} />);
+    const knew = screen.getByText("Knew it");
+    // Grading the last card swaps in the done screen — the second click lands on
+    // a button that no longer exists, so completion can't be re-emitted.
+    fireEvent.click(knew);
+    fireEvent.click(knew);
+    expect(received.filter((d) => d.action === "completed")).toHaveLength(1);
     off();
   });
 });

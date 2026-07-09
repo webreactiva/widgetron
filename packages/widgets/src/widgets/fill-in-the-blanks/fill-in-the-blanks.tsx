@@ -121,7 +121,7 @@ export function FillInTheBlanks({
               aria-label={`${reactId}-${part.id}`}
               onChange={(e) => handleChange(part.id, e.target.value)}
               className={cn(
-                "mx-0.5 rounded border bg-background px-2 py-1 align-baseline text-sm font-medium outline-none transition-colors",
+                "mx-0.5 max-w-full rounded border bg-background px-2 py-1 align-baseline text-sm font-medium outline-none transition-colors",
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                 status === "idle" && "border-input",
                 status === "correct" &&

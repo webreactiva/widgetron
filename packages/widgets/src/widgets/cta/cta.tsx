@@ -135,7 +135,7 @@ export function Cta({
       {variant === "link" ? (
         <div className="mt-4">
           {url ? (
-            <Button asChild>
+            <Button asChild className="max-w-full flex-wrap whitespace-normal break-words">
               <a
                 href={url}
                 target="_blank"
@@ -147,7 +147,7 @@ export function Cta({
               </a>
             </Button>
           ) : (
-            <Button disabled>
+            <Button disabled className="max-w-full flex-wrap whitespace-normal break-words">
               <RichText>{buttonLabel ?? l.submit}</RichText>
             </Button>
           )}

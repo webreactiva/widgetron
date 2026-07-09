@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
  * Story Studio CLI — the same engine the app and the dev API use.
  *
  *   pnpm --filter @webreactiva/story-studio story validate <slug|path>
+ *   pnpm --filter @webreactiva/story-studio story lint <slug|path> [--score]
  *   pnpm --filter @webreactiva/story-studio story render <slug>
  *   pnpm --filter @webreactiva/story-studio story theme <design.md> [outDir]
  *   pnpm --filter @webreactiva/story-studio story manifest [outFile]
@@ -31,6 +32,38 @@ async function main(): Promise<void> {
       }
       console.error(`✘ ${path.basename(file)} has ${result.errors.length} error(s):`);
       for (const error of result.errors) console.error(`  - ${error}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    case "lint": {
+      if (!target) usage("lint <slug|path/to/file.story.json> [--score]");
+      const file = target.endsWith(".json")
+        ? path.resolve(target)
+        : path.join(appRoot, "content", `${target}.story.json`);
+      const raw = JSON.parse(fs.readFileSync(file, "utf8"));
+      const { lintStoryDocument } = await import("./engine/lint");
+      const result = lintStoryDocument(raw);
+      const name = path.basename(file);
+
+      if (extra === "--score") {
+        console.log(`Partitura · ${name}`);
+        for (const line of result.score) console.log(`  ${line}`);
+        console.log("");
+      }
+
+      const errors = result.findings.filter((f) => f.severity === "error");
+      const warnings = result.findings.filter((f) => f.severity === "warning");
+      for (const f of warnings) console.warn(`  ⚠ [${f.rule}] ${f.message}`);
+      for (const f of errors) console.error(`  ✘ [${f.rule}] ${f.message}`);
+
+      if (result.ok) {
+        console.log(
+          `✔ ${name} passes pacing lint${warnings.length ? ` (${warnings.length} warning(s))` : ""}`,
+        );
+        return;
+      }
+      console.error(`✘ ${name} — ${errors.length} pacing error(s)`);
       process.exitCode = 1;
       return;
     }
@@ -82,7 +115,7 @@ async function main(): Promise<void> {
     }
 
     default:
-      usage("validate|render|theme|manifest …");
+      usage("validate|lint|render|theme|manifest …");
   }
 }
 

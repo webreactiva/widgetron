@@ -118,6 +118,8 @@ export function Hotspots({
               style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
               className={cn(
                 "absolute flex size-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border text-xs font-semibold shadow-wgt outline-none transition-colors",
+                // Keep the 28px dot but extend the tap area to 44px (WCAG min).
+                "before:absolute before:-inset-2 before:content-['']",
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 isSelected
                   ? "border-primary bg-primary text-primary-foreground ring-2 ring-ring motion-safe:animate-wgt-pop"

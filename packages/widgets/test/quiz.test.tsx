@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Quiz } from "@/widgets/quiz";
@@ -52,6 +52,19 @@ describe("Quiz", () => {
     expect(received[0].target).toBe(
       container.querySelector("[data-slot=quiz]"),
     );
+    off();
+  });
+
+  it("emits 'answered' once on a rapid double-click (no double event/confetti)", () => {
+    const received: WidgetronEvent[] = [];
+    const off = onWidgetronEvent((e) => received.push(e));
+    render(<Quiz question="Q?" options={options} celebrate={false} />);
+    const btn = screen.getByText("Right answer").closest("button")!;
+    // Two clicks with no re-render awaited between — the worst case. The button
+    // disables after the first, so the reader can never fire it twice.
+    fireEvent.click(btn);
+    fireEvent.click(btn);
+    expect(received.filter((e) => e.detail.action === "answered")).toHaveLength(1);
     off();
   });
 
