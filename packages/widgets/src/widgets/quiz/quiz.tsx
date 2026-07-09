@@ -2,6 +2,7 @@ import * as React from "react";
 import { Check, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
+import { fireConfetti } from "@/lib/confetti";
 import { Button } from "@/primitives/button";
 import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
@@ -61,20 +62,6 @@ function optionStatus(
   if (option.correct) return "correct";
   if (index === selected) return "selected-wrong";
   return "missed";
-}
-
-async function fireConfetti() {
-  try {
-    const mod = await import("canvas-confetti");
-    mod.default({
-      particleCount: 90,
-      spread: 70,
-      origin: { y: 0.7 },
-      disableForReducedMotion: true,
-    });
-  } catch {
-    /* canvas-confetti is optional — silently skip if unavailable */
-  }
 }
 
 /**

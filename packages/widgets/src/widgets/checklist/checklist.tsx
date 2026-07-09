@@ -2,6 +2,7 @@ import * as React from "react";
 import { Check, Gift } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
+import { fireConfetti } from "@/lib/confetti";
 import { useLabels } from "@/lib/i18n";
 import { useWidgetEvents } from "@/lib/use-widget-events";
 import { RichText } from "@/primitives/rich-text";
@@ -47,20 +48,6 @@ export interface ChecklistProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const STORAGE_PREFIX = "widgetron-checklist:";
-
-async function fireConfetti() {
-  try {
-    const mod = await import("canvas-confetti");
-    mod.default({
-      particleCount: 90,
-      spread: 70,
-      origin: { y: 0.7 },
-      disableForReducedMotion: true,
-    });
-  } catch {
-    /* canvas-confetti is optional — silently skip if unavailable */
-  }
-}
 
 /**
  * Checklist — an actionable, persistent to-do list. Checked state is saved to
