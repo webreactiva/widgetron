@@ -10,8 +10,9 @@ import type { CtaSettings, StoryDocument, WidgetNode } from "./schema";
  *     total number of screens flattened across modules in reading order.
  *     With N < 3 there is no meaningful middle: it merges into `end`.
  *   - `end`  → appended as the last screen of the last module.
- *   - CTA    → always the very last screen (after the `end` surprise), unless
- *     `placement` is a 1-based screen index (counted over the ORIGINAL
+ *   - CTA    → the storyline's `outro` slot, rendered after the built-in
+ *     completion finale (the reader is celebrated first, pitched second),
+ *     unless `placement` is a 1-based screen index (counted over the ORIGINAL
  *     flattened screens, so `mid` insertion never shifts it).
  */
 export function resolveStory(doc: StoryDocument): WidgetNode {
@@ -78,7 +79,7 @@ export function resolveStory(doc: StoryDocument): WidgetNode {
   const lastScreens = modules[modules.length - 1].screens!;
   if (midMergesToEnd) lastScreens.push(structuredClone(surprises!.mid!));
   if (surprises?.end) lastScreens.push(structuredClone(surprises.end));
-  if (ctaAtEnd && ctaNode) lastScreens.push(ctaNode);
+  if (ctaAtEnd && ctaNode) props.outro = ctaNode;
 
   return story;
 }

@@ -94,7 +94,7 @@ describe("resolveStory (D-004: injection happens at build time)", () => {
     expect(all[3].type).toBe("surprise"); // end
   });
 
-  it("the CTA is always the very last screen (after the end surprise)", () => {
+  it("the end CTA becomes the storyline outro (after the finale), the end surprise stays the last screen", () => {
     const resolved = resolveStory(
       doc({
         surprises: { end: surprise("end") },
@@ -102,9 +102,10 @@ describe("resolveStory (D-004: injection happens at build time)", () => {
       }),
     );
     const all = flat(resolved);
-    expect(all[all.length - 2].type).toBe("surprise");
-    expect(all[all.length - 1].type).toBe("cta");
-    expect(all[all.length - 1].props).toMatchObject({
+    expect(all[all.length - 1].type).toBe("surprise");
+    const outro = resolved.props!.outro as WidgetNode;
+    expect(outro.type).toBe("cta");
+    expect(outro.props).toMatchObject({
       variant: "link",
       title: "Go",
       url: "https://example.com",
@@ -129,11 +130,10 @@ describe("resolveStory (D-004: injection happens at build time)", () => {
     ]);
   });
 
-  it("clamps an out-of-range placement to the end", () => {
+  it("clamps an out-of-range placement to the end (outro)", () => {
     const resolved = resolveStory(
       doc({ cta: { kind: "link", title: "Go", url: "https://example.com", placement: 99 } }),
     );
-    const all = flat(resolved);
-    expect(all[all.length - 1].type).toBe("cta");
+    expect((resolved.props!.outro as WidgetNode).type).toBe("cta");
   });
 });
