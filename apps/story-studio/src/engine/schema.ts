@@ -115,6 +115,12 @@ export const storyDocumentSchema = z.object({
           z.object({
             id: z.string().min(1),
             src: z.string().min(1),
+            start: z
+              .number()
+              .nonnegative()
+              .optional()
+              .describe("Fragment start (seconds in src) — src may be the full episode."),
+            end: z.number().nonnegative().optional().describe("Fragment end (seconds in src)."),
             transcriptSrc: z.string().min(1).optional(),
           }),
         )
