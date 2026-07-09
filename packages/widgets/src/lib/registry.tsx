@@ -346,6 +346,7 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
     component: Storyline,
     adapt: (p) => ({
       ...p,
+      outro: asContent(p.outro),
       modules: Array.isArray(p.modules)
         ? p.modules.map((m) =>
             m && typeof m === "object"

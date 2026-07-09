@@ -133,6 +133,11 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     resumePrompt: "¿Seguimos donde lo dejaste?",
     resume: "Continuar",
     startOver: "Empezar desde arriba",
+    finaleTitle: "¡Has completado la guía!",
+    finaleChallenges: (correct: number, answered: number) =>
+      `Retos superados: ${correct}/${answered}`,
+    finaleActivities: (count: number) => `Actividades completadas: ${count}`,
+    finaleTime: (minutes: number) => `~${minutes} min de lectura`,
   },
   codeTranslation: {
     codeLabel: "Código",

@@ -53,6 +53,17 @@ export const storylineMeta: WidgetMeta = {
       .describe(
         "Persist the reading position in localStorage under this key; on return the course offers to resume where the reader left off. Use the document slug.",
       ),
+    outro: nodeSchema
+      .optional()
+      .describe(
+        "Closing widget node (usually the CTA) rendered after the built-in completion finale, so the reader is celebrated before being pitched.",
+      ),
+    celebrate: z
+      .boolean()
+      .optional()
+      .describe(
+        "Fire a confetti burst the first time the reader scrolls to the end. Default: true.",
+      ),
   }),
   example: {
     type: "storyline",

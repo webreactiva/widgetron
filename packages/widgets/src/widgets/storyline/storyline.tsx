@@ -1,6 +1,8 @@
 import * as React from "react";
 
-import { emitWidgetronEvent } from "@/lib/analytics";
+import { emitWidgetronEvent, onWidgetronEvent } from "@/lib/analytics";
+import { fireConfetti } from "@/lib/confetti";
+import { Check } from "@/lib/icons";
 import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/primitives/tooltip";
@@ -25,6 +27,14 @@ export interface StorylineLabels {
   resume: string;
   /** Resume bar: dismiss and read from the top. */
   startOver: string;
+  /** Finale: heading of the completion section at the end of the course. */
+  finaleTitle: React.ReactNode;
+  /** Finale: challenges stat, counted from bubbled `answered` events. */
+  finaleChallenges: (correct: number, answered: number) => React.ReactNode;
+  /** Finale: activities stat, counted from bubbled `completed` events. */
+  finaleActivities: (count: number) => React.ReactNode;
+  /** Finale: session reading time, in whole minutes. */
+  finaleTime: (minutes: number) => React.ReactNode;
 }
 
 export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
@@ -33,6 +43,11 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
   resumePrompt: "Pick up where you left off?",
   resume: "Resume",
   startOver: "Start from the top",
+  finaleTitle: "You've completed the guide!",
+  finaleChallenges: (correct, answered) =>
+    `Challenges passed: ${correct}/${answered}`,
+  finaleActivities: (count) => `Activities completed: ${count}`,
+  finaleTime: (minutes) => `~${minutes} min of reading`,
 };
 
 export interface StorylineProps
@@ -62,6 +77,16 @@ export interface StorylineProps
    * bar at the top of the storyline offers to jump back to the saved spot.
    */
   storageKey?: string;
+  /**
+   * Closing screen rendered AFTER the built-in completion finale — the natural
+   * slot for a CTA, so the reader is celebrated first and pitched second.
+   */
+  outro?: React.ReactNode;
+  /**
+   * Fire a confetti burst the first time the reader scrolls to the end.
+   * Default: true. Reduced-motion-safe; never fires without a real scroll.
+   */
+  celebrate?: boolean;
   labels?: Partial<StorylineLabels>;
 }
 
@@ -83,11 +108,14 @@ function readSavedTop(key: string): number {
  * Storyline — the dispensa reading composition (the "scrollytelling" reading
  * flow from ../dispensa, faithfully ported): a single-column, scroll-driven
  * document of modules. Each module fills the reading viewport, alternates its
- * background, and reveals its screens as they scroll in. A progress bar tracks
- * the raw scroll position and side dots (with a tooltip naming each module)
- * jump between modules. With `storageKey` it remembers where the reader
- * stopped and offers to resume there on the next visit. Assembles any widgets
- * into a course — the formative composition that *generates a dispensa*.
+ * background, and reveals its screens as they scroll in. A segmented progress
+ * bar (one segment per module) and side dots with pending/active/✓ states (a
+ * tooltip names each module) jump between modules. Reaching the end lands on a
+ * built-in finale — confetti plus a session scoreboard counted from the child
+ * widgets' own bubbled events — followed by the optional `outro` screen. With
+ * `storageKey` it remembers where the reader stopped and offers to resume
+ * there on the next visit. Assembles any widgets into a course — the formative
+ * composition that *generates a dispensa*.
  *
  * Self-contained: it owns its scroll viewport (default height via `className`,
  * e.g. `h-[80vh]`), so it works embedded anywhere.
@@ -101,6 +129,8 @@ export function Storyline({
   glossary,
   profile,
   storageKey,
+  outro,
+  celebrate = true,
   labels,
   className,
   ...props
@@ -109,9 +139,20 @@ export function Storyline({
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const moduleRefs = React.useRef<(HTMLElement | null)[]>([]);
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [progress, setProgress] = React.useState(0);
   const [active, setActive] = React.useState(0);
+  // How far the reader is through the ACTIVE module (0..1) — fills its segment.
+  const [fill, setFill] = React.useState(0);
   const [savedTop, setSavedTop] = React.useState<number | null>(null);
+  // Session scoreboard for the finale — child widget events bubble to the
+  // storyline root, so counting them needs zero cooperation from the widgets.
+  const [score, setScore] = React.useState({
+    answered: 0,
+    correct: 0,
+    completed: 0,
+  });
+  const [elapsedMin, setElapsedMin] = React.useState<number | null>(null);
+  const startedAt = React.useRef(0);
+  const finished = React.useRef(false);
   // Analytics dedup — refs survive Strict Mode re-runs and effect re-subscribes,
   // so each section view / milestone is emitted at most once per instance.
   const lastSectionEmitted = React.useRef(-1);
@@ -138,26 +179,34 @@ export function Storyline({
     if (top >= RESUME_MIN_TOP) setSavedTop(top);
   }, [storageKey]);
 
-  // Progress bar + active module + position persistence, driven by the
-  // container's own scroll. The bar measures the raw scroll offset — it is
-  // deliberately not quantized to modules.
+  // Segmented progress + active module + position persistence, driven by the
+  // container's own scroll. Progress is quantized to modules (goal-gradient):
+  // one segment per module, the active one filling as the reader moves through.
   React.useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+    startedAt.current ||= Date.now();
     let ticking = false;
-    const onScroll = () => {
+    // `userScroll` separates real reader scrolls from the mount measurement, so
+    // the finale payoff can never fire on hydration of an already-read state.
+    const onScroll = (userScroll: boolean) => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         const max = el.scrollHeight - el.clientHeight;
         const pct = max > 0 ? (el.scrollTop / max) * 100 : 0;
-        setProgress(pct);
         const center = el.scrollTop + el.clientHeight / 2;
         let idx = 0;
         moduleRefs.current.forEach((m, i) => {
           if (m && m.offsetTop <= center) idx = i;
         });
         setActive(idx);
+        const mod = moduleRefs.current[idx];
+        setFill(
+          mod && mod.offsetHeight > 0
+            ? Math.min(1, Math.max(0, (center - mod.offsetTop) / mod.offsetHeight))
+            : 0,
+        );
         if (idx !== lastSectionEmitted.current) {
           lastSectionEmitted.current = idx;
           const title = modules[idx]?.title;
@@ -173,6 +222,13 @@ export function Storyline({
             emitStoryline("scroll_milestone", { percent: m });
             if (m === 100) emitStoryline("completed", {});
           }
+        }
+        if (pct >= 100 && userScroll && !finished.current) {
+          finished.current = true;
+          setElapsedMin(
+            Math.max(1, Math.round((Date.now() - startedAt.current) / 60000)),
+          );
+          if (celebrate) void fireConfetti();
         }
         ticking = false;
       });
@@ -190,13 +246,34 @@ export function Storyline({
         }, 250);
       }
     };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    const listener = () => onScroll(true);
+    el.addEventListener("scroll", listener, { passive: true });
+    onScroll(false);
     return () => {
-      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("scroll", listener);
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [modules.length, storageKey]);
+  }, [modules.length, storageKey, celebrate]);
+
+  // Finale scoreboard — count the child widgets' own analytics events as they
+  // bubble through the scroll container (source "widget" only; the storyline's
+  // events also pass through here).
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    return onWidgetronEvent((e) => {
+      const { source, action, data } = e.detail;
+      if (source !== "widget") return;
+      if (action === "answered")
+        setScore((s) => ({
+          ...s,
+          answered: s.answered + 1,
+          correct: s.correct + (data?.correct === true ? 1 : 0),
+        }));
+      else if (action === "completed")
+        setScore((s) => ({ ...s, completed: s.completed + 1 }));
+    }, el);
+  }, []);
 
   // Reveal screens as they enter the reading viewport.
   React.useEffect(() => {
@@ -254,9 +331,27 @@ export function Storyline({
       )}
       {...props}
     >
-      {/* Progress bar — pinned to the top of the reading viewport. */}
+      {/* Progress — one segment per module; the active one fills as it's read. */}
       <div className="pointer-events-none sticky top-0 z-30 h-0">
-        <div className="h-1 bg-primary" style={{ width: `${progress}%` }} />
+        <div aria-hidden="true" className="flex h-1 gap-px">
+          {modules.map((_, i) => (
+            <div key={i} className="flex-1 bg-primary/15">
+              <div
+                className="h-full bg-primary"
+                style={{
+                  width: `${(i < active ? 1 : i === active ? fill : 0) * 100}%`,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+        {/* Per-module readout for mobile, where the right-rail dots (sm:block)
+            are hidden — keeps "which module / how many left" on phones. */}
+        {modules.length > 1 && (
+          <div className="absolute top-2 right-2 rounded-full border bg-popover/90 px-2 py-0.5 font-mono text-[11px] tabular-nums text-muted-foreground shadow-wgt backdrop-blur sm:hidden">
+            {active + 1}/{modules.length}
+          </div>
+        )}
       </div>
 
       {/* Resume bar — offers to jump back to the saved reading position. */}
@@ -287,8 +382,14 @@ export function Storyline({
         <div className="pointer-events-none sticky top-1/2 z-30 hidden h-0 sm:block">
           <nav
             aria-label={l.modulesNav}
-            className="pointer-events-auto absolute right-3 flex -translate-y-1/2 flex-col gap-2"
+            className="pointer-events-auto absolute right-3 flex -translate-y-1/2 flex-col items-center gap-2"
           >
+            <span
+              aria-hidden="true"
+              className="mb-1 rounded-full border bg-popover/90 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground shadow-wgt"
+            >
+              {active + 1}/{modules.length}
+            </span>
             {modules.map((m, i) => (
               <Tooltip
                 key={i}
@@ -314,12 +415,22 @@ export function Storyline({
                     })
                   }
                   className={cn(
-                    "block size-3 rounded-full border transition-colors",
+                    "flex size-3 items-center justify-center rounded-full border transition-colors",
                     i === active
                       ? "border-primary bg-primary"
-                      : "border-border bg-card hover:border-primary",
+                      : i < active
+                        ? "border-primary bg-primary/70 text-primary-foreground"
+                        : "border-border bg-card hover:border-primary",
                   )}
-                />
+                >
+                  {i < active && (
+                    <Check
+                      aria-hidden="true"
+                      strokeWidth={4}
+                      className="size-2"
+                    />
+                  )}
+                </button>
               </Tooltip>
             ))}
           </nav>
@@ -389,6 +500,57 @@ export function Storyline({
           </div>
         </section>
       ))}
+
+      {/* Finale — the container's own payoff. The reader is celebrated first
+          (confetti + session scoreboard), pitched (outro) second. */}
+      <section
+        data-slot="storyline-finale"
+        className={cn(
+          "flex min-h-full flex-col justify-center px-6 py-14 sm:px-10",
+          modules.length % 2 === 1 && "bg-muted/40",
+        )}
+      >
+        <div
+          data-reveal
+          className={cn("mx-auto w-full max-w-2xl text-center", reveal)}
+        >
+          <div className="mx-auto mb-6 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
+            <Check aria-hidden="true" className="size-7" />
+          </div>
+          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            {l.finaleTitle}
+          </h2>
+          {(score.answered > 0 ||
+            score.completed > 0 ||
+            elapsedMin !== null) && (
+            <ul className="mt-6 flex flex-wrap justify-center gap-2">
+              {score.answered > 0 && (
+                <li className="rounded-full border bg-card px-3 py-1 text-sm text-muted-foreground shadow-wgt">
+                  {l.finaleChallenges(score.correct, score.answered)}
+                </li>
+              )}
+              {score.completed > 0 && (
+                <li className="rounded-full border bg-card px-3 py-1 text-sm text-muted-foreground shadow-wgt">
+                  {l.finaleActivities(score.completed)}
+                </li>
+              )}
+              {elapsedMin !== null && (
+                <li className="rounded-full border bg-card px-3 py-1 text-sm text-muted-foreground shadow-wgt">
+                  {l.finaleTime(elapsedMin)}
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      {outro != null && (
+        <section data-slot="storyline-outro" className="px-6 pb-14 sm:px-10">
+          <div data-reveal className={cn(screenWidth, reveal)}>
+            {outro}
+          </div>
+        </section>
+      )}
     </div>
   );
 

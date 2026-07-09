@@ -1,9 +1,16 @@
 import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
+import confetti from "canvas-confetti";
 
 import { Storyline } from "@/widgets/storyline";
-import { onWidgetronEvent, type WidgetronEventDetail } from "@/lib/analytics";
+import {
+  emitWidgetronEvent,
+  onWidgetronEvent,
+  type WidgetronEventDetail,
+} from "@/lib/analytics";
+
+vi.mock("canvas-confetti", () => ({ default: vi.fn() }));
 
 const modules = [
   { title: "First module", screens: [<p key="a">a</p>] },
@@ -25,10 +32,10 @@ function storylineEvents(action?: string) {
 }
 
 /** Render inside StrictMode (double effects) and fake the container layout. */
-function renderStoryline() {
+function renderStoryline(extra?: Partial<React.ComponentProps<typeof Storyline>>) {
   const view = render(
     <React.StrictMode>
-      <Storyline modules={modules} />
+      <Storyline modules={modules} {...extra} />
     </React.StrictMode>,
   );
   const container = view.container.querySelector(
@@ -68,6 +75,7 @@ beforeEach(() => {
   });
   received = [];
   off = onWidgetronEvent((e) => received.push(e.detail));
+  vi.mocked(confetti).mockClear();
 });
 
 afterEach(() => {
@@ -127,5 +135,82 @@ describe("Storyline analytics", () => {
     fireEvent.scroll(container);
     expect(storylineEvents("scroll_milestone")).toHaveLength(4);
     expect(storylineEvents("completed")).toHaveLength(1);
+  });
+});
+
+describe("Storyline finale", () => {
+  it("counts bubbled child events into the finale scoreboard", () => {
+    const { container } = renderStoryline();
+    const child = container.querySelector("p") as HTMLElement;
+
+    act(() => {
+      emitWidgetronEvent(child, {
+        source: "widget",
+        widget: "quiz",
+        action: "answered",
+        data: { index: 1, correct: true },
+      });
+      emitWidgetronEvent(child, {
+        source: "widget",
+        widget: "quiz",
+        action: "answered",
+        data: { index: 0, correct: false },
+      });
+      emitWidgetronEvent(child, {
+        source: "widget",
+        widget: "checklist",
+        action: "completed",
+        data: { total: 3 },
+      });
+    });
+
+    const finale = container.querySelector(
+      "[data-slot=storyline-finale]",
+    ) as HTMLElement;
+    expect(finale).toHaveTextContent("Challenges passed: 1/2");
+    expect(finale).toHaveTextContent("Activities completed: 1");
+  });
+
+  it("ignores the storyline's own events in the scoreboard", () => {
+    const { container } = renderStoryline();
+    // Mount already emitted storyline events (section_viewed) through the
+    // same root — the finale must not count them as challenges.
+    const finale = container.querySelector(
+      "[data-slot=storyline-finale]",
+    ) as HTMLElement;
+    expect(finale).not.toHaveTextContent("Challenges passed");
+  });
+
+  it("renders the outro after the finale", () => {
+    const { container } = renderStoryline({ outro: <p>the CTA</p> });
+    const outro = container.querySelector("[data-slot=storyline-outro]");
+    expect(outro).toHaveTextContent("the CTA");
+    const finale = container.querySelector("[data-slot=storyline-finale]")!;
+    expect(
+      finale.compareDocumentPosition(outro!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("fires confetti once on a real scroll to the end, never on mount", async () => {
+    const { container } = renderStoryline();
+    expect(confetti).not.toHaveBeenCalled();
+
+    container.scrollTop = 1500;
+    fireEvent.scroll(container);
+    await vi.waitFor(() => expect(confetti).toHaveBeenCalledTimes(1));
+
+    // Reaching the end again does not re-celebrate.
+    fireEvent.scroll(container);
+    await Promise.resolve();
+    expect(confetti).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not fire confetti when celebrate is false", async () => {
+    const { container } = renderStoryline({ celebrate: false });
+    container.scrollTop = 1500;
+    fireEvent.scroll(container);
+    await Promise.resolve();
+    expect(confetti).not.toHaveBeenCalled();
   });
 });
