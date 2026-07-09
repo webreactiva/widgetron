@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render } from "@testing-library/react";
 import confetti from "canvas-confetti";
 
-import { Storyline } from "@/widgets/storyline";
+import { Storyline, readStorylineProgress } from "@/widgets/storyline";
 import {
   emitWidgetronEvent,
   onWidgetronEvent,
@@ -212,5 +212,82 @@ describe("Storyline finale", () => {
     fireEvent.scroll(container);
     await Promise.resolve();
     expect(confetti).not.toHaveBeenCalled();
+  });
+});
+
+describe("Storyline progress persistence", () => {
+  afterEach(() => window.localStorage.clear());
+
+  it("readStorylineProgress parses the JSON format and the legacy bare px", () => {
+    window.localStorage.setItem(
+      "wgt-storyline:new",
+      JSON.stringify({ top: 900, pct: 60, done: true }),
+    );
+    expect(readStorylineProgress("new")).toEqual({
+      top: 900,
+      pct: 60,
+      done: true,
+    });
+
+    window.localStorage.setItem("wgt-storyline:legacy", "1234");
+    expect(readStorylineProgress("legacy")).toEqual({
+      top: 1234,
+      pct: 0,
+      done: false,
+    });
+
+    window.localStorage.setItem("wgt-storyline:junk", "not json");
+    expect(readStorylineProgress("junk")).toBeNull();
+    expect(readStorylineProgress("missing")).toBeNull();
+  });
+
+  it("persists {top, pct, done} and keeps done sticky across saves", async () => {
+    const { container } = renderStoryline({ storageKey: "persist" });
+    container.scrollTop = 1500; // 100%
+    fireEvent.scroll(container);
+    await new Promise((r) => setTimeout(r, 300)); // debounced save
+    expect(readStorylineProgress("persist")).toEqual({
+      top: 1500,
+      pct: 100,
+      done: true,
+    });
+
+    container.scrollTop = 300; // scroll back up — done must survive
+    fireEvent.scroll(container);
+    await new Promise((r) => setTimeout(r, 300));
+    expect(readStorylineProgress("persist")).toMatchObject({
+      top: 300,
+      pct: 20,
+      done: true,
+    });
+  });
+});
+
+describe("Storyline mobile module index", () => {
+  it("opens the bottom sheet from the pill, emits toc_opened, and jumps to a module", () => {
+    const { container } = renderStoryline();
+    const pill = [...container.querySelectorAll("button")].find((b) =>
+      /1\/2/.test(b.textContent ?? ""),
+    )!;
+    expect(pill).toBeTruthy();
+    expect(pill.textContent).toContain("First module");
+
+    fireEvent.click(pill);
+    expect(storylineEvents("toc_opened")).toHaveLength(1);
+
+    const sheet = container.querySelector("[data-slot=storyline-toc]")!;
+    const rows = sheet.querySelectorAll("ol button");
+    expect(rows).toHaveLength(2);
+    expect(rows[1].textContent).toContain("Second module");
+
+    const spy = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+      configurable: true,
+      value: spy,
+    });
+    fireEvent.click(rows[1]);
+    expect(spy).toHaveBeenCalled();
+    // sheet closed
+    expect(container.querySelector("[data-slot=storyline-toc]")).toBeNull();
   });
 });

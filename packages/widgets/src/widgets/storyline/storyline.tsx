@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { emitWidgetronEvent, onWidgetronEvent } from "@/lib/analytics";
 import { fireConfetti } from "@/lib/confetti";
-import { Check } from "@/lib/icons";
+import { Check, X } from "@/lib/icons";
 import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/primitives/tooltip";
@@ -35,6 +35,10 @@ export interface StorylineLabels {
   finaleActivities: (count: number) => React.ReactNode;
   /** Finale: session reading time, in whole minutes. */
   finaleTime: (minutes: number) => React.ReactNode;
+  /** Mobile module index: close-button label. */
+  tocClose: string;
+  /** Mobile module index: estimated reading time remaining. */
+  minutesLeft: (minutes: number) => React.ReactNode;
 }
 
 export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
@@ -48,6 +52,8 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
     `Challenges passed: ${correct}/${answered}`,
   finaleActivities: (count) => `Activities completed: ${count}`,
   finaleTime: (minutes) => `~${minutes} min of reading`,
+  tocClose: "Close",
+  minutesLeft: (minutes) => `~${minutes} min left`,
 };
 
 export interface StorylineProps
@@ -93,14 +99,40 @@ export interface StorylineProps
 const POSITION_PREFIX = "wgt-storyline:";
 /** Below this scroll offset (px) there is nothing worth resuming. */
 const RESUME_MIN_TOP = 240;
+// ponytail: ~220 wpm flat estimate; per-widget weights if it ever matters.
+const WORDS_PER_MINUTE = 220;
 
-function readSavedTop(key: string): number {
+export interface StorylineProgress {
+  /** Saved scroll offset, px. */
+  top: number;
+  /** Scroll progress, 0–100. */
+  pct: number;
+  /** The reader has reached the end at least once. */
+  done: boolean;
+}
+
+/**
+ * Read the reading progress a Storyline persisted under `storageKey` — the
+ * hook for hosts (catalogs, dashboards) to show "Continue · 60%" or
+ * "Completed ✓" without touching the widget. Returns null when nothing was
+ * saved. Understands the legacy bare-px format from earlier versions.
+ */
+export function readStorylineProgress(key: string): StorylineProgress | null {
   try {
     const raw = window.localStorage.getItem(POSITION_PREFIX + key);
-    const top = raw === null ? NaN : Number(raw);
-    return Number.isFinite(top) ? top : 0;
+    if (raw === null) return null;
+    if (raw.startsWith("{")) {
+      const p = JSON.parse(raw) as Partial<StorylineProgress>;
+      return {
+        top: Number(p.top) || 0,
+        pct: Number(p.pct) || 0,
+        done: p.done === true,
+      };
+    }
+    const top = Number(raw);
+    return Number.isFinite(top) ? { top, pct: 0, done: false } : null;
   } catch {
-    return 0;
+    return null;
   }
 }
 
@@ -151,8 +183,13 @@ export function Storyline({
     completed: 0,
   });
   const [elapsedMin, setElapsedMin] = React.useState<number | null>(null);
+  // Mobile module index (bottom sheet) — the rail is desktop-only.
+  const [tocOpen, setTocOpen] = React.useState(false);
+  const [minutesLeft, setMinutesLeft] = React.useState(0);
   const startedAt = React.useRef(0);
   const finished = React.useRef(false);
+  // Completion persisted on a previous visit — must survive re-reads.
+  const wasDone = React.useRef(false);
   // Analytics dedup — refs survive Strict Mode re-runs and effect re-subscribes,
   // so each section view / milestone is emitted at most once per instance.
   const lastSectionEmitted = React.useRef(-1);
@@ -175,8 +212,10 @@ export function Storyline({
   // Offer to resume when a meaningful position was saved on a previous visit.
   React.useEffect(() => {
     if (!storageKey) return;
-    const top = readSavedTop(storageKey);
-    if (top >= RESUME_MIN_TOP) setSavedTop(top);
+    const saved = readStorylineProgress(storageKey);
+    if (!saved) return;
+    wasDone.current = saved.done;
+    if (saved.top >= RESUME_MIN_TOP) setSavedTop(saved.top);
   }, [storageKey]);
 
   // Segmented progress + active module + position persistence, driven by the
@@ -236,9 +275,18 @@ export function Storyline({
         if (saveTimer.current) clearTimeout(saveTimer.current);
         saveTimer.current = setTimeout(() => {
           try {
+            const max = el.scrollHeight - el.clientHeight;
+            const pct =
+              max > 0 ? Math.round((el.scrollTop / max) * 100) : 0;
+            if (pct >= 100) wasDone.current = true;
+            const progress: StorylineProgress = {
+              top: Math.round(el.scrollTop),
+              pct,
+              done: wasDone.current,
+            };
             window.localStorage.setItem(
               POSITION_PREFIX + storageKey,
-              String(Math.round(el.scrollTop)),
+              JSON.stringify(progress),
             );
           } catch {
             /* private mode etc. — reading position is best-effort */
@@ -300,6 +348,21 @@ export function Storyline({
     setSavedTop(null);
   };
 
+  const openToc = () => {
+    // Remaining reading time, estimated from the words still below the reader.
+    const words = moduleRefs.current
+      .slice(active)
+      .reduce((n, m) => n + (m?.textContent?.split(/\s+/).length ?? 0), 0);
+    setMinutesLeft(Math.ceil(words / WORDS_PER_MINUTE));
+    setTocOpen(true);
+    emitStoryline("toc_opened", {});
+  };
+
+  const jumpToModule = (i: number) => {
+    setTocOpen(false);
+    moduleRefs.current[i]?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const startOver = () => {
     setSavedTop(null);
     if (storageKey) {
@@ -345,13 +408,6 @@ export function Storyline({
             </div>
           ))}
         </div>
-        {/* Per-module readout for mobile, where the right-rail dots (sm:block)
-            are hidden — keeps "which module / how many left" on phones. */}
-        {modules.length > 1 && (
-          <div className="absolute top-2 right-2 rounded-full border bg-popover/90 px-2 py-0.5 font-mono text-[11px] tabular-nums text-muted-foreground shadow-wgt backdrop-blur sm:hidden">
-            {active + 1}/{modules.length}
-          </div>
-        )}
       </div>
 
       {/* Resume bar — offers to jump back to the saved reading position. */}
@@ -550,6 +606,102 @@ export function Storyline({
             {outro}
           </div>
         </section>
+      )}
+
+      {/* Mobile module index — floating pill that opens a bottom sheet with
+          the full table of contents (the dot rail is desktop-only). Sticky
+          bottom as the container's last child = pinned in the thumb zone. */}
+      {modules.length > 1 && (
+        <div className="pointer-events-none sticky bottom-4 z-40 h-0 sm:hidden">
+          {tocOpen ? (
+            <div
+              data-slot="storyline-toc"
+              className="pointer-events-auto absolute inset-x-3 bottom-0 max-h-[60vh] overflow-y-auto rounded-lg border bg-popover text-popover-foreground shadow-wgt motion-safe:animate-wgt-fade-in"
+            >
+              <div className="sticky top-0 flex items-center gap-2 border-b bg-popover px-4 py-1">
+                <span className="text-sm font-semibold">{l.modulesNav}</span>
+                {minutesLeft > 0 && (
+                  <span className="ml-auto text-xs text-muted-foreground">
+                    {l.minutesLeft(minutesLeft)}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  aria-label={l.tocClose}
+                  onClick={() => setTocOpen(false)}
+                  className={cn(
+                    "flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground",
+                    minutesLeft <= 0 && "ml-auto",
+                  )}
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+              <ol>
+                {modules.map((m, i) => (
+                  <li key={i}>
+                    <button
+                      type="button"
+                      aria-current={i === active || undefined}
+                      onClick={() => jumpToModule(i)}
+                      className={cn(
+                        "flex min-h-11 w-full items-center gap-3 px-4 py-2 text-left",
+                        i === active && "bg-muted",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "flex size-5 shrink-0 items-center justify-center rounded-full border font-mono text-[10px] tabular-nums",
+                          i < active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : i === active
+                              ? "border-primary text-primary"
+                              : "text-muted-foreground",
+                        )}
+                      >
+                        {i < active ? (
+                          <Check
+                            aria-hidden="true"
+                            strokeWidth={3}
+                            className="size-3"
+                          />
+                        ) : (
+                          i + 1
+                        )}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-medium">
+                          {typeof m.title === "string" ? m.title : eyebrow(i)}
+                        </span>
+                        {m.subtitle != null && (
+                          <span className="block truncate text-xs text-muted-foreground">
+                            {m.subtitle}
+                          </span>
+                        )}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ) : (
+            <button
+              type="button"
+              aria-label={l.modulesNav}
+              onClick={openToc}
+              className="pointer-events-auto absolute bottom-0 left-1/2 flex h-11 max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full border bg-popover/95 px-4 text-sm text-popover-foreground shadow-wgt backdrop-blur"
+            >
+              <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                {active + 1}/{modules.length}
+              </span>
+              <span className="truncate font-medium">
+                {typeof modules[active]?.title === "string"
+                  ? modules[active].title
+                  : eyebrow(active)}
+              </span>
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

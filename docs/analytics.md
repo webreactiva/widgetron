@@ -56,6 +56,7 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | storyline | storyline | `scroll_milestone` | `{ percent: 25 \| 50 \| 75 \| 100 }` — monotonic, once per instance |
 | storyline | storyline | `completed` | `{}` — alongside the 100 milestone |
 | storyline | storyline | `resumed` | `{ top }` — reader used the resume bar |
+| storyline | storyline | `toc_opened` | `{}` — reader opened the mobile module index |
 
 More widgets (decision-tree, scrubber, drag-and-drop…) will join in v2 — each
 is a ~3-line addition via the internal `useWidgetEvents` hook.

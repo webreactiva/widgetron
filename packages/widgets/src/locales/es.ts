@@ -138,6 +138,8 @@ export const esLabels: Record<string, Record<string, unknown>> = {
       `Retos superados: ${correct}/${answered}`,
     finaleActivities: (count: number) => `Actividades completadas: ${count}`,
     finaleTime: (minutes: number) => `~${minutes} min de lectura`,
+    tocClose: "Cerrar",
+    minutesLeft: (minutes: number) => `Te quedan ~${minutes} min`,
   },
   codeTranslation: {
     codeLabel: "Código",
