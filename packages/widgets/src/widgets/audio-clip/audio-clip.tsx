@@ -72,6 +72,15 @@ export interface AudioClipProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   /** Audio source URL. */
   src: string;
+  /**
+   * Fragment window start, in seconds of the source's timeline. Playback
+   * begins here, and the seek bar, displayed times, transcript cues and the
+   * resume position all become relative to the window — so one long episode
+   * file can serve many clips.
+   */
+  start?: number;
+  /** Fragment window end (seconds in the source). Playback pauses here. */
+  end?: number;
   /** Optional title shown above the player. */
   title?: React.ReactNode;
   /** Optional cover image URL. */
@@ -377,6 +386,11 @@ function VolumeControl({
  * it renders below the controls, highlighting and auto-scrolling each cue as it
  * plays (karaoke); clicking a cue seeks to its start.
  *
+ * With `start`/`end` the player plays only that fragment of `src` (one long
+ * episode file can serve many clips): times, seek bar, resume position and
+ * transcript cues are all fragment-relative — hand it the fragment's own cut
+ * .srt, not the episode's.
+ *
  * Once playback starts, scrolling the main player out of view reveals a sticky
  * mini-player in the corner (play/pause, seek, volume, speed, close) driving the
  * same audio element. Preferred speed and volume, plus the resume position,
@@ -384,6 +398,8 @@ function VolumeControl({
  */
 export function AudioClip({
   src,
+  start,
+  end,
   title,
   poster,
   transcript,
@@ -419,7 +435,17 @@ export function AudioClip({
   const rateRef = React.useRef(1);
   const volumeRef = React.useRef(1);
   const mutedRef = React.useRef(false);
-  const posKey = storageKey ?? src;
+  // Fragment window. All UI state (currentTime, duration, cues, persistence)
+  // is window-relative; only the <audio> element speaks source time.
+  const clipStart = start != null && start > 0 ? start : 0;
+  const clipStartRef = React.useRef(clipStart);
+  clipStartRef.current = clipStart;
+  const clipEndRef = React.useRef(end);
+  clipEndRef.current = end;
+  // Different windows over the same file must not share a resume position.
+  const posKey =
+    storageKey ??
+    (clipStart > 0 || end != null ? `${src}#t=${clipStart},${end ?? ""}` : src);
   const posKeyRef = React.useRef(posKey);
   posKeyRef.current = posKey;
   const restoredRef = React.useRef(false);
@@ -501,15 +527,27 @@ export function AudioClip({
     const savePosition = (t: number) => writeNumber(POS_PREFIX + posKeyRef.current, t);
 
     const onTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+      const cs = clipStartRef.current;
+      const ce = clipEndRef.current;
+      let rel = Math.max(0, audio.currentTime - cs);
+      if (ce != null && audio.currentTime >= ce) {
+        if (!audio.paused) audio.pause();
+        rel = Math.max(0, ce - cs);
+      }
+      setCurrentTime(rel);
       const now = Date.now();
       if (now - lastSaveRef.current >= SAVE_THROTTLE_MS) {
         lastSaveRef.current = now;
-        savePosition(audio.currentTime);
+        savePosition(rel);
       }
     };
     const onLoadedMetadata = () => {
-      setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+      const cs = clipStartRef.current;
+      const total =
+        clipEndRef.current ??
+        (Number.isFinite(audio.duration) ? audio.duration : 0);
+      const windowLen = Math.max(0, total - cs);
+      setDuration(windowLen);
       // Re-assert preferences (some browsers reset them on load).
       audio.playbackRate = rateRef.current;
       audio.volume = volumeRef.current;
@@ -521,10 +559,13 @@ export function AudioClip({
         if (
           saved != null &&
           saved > 0 &&
-          (!Number.isFinite(audio.duration) || saved < audio.duration - 5)
+          (windowLen === 0 || saved < windowLen - 5)
         ) {
-          audio.currentTime = saved;
+          audio.currentTime = cs + saved;
           setCurrentTime(saved);
+        } else if (cs > 0) {
+          audio.currentTime = cs;
+          setCurrentTime(0);
         }
       }
     };
@@ -602,6 +643,11 @@ export function AudioClip({
     const audio = audioRef.current;
     if (!audio) return;
     if (audio.paused) {
+      // Play again after pausing at the window's end restarts the fragment.
+      if (end != null && audio.currentTime >= end - 0.05) {
+        audio.currentTime = clipStart;
+        setCurrentTime(0);
+      }
       void audio.play().catch(() => {
         // Autoplay/permission rejection — leave paused.
       });
@@ -613,7 +659,7 @@ export function AudioClip({
   function restart() {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.currentTime = 0;
+    audio.currentTime = clipStart;
     setCurrentTime(0);
   }
 
@@ -624,7 +670,7 @@ export function AudioClip({
       0,
       duration > 0 ? Math.min(seconds, duration) : seconds,
     );
-    audio.currentTime = clamped;
+    audio.currentTime = clipStart + clamped;
     setCurrentTime(clamped);
   }
 

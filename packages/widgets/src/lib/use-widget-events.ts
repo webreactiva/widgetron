@@ -9,8 +9,11 @@ import { emitWidgetronEvent } from "@/lib/analytics";
  * hydration and Strict Mode double-invocation). Events dispatch from the root
  * so hosts can attribute them via bubbling (e.g. closest storyline section).
  */
-export function useWidgetEvents(widget: string, id?: string) {
-  const ref = React.useRef<HTMLDivElement>(null);
+export function useWidgetEvents<T extends HTMLElement = HTMLDivElement>(
+  widget: string,
+  id?: string,
+) {
+  const ref = React.useRef<T>(null);
   const emit = React.useCallback(
     (action: string, data?: Record<string, unknown>) =>
       emitWidgetronEvent(ref.current, {
