@@ -249,7 +249,9 @@ export function Storyline({
       ref={scrollRef}
       data-slot="storyline"
       className={cn(
-        "relative h-[600px] overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-wgt",
+        // overflow-wrap is inherited — break pathological unbreakable author
+        // strings so no generated text can scroll the reading column sideways.
+        "relative h-[600px] overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-wgt [overflow-wrap:anywhere]",
         className,
       )}
       {...props}
@@ -257,6 +259,13 @@ export function Storyline({
       {/* Progress bar — pinned to the top of the reading viewport. */}
       <div className="pointer-events-none sticky top-0 z-30 h-0">
         <div className="h-1 bg-primary" style={{ width: `${progress}%` }} />
+        {/* Per-module readout for mobile, where the right-rail dots (sm:block)
+            are hidden — keeps "which module / how many left" on phones. */}
+        {modules.length > 1 && (
+          <div className="absolute top-2 right-2 rounded-full border bg-popover/90 px-2 py-0.5 font-mono text-[11px] tabular-nums text-muted-foreground shadow-wgt backdrop-blur sm:hidden">
+            {active + 1}/{modules.length}
+          </div>
+        )}
       </div>
 
       {/* Resume bar — offers to jump back to the saved reading position. */}
