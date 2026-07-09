@@ -125,7 +125,7 @@ function readVar(
  * loaded with a DYNAMIC `import("mermaid")` (it stays out of the main bundle
  * and off the server) and its theme variables are resolved from the live CSS
  * custom properties on the container, so the diagram matches whatever theme is
- * active at mount. Optionally zoomable (buttons / wheel / drag-pan) and with
+ * active at mount. Optionally zoomable (buttons / wheel / drag-pan / pinch) and with
  * clickable nodes that open an aseptic detail overlay (Escape closes).
  */
 export function MermaidDiagram({
@@ -400,6 +400,56 @@ export function MermaidDiagram({
     };
   }, [zoomable]);
 
+  // --- Pinch-to-zoom (touch) ----------------------------------------------
+  // Desktop zooms with the wheel/buttons; touch had neither gesture. One-finger
+  // pan stays native (scrollRef is overflow-auto + touch-action pan-x/pan-y);
+  // two fingers drive the scale by their distance ratio.
+  React.useEffect(() => {
+    if (!zoomable) return;
+    const surface = scrollRef.current;
+    if (!surface) return;
+
+    const active = new Map<number, { x: number; y: number }>();
+    let startDist = 0;
+    let startScale = 1;
+    const spread = () => {
+      const [a, b] = [...active.values()];
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    };
+
+    function onPointerDown(e: PointerEvent) {
+      if (e.pointerType !== "touch") return;
+      active.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (active.size === 2) {
+        startDist = spread();
+        startScale = scaleRef.current;
+      }
+    }
+    function onPointerMove(e: PointerEvent) {
+      if (!active.has(e.pointerId)) return;
+      active.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (active.size === 2 && startDist > 0) {
+        e.preventDefault(); // hold the native scroll while pinching
+        setScaleClamped(startScale * (spread() / startDist));
+      }
+    }
+    function onPointerUp(e: PointerEvent) {
+      active.delete(e.pointerId);
+      if (active.size < 2) startDist = 0;
+    }
+
+    surface.addEventListener("pointerdown", onPointerDown);
+    surface.addEventListener("pointermove", onPointerMove, { passive: false });
+    surface.addEventListener("pointerup", onPointerUp);
+    surface.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      surface.removeEventListener("pointerdown", onPointerDown);
+      surface.removeEventListener("pointermove", onPointerMove);
+      surface.removeEventListener("pointerup", onPointerUp);
+      surface.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [zoomable, setScaleClamped]);
+
   return (
     <div
       ref={containerRef}
@@ -446,7 +496,9 @@ export function MermaidDiagram({
         ref={scrollRef}
         className={cn(
           "relative max-h-[30rem] overflow-auto overscroll-contain rounded-md [scrollbar-width:thin]",
-          zoomable && "cursor-grab",
+          // pan-x/pan-y keeps one-finger pan native but frees two-finger pinch
+          // for the zoom handler (the browser won't page-zoom over the diagram).
+          zoomable && "cursor-grab [touch-action:pan-x_pan-y]",
         )}
       >
         <div ref={sizerRef} className="mx-auto min-h-[10rem]">
