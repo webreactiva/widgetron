@@ -21,14 +21,21 @@ a real defect a blind reader caught in a generated guide.
 
 ## The catalog (smell → real before → fix)
 
-### 1. Ownerless / uncredentialed quote
-A `quote` the reader can't attribute — no owner, or a name with no credential —
-can't be calibrated ("is this me, the author, an expert?").
-- **Before**: `{ "children": "…si depende solo de mí, estoy más en el nivel 5…" }` (no `attribution`).
-- **Before (name, no role)**: `{ "attribution": "Daniel Primo" }` → "who is he, why trust him?"
-- **Fix, no profile**: neutral label so it's clearly a real line from the source, not a floating thought: `{ "attribution": "La voz del episodio", "role": "sobre su propio criterio" }`.
-- **Fix, profile loaded** (`--podcast`): a real credential — `{ "attribution": "Daniel Primo", "role": "creador de Web Reactiva" }` (a role is a *person's* stance, not the show name "Web Reactiva Premium").
-- For a written post's own thesis lines, a neutral `"La voz de la guía"` (or an unattributed pull-quote) beats a bare name.
+### 1. Uncalibrated first quote (attribution is optional, not repetitive)
+The smell is a name the reader can't calibrate on FIRST appearance — not the
+absence of attribution. Attribution is optional and follows a decay:
+- **First quote from a person**: name + credential `role` —
+  `{ "attribution": "Alberto Chesa", "role": "business analyst, antes developer" }`
+  (a role is a *person's* stance, never the show name).
+- **Later quotes from the same voice**: just the name, or nothing when the
+  context makes the speaker obvious. Repeating «Daniel Primo, creador de Web
+  Reactiva» on every quote reads robotic — knowing it once is enough.
+- **Speaker unknown or it's the guide's own thesis line**: NO attribution.
+  An unattributed quote reads as editorial emphasis, which is honest. Never
+  invent a speaker and never use awkward neutral labels («La voz de la
+  guía», «La voz del episodio»).
+- **Still a smell**: `{ "attribution": "Daniel Primo" }` as the FIRST
+  appearance with no role → "who is he, why trust him?"
 
 ### 2. Unanchored metaphor / nickname
 A vivid name lifted from the audio, used as if known.

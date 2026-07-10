@@ -37,8 +37,7 @@
           "content": {
             "type": "quote",
             "props": {
-              "children": "El diferenciador entre hacer el tonto con la IA y hacer ingeniería con la IA no es la herramienta que usas. Es cuánta estructura le pones alrededor. El mismo agente sirve para las dos cosas.",
-              "attribution": "La voz de la guía"
+              "children": "El diferenciador entre hacer el tonto con la IA y hacer ingeniería con la IA no es la herramienta que usas. Es cuánta estructura le pones alrededor. El mismo agente sirve para las dos cosas."
             }
           }
         }
@@ -111,8 +110,7 @@
             {
               "type": "quote",
               "props": {
-                "children": "No el vibe coding de «soy un mago que construye apps sin saber programar», sino el de «construí algo que no entiendo y ahora me toca pagar la factura».",
-                "attribution": "La voz de la guía"
+                "children": "No el vibe coding de «soy un mago que construye apps sin saber programar», sino el de «construí algo que no entiendo y ahora me toca pagar la factura»."
               }
             },
             {
@@ -572,8 +570,7 @@
             {
               "type": "quote",
               "props": {
-                "children": "La IA es un multiplicador. Multiplica tus fortalezas y, con la misma alegría, tus debilidades.",
-                "attribution": "La voz de la guía"
+                "children": "La IA es un multiplicador. Multiplica tus fortalezas y, con la misma alegría, tus debilidades."
               }
             },
             {

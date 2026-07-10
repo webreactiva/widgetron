@@ -132,14 +132,16 @@ can review them first.
    audio; anything that only lands with the spoken delivery is a bug, and the
    fix is to ADD context, not delete the content (faithful-but-uncontextualized
    still fails). The recurring smells, all caught by the read-back (step 6):
-   - **Ownerless quote.** A first-person `quote` with no `attribution` reads as
-     "who is saying this — me, the author, an expert?" and the reader can't
-     calibrate it. A name with no `role` fails the same way ("who is Daniel
-     Primo, why trust him?"). Every quote needs an owner; with no `--podcast`
-     profile to license a name, use a neutral source label (`attribution: "La
-     voz del episodio"` + a `role` that gives the stance) so it is clearly a
-     real line from the source; with a profile, give a real credential `role`
-     (a person's stance, not the show name).
+   - **Attribution: once, and only when known.** `attribution` is OPTIONAL.
+     Use it when the words belong to an identifiable person — with a
+     credential `role` the FIRST time that person is quoted in the guide
+     («Alberto Chesa · business analyst»); later quotes from the same voice
+     carry just the name, or nothing when context makes the speaker obvious.
+     Repeating name + credentials on every quote reads robotic. Never invent
+     a speaker and never use awkward neutral labels («La voz de la guía») —
+     an unattributed quote reads as editorial emphasis, which is honest.
+     What stays a smell: a name whose FIRST appearance gives the reader no
+     way to calibrate it ("who is this, why trust them?").
    - **Unanchored metaphor / nickname.** A vivid name lifted from the audio
      ("el ojo de Sauron" for a level) must be EXPLAINED the first time it
      appears, or it is just a wink only listeners get.
@@ -184,10 +186,13 @@ gets cut or converted into an exercise.
   `quote`/`callout-box` that opens a question the guide will answer. The reader
   gets something to touch (or a question to hold) within the first 60 seconds;
   never open the guide with plain `prose`.
-- **Payoff cadence.** No stretch of 4+ screens without a reader interaction,
-  module boundaries included — `story lint` warns on this (`cadence`). When a
-  stretch sags, UPGRADE a passive screen (prose → quiz, flashcards,
-  decision-tree, checklist…) instead of adding filler.
+- **Payoff cadence.** Avoid long stretches without a reader interaction —
+  `story lint` warns past 4 passive screens (`cadence`). Treat the number as
+  a smell, not a law: a dense topic can carry a longer passive stretch when
+  every screen earns its place — judge the material's density and the
+  transcript's own rhythm, not just the count. When a stretch genuinely
+  sags, UPGRADE a passive screen (prose → quiz, flashcards, decision-tree,
+  checklist…) instead of adding filler.
 - **Stamp + send-off per module.** Give every module an `emoji` (a single
   emoji matching its theme — the stamp the reader earns and collects in the
   finale; make the set varied, never repeat one) and an `outro`: ONE line with
