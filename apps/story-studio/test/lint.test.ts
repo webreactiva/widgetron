@@ -165,6 +165,27 @@ describe("story pacing lint", () => {
     expect(result.findings.some((f) => f.rule === "persistence-collision")).toBe(false);
   });
 
+  it("warns on a minute-chipped quote without a clip only when the doc has audio", () => {
+    const quoteAt = {
+      type: "quote",
+      props: { children: "q", timestamp: "23:14" },
+    };
+    const story = {
+      type: "storyline",
+      props: { modules: [{ title: "One", screens: [quoteAt] }] },
+    };
+    const withAudio = lintStoryDocument({
+      version: 1,
+      meta,
+      audio: { full: "https://example.com/e315.mp3" },
+      story,
+    });
+    expect(withAudio.findings.some((f) => f.rule === "audio-pending")).toBe(true);
+
+    const withoutAudio = lintStoryDocument({ version: 1, meta, story });
+    expect(withoutAudio.findings.some((f) => f.rule === "audio-pending")).toBe(false);
+  });
+
   it("skips pacing rules for a non-storyline root", () => {
     const result = lintStoryDocument({
       version: 1,

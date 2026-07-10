@@ -245,8 +245,8 @@ export function lintStoryDocument(input: unknown): StoryLint {
   });
 
   // --- cadence: no long stretch without a reader action (F6) ---
-  // ponytail: 4 is a tunable heuristic — the skill states no number. Interactive
-  // = the "Interactive" category.
+  // ponytail: 4 is a tunable heuristic, mirrored by the skill's payoff-cadence
+  // rule. Interactive = the "Interactive" category.
   const MAX_STATIC_STREAK = 4;
   let streak = 0;
   let worstStreak = 0;
@@ -289,6 +289,24 @@ export function lintStoryDocument(input: unknown): StoryLint {
     if (c > 1) {
       warn("visual-metaphor", `mermaid "${kind}" diagram used ${c}× — vary the diagram type`);
     }
+  }
+
+  // --- audio-aware: a quote pinned to a minute but without a playable clip is
+  // pending audio work. Only nagged when the document already carries audio
+  // (the clips pipeline is clearly in play); without an `audio` block the
+  // skill's handoff report owns the pending-clip list. ---
+  if (doc.audio) {
+    flat
+      .filter((f) => f.type === "quote")
+      .forEach((f) => {
+        const p = (f.node.props ?? {}) as Record<string, unknown>;
+        if (typeof p.timestamp === "string" && p.clip == null) {
+          warn(
+            "audio-pending",
+            `module ${f.moduleIndex + 1}: quote at ${p.timestamp} has a minute chip but no clip — cut it with make-audio-clip or drop the timestamp`,
+          );
+        }
+      });
   }
 
   // --- persistence collision: two widgets writing the same localStorage key
