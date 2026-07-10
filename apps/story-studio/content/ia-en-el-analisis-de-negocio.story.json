@@ -1,0 +1,378 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Del requerimiento al prompt: la IA entra en el equipo ágil",
+    "slug": "ia-en-el-analisis-de-negocio",
+    "lang": "es",
+    "theme": "webreactiva",
+    "format": "entrevista",
+    "description": "Un analista de negocio enseña, sin humo, dónde le ayuda la IA de verdad: historias de usuario, casos de test y una librería de prompts para todo el equipo — y dónde todavía no. Te llevas su ciclo completo, su playbook y un prompt listo para usar.",
+    "source": {
+      "type": "podcast",
+      "show": "Web Reactiva",
+      "episode": 336,
+      "date": "2026-02"
+    }
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Llevas medio camino. Aquí hay un truco que no es de oficina.",
+          "content": {
+            "type": "callout-box",
+            "props": {
+              "variant": "info",
+              "label": "El truco de estudiante",
+              "children": "Alberto sigue estudiando (universidad online, nada menos) y su arma es NotebookLM, la herramienta de Google que trabaja solo sobre las fuentes que tú le das: mete los apuntes en PDF y le pide «hazme un podcast de 20 minutos del tema 1». Audio, vídeo o notas de repaso a partir de tu propio material — dice que los podcasts que saca «son espectaculares»."
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "link",
+      "title": "La conversación sigue con los malandriners",
+      "description": "Cada charla como esta continúa en la comunidad de Web Reactiva: retos, crónicas reactivas y más historias como la de Alberto.",
+      "buttonLabel": "Únete a la conversación",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "version": 1,
+    "props": {
+      "storageKey": "ia-en-el-analisis-de-negocio",
+      "glossary": {
+        "historia de usuario": "La unidad de trabajo del equipo: describe una necesidad desde el punto de vista de quien la usa, con una estructura fija de descripción y criterios de aceptación.",
+        "criterios de aceptación": "La lista de condiciones que una historia debe cumplir para darse por buena. En el equipo de Alberto viven en Jira, con estructura propia.",
+        "refinamiento": "Ceremonia ágil en la que el analista presenta la historia y el equipo de desarrollo pregunta el porqué y el qué antes de implementarla.",
+        "business analyst": "Analista de negocio: recoge los requerimientos de la parte de negocio y los traslada al equipo de desarrollo para que todo el trabajo apunte a la entrega de valor.",
+        "skill": "Fichero de instrucciones reutilizable (un markdown) que encapsula el conocimiento de una tarea para que un agente de IA lo aplique sin que tengas que definirlo todo tú."
+      },
+      "modules": [
+        {
+          "title": "El personaje: del código a la trinchera del negocio",
+          "subtitle": "Por qué un developer con años de .NET dejó de programar para dedicarse a aclarar lo que hay que programar.",
+          "emoji": "🧭",
+          "outro": "Ya sabes quién habla y de qué trinchera viene. Ahora toca abrir su flujo de trabajo por dentro: ahí es donde entra la IA.",
+          "screens": [
+            {
+              "type": "profile-card",
+              "props": {
+                "people": [
+                  {
+                    "name": "Alberto Chesa",
+                    "role": "Business analyst en una gran consultora",
+                    "bio": "Recoge los requerimientos de negocio y los traduce a un equipo de desarrollo ágil, con la entrega de valor como brújula. Antes fue developer del mundo Microsoft durante años — por eso sabe exactamente qué le falta a un requerimiento cuando llega mal contado."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Me surgió la oportunidad de estar al otro lado de la trinchera. Y dije: pues ¿por qué no? Vamos a intentar ayudar a desarrolladores como me gustaría que me hubieran ayudado a mí.",
+                "attribution": "Alberto Chesa",
+                "role": "business analyst, antes developer"
+              }
+            },
+            {
+              "type": "timeline",
+              "props": {
+                "defaultOpen": 0,
+                "items": [
+                  {
+                    "time": "Los años de developer",
+                    "title": "Picando código en el mundo Microsoft",
+                    "description": "Años programando con tecnología Microsoft en una época en la que defenderla en público era una rareza: «cuando empecé en este mundillo, era Satán», bromea. Hoy medio mundo programa con VS Code (que es de Microsoft) y no pasa nada."
+                  },
+                  {
+                    "time": "2018",
+                    "title": "Primera visita al podcast",
+                    "description": "Pasó por Web Reactiva, el podcast de Daniel Primo, para hablar de Microsoft y desarrollo web — justo cuando .NET Core acababa de abrir su código en GitHub. Casi fue una despedida: poco después cambió de bando."
+                  },
+                  {
+                    "time": "El salto",
+                    "title": "Al otro lado de la trinchera",
+                    "description": "Como developer perdía demasiado tiempo aclarando requerimientos confusos, así que decidió ser él quien los aclarase: dejó el código y se hizo business analyst. Lleva casi 6 años en el rol, con certificación de Product Owner de Scrum incluida."
+                  },
+                  {
+                    "time": "Hoy",
+                    "title": "Responsable de la iniciativa de IA de su equipo",
+                    "description": "En su consultora le encargaron introducir la IA en el ciclo de trabajo del equipo: lluvia de ideas, kickoffs individuales y una librería de prompts en construcción. De eso va esta guía."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Cuando Alberto dice que su trabajo es recoger «requerimientos de negocio», ¿de qué negocio habla?",
+                "options": [
+                  {
+                    "text": "Del de las empresas: clientes, contratos y gente con corbata",
+                    "feedback": "Ahí también, claro — pero se te escapa la parte que te toca a ti aunque programes por hobby. Vuelve a pensarlo."
+                  },
+                  {
+                    "text": "De cualquiera que necesite software, incluido tu proyecto personal",
+                    "correct": true,
+                    "feedback": "Eso es. Alberto lo dice tal cual: «el negocio puede ser también un proyecto personal; el negocio podemos ser nosotros mismos». Si programas para ti sin tener claro el porqué, tienes el mismo problema que una empresa."
+                  },
+                  {
+                    "text": "Del departamento comercial que pide cosas imposibles",
+                    "feedback": "Buen meme, pero no: el requerimiento de negocio es lo que determina todo lo técnico que viene después, venga de donde venga."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "El flujo: una historia de usuario, cinco paradas",
+          "subtitle": "Dónde ayuda la IA de verdad en el ciclo de un equipo ágil — y dónde se atasca.",
+          "emoji": "🔁",
+          "outro": "El ciclo entero con la IA de copiloto — y sin dejar que un contador de tokens decida quién trabaja. Quédate ahora con las ideas que sostienen todo esto.",
+          "screens": [
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Escribir",
+                    "active": true,
+                    "detail": {
+                      "title": "Redactar la historia de usuario",
+                      "description": "A partir de documentación o de un borrador, un prompt con la estructura de la casa (descripción + criterios de aceptación, todo en Jira, el gestor de tickets) ayuda a redactarla. El resultado sirve más para corregir, ampliar y anticipar preguntas que para escribir desde cero."
+                    }
+                  },
+                  {
+                    "label": "Refinar",
+                    "detail": {
+                      "title": "Presentarla al equipo",
+                      "description": "En la ceremonia de refinamiento, el analista presenta la historia y los desarrolladores preguntan el porqué y el qué — el cómo es cosa suya. Un compañero recién llegado sumó su propio prompt: que la IA le escriba el guion para presentar la historia. De lo que mejor funciona."
+                    }
+                  },
+                  {
+                    "label": "Desarrollar",
+                    "detail": {
+                      "title": "El equipo implementa",
+                      "description": "La historia se desarrolla. Aquí el analista suelta el volante: el cómo pertenece al equipo de desarrollo."
+                    }
+                  },
+                  {
+                    "label": "Probar",
+                    "detail": {
+                      "title": "Aceptar la historia",
+                      "description": "A partir del contenido de la historia, la IA genera el listado de casos de test. No son tests unitarios ni automáticos: se prueba a mano que los requerimientos están cubiertos, no solo que técnicamente funciona."
+                    }
+                  },
+                  {
+                    "label": "Documentar",
+                    "detail": {
+                      "title": "Una sola documentación",
+                      "description": "De la historia sale una documentación única que mezcla lo técnico, lo funcional y lo de negocio. Es el eslabón con menos éxito: a nadie le gusta documentar, y exportar desde Confluence (la wiki corporativa) en un formato que la IA digiera bien sigue siendo la gran fricción — el PDF que genera es terrible y las restricciones de seguridad impiden convertirlo a Markdown."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "La jugada del equipo de Alberto no es una herramienta nueva: es una **librería de prompts**. Si una persona resuelve una tarea con un prompt que funciona, ese prompt se comparte y la siguiente persona ya no empieza de cero: unas bases comunes de uso de la IA para todo el equipo. Al anfitrión de la charla, Daniel Primo, se le encendió la bombilla al oírlo: eso es exactamente lo que en el mundo de los agentes se llama *skills* — ficheros de instrucciones reutilizables. «Cambia skill por prompt» y es la misma idea."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Es tan importante o más el proceso que el resultado. Tenemos que jugar con la IA, tenemos que aprender cómo funciona, tenemos que aprender sus limitaciones y tenemos que aprender también en lo que es buena.",
+                "attribution": "Alberto Chesa"
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "¿Y si te evaluaran por tokens gastados?",
+                "messages": [
+                  {
+                    "from": "Daniel",
+                    "side": "left",
+                    "text": "Imagínate que llegas a la revisión mensual y te sacan un papelito: «Estás usando pocos tokens. No estás siendo suficientemente productivo con la IA». ¿Cómo ves esto?"
+                  },
+                  {
+                    "from": "Alberto",
+                    "side": "right",
+                    "text": "Sería la manera 824.000 de intentar medir la productividad de una persona de manera cuantitativa, cuando debería ser un concepto cualitativo."
+                  },
+                  {
+                    "from": "Alberto",
+                    "side": "right",
+                    "text": "Es como las líneas de código, Dani. Esta persona me ha hecho 30.000 este mes y esta otra me ha hecho tres. ¿Quién ha trabajado más? ¿Quién es más productivo?"
+                  },
+                  {
+                    "from": "Alberto",
+                    "side": "right",
+                    "text": "Y ahí surgiría la trampa: imagínate que la evaluación maneja 40 criterios. Yo me fijo solo en esos 40, los hago perfectos, y me va a salir en la IA que soy el mega máquina."
+                  },
+                  {
+                    "from": "Alberto",
+                    "side": "right",
+                    "text": "Si nos van a evaluar con el uso de la IA, nos tendrán que enseñar a usar la IA."
+                  },
+                  {
+                    "from": "Daniel",
+                    "side": "left",
+                    "text": "Correcto, claro. Hecha la ley, hecha la trampa: la medida no puede depender solo de un número."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Las ideas: lo que te llevas de la conversación",
+          "subtitle": "Copilotos, cajas negras y por qué contar tokens es contar líneas de código.",
+          "emoji": "💡",
+          "outro": "Cinco ideas, un consejo que pica y el vocabulario dominado. Falta lo mejor: llevártelo a tu equipo.",
+          "screens": [
+            {
+              "type": "flashcards",
+              "props": {
+                "cards": [
+                  {
+                    "front": "¿La IA le escribe las historias de usuario a Alberto?",
+                    "back": "No: hace de copiloto. El resultado le sirve «más para corregir, ampliar y darte cuenta de algún detalle que te podrían preguntar» que para escribir desde cero. Y si fuera un agente autónomo escupiendo historias listas, bromea, «yo no estaría allá»."
+                  },
+                  {
+                    "front": "¿Qué pesa más al meter la IA en un equipo: el proceso o el resultado?",
+                    "back": "El proceso, «tan importante o más que el resultado»: jugar con la IA, aprender cómo funciona, sus limitaciones y en lo que es buena."
+                  },
+                  {
+                    "front": "¿Validar un JSON con IA? ¿Multiplicar dos cifras grandes?",
+                    "back": "Mejor no: lo determinista debe seguir siendo determinista. Un 2+2 siempre mejor con una función de código, aunque viva dentro del contexto de la IA. La IA para lo difuso; el código para lo exacto."
+                  },
+                  {
+                    "front": "¿Por qué su equipo no usa el ChatGPT de todos?",
+                    "back": "Su consultora tiene su propio acceso corporativo a la IA (con GPT-5.1 de motor por debajo): un entorno montado para que sea seguro compartir datos delicados. La misma experiencia de chat, pero por ahí no se escapa información de la compañía."
+                  },
+                  {
+                    "front": "¿Da miedo no ver el código que genera la IA?",
+                    "back": "Ya vivimos esa película: en C gestionabas la memoria a mano; con los frameworks (.NET, Java) aceptamos instrucciones que «por debajo hacen cosas». Luego .NET Core reabrió la caja al publicar su código en GitHub. Con la IA, «puede que pasemos un proceso parecido»."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Pruébalo. Pruébalo ahora. Mira a ver lo que te dice y compáralo con hacerle esa pregunta a cualquier persona de tu entorno. A ver qué resultado obtienes. Y a partir de ahí hablamos.",
+                "attribution": "Alberto Chesa"
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Alberto resume hacia dónde va esto con una metáfora: «Se empezó usando como un copilot y se está tendiendo a un autopilot». ¿Qué matiz le pone a ese futuro?",
+                "options": [
+                  {
+                    "text": "Que el avión ya vuela solo: el desarrollador tiene los días contados",
+                    "feedback": "No es su lectura: «los aviones tienen autopilot, pero todavía los tenemos que aterrizar manualmente… y todavía llevan personas en las cabinas»."
+                  },
+                  {
+                    "text": "Que seguirá habiendo personas en la cabina: alguien definiendo bien al principio y alguien revisando al final",
+                    "correct": true,
+                    "feedback": "Exacto. Imagina incluso un rol nuevo al final del proceso — el «portero de la IA», que decide qué código pasa — y el suyo propio al principio: en vez de escribir una historia de usuario, escribir un prompt y enchufárselo a la IA para que lo implemente."
+                  },
+                  {
+                    "text": "Que el autopilot es humo: en dos años volvemos a picarlo todo a mano",
+                    "feedback": "Al revés: no le parece nada descabellado que la IA genere el código mientras las personas lo definen antes y lo revisan después."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Repaso rápido de vocabulario, por si algún término se coló sin presentarse: todo el flujo gira alrededor de la [[historia de usuario]], que nace con sus [[criterios de aceptación]], se presenta al equipo en el [[refinamiento]] y se acepta probando que cumple lo prometido. En medio, el [[business analyst]] hace de traductor entre el negocio y el código. Y si algún día empaquetas ese conocimiento en un fichero reutilizable, estarás escribiendo una [[skill]]. Toca cualquier palabra marcada para ver su definición."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Para seguir: móntalo en tu equipo",
+          "subtitle": "El playbook de Alberto, las herramientas que salieron en la charla y un prompt para empezar hoy.",
+          "emoji": "🧰",
+          "outro": "Playbook, herramientas y un prompt en el bolsillo. Recoge tus sellos: la conversación sigue al otro lado del botón.",
+          "screens": [
+            {
+              "type": "step-cards",
+              "props": {
+                "steps": [
+                  {
+                    "title": "Lluvia de ideas sin respuesta mala",
+                    "icon": "lightbulb",
+                    "description": "Reúne al equipo y pregunta: «¿en qué tarea se os ocurre que nos puede ayudar la IA?». Alberto no rechazó ninguna propuesta — el filtro llega después, al priorizar las más inmediatas."
+                  },
+                  {
+                    "title": "Kickoff con cada persona",
+                    "icon": "users",
+                    "description": "Una sesión individual para alinear cómo orientar cada tema, dar unas guías comunes y mantener los experimentos cohesionados."
+                  },
+                  {
+                    "title": "Un prompt por tarea del ciclo",
+                    "icon": "book",
+                    "description": "Escribir la historia, generar el guion para presentarla, sacar casos de test, documentar: cada tarea resuelta se convierte en un prompt compartido en la librería del equipo."
+                  },
+                  {
+                    "title": "Sesiones de control",
+                    "icon": "calendar",
+                    "description": "Fecha en el calendario para recoger los primeros resultados: qué prompts funcionan, cuáles no y qué se aprende por el camino."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "resource-list",
+              "props": {
+                "title": "Lo que salió en la charla",
+                "items": [
+                  {
+                    "label": "NotebookLM",
+                    "href": "https://notebooklm.google.com",
+                    "kind": "tool",
+                    "source": "Google",
+                    "description": "La herramienta con la que Alberto estudia: le das tus PDF y te genera podcasts, vídeos o notas de repaso a partir de tus propias fuentes."
+                  },
+                  {
+                    "label": "Perplexity",
+                    "href": "https://www.perplexity.ai",
+                    "kind": "tool",
+                    "source": "Perplexity",
+                    "description": "Su buscador por defecto, antes que Google: organiza en proyectos las dudas del día a día, desde la caldera que hace un ruido raro hasta el plan para sacarse el B2 de inglés."
+                  },
+                  {
+                    "label": "skills.sh",
+                    "href": "https://skills.sh",
+                    "kind": "tool",
+                    "source": "skills.sh",
+                    "description": "El directorio de skills que salió en la conversación: conocimiento humano plasmado en un markdown para que lo usen los agentes. Ahí vive la popular «humanizer», una skill para que los textos escritos con IA suenen a persona."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "prompt-template",
+              "props": {
+                "template": "Actúa como analista de negocio de mi equipo.\n\nQuiero escribir una historia de usuario a partir de este material:\n{{pega aquí tu documentación o borrador}}\n\nUsa esta estructura: una descripción que explique el porqué y el qué (nunca el cómo), y una lista de criterios de aceptación verificables.\n\nAntes de redactar nada, hazme las preguntas de contexto que necesites. Después, señálame los detalles que el equipo de desarrollo podría preguntarme, para anticiparme.",
+                "note": "Modelado sobre el uso real de Alberto: la IA como copiloto que corrige, amplía y anticipa. La historia sigue siendo tuya."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

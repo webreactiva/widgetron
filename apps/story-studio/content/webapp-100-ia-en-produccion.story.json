@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Una webapp 100% IA en producción, en 5 claves",
+    "slug": "webapp-100-ia-en-produccion",
+    "lang": "es",
+    "theme": "webreactiva",
+    "format": "briefing",
+    "description": "El flujo, la gran cagada de enero y los trucos que sacaron a producción una plataforma real con el 99,5% del código escrito por IA.",
+    "source": {
+      "type": "podcast",
+      "show": "Web Reactiva Premium",
+      "episode": 354,
+      "date": "2026-04"
+    }
+  },
+  "settings": {
+    "cta": {
+      "kind": "link",
+      "placement": "end",
+      "title": "Sigue la conversación en Web Reactiva",
+      "description": "Cada domingo, developers reciben en su correo lo que de verdad funciona al programar con IA. Gratis.",
+      "buttonLabel": "Entra en Web Reactiva",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "webapp-100-ia-en-produccion",
+      "modules": [
+        {
+          "title": "Las claves",
+          "subtitle": "Daniel Primo construyó y desplegó la nueva plataforma para suscriptores de Web Reactiva con el 99,5% del código escrito por IA — Claude Code como herramienta principal. El error, el flujo y los trucos: una clave por pantalla.",
+          "emoji": "🔑",
+          "outro": "Cinco claves y una cicatriz. Ahora toca demostrar que estuviste atento.",
+          "screens": [
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "Enero: «el paso final» que casi lo tira todo",
+                "messages": [
+                  {
+                    "from": "Dani",
+                    "side": "right",
+                    "text": "Último paso antes de abrir la web nueva a los betatesters: mis suscriptores ya pagan por Stripe en la plataforma vieja, así que te he pedido un comando que los empareje con sus suscripciones y las deje activas en la nueva."
+                  },
+                  {
+                    "from": "IA",
+                    "side": "left",
+                    "text": "Hecho. El dry run (ejecutar en seco: te digo lo que haría, sin hacerlo) pinta bien: cada correo con la suscripción que voy a crear, hasta con su código de Stripe. ✅"
+                  },
+                  {
+                    "from": "Dani",
+                    "side": "right",
+                    "text": "Probado en la cuenta de prueba, me vale. Lo lanzo en producción… ¿por qué tarda tanto cada iteración?"
+                  },
+                  {
+                    "from": "Dani",
+                    "side": "right",
+                    "text": "Algo no cuadra. Paro, miro Stripe y… se están creando suscripciones DUPLICADAS."
+                  },
+                  {
+                    "from": "IA",
+                    "side": "left",
+                    "text": "Entendí que querías *generar* las suscripciones, tal cual, de forma literal: el comando llamaba a `newSubscription` con cada correo."
+                  },
+                  {
+                    "from": "Dani",
+                    "side": "right",
+                    "text": "Y al pedirle cuentas, su respuesta fue puro «¿de dónde vienes? manzanas traigo»: excusas de quien no quiere ver el error. Pero la culpa era mía, que di por buena una solución que no lo era justo en la parte más crítica."
+                  },
+                  {
+                    "from": "Dani",
+                    "side": "right",
+                    "text": "Frené a tiempo: 10 o 12 suscripciones duplicadas y ni un euro cobrado a nadie. Pero la presión de no controlar lo que pasaba en mi propia aplicación me hizo aparcarlo todo: febrero entero en blanco."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Plan",
+                    "detail": {
+                      "title": "¿Cuándo toca hacer plan?",
+                      "description": "Cuatro preguntas sobre la funcionalidad: ¿toca varios ficheros?, ¿afecta a lo que ve o hace el usuario?, ¿requiere varias formas de interacción (web, panel de administración, terminal)?, ¿se integra con herramientas externas como Stripe? **Con dos síes, se hace plan.** Si no, directo a pedirlo."
+                    }
+                  },
+                  {
+                    "label": "Ejecución",
+                    "active": true,
+                    "detail": {
+                      "title": "Con plan o a lo vibe coding",
+                      "description": "O ejecutas el plan o se lo cuentas directamente: «quiero esto, ten en cuenta esto otro», ver el resultado y seguir sumando sin deshacer. Pero sin desligarte de la pantalla: a veces el modelo toma caminos que no son los esperables y conviene corregir en caliente."
+                    }
+                  },
+                  {
+                    "label": "Revisión",
+                    "detail": {
+                      "title": "Donde se le planta cara a la IA",
+                      "description": "Revisión manual en local con el entorno arrancado, pruebas sobre el navegador — con herramientas que lo controlan desde el agente, como Chrome DevTools MCP o Playwright — y revisiones encargadas al propio agente: las de serie en Claude Code (/review, /security-review) o pedidas a mano («hazme una revisión de esto»), más una pasada de vez en cuando a la caza de código duplicado."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "flashcards",
+              "props": {
+                "cards": [
+                  {
+                    "front": "¿Brilla o falla? Hacer un CRUD completo, front y back",
+                    "back": "**Brilla.** Ha leído miles y miles de CRUD: hasta el panel de administración salió con una estructura propia adaptable a cada modelo, sin pedírselo."
+                  },
+                  {
+                    "front": "¿Brilla o falla? Migrar la base de datos de la web vieja a la nueva",
+                    "back": "**Brilla.** No fue a la primera, pero se apañó hasta con un importador y un exportador. Hacerlo a mano parecía una barrera infranqueable."
+                  },
+                  {
+                    "front": "¿Brilla o falla? Seguir tu plan al pie de la letra",
+                    "back": "**Falla.** Aunque el plan pedía los tests organizados por features, acababan una y otra vez en la carpeta de siempre. Hay que vigilarlo constantemente."
+                  },
+                  {
+                    "front": "¿Brilla o falla? No duplicar código",
+                    "back": "**Falla.** En una revisión aparecieron 20 o 30 implementaciones diferentes del formato de fecha. Dedica tokens de vez en cuando a cazar duplicados."
+                  },
+                  {
+                    "front": "¿Brilla o falla? Salirse de lo que tiene establecido",
+                    "back": "**Falla.** Con React tira casi siempre de su librería de iconos favorita (Lucide) aunque pidas otra, e incluso coló una librería de 2 gigas solo para pintar markdown."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**La salvación vino de dos herramientas: el CLI y las skills.** Cualquier cosa que puedas llevarte a la terminal, llévatela: un comando propio que crea usuarios de prueba con suscripción activa y rol, o un pequeño script que lee del node_modules los iconos realmente disponibles para que la IA no se los invente. Y las skills (un prompt guardado con instrucciones, scripts y referencias que el agente carga cuando toca): una tan simple como «crear usuario» ahorra explicárselo cada vez, a ti y a los tests que abren el navegador."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Hacer una POC ahora es cuestión de tokens. Porque una prueba de concepto es prácticamente la funcionalidad hecha.",
+                "attribution": "Daniel Primo",
+                "role": "creador de Web Reactiva, tras tirar una sección entera sin que doliera"
+              }
+            }
+          ]
+        },
+        {
+          "title": "El reto",
+          "subtitle": "Dos comprobaciones rápidas, solo sobre lo que acabas de leer. Si estuviste atento, esto es un paseo.",
+          "emoji": "🎯",
+          "outro": "Reto superado. Te llevas los enlaces y una chuleta de despedida.",
+          "screens": [
+            {
+              "type": "quiz",
+              "props": {
+                "question": "El comando de sincronización con Stripe acabó creando suscripciones duplicadas. ¿Cuál fue el fallo de fondo?",
+                "options": [
+                  {
+                    "text": "La IA entendió «generar las suscripciones» de forma literal y llamaba a newSubscription con cada correo",
+                    "correct": true,
+                    "feedback": "Eso es. En vez de emparejar las suscripciones existentes, creaba una nueva por cada usuario. En la cuenta de prueba parecía perfecto… y en producción, no."
+                  },
+                  {
+                    "text": "Stripe cambió su API justo esa semana",
+                    "feedback": "No: Stripe hizo exactamente lo que el comando le pidió. El fallo venía de casa."
+                  },
+                  {
+                    "text": "No se probó antes de lanzarlo",
+                    "feedback": "Sí se probó: dry run y cuenta de dev. La lección es otra: en la parte crítica no basta con que parezca que va bien — la responsabilidad de verificarlo es tuya."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "fill-in-the-blanks",
+              "props": {
+                "text": "«Hacer una {{cosa}} ahora es cuestión de {{coste}}»: la prueba es prácticamente la funcionalidad hecha, y tirarla ya no duele. Y antes de soltarle una feature gorda a la IA, recuerda la regla: si dos de las cuatro preguntas dan sí, se hace {{paso}}.",
+                "blanks": {
+                  "cosa": {
+                    "options": [
+                      "POC",
+                      "pull request",
+                      "migración"
+                    ],
+                    "answer": "POC"
+                  },
+                  "coste": {
+                    "options": [
+                      "tokens",
+                      "horas",
+                      "suerte"
+                    ],
+                    "answer": "tokens"
+                  },
+                  "paso": {
+                    "options": [
+                      "plan",
+                      "commit",
+                      "despliegue"
+                    ],
+                    "answer": "plan"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "Fuentes y cierre",
+          "subtitle": "Los enlaces reales detrás de esta guía y una chuleta para tu próximo proyecto con IA.",
+          "emoji": "🎒",
+          "outro": "Marca lo que ya haces, guarda lo que falta — y nos vemos en la comunidad.",
+          "screens": [
+            {
+              "type": "resource-list",
+              "props": {
+                "title": "Para seguir tirando del hilo",
+                "items": [
+                  {
+                    "label": "La nueva zona premium: el acceso mágico",
+                    "href": "https://app.webreactiva.com/acceso-magico",
+                    "kind": "tool",
+                    "source": "Web Reactiva",
+                    "description": "La webapp de la que habla toda esta guía. Si eres suscriptor: pon tu correo y te llega el enlace de entrada."
+                  },
+                  {
+                    "label": "Web Reactiva",
+                    "href": "https://www.webreactiva.com",
+                    "kind": "link",
+                    "source": "Web Reactiva",
+                    "description": "La casa de Web Reactiva y de su comunidad de developers, los malandriners: el sitio donde seguir la conversación."
+                  },
+                  {
+                    "label": "skills.sh",
+                    "href": "https://skills.sh",
+                    "kind": "tool",
+                    "description": "Un buscador de skills para encontrar las apropiadas para tu framework, tu lenguaje o tu forma de programar."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "webapp-100-ia-en-produccion-chuleta",
+                "items": [
+                  {
+                    "text": "Divide la aplicación por features, en frontend y backend",
+                    "hint": "La IA resuelve mejor las tareas divididas y tú ganas paz mental."
+                  },
+                  {
+                    "text": "Tests automatizados desde el principio, y que se ejecuten solos",
+                    "hint": "Unitarios y de integración, front y back; con hooks (automatismos del agente) o insistiendo en las instrucciones del proyecto (CLAUDE.md, AGENTS.md) para que el flujo siempre los lance."
+                  },
+                  {
+                    "text": "Prueba en el navegador lo que la IA implementa",
+                    "hint": "Entornos de desarrollo arrancados y herramientas que controlan el navegador: al menos que no queden pantallas en blanco."
+                  },
+                  {
+                    "text": "Dedica tokens de vez en cuando a cazar código duplicado",
+                    "hint": "Es donde más deuda técnica se acumula, sobre todo en el frontend."
+                  },
+                  {
+                    "text": "En la parte crítica, no te fíes solo del dry run",
+                    "hint": "Verifica tú qué va a hacer de verdad el comando. La responsabilidad del código es tuya, no de la IA."
+                  },
+                  {
+                    "text": "Despliega antes — ayer ya es tarde",
+                    "hint": "Ayúdate de la IA también en el despliegue: da buenas pistas del típico fallo que en local no aparece."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
