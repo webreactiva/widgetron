@@ -158,6 +158,16 @@ const surpriseReveal: WidgetNode = {
         note: "Copy it, paste it into your AI.",
       },
     },
+    // Variable reward: the reveal picks ONE of content + variants at random.
+    variants: [
+      {
+        type: "quote",
+        props: {
+          children: "The best way to predict the future is to invent it.",
+          attribution: "Alan Kay",
+        },
+      },
+    ],
   },
 };
 
@@ -250,6 +260,8 @@ const courseStoryline: WidgetNode = {
       {
         title: "A walk you can touch",
         subtitle: "How this dispensa works.",
+        emoji: "🧭",
+        outro: "You know the rules of the walk — next, the machinery under it.",
         screens: [
           { type: "section-header", props: { icon: "book", eyebrow: "Start here", title: "The tour begins" } },
           {
@@ -271,6 +283,8 @@ const courseStoryline: WidgetNode = {
       {
         title: "The round trip",
         subtitle: "What happens between Enter and the page.",
+        emoji: "🌐",
+        outro: "You can follow a request end to end — time to prove it.",
         screens: [
           {
             type: "flow-diagram",
@@ -293,6 +307,7 @@ const courseStoryline: WidgetNode = {
       {
         title: "Check yourself",
         subtitle: "One question before you go.",
+        emoji: "🏆",
         screens: [
           {
             type: "quiz",
@@ -1834,6 +1849,25 @@ console.log("C");`}
       {
         label: "A mini-dispensa (JSON-driven)",
         node: renderWidget(courseStoryline),
+      },
+      {
+        label: "Thread mode (experimental) — same JSON, tap-through",
+        node: renderWidget({
+          ...courseStoryline,
+          props: {
+            ...courseStoryline.props,
+            title: "A walk you can tap",
+            description: "The same module tree, one screen at a time.",
+            variant: "thread",
+          },
+        }),
+      },
+      {
+        label: "Challenge mode — a themed meter fed by the interactions",
+        node: renderWidget({
+          ...courseStoryline,
+          props: { ...courseStoryline.props, challenge: "Your tour score" },
+        }),
       },
     ],
   },
