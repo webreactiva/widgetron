@@ -106,6 +106,46 @@ claims about the episode's subject matter beyond safe general knowledge), and
 the handoff summary must list every complementary screen added, so the author
 can review them first.
 
+## Author-supplied images (the local-assets pattern)
+
+When the user hands over a notes folder (Google Docs exported to HTML +
+`images/`), the HTML almost always points at **relative paths** to local files
+(`images/image1.png`) that have no public URL. Default to the
+**self-contained local-assets pattern**, not to base64-in-the-JSON (it bloats
+the document) and not to uploading anywhere (the author may not want a third
+party to host their material):
+
+1. **Inspect every image first** with the `read` tool. Each one needs a real
+   caption + credit before it enters the JSON — never invent them.
+2. **Copy** the relevant images into a sibling folder next to the story JSON:
+   ```
+   apps/story-studio/content/<slug>.story.json
+   apps/story-studio/content/<slug>.assets/<semantic-name>.<ext>
+   ```
+   Rename to **semantic names** (`onion-4-layers.png`, not `image9.png`).
+   Crop out images that don't earn a slot (no signal → no entry); the folder
+   rides alongside the slug in git, so a junk image is permanent dead weight.
+3. **Reference them with absolute paths** in the `figure` widget:
+   `src: "/<slug>.assets/<name>.<ext>"`. The dev server (via
+   `publicDir: "content"` in `apps/story-studio/vite.config.ts`) serves them
+   at the root, and `pnpm story render` copies the whole folder into
+   `dist/<slug>/<slug>.assets/` so the export is self-contained. **No base64,
+   no external hosting, no `public/` bleed.**
+4. **Credit per image**: the author's own diagrams → "Diagrama de las notas
+   del episodio" (or your own caption); borrowed figures (e.g. Uncle Bob's
+   Clean Architecture onion) → the canonical source. If you can't credit
+   confidently, drop the image.
+5. **Caption rule (cold reader)**: an image whose caption just repeats the
+   screen text above it is dead weight — either it adds new info or it goes.
+6. **Pacing impact**: `figure` counts as a static screen. If you insert many
+   in a row, the lint will block (no two same-type consecutive, module
+   boundaries included) and the cadence warning will fire. Plan the slot as
+   one figure per module max, ideally paired with an interactive widget
+   (quiz, decision-tree, fill-in) on the other side so the streak breaks.
+
+Skip this whole section if no images were provided — the rest of the
+pipeline already handles media-less stories.
+
 ## Non-negotiable content rules (inherited from transcripts-to-guide)
 
 1. **Never invent.** No features, commands, numbers or claims that are not in
