@@ -102,3 +102,27 @@ teaching material; provenance is envelope data.
   reading position and offers to resume on the next visit.
 - `meta.lang` = the episode's language → widget chrome (Module eyebrows, quiz
   buttons, resume bar…) localizes itself via the locale packs.
+
+## Engagement layer
+
+What the storyline runtime rewards (full rules in SKILL.md — this is the
+calibration cheat-sheet):
+
+- **Per module**: `emoji` (the stamp — varied set, never repeat one) and
+  `outro` (one line with voice that closes the idea and nudges forward). The
+  runtime stamps the rail/TOC, collects the set in the finale and shows it in
+  the reader's passport.
+- **`settings.challenge.label`**: only when the episode has a native progress
+  metaphor (a meter, a level, a delta). It becomes a themed meter fed by the
+  reader's beaten interactions. Never force one.
+- **The cover is a contract**: time, module index and challenge count are
+  computed from the tree — a strong `meta.title`/`meta.description` is all
+  the authoring it needs (description clamps at 2 lines; front-load it).
+- **`surprise.variants[]`**: 1–2 alternative payloads of the same spirit as
+  `content` — the reveal picks one at random (variable reward). Use for the
+  settings surprises too.
+- **`quote.timestamp`** (+ `clip` when a real cut exists): the minute chip is
+  provenance; a quote with `timestamp` but no `clip` in a document that has
+  an `audio` block is flagged by `story lint` as pending audio work.
+- **`variant: "thread"` is NOT for generation** — it's an experimental
+  reader-side presentation of the same JSON; never emit it.

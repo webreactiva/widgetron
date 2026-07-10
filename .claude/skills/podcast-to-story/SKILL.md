@@ -163,6 +163,38 @@ gets cut or converted into an exercise.
   show/episode/date), and NEVER open a module with a `section-header` that
   repeats the module's own title — module headers render themselves.
   `section-header` is only for introducing a sub-section mid-module.
+- **Open with a hook.** The first screen of module 1 must be interactive or
+  built on intrigue — a quiz, decision-tree, tangle-text, or a curiosity-gap
+  `quote`/`callout-box` that opens a question the guide will answer. The reader
+  gets something to touch (or a question to hold) within the first 60 seconds;
+  never open the guide with plain `prose`.
+- **Payoff cadence.** No stretch of 4+ screens without a reader interaction,
+  module boundaries included — `story lint` warns on this (`cadence`). When a
+  stretch sags, UPGRADE a passive screen (prose → quiz, flashcards,
+  decision-tree, checklist…) instead of adding filler.
+- **Stamp + send-off per module.** Give every module an `emoji` (a single
+  emoji matching its theme — the stamp the reader earns and collects in the
+  finale; make the set varied, never repeat one) and an `outro`: ONE line with
+  voice that closes the module's idea and nudges into the next («Ya piensas en
+  niveles. El siguiente módulo es donde se gana el sueldo») — it renders after
+  a "Módulo N ✓" seal. The last module's outro points at the finale/CTA
+  instead. Same never-invent rules as any other copy.
+- **Challenge mode (optional).** When the episode has a central progress
+  metaphor (a meter, a level, a delta), name it in
+  `settings.challenge.label` (e.g. «Tu delta de garantías») — the engine
+  injects a themed meter that fills as the reader beats interactions. Skip it
+  when no metaphor is native to the content; never force one.
+- **Reader profile (optional — only when the episode clearly serves two
+  audiences).** If the transcript addresses both a newcomer and someone
+  already doing the thing, open module 1 with a `profile-quiz` (ONE question,
+  e.g. «¿Ya trabajas con agentes?»; the question `id` and option `value`s are
+  the keys `profile-gate` matches) and branch 2–3 screens with
+  `profile-gate`: the novice branch gets the prerequisite/extended-glossary
+  screens, the veteran branch a shortcut or advanced aside — BOTH branches
+  built from the same transcript (a gate redistributes content, it never
+  invents). Set `profile: true` on the storyline (or a storage key to
+  remember the answer). The guide must still read complete for a reader who
+  skips the question — gate the optional depth, never the spine.
 - **Prefer interaction over prose — and spread the catalog.** Read
   [references/widget-guide.md](references/widget-guide.md) (signal → widget
   map + variety rules) alongside the manifest. Hard minimums: screens from at
@@ -219,13 +251,31 @@ gets cut or converted into an exercise.
    without set-up. Its confusion list is your fix list. This pass catches what
    fidelity + variety + validation miss. Worked before→after examples for each
    smell: [references/cold-reader-review.md](references/cold-reader-review.md).
-7. **Validate and self-correct** until clean:
+
+   Then run the **fun pass** — the engagement checklist, next to the smells:
+   - Does the cover make a promise (what you'll know/be able to do, roughly
+     what it costs), not just name a topic?
+   - Does the first screen hook (something to touch or a question to hold)?
+   - Does every module contain at least one challenge (quiz, decision-tree,
+     checklist, tangle-text…)?
+   - Does the ending pay off — a keepsake screen (checklist, prompt-template)
+     before the CTA, not a trailing prose?
+
+   Fix by upgrading screens, never by adding length.
+7. **Validate, lint and self-correct** until clean:
    ```bash
    pnpm --filter @webreactiva/story-studio story validate <slug>
+   pnpm --filter @webreactiva/story-studio story lint <slug>
    ```
-   Errors come with node paths (`storyline.modules[2].screens[1].quiz → …`);
-   fix exactly what they point at.
+   Validation errors come with node paths
+   (`storyline.modules[2].screens[1].quiz → …`); fix exactly what they point
+   at. The lint enforces the pacing rules above (repetition, prose quota,
+   cadence, quiz placement); fix errors, judge warnings.
 8. **Preview**: `pnpm dev:studio` → `http://localhost:5173/s/<slug>` (player)
-   and `/s/<slug>/editar` (editor). Hand off to the user for review.
+   and `/s/<slug>/editar` (editor).
+   Then **playtest before handing off**: run the `story-playtester` skill on
+   the slug — it plays the guide in a real browser (mobile viewport) and
+   reports hook/cadence/payoff problems that only rendering reveals. Apply its
+   fix list, then hand off to the user for review with the playtest verdict.
 9. **Export** only when the user asks: `pnpm story render <slug>` →
    `apps/story-studio/dist/<slug>/` (self-contained, uploadable anywhere).
