@@ -115,6 +115,7 @@ function listStories(contentDir: string) {
           slug,
           meta: doc?.meta ?? {},
           minutes: estimateMinutes(doc?.story),
+          emojis: moduleEmojis(doc?.story),
           error: null,
         };
       } catch (error) {
@@ -134,6 +135,17 @@ function estimateMinutes(node: unknown): number {
   };
   walk(node);
   return Math.max(1, Math.round(words / 220));
+}
+
+/** Per-module stamp emojis ('' where a module declares none), for the passport. */
+function moduleEmojis(story: unknown): string[] {
+  const modules = (story as { props?: { modules?: unknown } })?.props?.modules;
+  if (!Array.isArray(modules)) return [];
+  return modules.map((m) =>
+    m && typeof m === "object" && typeof (m as { emoji?: unknown }).emoji === "string"
+      ? ((m as { emoji: string }).emoji)
+      : "",
+  );
 }
 
 function storyFile(contentDir: string, slug: string): string | null {

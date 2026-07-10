@@ -3,13 +3,16 @@ import * as React from "react";
 import { Catalog } from "./pages/Catalog";
 import { Player } from "./pages/Player";
 import { Editor } from "./pages/Editor";
+import { Passport } from "./pages/Passport";
 
 export type Route =
   | { page: "catalog" }
+  | { page: "passport" }
   | { page: "player"; slug: string }
   | { page: "editor"; slug: string };
 
 function parseRoute(pathname: string): Route {
+  if (/^\/pasaporte\/?$/.test(pathname)) return { page: "passport" };
   const m = pathname.match(/^\/s\/([a-z0-9-]+)(\/editar)?\/?$/);
   if (m) return m[2] ? { page: "editor", slug: m[1] } : { page: "player", slug: m[1] };
   return { page: "catalog" };
@@ -67,6 +70,16 @@ export function App() {
             podcast → interactive guide
           </span>
           <div className="ms-auto flex items-center gap-2">
+            <a
+              href="/pasaporte"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/pasaporte");
+              }}
+              className="rounded-md border bg-background px-2 py-1 text-sm"
+            >
+              🎫 Passport
+            </a>
             <select
               aria-label="Theme"
               value={theme}
@@ -92,6 +105,7 @@ export function App() {
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6">
         {route.page === "catalog" && <Catalog />}
+        {route.page === "passport" && <Passport />}
         {route.page === "player" && <Player slug={route.slug} onTheme={setTheme} />}
         {route.page === "editor" && <Editor slug={route.slug} />}
       </main>
