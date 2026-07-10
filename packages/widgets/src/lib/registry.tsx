@@ -186,6 +186,7 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
     adapt: (p) => ({
       ...p,
       content: asContent(p.content),
+      variants: asContent(p.variants),
       teaser: asContent(p.teaser),
     }),
   },
@@ -354,6 +355,7 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
                   ...m,
                   title: asContent((m as { title?: unknown }).title),
                   subtitle: asContent((m as { subtitle?: unknown }).subtitle),
+                  outro: asContent((m as { outro?: unknown }).outro),
                   screens: asContent((m as { screens?: unknown }).screens),
                 }
               : m,

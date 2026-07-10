@@ -140,6 +140,21 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     finaleTime: (minutes: number) => `~${minutes} min de lectura`,
     tocClose: "Cerrar",
     minutesLeft: (minutes: number) => `Te quedan ~${minutes} min`,
+    resumeAt: (moduleTitle: string) => `Te quedaste en «${moduleTitle}»`,
+    coverTime: (minutes: number) => `~${minutes} min`,
+    coverModules: (count: number) =>
+      count === 1 ? "1 módulo" : `${count} módulos`,
+    coverChallenges: (count: number) =>
+      count === 1 ? "1 reto" : `${count} retos`,
+    start: "Empezar",
+    readMore: "Leer más",
+    moduleDone: (n: number) => `Módulo ${n} ✓`,
+    shareResult: "Copiar mi resultado",
+    shareCopied: "¡Copiado!",
+    shareText: (correct: number, answered: number, title: string, url: string) =>
+      `Superé ${correct}/${answered} retos de «${title}» 🏆 → ${url}`,
+    threadNext: "Siguiente",
+    threadPrev: "Atrás",
   },
   quote: {
     saidAt: (timestamp: string) => `Dicho en el ${timestamp}`,

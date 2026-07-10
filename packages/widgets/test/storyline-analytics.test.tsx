@@ -229,6 +229,28 @@ describe("Storyline progress persistence", () => {
       done: true,
     });
 
+    // Semantic fields (module/frac/stamps) survive the round trip; garbage
+    // in them is dropped rather than propagated.
+    window.localStorage.setItem(
+      "wgt-storyline:semantic",
+      JSON.stringify({
+        top: 900,
+        pct: 60,
+        done: false,
+        module: 2,
+        frac: 0.5,
+        stamps: [0, "x", 1.5, 1],
+      }),
+    );
+    expect(readStorylineProgress("semantic")).toEqual({
+      top: 900,
+      pct: 60,
+      done: false,
+      module: 2,
+      frac: 0.5,
+      stamps: [0, 1],
+    });
+
     window.localStorage.setItem("wgt-storyline:legacy", "1234");
     expect(readStorylineProgress("legacy")).toEqual({
       top: 1234,
@@ -241,7 +263,7 @@ describe("Storyline progress persistence", () => {
     expect(readStorylineProgress("missing")).toBeNull();
   });
 
-  it("persists {top, pct, done} and keeps done sticky across saves", async () => {
+  it("persists {top, pct, done, module, frac} and keeps done sticky across saves", async () => {
     const { container } = renderStoryline({ storageKey: "persist" });
     container.scrollTop = 1500; // 100%
     fireEvent.scroll(container);
@@ -250,6 +272,8 @@ describe("Storyline progress persistence", () => {
       top: 1500,
       pct: 100,
       done: true,
+      module: 1, // the semantic position: last module, fully read
+      frac: 0,
     });
 
     container.scrollTop = 300; // scroll back up — done must survive

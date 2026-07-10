@@ -29,6 +29,18 @@ export const storylineMeta: WidgetMeta = {
           screens: z
             .array(nodeSchema)
             .describe("The widget nodes shown in this module, top to bottom."),
+          emoji: z
+            .string()
+            .optional()
+            .describe(
+              "Stamp for the module — a single emoji that matches its theme. The reader earns it on completing the module (shown in the navigation, collected in the finale).",
+            ),
+          outro: z
+            .string()
+            .optional()
+            .describe(
+              "One-line send-off with voice, shown at the module's end after a 'Module N ✓' seal — close the module's idea and nudge into the next one. Supports inline markdown.",
+            ),
         }),
       )
       .min(1)
@@ -64,6 +76,18 @@ export const storylineMeta: WidgetMeta = {
       .describe(
         "Fire a confetti burst the first time the reader scrolls to the end. Default: true.",
       ),
+    challenge: z
+      .string()
+      .optional()
+      .describe(
+        "Challenge mode (opt-in): a short themed label naming the guide's own progress narrative (e.g. 'Tu delta de garantías'). Shows a pinned meter that fills as the reader beats interactions. Take the theme from the content's central metaphor; never blocks reading.",
+      ),
+    variant: z
+      .enum(["scroll", "thread"])
+      .optional()
+      .describe(
+        "Presentation: 'scroll' (default) is the scroll-driven document; 'thread' is an experimental screen-by-screen tap-through of the same modules.",
+      ),
   }),
   example: {
     type: "storyline",
@@ -75,6 +99,8 @@ export const storylineMeta: WidgetMeta = {
         {
           title: "The round trip",
           subtitle: "What happens between Enter and the page.",
+          emoji: "🌐",
+          outro: "You can now follow a request end to end — next, we make it fast.",
           screens: [
             {
               type: "prose",

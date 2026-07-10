@@ -53,11 +53,14 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | widget | cta | `submitted` | `{ ok }` — **never the email** |
 | widget | resource-list | `resource_opened` | `{ kind, href, index }` |
 | widget | quote | `clip_opened` | `{ start? }` — reader expanded the audio of the quoted moment |
+| widget | surprise | `revealed` | `{ variant, variants }` — which pool entry the reveal landed on |
 | storyline | storyline | `section_viewed` | `{ index, total, title? }` — when the active module changes |
 | storyline | storyline | `scroll_milestone` | `{ percent: 25 \| 50 \| 75 \| 100 }` — monotonic, once per instance |
 | storyline | storyline | `completed` | `{}` — alongside the 100 milestone |
-| storyline | storyline | `resumed` | `{ top }` — reader used the resume bar |
+| storyline | storyline | `started` | `{}` — reader pressed the cover's Start button |
+| storyline | storyline | `resumed` | `{ top, module? }` — reader used the resume bar |
 | storyline | storyline | `toc_opened` | `{}` — reader opened the mobile module index |
+| storyline | storyline | `result_copied` | `{ correct, answered }` — reader copied their finale result |
 
 More widgets (decision-tree, scrubber, drag-and-drop…) will join in v2 — each
 is a ~3-line addition via the internal `useWidgetEvents` hook.
