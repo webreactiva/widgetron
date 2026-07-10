@@ -26,6 +26,9 @@ export function resolveStory(doc: StoryDocument): WidgetNode {
   props.title ??= doc.meta.title;
   if (doc.meta.description) props.description ??= doc.meta.description;
 
+  // Challenge mode: declared in settings, injected like surprises/CTA (D-004).
+  if (doc.settings?.challenge) props.challenge ??= doc.settings.challenge.label;
+
   const surprises = doc.settings?.surprises;
   const cta = doc.settings?.cta;
   if (!surprises?.mid && !surprises?.end && !cta) return story;

@@ -131,6 +131,19 @@ export const storyDocumentSchema = z.object({
     .object({
       surprises: surprisesSettingsSchema.optional(),
       cta: ctaSettingsSchema.optional(),
+      challenge: z
+        .object({
+          label: z
+            .string()
+            .min(1)
+            .describe(
+              "Themed label for the guide's own progress meter (e.g. 'Tu delta de garantías') — take it from the content's central metaphor.",
+            ),
+        })
+        .optional()
+        .describe(
+          "Challenge mode (opt-in): a themed meter that fills as the reader beats interactions. Injected into the storyline at resolve time; never blocks reading.",
+        ),
     })
     .optional(),
   story: nodeSchema,

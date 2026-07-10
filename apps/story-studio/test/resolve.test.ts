@@ -35,6 +35,15 @@ const modules = (story: WidgetNode) => story.props!.modules as Mod[];
 const flat = (story: WidgetNode) => modules(story).flatMap((m) => m.screens);
 
 describe("resolveStory (D-004: injection happens at build time)", () => {
+  it("injects settings.challenge as the storyline `challenge` prop", () => {
+    const resolved = resolveStory(doc({ challenge: { label: "Tu delta" } }));
+    expect(resolved.props!.challenge).toBe("Tu delta");
+    // An explicit prop wins over the setting.
+    const explicit = doc({ challenge: { label: "Tu delta" } });
+    explicit.story.props!.challenge = "Otro";
+    expect(resolveStory(explicit).props!.challenge).toBe("Otro");
+  });
+
   it("without settings only the cover metadata is injected", () => {
     const d = doc();
     const resolved = resolveStory(d);
