@@ -44,6 +44,17 @@ describe("resolveStory (D-004: injection happens at build time)", () => {
     expect(resolveStory(explicit).props!.challenge).toBe("Otro");
   });
 
+  it("injects settings.lives as the storyline `lives` prop", () => {
+    const resolved = resolveStory(doc({ lives: { total: 3, label: "Vidas" } }));
+    expect(resolved.props!.lives).toEqual({ total: 3, label: "Vidas" });
+    // An explicit prop wins over the setting.
+    const explicit = doc({ lives: { total: 3 } });
+    explicit.story.props!.lives = { total: 5 };
+    expect(resolveStory(explicit).props!.lives).toEqual({ total: 5 });
+    // Absent setting → no injection.
+    expect(resolveStory(doc()).props!.lives).toBeUndefined();
+  });
+
   it("without settings only the cover metadata is injected", () => {
     const d = doc();
     const resolved = resolveStory(d);

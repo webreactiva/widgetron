@@ -138,6 +138,11 @@ export const esLabels: Record<string, Record<string, unknown>> = {
       `Retos superados: ${correct}/${answered}`,
     finaleActivities: (count: number) => `Actividades completadas: ${count}`,
     finaleTime: (minutes: number) => `~${minutes} min de lectura`,
+    livesLabel: (left: number, total: number) =>
+      `Te quedan ${left} de ${total} vidas`,
+    finaleGameOverTitle: "¡Te quedaste sin vidas!",
+    finaleGameOverHint:
+      "Vuelve atrás y clava un reto para recuperar una vida — tu recompensa te espera.",
     tocClose: "Cerrar",
     minutesLeft: (minutes: number) => `Te quedan ~${minutes} min`,
     resumeAt: (moduleTitle: string) => `Te quedaste en «${moduleTitle}»`,

@@ -75,4 +75,20 @@ describe("story document envelope", () => {
       expect.stringContaining("settings.cta.title"),
     );
   });
+
+  it("accepts settings.lives and defaults total to 3", () => {
+    const doc = { ...minimal(), settings: { lives: { label: "Vidas" } } };
+    const result = validateEnvelope(doc);
+    expect(result.valid).toBe(true);
+    expect(result.document?.settings?.lives?.total).toBe(3);
+  });
+
+  it("rejects settings.lives with a non-positive total", () => {
+    const doc = { ...minimal(), settings: { lives: { total: 0 } } };
+    const result = validateEnvelope(doc);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.startsWith("settings.lives.total"))).toBe(
+      true,
+    );
+  });
 });

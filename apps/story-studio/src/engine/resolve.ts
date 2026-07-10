@@ -29,6 +29,14 @@ export function resolveStory(doc: StoryDocument): WidgetNode {
   // Challenge mode: declared in settings, injected like surprises/CTA (D-004).
   if (doc.settings?.challenge) props.challenge ??= doc.settings.challenge.label;
 
+  // Game mode: `settings.lives` is the signature of the `juego` format,
+  // injected the same way. An explicit `story.props.lives` wins (`??=`).
+  if (doc.settings?.lives)
+    props.lives ??= {
+      total: doc.settings.lives.total,
+      label: doc.settings.lives.label,
+    };
+
   const surprises = doc.settings?.surprises;
   const cta = doc.settings?.cta;
   if (!surprises?.mid && !surprises?.end && !cta) return story;

@@ -6,6 +6,7 @@ import { Check, X } from "@/lib/icons";
 import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { Icon } from "@/primitives/icon";
 import { RichText } from "@/primitives/rich-text";
 import { Tooltip } from "@/primitives/tooltip";
 import { GlossaryProvider, type GlossaryMap } from "@/widgets/glossary";
@@ -47,6 +48,12 @@ export interface StorylineLabels {
   finaleActivities: (count: number) => React.ReactNode;
   /** Finale: session reading time, in whole minutes. */
   finaleTime: (minutes: number) => React.ReactNode;
+  /** Game mode: accessible label for the lives HUD ("2 of 3 lives left"). */
+  livesLabel: (left: number, total: number) => string;
+  /** Game mode: finale heading shown when the reader ran out of lives. */
+  finaleGameOverTitle: React.ReactNode;
+  /** Game mode: finale hint inviting the reader to retry a challenge. */
+  finaleGameOverHint: React.ReactNode;
   /** Mobile module index: close-button label. */
   tocClose: string;
   /** Mobile module index: estimated reading time remaining. */
@@ -93,6 +100,10 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
     `Challenges passed: ${correct}/${answered}`,
   finaleActivities: (count) => `Activities completed: ${count}`,
   finaleTime: (minutes) => `~${minutes} min of reading`,
+  livesLabel: (left, total) => `${left} of ${total} lives left`,
+  finaleGameOverTitle: "Out of lives!",
+  finaleGameOverHint:
+    "Scroll back and ace a challenge to win a life back — your reward is waiting.",
   tocClose: "Close",
   minutesLeft: (minutes) => `~${minutes} min left`,
   resumeAt: (moduleTitle) => `You were at “${moduleTitle}”`,
@@ -155,6 +166,16 @@ export interface StorylineProps
    * over the guide's total challenges. Purely additive; never blocks reading.
    */
   challenge?: React.ReactNode;
+  /**
+   * Game mode (opt-in): turns the guide into a soft game. The reader starts
+   * with `total` lives (hearts pinned by the challenge meter); each WRONG
+   * scored answer costs a life and each correct one wins one back (redemption,
+   * capped at `total`). At 0 lives only the finale REWARD is withheld — a
+   * game-over screen invites a retry instead of celebrating, and the confetti
+   * waits — while the prose stays fully readable. `label` names the meter
+   * (e.g. "Vidas"). Session-scoped (never persisted). Scroll variant only.
+   */
+  lives?: { total: number; label?: React.ReactNode };
   /**
    * Presentation. "scroll" (default) is the scroll-driven document;
    * "thread" is an experimental screen-by-screen tap-through (stories-like)
@@ -291,6 +312,7 @@ function StorylineScroll({
   outro,
   celebrate = true,
   challenge,
+  lives,
   variant: _variant,
   labels,
   className,
@@ -337,6 +359,16 @@ function StorylineScroll({
     correct: 0,
     completed: 0,
   });
+  // Game mode (opt-in via `lives`): session-scoped hearts. `livesRef`/`gameOverRef`
+  // mirror the state so the scroll effect's confetti gate (a stale closure that
+  // never re-runs on life changes) and the event listener can read them
+  // synchronously; the state drives the HUD + finale render.
+  const livesTotal = lives?.total ?? 0;
+  const livesEnabled = lives != null && livesTotal > 0;
+  const [livesLeft, setLivesLeft] = React.useState(livesTotal);
+  const livesRef = React.useRef(livesTotal);
+  const [gameOver, setGameOver] = React.useState(false);
+  const gameOverRef = React.useRef(false);
   const [elapsedMin, setElapsedMin] = React.useState<number | null>(null);
   // Mobile module index (bottom sheet) — the rail is desktop-only.
   const [tocOpen, setTocOpen] = React.useState(false);
@@ -457,7 +489,16 @@ function StorylineScroll({
             if (m === 100) emitStoryline("completed", {});
           }
         }
-        if (pct >= 100 && userScroll && !finished.current) {
+        // Game mode: while the reader is out of lives the finale withholds its
+        // reward, so the "finished" latch itself waits — otherwise reaching the
+        // end dead would spend the one-shot payoff and redemption could never
+        // fire the confetti. With lives off, gameOverRef is always false.
+        if (
+          pct >= 100 &&
+          userScroll &&
+          !finished.current &&
+          !gameOverRef.current
+        ) {
           finished.current = true;
           setElapsedMin(
             Math.max(1, Math.round((Date.now() - startedAt.current) / 60000)),
@@ -511,16 +552,43 @@ function StorylineScroll({
     return onWidgetronEvent((e) => {
       const { source, action, data } = e.detail;
       if (source !== "widget") return;
-      if (action === "answered")
+      if (action === "answered") {
         setScore((s) => ({
           ...s,
           answered: s.answered + 1,
           correct: s.correct + (data?.correct === true ? 1 : 0),
         }));
-      else if (action === "completed")
+        // Lives: lose one on a wrong answer, win one back on a right one
+        // (redemption, clamped to [0, total]). Emit + gate transition happen
+        // OUTSIDE the setState updater so StrictMode's double-invoke can't
+        // double-fire them — the refs are the single source of truth here.
+        if (livesEnabled && (data?.correct === true || data?.correct === false)) {
+          const wasOver = gameOverRef.current;
+          if (data.correct === false && livesRef.current > 0) {
+            livesRef.current -= 1;
+            emitStoryline("life_lost", {
+              livesLeft: livesRef.current,
+              total: livesTotal,
+            });
+          } else if (data.correct === true && livesRef.current < livesTotal) {
+            livesRef.current += 1;
+            emitStoryline("life_restored", {
+              livesLeft: livesRef.current,
+              total: livesTotal,
+            });
+          }
+          const nowOver = livesRef.current === 0;
+          if (nowOver !== wasOver) {
+            gameOverRef.current = nowOver;
+            setGameOver(nowOver);
+            if (nowOver) emitStoryline("game_over", { total: livesTotal });
+          }
+          setLivesLeft(livesRef.current);
+        }
+      } else if (action === "completed")
         setScore((s) => ({ ...s, completed: s.completed + 1 }));
     }, el);
-  }, []);
+  }, [livesEnabled, livesTotal, emitStoryline]);
 
   // Reveal screens as they enter the reading viewport.
   React.useEffect(() => {
@@ -672,29 +740,65 @@ function StorylineScroll({
         </div>
       </div>
 
-      {/* Challenge mode — the guide's own progress narrative: a themed meter
-          that fills as the reader beats interactions. Opt-in, never blocks.
-          Hidden while the resume bar is up (they share the top edge). */}
-      {challenge != null && challenges > 0 && saved === null && (
-        <div className="pointer-events-none sticky top-2 z-30 h-0">
-          <div
-            data-slot="storyline-challenge"
-            className="absolute right-3 max-w-[70%] overflow-hidden rounded-full border bg-popover/95 px-3 py-1 text-xs text-popover-foreground shadow-wgt backdrop-blur"
-          >
-            <div
-              aria-hidden="true"
-              className="absolute inset-y-0 left-0 bg-primary/25 transition-[width] duration-500"
-              style={{ width: `${(challengeEarned / challenges) * 100}%` }}
-            />
-            <span className="relative flex items-center gap-1.5">
-              <span className="truncate font-medium">{challenge}</span>
-              <span className="font-mono tabular-nums text-muted-foreground">
-                {challengeEarned}/{challenges}
-              </span>
-            </span>
+      {/* Pinned game HUD — the lives hearts (opt-in) stacked over the challenge
+          meter (the guide's own progress narrative that fills as the reader
+          beats interactions). Both are additive and never block reading; hidden
+          while the resume bar is up (they share the top edge). */}
+      {(livesEnabled || (challenge != null && challenges > 0)) &&
+        saved === null && (
+          <div className="pointer-events-none sticky top-2 z-30 h-0">
+            <div className="absolute right-3 flex max-w-[80%] flex-col items-end gap-1.5">
+              {livesEnabled && (
+                <div
+                  key={livesLeft}
+                  data-slot="storyline-lives"
+                  className="flex items-center gap-1.5 rounded-full border bg-popover/95 px-3 py-1 text-xs text-popover-foreground shadow-wgt backdrop-blur motion-safe:animate-wgt-pop"
+                >
+                  {lives?.label != null && (
+                    <span className="truncate font-medium">{lives.label}</span>
+                  )}
+                  <span
+                    className="flex items-center gap-0.5"
+                    role="img"
+                    aria-label={l.livesLabel(livesLeft, livesTotal)}
+                  >
+                    {Array.from({ length: livesTotal }).map((_, i) => (
+                      <Icon
+                        key={i}
+                        icon="heart"
+                        aria-hidden="true"
+                        className={cn(
+                          "size-3.5",
+                          i < livesLeft
+                            ? "text-destructive"
+                            : "text-muted-foreground/30",
+                        )}
+                      />
+                    ))}
+                  </span>
+                </div>
+              )}
+              {challenge != null && challenges > 0 && (
+                <div
+                  data-slot="storyline-challenge"
+                  className="relative max-w-full overflow-hidden rounded-full border bg-popover/95 px-3 py-1 text-xs text-popover-foreground shadow-wgt backdrop-blur"
+                >
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-y-0 left-0 bg-primary/25 transition-[width] duration-500"
+                    style={{ width: `${(challengeEarned / challenges) * 100}%` }}
+                  />
+                  <span className="relative flex items-center gap-1.5">
+                    <span className="truncate font-medium">{challenge}</span>
+                    <span className="font-mono tabular-nums text-muted-foreground">
+                      {challengeEarned}/{challenges}
+                    </span>
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Resume bar — offers to jump back to the saved reading position. */}
       {saved !== null && (
@@ -984,12 +1088,28 @@ function StorylineScroll({
           data-reveal
           className={cn("mx-auto w-full max-w-2xl text-center", reveal)}
         >
-          <div className="mx-auto mb-6 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <Check aria-hidden="true" className="size-7" />
+          <div
+            className={cn(
+              "mx-auto mb-6 flex size-14 items-center justify-center rounded-full",
+              gameOver
+                ? "bg-destructive text-destructive-foreground"
+                : "bg-primary text-primary-foreground",
+            )}
+          >
+            {gameOver ? (
+              <X aria-hidden="true" className="size-7" />
+            ) : (
+              <Check aria-hidden="true" className="size-7" />
+            )}
           </div>
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            {l.finaleTitle}
+            {gameOver ? l.finaleGameOverTitle : l.finaleTitle}
           </h2>
+          {gameOver && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              <RichText>{l.finaleGameOverHint}</RichText>
+            </p>
+          )}
           {(score.answered > 0 ||
             score.completed > 0 ||
             elapsedMin !== null) && (
@@ -1187,6 +1307,7 @@ function StorylineThread({
   outro,
   celebrate = true,
   challenge: _challenge,
+  lives: _lives,
   variant: _variant,
   labels,
   className,

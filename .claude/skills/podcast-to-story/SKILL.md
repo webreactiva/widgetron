@@ -1,7 +1,7 @@
 ---
 name: podcast-to-story
 description: "Convert a podcast episode (ordered .srt transcripts + metadata + highlighted moments) into a Story Studio document — a .story.json in apps/story-studio/content/ that renders as an interactive guide. Fuses the transcripts-to-guide rules (ASR cleanup, Daniel's voice, never invent) with an aggressively-visual module structure, using the widgetron manifest as the output contract. Use when: (1) user invokes /podcast-to-story, (2) user says 'convierte este episodio/transcripción en una guía interactiva / storyline', (3) user wants a .story.json generated from SRT transcripts."
-argument-hint: "[--srt=<file-or-folder>] [--podcast=<id|file>] [--slug=<slug>] [--title=<title>] [--lang=es] [--theme=webreactiva] [--episode=<n>] [--format=entrevista|briefing] [--length=corta|media|larga] [--emphasis=equilibrado|practica|conceptos|motivacion] [--styles=<id,id,…>] [--cta=link:<url>|email-form|none] [--complement=ask|never|auto]"
+argument-hint: "[--srt=<file-or-folder>] [--podcast=<id|file>] [--slug=<slug>] [--title=<title>] [--lang=es] [--theme=webreactiva] [--episode=<n>] [--format=entrevista|briefing|juego] [--length=corta|media|larga] [--emphasis=equilibrado|practica|conceptos|motivacion] [--styles=<id,id,…>] [--cta=link:<url>|email-form|none] [--complement=ask|never|auto]"
 user_invocable: true
 ---
 
@@ -58,6 +58,8 @@ and let the preset override the length question (the mold decides):
   [references/format-entrevista.md](references/format-entrevista.md).
 - `briefing` — the playable weekly briefing, for news episodes:
   [references/format-briefing.md](references/format-briefing.md).
+- `juego` — the playable challenge run with lives/HP, for a competitive
+  extra pass over any episode: [references/format-juego.md](references/format-juego.md).
 
 Everything else in this skill (never invent, cold reader, cadence, fun pass,
 engagement layer, validation loop) applies unchanged inside a preset.

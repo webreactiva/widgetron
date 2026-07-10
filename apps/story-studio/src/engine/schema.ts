@@ -150,6 +150,27 @@ export const storyDocumentSchema = z.object({
         .describe(
           "Challenge mode (opt-in): a themed meter that fills as the reader beats interactions. Injected into the storyline at resolve time; never blocks reading.",
         ),
+      lives: z
+        .object({
+          total: z
+            .number()
+            .int()
+            .min(1)
+            .max(5)
+            .default(3)
+            .describe(
+              "Starting lives (hearts). Keep it below the number of scored challenges so a game-over is reachable.",
+            ),
+          label: z
+            .string()
+            .min(1)
+            .optional()
+            .describe("Themed name for the lives meter, e.g. 'Vidas'."),
+        })
+        .optional()
+        .describe(
+          "Game mode (opt-in — the signature of the `juego` format): the reader loses a life on each wrong scored answer and wins one back on a correct one; at 0 lives the finale withholds its reward while the prose stays readable. Injected into the storyline at resolve time.",
+        ),
     })
     .optional(),
   story: nodeSchema,

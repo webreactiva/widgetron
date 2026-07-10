@@ -1869,6 +1869,17 @@ console.log("C");`}
           props: { ...courseStoryline.props, challenge: "Your tour score" },
         }),
       },
+      {
+        label: "Game mode (juego) — lives on the line: miss a quiz, lose a heart",
+        node: renderWidget({
+          ...courseStoryline,
+          props: {
+            ...courseStoryline.props,
+            challenge: "Your run",
+            lives: { total: 3, label: "Vidas" },
+          },
+        }),
+      },
     ],
   },
   {
