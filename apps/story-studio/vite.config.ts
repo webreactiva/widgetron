@@ -13,6 +13,12 @@ export default defineConfig({
   // dist/ belongs to per-guide exports (`story render` → dist/<slug>/); the
   // studio app itself builds elsewhere so it never clobbers rendered guides.
   build: { outDir: "dist-app" },
+  // Per-guide `content/<slug>.assets/` folders ride alongside the story JSON;
+  // exposing `content/` as the public dir lets widgets reference them with
+  // absolute URLs (`/arquitectura-software-domain-234.assets/image9.png`) in
+  // dev and in `pnpm story render` (the render pipeline copies the same folder
+  // into dist/ — see src/render/build.ts).
+  publicDir: "content",
   plugins: [react(), tailwindcss(), storyStudioApi()],
   resolve: {
     // Only the library's INTERNAL `@/` alias, required to consume its source

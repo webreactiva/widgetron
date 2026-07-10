@@ -54,6 +54,7 @@ export async function renderStory(
   const widgetronIsSource = widgetronEntry.endsWith(".ts");
   const renderDir = path.join(root, ".render", slug);
   const outDir = path.join(root, "dist", slug);
+  const assetsSrc = path.join(root, "content", `${slug}.assets`);
   fs.rmSync(renderDir, { recursive: true, force: true });
   fs.mkdirSync(renderDir, { recursive: true });
 
@@ -88,6 +89,15 @@ export async function renderStory(
     },
     build: { outDir, emptyOutDir: true },
   });
+
+  // Figure widgets reference these by absolute URL
+  // (`/arquitectura-software-domain-234.assets/...`) that the inner Vite
+  // build does not parse as an import, so it never copies them. Move them
+  // straight into the final outDir.
+  if (fs.existsSync(assetsSrc)) {
+    const assetsDst = path.join(outDir, `${slug}.assets`);
+    fs.cpSync(assetsSrc, assetsDst, { recursive: true });
+  }
 
   fs.rmSync(renderDir, { recursive: true, force: true });
   return outDir;
