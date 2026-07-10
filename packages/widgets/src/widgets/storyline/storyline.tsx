@@ -298,6 +298,16 @@ function StorylineScroll({
 }: StorylineProps) {
   const l = useLabels("storyline", DEFAULT_STORYLINE_LABELS, labels);
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  // Keyboard scrolling acts on the focused scroll container, so the reading
+  // pane must be focusable (tabIndex on the container below) AND own focus on
+  // mount — otherwise Up/Down scroll whatever the host has focused (often the
+  // near-static page) instead of the guide. Only claim focus if the host hasn't
+  // deliberately placed it elsewhere; preventScroll so it never jumps.
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (el && (!document.activeElement || document.activeElement === document.body))
+      el.focus({ preventScroll: true });
+  }, []);
   const moduleRefs = React.useRef<(HTMLElement | null)[]>([]);
   // Dot-nav buttons — roving tabindex + arrow keys walk the modules.
   const dotRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
@@ -636,10 +646,12 @@ function StorylineScroll({
     <div
       ref={scrollRef}
       data-slot="storyline"
+      // Focusable so keyboard readers can scroll the pane with Up/Down/PageDown.
+      tabIndex={0}
       className={cn(
         // overflow-wrap is inherited — break pathological unbreakable author
         // strings so no generated text can scroll the reading column sideways.
-        "relative h-[600px] overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-wgt [overflow-wrap:anywhere]",
+        "relative h-[600px] overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-wgt outline-none [overflow-wrap:anywhere]",
         className,
       )}
       {...props}
@@ -1126,10 +1138,10 @@ function StorylineScroll({
               onClick={openToc}
               className="pointer-events-auto absolute bottom-0 left-1/2 flex h-11 max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full border bg-popover/95 px-4 text-sm text-popover-foreground shadow-wgt backdrop-blur"
             >
-              <span className="font-mono text-xs tabular-nums text-muted-foreground">
+              <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
                 {active + 1}/{modules.length}
               </span>
-              <span className="truncate font-medium">
+              <span className="min-w-0 truncate font-medium">
                 {typeof modules[active]?.title === "string"
                   ? modules[active].title
                   : eyebrow(active)}
