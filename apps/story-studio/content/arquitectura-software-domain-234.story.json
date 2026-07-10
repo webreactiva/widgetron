@@ -1,0 +1,538 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Tu código no se cae: arquitectura de software empezando por el domain",
+    "slug": "arquitectura-software-domain-234",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "El carrito de la compra como excusa para entender Domain, Entity y Value Object — sin frameworks, sin palabrería, con un caso real en TypeScript que puedes tocar en 20 minutos.",
+    "source": {
+      "type": "podcast",
+      "show": "wrp",
+      "episode": 234,
+      "date": "2023-02-23"
+    }
+  },
+  "settings": {
+    "cta": {
+      "kind": "link",
+      "title": "Sigue la conversación",
+      "description": "En Web Reactiva cada episodio termina donde empieza el siguiente. Únete a la comunidad y sigue tirando del hilo.",
+      "buttonLabel": "Ir a webreactiva.com",
+      "url": "https://www.webreactiva.com"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "version": 1,
+    "props": {
+      "storageKey": "arquitectura-software-domain-234",
+      "glossary": {
+        "Domain": "El núcleo de tu software: la lógica de negocio que refleja la realidad que tu código representa. La capa más interna, la que no sabe nada del exterior.",
+        "Entity": "Un objeto de negocio con identidad propia (un ID único), estado mutable y comportamiento. Ejemplo: Product.",
+        "Value Object": "Un objeto de negocio sin identidad: se define por sus valores, no por un ID. Lo ideal es que sea inmutable. Ejemplo: Money (cantidad + moneda).",
+        "Lenguaje ubicuo": "En Domain-Driven Design, el vocabulario compartido entre el equipo técnico y el negocio para que el código hable el mismo idioma que el problema real.",
+        "Antipatrón del modelo anémico": "Diseñar entidades que solo tienen datos, sin comportamiento. Parecen objetos pero se comportan como bolsas de propiedades.",
+        "Patrón Factory": "Un método (típicamente `create()`) que controla cómo se construye una entidad, usando un constructor privado para impedir que nadie cree instancias inválidas.",
+        "ORM": "Object-Relational Mapper: una librería que conecta tus modelos con la base de datos. Cómodo, pero acopla tu modelo a la persistencia."
+      },
+      "modules": [
+        {
+          "title": "Como las vacas mirando al tren",
+          "subtitle": "Por qué la arquitectura de software parece un idioma que no hablan los mortales",
+          "emoji": "🐄",
+          "outro": "Ya sabes que el edificio del software puede cambiarse — eso es lo que vuelve todo más fácil y más difícil a la vez.",
+          "screens": [
+            {
+              "type": "quote",
+              "props": {
+                "children": "Yo siempre me he sentido un poco idiota cuando me han hablado de estos conceptos, como si yo ya los tuviera que saber.",
+                "attribution": "Daniel",
+                "role": "Host de Web Reactiva Premium",
+                "timestamp": "00:02:59"
+              }
+            },
+            {
+              "type": "prose",
+              "props": {
+                "children": "En este módulo abrimos con la imagen que abre el episodio: las **vacas mirando al tren**. Acompañan el viaje, pero no saben de qué va la fiesta. Si alguna vez te has sentido así leyendo sobre arquitectura, este es tu sitio. Vamos paso a paso, sin presuponer que ya te lo sabes."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "¿Por qué la arquitectura de software suele intimidar a los developers que se acercan por primera vez?",
+                "options": [
+                  {
+                    "text": "Porque es una disciplina muy nueva y todavía no hay consenso.",
+                    "feedback": "Parcialmente cierto — tiene menos años de evolución que la arquitectura de edificios — pero no es la razón principal que señala el episodio."
+                  },
+                  {
+                    "text": "Porque hay demasiados conceptos abstractos que la vuelven enrevesada y compleja.",
+                    "correct": true,
+                    "feedback": "Exacto. El problema no es que falte información, es que sobran conceptos que se pisan entre sí. Por eso este episodio se centra en tres: Domain, Entity y Value Object."
+                  },
+                  {
+                    "text": "Porque solo se puede aplicar con lenguajes tipados como TypeScript o Java.",
+                    "feedback": "No — se puede hacer con cualquier lenguaje. TypeScript es solo la excusa del episodio para mostrarlo con código real."
+                  },
+                  {
+                    "text": "Porque exige siempre un framework concreto y no funciona sin él.",
+                    "feedback": "Justo al revés. Funciona mejor cuanto menos te ata tu framework."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Antes de seguir, conviene sembrar el [[Lenguaje ubicuo]] de esta guía. Vamos a hablar de tres piezas que viven en el centro de tu software: el [[Domain]] (la capa más interna, la lógica de negocio), la [[Entity]] (un objeto con identidad) y el [[Value Object]] (un objeto definido por sus valores, no por un ID). Si tu proyecto vive cerca de una base de datos, también aparece el [[ORM]], que es la pieza que más a menudo confunde a los principiantes porque acopla el modelo con la persistencia. Y cuando veas una entidad que solo tiene datos y ningún comportamiento, estarás ante el [[Antipatrón del modelo anémico]]. Para evitarlo, los constructores privados se acompañan de un [[Patrón Factory]] que controla la creación."
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "La libertad no siempre te hace más libre, porque para tomar mejores decisiones hace falta saber un poquito más.",
+                "attribution": "Daniel",
+                "role": "Host de Web Reactiva Premium",
+                "timestamp": "00:10:41"
+              }
+            }
+          ]
+        },
+        {
+          "title": "El edificio que se puede tumbar",
+          "subtitle": "Arquitectura de software: solidez, funcionalidad, belleza y una cuarta cosa que solo el software tiene",
+          "emoji": "🏛️",
+          "outro": "Las capas interiores nunca saben nada de las exteriores. Anótalo a fuego — vuelve en cada ejemplo que veamos.",
+          "screens": [
+            {
+              "type": "figure",
+              "props": {
+                "src": "/arquitectura-software-domain-234.assets/onion-2-layers.png",
+                "alt": "Cebolla de dos capas: Infrastructure por fuera, Domain por dentro.",
+                "caption": "La división más básica: dos capas. Infrastructure por fuera (la tecnología, las pantallas, la base de datos), Domain por dentro (la lógica de negocio). El resto de la guía añade capas en medio, pero la regla no cambia: las interiores nunca saben nada de las exteriores.",
+                "credit": "Diagrama de las notas del episodio."
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "pillars",
+                "title": "Las cuatro columnas de la arquitectura de software",
+                "description": "Un edificio se cae, no se habita, o afea la acera. La arquitectura de software comparte esas tres obsesiones — solidez, funcionalidad y belleza — y añade una cuarta que no existe en la construcción: la flexibilidad. Un edificio no se puede cambiar. Tu software, sí.",
+                "items": [
+                  {
+                    "label": "Solidez",
+                    "description": "El código no se cae por su propio peso. Soporta lo que le eches.",
+                    "icon": "shield"
+                  },
+                  {
+                    "label": "Funcionalidad",
+                    "description": "Hace lo que tiene que hacer, y alguien lo puede usar sin frustrarse.",
+                    "icon": "door-open"
+                  },
+                  {
+                    "label": "Belleza",
+                    "description": "No estorba. Encaja con el resto del sistema y con quien lo lee.",
+                    "icon": "sparkles"
+                  },
+                  {
+                    "label": "Flexibilidad",
+                    "description": "Se puede cambiar sin tener que tirarlo abajo. Solo el software la tiene.",
+                    "icon": "git-branch"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "pattern-card",
+              "props": {
+                "title": "Las nueve características que siempre vuelven",
+                "description": "Hay un resumen clásico que se repite libro tras libro y que esta guía te destila en nueve tarjetas.",
+                "cards": [
+                  { "icon": "sitemap", "title": "Estructura", "description": "Organiza los componentes y sus relaciones desde el principio." },
+                  { "icon": "layers", "title": "Separación de responsabilidades", "description": "Cada capa hace una cosa y se acopla lo mínimo con las demás." },
+                  { "icon": "trending-up", "title": "Escalabilidad", "description": "Crece en datos y usuarios sin romperse." },
+                  { "icon": "wrench", "title": "Mantenibilidad", "description": "Cambiar una pieza no introduce fallos en las otras." },
+                  { "icon": "shuffle", "title": "Flexibilidad", "description": "Se adapta a nuevas necesidades sin reescribirse entero." },
+                  { "icon": "flask-conical", "title": "Testabilidad", "description": "Las pruebas automatizadas se pueden escribir a cualquier nivel." },
+                  { "icon": "recycle", "title": "Reusabilidad", "description": "Componentes que sirven en más de un sitio." },
+                  { "icon": "lock", "title": "Seguridad", "description": "Protege la app y los datos de amenazas internas y externas." },
+                  { "icon": "zap", "title": "Rendimiento", "description": "Optimiza sin sacrificar las demás columnas." }
+                ]
+              }
+            },
+            {
+              "type": "predict-output",
+              "props": {
+                "title": "El bug del Ariane 5, en pseudocódigo",
+                "code": "// El software de navegación intentaba copiar\n// la velocidad horizontal (64 bits) a un buffer de 16 bits.\nconst horizontalBias = readFrom64BitRegister();\nwriteTo16BitBuffer(horizontalBias);\n// ¿Qué pasa en writeTo16BitBuffer si el número no cabe?",
+                "output": "El valor se trunca silenciosamente y el cohete interpreta una velocidad absurda. 40 segundos después, la nave se autodestruye.",
+                "question": "Antes de leer la siguiente pantalla: ¿qué crees que ocurre con el dato que no cabe en 16 bits?",
+                "options": [
+                  {
+                    "text": "Da error y el programa se detiene limpiamente.",
+                    "feedback": "Ojalá. En muchos sistemas antiguos, un valor que no cabe se trunca sin avisar. Aquí pasó exactamente eso."
+                  },
+                  {
+                    "text": "Se trunca silenciosamente y el programa sigue con un valor equivocado.",
+                    "correct": true,
+                    "feedback": "Exacto. Por eso el episodio usa el Ariane 5 para recordar que un software que falla puede ser tan catastrófico como un edificio mal construido."
+                  },
+                  {
+                    "text": "JavaScript / TypeScript lo convertirían en `NaN` automáticamente.",
+                    "feedback": "Aquí estamos en código embebido en C, no en JavaScript. Y aunque JS lo envolviera, el bug seguiría siendo de diseño: no se valida antes de truncar."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "En 1996 el cohete Ariane 5 explotó 40 segundos después del lanzamiento por un bug de software: intentaba convertir un valor de 64 bits en uno de 16, sin comprobar que cabía. Coste: 370 millones de dólares según el informe oficial de la ESA (Ariane 5 Flight 501 Inquiry Board, 1996). La frase del episodio lo resume: «que un software falle ya puede tener las mismas consecuencias catastróficas que un edificio que no esté bien construido»."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Cebolla, hexágono y la regla de las capas",
+          "subtitle": "Cuatro capas, una sola dirección",
+          "emoji": "🧅",
+          "outro": "Capas claras, dependencias hacia adentro. Ahora vamos a poner un nombre al centro del huracán.",
+          "screens": [
+            {
+              "type": "fill-in-the-blanks",
+              "props": {
+                "title": "Antes de seguir: completa la frase",
+                "text": "En una arquitectura por capas, la regla de oro es que las capas {{c1}} nunca saben nada de las capas {{c2}}. Si esa regla se rompe, el centro deja de estar protegido.",
+                "blanks": {
+                  "c1": {
+                    "options": ["interiores", "exteriores", "laterales"],
+                    "answer": "interiores"
+                  },
+                  "c2": {
+                    "options": ["interiores", "exteriores", "superiores"],
+                    "answer": "exteriores"
+                  }
+                }
+              }
+            },
+            {
+              "type": "figure",
+              "props": {
+                "src": "/arquitectura-software-domain-234.assets/onion-4-layers.png",
+                "alt": "Cebolla de cuatro capas: Infrastructure, Adapters, Use Cases y Domain.",
+                "caption": "La versión completa con cuatro capas. **Use Cases / Application Services** es la capa más difícil de definir y la que más valor aporta: ahí viven los comandos (cambian el estado) y las queries (lo recuperan). El resto — Infrastructure, Adapters, Domain — ya las tienes en la cabeza.",
+                "credit": "Diagrama de las notas del episodio."
+              }
+            },
+            {
+              "type": "decision-tree",
+              "props": {
+                "title": "¿Estoy escribiendo Domain o Infrastructure?",
+                "start": "q1",
+                "nodes": {
+                  "q1": {
+                    "prompt": "¿Tu código importa algo de UI, HTTP, base de datos o del framework?",
+                    "options": [
+                      { "label": "Sí, importa la base de datos, un ORM, express, fetch…", "to": "infra" },
+                      { "label": "No, son clases y tipos puros del lenguaje", "to": "q2" }
+                    ]
+                  },
+                  "q2": {
+                    "prompt": "¿Tu código representa un concepto del negocio (Producto, Carrito, Pedido, Dinero)?",
+                    "options": [
+                      { "label": "Sí, claramente", "to": "q3" },
+                      { "label": "No, es lógica técnica (caché, logging, retries)", "to": "infra" }
+                    ]
+                  },
+                  "q3": {
+                    "prompt": "¿Tu código tiene reglas de negocio (validaciones, invariantes, transiciones de estado)?",
+                    "options": [
+                      { "label": "Sí, valida que el precio no sea negativo, que la cantidad sume bien…", "to": "domain" },
+                      { "label": "No, solo es una bolsa de datos", "to": "anemic" }
+                    ]
+                  },
+                  "domain": {
+                    "prompt": "Estás en Domain.",
+                    "outcome": "Bien. Mantenlo libre de imports del framework: que tu Product y tu Money no sepan que existe un ORM. Si lo hacen, la capa de Infrastructure está colándose en el centro."
+                  },
+                  "infra": {
+                    "prompt": "Estás en Infrastructure (o en un Adapter).",
+                    "outcome": "También tiene su sitio. Es donde está permitido saber que existen HTTP, Postgres, colas, logs. Lo importante es que la flecha vaya hacia adentro, no al revés."
+                  },
+                  "anemic": {
+                    "prompt": "Cuidado: posible modelo anémico.",
+                    "outcome": "Estás ante el [[Antipatrón del modelo anémico]]: una entidad que solo guarda datos sin comportamiento. Lo verás bien masticado en el siguiente módulo, cuando construyamos Product desde el esqueleto hasta sus reglas."
+                  }
+                }
+              }
+            },
+            {
+              "type": "figure",
+              "props": {
+                "src": "/arquitectura-software-domain-234.assets/ddd-layered-pie.png",
+                "alt": "Tarta de Domain-Driven Design: Domain central, Application alrededor, y la capa externa dividida en Presentation, Persistence e Infrastructure.",
+                "caption": "Domain-Driven Design lo dibuja como una tarta: la capa externa se divide en tres sectores (Presentation, Persistence, Infrastructure) que apuntan hacia el centro. El Domain sigue siendo el corazón, y la capa de Application (Use Cases) hace de intermediario. La idea es la misma; el dibujo, otro.",
+                "credit": "Diagrama de las notas del episodio."
+              }
+            }
+          ]
+        },
+        {
+          "title": "El carrito: la Entity Product",
+          "subtitle": "Construir Product sin convertirlo en una bolsa de datos",
+          "emoji": "🛒",
+          "outro": "Ya tienes una Entity viva, con reglas y una Factory. Ahora le toca el turno al carrito que la recibe.",
+          "screens": [
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "**El caso de uso**: un usuario añade un producto a un carrito de la compra. Tres criterios de aceptación — el precio del producto no puede ser negativo, la cantidad añadida al carrito no puede ser negativa, y el carrito debe saber el precio total. Solo eso. Sin base de datos, sin interfaz, sin framework."
+              }
+            },
+            {
+              "type": "figure",
+              "props": {
+                "src": "/arquitectura-software-domain-234.assets/domain-entity.jpg",
+                "alt": "Círculo Domain con un rombo dentro etiquetado Entity.",
+                "caption": "Una Entity vive dentro del Domain, con identidad propia (un ID) y comportamiento. Lo que vamos a construir ahora — el Product — es la Entity de este caso de uso.",
+                "credit": "Diagrama de las notas del episodio."
+              }
+            },
+            {
+              "type": "code-translation",
+              "props": {
+                "language": "ts",
+                "code": "class Product {\n  #id: string;\n  #title: string;\n  #price: number;\n\n  constructor(id: string, title: string, price: number) {\n    this.#id = id;\n    this.#title = title;\n    this.#price = price;\n  }\n}",
+                "translations": [
+                  "Una clase `Product` con tres propiedades privadas: id, título y precio. La almoadilla (`#`) es la sintaxis de TypeScript para mantenerlas encapsuladas — solo se leen a través de getters.",
+                  "Por ahora la entidad no valida nada. Eso viene en el siguiente paso, y es donde la Entity deja de ser una bolsa de datos y empieza a tener comportamiento propio."
+                ]
+              }
+            },
+            {
+              "type": "figure",
+              "props": {
+                "src": "/arquitectura-software-domain-234.assets/product-entity-code.jpg",
+                "alt": "Captura de código TypeScript de product.ts: class Product con #id, #title y #price privados, y un constructor público.",
+                "caption": "El esqueleto del Product: tres propiedades privadas y un constructor. La Entity de Domain empieza aquí. Cuidado con el [[Antipatrón del modelo anémico]] — si este esqueleto se queda así, con todas las reglas en otra capa, ya hemos caído.",
+                "credit": "Código del repositorio de las notas del episodio."
+              }
+            },
+            {
+              "type": "step-cards",
+              "props": {
+                "title": "Cuatro pasos para construir la Entity Product sin volverte loco",
+                "steps": [
+                  {
+                    "title": "1. El esqueleto (paso 01)",
+                    "description": "Creas la clase con `id`, `title` y `price` privados. Todavía sin reglas, solo la forma."
+                  },
+                  {
+                    "title": "2. Las restricciones (paso 02)",
+                    "description": "Añades invariantes: `title` con más de 3 caracteres, `price` que no puede ser negativo. Si no se cumplen, la entidad no se crea. **Si te saltas este paso, tu Product es una bolsa de datos — el [[Antipatrón del modelo anémico]] hecho Entity.**"
+                  },
+                  {
+                    "title": "3. El patrón Factory (paso 03)",
+                    "description": "Pasas el constructor a privado y creas un método estático `create()`. Ahora la única forma de fabricar un Product es pasar por esa puerta, que es donde viven las validaciones. Esa pieza es un [[Patrón Factory]]."
+                  },
+                  {
+                    "title": "4. Argumentos con nombre (paso 04)",
+                    "description": "En vez de pasar `id, title, price` en orden, le pasas a `create()` un objeto `{ title, price }`. El equipo de desarrollo ya no tiene que recordar el orden de los parámetros."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "El carrito: Cart y Money",
+          "subtitle": "Una trampa con el carrito y el Value Object que la arregla",
+          "emoji": "💰",
+          "outro": "Ya tienes las tres piezas del puzzle: Product, Cart y Money. Falta una pregunta que no se responde aquí — y por eso el episodio siguiente existe.",
+          "screens": [
+            {
+              "type": "figure",
+              "props": {
+                "src": "/arquitectura-software-domain-234.assets/domain-value-object.jpg",
+                "alt": "Círculo Domain con un rombo dentro etiquetado Value Object.",
+                "caption": "Un Value Object también vive en el Domain, pero se define por sus valores, no por un ID. Lo ideal es que sea inmutable. El Money que vamos a construir ahora es exactamente eso: una cifra y una moneda, sin identidad propia.",
+                "credit": "Diagrama de las notas del episodio."
+              }
+            },
+            {
+              "type": "spot-the-bug",
+              "props": {
+                "title": "¿Dónde está el bug?",
+                "lines": [
+                  { "code": "class Cart {" },
+                  { "code": "  #products: Product[] = [];" },
+                  { "code": "" },
+                  { "code": "  add(product: Product) {" },
+                  { "code": "    this.#products.push(product);" },
+                  { "code": "  }" },
+                  { "code": "" },
+                  { "code": "  total(): number {" },
+                  { "code": "    return this.#products.reduce((sum, p) => sum + p.price, 0);" },
+                  { "code": "  }" },
+                  { "code": "}" },
+                  { "code": "/* Llamada: cart.add(sameProduct); cart.add(sameProduct); cart.total() */" }
+                ],
+                "explanation": "El carrito no distingue entre «añadir uno nuevo» y «añadir otro igual». Si pulsas dos veces el mismo producto, el total cuenta el doble. La solución está más adelante: introducir un `CartProduct` (producto + cantidad) y tratar al carrito como un mapa, no como una lista."
+              }
+            },
+            {
+              "type": "figure",
+              "props": {
+                "src": "/arquitectura-software-domain-234.assets/cart-add-code.jpg",
+                "alt": "Captura de cart.ts: addCartProduct con cláusula de guarda if (quantity < 0) throw new Error, y un find del existingProduct por product.id.",
+                "caption": "El carrito añadiendo productos con la cláusula de guarda: si la cantidad es negativa, lanza un error en vez de aceptar un valor inválido. El Cart no gestiona el error, lo lanza — esa es la diferencia entre una regla de negocio y un detalle técnico.",
+                "credit": "Código del repositorio de las notas del episodio."
+              }
+            },
+            {
+              "type": "code-translation",
+              "props": {
+                "language": "ts",
+                "title": "Money como Value Object (paso 09)",
+                "code": "class Money {\n  readonly amount: number;\n  readonly currency: string;\n\n  private constructor(amount: number, currency: string) {\n    if (amount < 0) throw new Error('Amount cannot be negative');\n    if (currency.length < 3) throw new Error('Currency must have at least 3 characters');\n    this.amount = amount;\n    this.currency = currency;\n  }\n\n  static create(params: { amount: number; currency: string }): Money {\n    return new Money(params.amount, params.currency);\n  }\n\n  isEqualTo(other: Money): boolean {\n    return this.amount === other.amount && this.currency === other.currency;\n  }\n\n  isGreaterThan(other: Money): boolean {\n    if (this.currency !== other.currency) throw new Error('Different currencies');\n    return this.amount > other.amount;\n  }\n}",
+                "translations": [
+                  "Las propiedades son `readonly`: una vez creado, el `Money` no se puede mutar. Si necesitas otro precio, creas otro. Esa es la diferencia práctica con la Entity: el Value Object se reemplaza, no se modifica.",
+                  "El constructor es privado. La única puerta de entrada es `Money.create()`, que es el [[Patrón Factory]] aplicado a un Value Object. Las reglas viven en la creación, no en setters posteriores.",
+                  "Los métodos `isEqualTo` e `isGreaterThan` son la respuesta a una pregunta importante: si dos `Money` se comparan, ¿qué cuenta? El episodio insiste en que la respuesta la define el propio objeto, no un `if` perdido en mitad de un use case."
+                ]
+              }
+            },
+            {
+              "type": "tangle-text",
+              "props": {
+                "title": "Toca el carrito: ¿cuánto suma?",
+                "text": "Si el carrito tiene {camisetas} camiseta(s) a {precio_camiseta} € y {tazas} taza(s) a {precio_taza} €, el total es {=total}.",
+                "variables": {
+                  "camisetas": { "value": 2, "min": 0, "max": 10 },
+                  "precio_camiseta": { "value": 15, "min": 1, "max": 50 },
+                  "tazas": { "value": 1, "min": 0, "max": 10 },
+                  "precio_taza": { "value": 8, "min": 1, "max": 30 }
+                },
+                "outputs": {
+                  "total": { "formula": "camisetas * precio_camiseta + tazas * precio_taza", "suffix": " €" }
+                },
+                "note": "Mueve los números. Cuando lo veas claro, lo que está pasando dentro del `Cart.total()` es exactamente esto: una reducción que multiplica cantidad por precio y suma. Si una moneda no coincide, falla: dos `Money` con currencies distintas no se pueden mezclar."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Volver al tren sin ser la vaca",
+          "subtitle": "Lo que te llevas y lo que el siguiente episodio abre",
+          "emoji": "🚪",
+          "outro": "Ya no miras el tren pasar: sabes qué capa del software estás tocando y por qué. Nos escuchamos en el siguiente.",
+          "screens": [
+            {
+              "type": "checklist",
+              "props": {
+                "id": "arquitectura-domain-takeaway",
+                "title": "Tu checklist antes de seguir",
+                "description": "Marca lo que ya tengas claro. Lo que quede pendiente es lo que vale la pena repasar antes del siguiente episodio.",
+                "items": [
+                  {
+                    "text": "Sé explicar qué es el [[Domain]] y por qué va en el centro.",
+                    "hint": "Si dudas, vuelve al módulo 3 y mira el diagrama de la cebolla."
+                  },
+                  {
+                    "text": "Distingo una [[Entity]] de un [[Value Object]] sin tener que pensarlo mucho.",
+                    "hint": "Entity: tiene ID y cambia. Value Object: se define por sus valores y se reemplaza."
+                  },
+                  {
+                    "text": "Sé por qué nunca se expone una Entity al exterior tal cual.",
+                    "hint": "Se serializa, se mapea a un DTO, se transforma. La Entity se queda dentro del Domain."
+                  },
+                  {
+                    "text": "Entiendo por qué el [[ORM]] no es lo mismo que una Entity de Domain.",
+                    "hint": "El ORM te lo acopla todo a la persistencia. Hay formas de separarlos, pero el compromiso siempre existe."
+                  },
+                  {
+                    "text": "Reconozco un [[Patrón Factory]] y un [[Antipatrón del modelo anémico]] cuando los veo.",
+                    "hint": "Factory: un único punto de creación con constructor privado. Anémico: datos sin comportamiento."
+                  }
+                ],
+                "completion": "Tienes el dominio en la cabeza. Ahora viene lo bueno: la capa de Use Cases."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "title": "Cierra el bucle: ¿cuál de estas afirmaciones es falsa?",
+                "question": "Repasa lo que llevas visto. ¿Cuál de estas opciones NO se sostiene con lo que acabas de leer en esta guía?",
+                "options": [
+                  {
+                    "text": "Las capas interiores del software no deben saber nada de las exteriores.",
+                    "feedback": "Verdadero, y repetido a propósito. Es la regla de oro de la arquitectura por capas."
+                  },
+                  {
+                    "text": "Un Value Object debería ser inmutable y definirse por sus valores, no por un ID.",
+                    "feedback": "Verdadero. Si lo mutas, estás confundiendo Entity con Value Object."
+                  },
+                  {
+                    "text": "Una Entity de Domain y el modelo de un ORM son exactamente lo mismo.",
+                    "correct": true,
+                    "feedback": "Falso, y esta es la trampa que más cuesta ver. El modelo del ORM está acoplado a la persistencia, mientras que la Entity de Domain no debería saber que existe una base de datos. De ahí el [[ORM]] como pieza separada y la advertencia del episodio."
+                  },
+                  {
+                    "text": "El Domain puede evolucionar de forma independiente a las capas externas.",
+                    "feedback": "Verdadero. La gracia del Domain es que cambia sin obligar a cambiar la UI, la base de datos o la API."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "Developer contra las cuerdas",
+                "messages": [
+                  {
+                    "from": "Nerea",
+                    "text": "Ya entiendo el domain. ¿Para qué tantas capas si al final todo va a una base de datos?"
+                  },
+                  {
+                    "from": "Iván",
+                    "text": "Justo por eso. Si el día de mañana cambias Postgres por otra cosa, tocas solo el Adapter, no el Domain."
+                  },
+                  {
+                    "from": "Nerea",
+                    "text": "Pero entonces mi Product es una Entity o un modelo de Eloquent."
+                  },
+                  {
+                    "from": "Iván",
+                    "text": "Entity de Domain. Lo otro es la persistencia vistiéndose de Entity: Eloquent es el ORM de Laravel, es decir, la pieza que traduce tu entidad a una fila de base de datos. La Entity nunca se expone fuera del centro."
+                  },
+                  {
+                    "from": "Nerea",
+                    "text": "Vale, y el Money con su `amount` y su `currency`… ¿eso qué es?"
+                  },
+                  {
+                    "from": "Iván",
+                    "text": "Value Object. Inmutable, con sus reglas en el constructor, y si necesitas otro precio, creas otro en vez de mutarlo."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "prompt-template",
+              "props": {
+                "title": "Pídele a tu IA que revise tu Domain",
+                "description": "Copia este prompt, pega una clase de tu proyecto y mira si tu entidad aguanta la prueba de los nueve puntos.",
+                "template": "Actúa como un revisor de arquitectura de software con experiencia en Domain-Driven Design (DDD, el enfoque que pone el lenguaje del negocio en el centro del código).\n\nAnaliza la siguiente clase de TypeScript y dime:\n\n1. ¿Es una Entity o un Value Object? ¿Por qué?\n2. ¿Tiene invariantes (reglas de negocio) en su creación, o se las puede saltar alguien desde fuera?\n3. ¿Expone sus propiedades internas o las encapsula con getters?\n4. ¿Acopla la clase con la base de datos, HTTP o el framework? Si sí, ¿qué parte se ha colado dentro del Domain?\n5. ¿Podría mejorarse aplicando un [[Patrón Factory]] con constructor privado?\n6. Si tiene mucha lógica técnica, ¿debería vivir en un Use Case o un Adapter en vez de aquí?\n7. ¿Cómo la probarías sin levantar la base de datos?\n8. ¿Su nombre refleja un concepto del negocio o es un nombre genérico (Item, Data, Manager)?\n9. ¿Forma parte de un lenguaje compartido con el equipo de producto, o solo lo entiende el equipo técnico?\n\nClase a revisar:\n\n```typescript\n{{pega aquí tu clase}}\n```",
+                "note": "Tip: empieza con tu Entity principal (User, Order, Product…). Las respuestas suelen sacar a la luz al menos un [[Antipatrón del modelo anémico]]."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
