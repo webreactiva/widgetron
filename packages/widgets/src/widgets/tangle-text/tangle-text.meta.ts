@@ -14,7 +14,7 @@ export const tangleTextMeta: WidgetMeta = {
     text: z
       .string()
       .describe(
-        "Prose containing `{varName}` placeholders (draggable variables) and `{=outName}` placeholders (computed outputs), e.g. 'Shipping {n} times costs {=total} hours.'",
+        "Prose containing `{varName}` placeholders (draggable variables) and `{=outName}` placeholders (computed outputs), e.g. 'Shipping {n} times costs {=total} hours.' Plain text only — the placeholders are the sole markup; do NOT use markdown here (no `**bold**`, `*italic*` or `` `code` ``, they render as literal characters). Emphasis lives in the placeholders themselves. Put any unit (€, h, %) in the variable/output `suffix`, not in the surrounding prose, so it never doubles up.",
       ),
     variables: z
       .record(

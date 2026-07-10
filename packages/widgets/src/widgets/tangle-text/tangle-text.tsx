@@ -3,6 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { evaluateFormula, formatValue } from "@/lib/formula";
 import { useLabels, useLocale } from "@/lib/i18n";
+import { RichText } from "@/primitives/rich-text";
 
 export interface TangleVariable {
   value: number;
@@ -142,7 +143,9 @@ export function TangleText({
       </p>
       <p className="mt-3 text-xs text-muted-foreground">{l.hint}</p>
       {note != null && (
-        <p className="mt-2 text-sm text-muted-foreground">{note}</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          <RichText>{note}</RichText>
+        </p>
       )}
     </div>
   );
