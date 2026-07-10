@@ -309,6 +309,31 @@ export function lintStoryDocument(input: unknown): StoryLint {
       });
   }
 
+  // --- format molds: when meta.format names a preset, validate its shape.
+  // The presets live in the podcast-to-story skill (references/format-*.md);
+  // these are their hard, machine-checkable rules.
+  const format = (doc.meta as { format?: string }).format;
+  if (format === "briefing") {
+    // The mold is ~7 screens; beyond 9 the «5 minutos y estás al día»
+    // contract is broken.
+    if (n > 9) {
+      err("format-briefing", `briefing has ${n} screens (max 9) — a briefing that grows long stops being a briefing`);
+    }
+    if (!types.includes("quiz")) {
+      err("format-briefing", "briefing has no quiz — the reto is the mold's payoff");
+    }
+  } else if (format === "entrevista") {
+    if (!types.includes("profile-card")) {
+      err("format-entrevista", "no profile-card — an interview guide needs the guest's card");
+    }
+    const quotes = types.filter((t) => t === "quote").length;
+    if (quotes < 2) {
+      err("format-entrevista", `only ${quotes} quote(s) — the interview must speak in the guest's voice (≥2)`);
+    }
+  } else if (format) {
+    warn("format", `unknown format "${format}" — no mold rules applied`);
+  }
+
   // --- persistence collision: two widgets writing the same localStorage key
   // silently overwrite each other's saved state (the AI surface can emit dup
   // ids/storageKeys, and schema validation doesn't catch it). ---

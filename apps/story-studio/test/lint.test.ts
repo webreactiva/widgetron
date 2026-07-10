@@ -186,6 +186,64 @@ describe("story pacing lint", () => {
     expect(withoutAudio.findings.some((f) => f.rule === "audio-pending")).toBe(false);
   });
 
+  it("validates the briefing mold: hard length cap and a required quiz", () => {
+    const story = (screens: string[]) => ({
+      type: "storyline",
+      props: {
+        modules: [
+          { title: "Claves", screens: screens.map(screen) },
+          { title: "Reto", screens: ["callout-box", "prose"].map(screen) },
+          { title: "Fuentes", screens: ["resource-list", "cta"].map(screen) },
+        ],
+      },
+    });
+    const long = lintStoryDocument({
+      version: 1,
+      meta: { ...meta, format: "briefing" },
+      // 6 + 2 + 2 = 10 screens (> 9), and no quiz anywhere.
+      story: story(["data-chart", "quote", "flow-diagram", "callout-box", "prose", "timeline"]),
+    });
+    const rules = long.findings.filter((f) => f.rule === "format-briefing");
+    expect(rules.some((f) => f.message.includes("screens"))).toBe(true);
+    expect(rules.some((f) => f.message.includes("quiz"))).toBe(true);
+
+    const fit = lintStoryDocument({
+      version: 1,
+      meta: { ...meta, format: "briefing" },
+      story: story(["data-chart", "quote", "quiz"]),
+    });
+    expect(fit.findings.some((f) => f.rule === "format-briefing")).toBe(false);
+  });
+
+  it("validates the entrevista mold: guest card and enough quotes", () => {
+    const result = lintStoryDocument({
+      version: 1,
+      meta: { ...meta, format: "entrevista" },
+      story: {
+        type: "storyline",
+        props: {
+          modules: [
+            { title: "Personaje", screens: ["timeline", "quote"].map(screen) },
+            { title: "Ideas", screens: ["flashcards", "quiz"].map(screen) },
+            { title: "Seguir", screens: ["resource-list", "cta"].map(screen) },
+          ],
+        },
+      },
+    });
+    const msgs = result.findings.filter((f) => f.rule === "format-entrevista");
+    expect(msgs.some((f) => f.message.includes("profile-card"))).toBe(true);
+    expect(msgs.some((f) => f.message.includes("quote"))).toBe(true);
+  });
+
+  it("warns on an unknown format", () => {
+    const result = lintStoryDocument({
+      version: 1,
+      meta: { ...meta, format: "opera" },
+      story: cleanDoc.story,
+    });
+    expect(result.findings.some((f) => f.rule === "format")).toBe(true);
+  });
+
   it("skips pacing rules for a non-storyline root", () => {
     const result = lintStoryDocument({
       version: 1,

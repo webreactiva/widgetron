@@ -101,6 +101,12 @@ export const storyDocumentSchema = z.object({
       .optional()
       .describe('Any available [data-theme] name, e.g. "webreactiva".'),
     description: z.string().optional(),
+    format: z
+      .string()
+      .optional()
+      .describe(
+        'Format preset the document follows (e.g. "entrevista", "briefing") — `story lint` validates the preset\'s mold. Omit for the default didactic dispensa.',
+      ),
     source: z
       .object({ type: z.string() })
       .catchall(z.unknown())

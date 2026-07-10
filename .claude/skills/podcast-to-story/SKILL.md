@@ -1,7 +1,7 @@
 ---
 name: podcast-to-story
 description: "Convert a podcast episode (ordered .srt transcripts + metadata + highlighted moments) into a Story Studio document — a .story.json in apps/story-studio/content/ that renders as an interactive guide. Fuses the transcripts-to-guide rules (ASR cleanup, Daniel's voice, never invent) with an aggressively-visual module structure, using the widgetron manifest as the output contract. Use when: (1) user invokes /podcast-to-story, (2) user says 'convierte este episodio/transcripción en una guía interactiva / storyline', (3) user wants a .story.json generated from SRT transcripts."
-argument-hint: "[--srt=<file-or-folder>] [--podcast=<id|file>] [--slug=<slug>] [--title=<title>] [--lang=es] [--theme=webreactiva] [--episode=<n>] [--length=corta|media|larga] [--emphasis=equilibrado|practica|conceptos|motivacion] [--styles=<id,id,…>] [--cta=link:<url>|email-form|none] [--complement=ask|never|auto]"
+argument-hint: "[--srt=<file-or-folder>] [--podcast=<id|file>] [--slug=<slug>] [--title=<title>] [--lang=es] [--theme=webreactiva] [--episode=<n>] [--format=entrevista|briefing] [--length=corta|media|larga] [--emphasis=equilibrado|practica|conceptos|motivacion] [--styles=<id,id,…>] [--cta=link:<url>|email-form|none] [--complement=ask|never|auto]"
 user_invocable: true
 ---
 
@@ -45,6 +45,22 @@ in the manifest. The envelope schema lives in
 - **Author settings**: theme, surprises (mid/end) and CTA. These go in
   `settings`, NEVER inline in the story — the engine injects them at build
   time (D-004 in docs/story-studio-decisions.md).
+
+## Format presets (`--format`, optional)
+
+Without a format, the output is the default **didactic dispensa** (the
+structure rules below). With `--format=<id>` the episode gets a
+genre-native shape instead — read the preset BEFORE outlining, set
+`meta.format: "<id>"` in the envelope (so `story lint` validates the mold),
+and let the preset override the length question (the mold decides):
+
+- `entrevista` — the guest's card, for interview episodes:
+  [references/format-entrevista.md](references/format-entrevista.md).
+- `briefing` — the playable weekly briefing, for news episodes:
+  [references/format-briefing.md](references/format-briefing.md).
+
+Everything else in this skill (never invent, cold reader, cadence, fun pass,
+engagement layer, validation loop) applies unchanged inside a preset.
 
 ## Ask first (AskUserQuestion, always with a recommended default)
 
