@@ -51,6 +51,9 @@
       "description": "Cada domingo, developers reciben en su correo lo que de verdad funciona al programar con IA. Gratis.",
       "buttonLabel": "Entra en Web Reactiva",
       "url": "https://www.webreactiva.com"
+    },
+    "challenge": {
+      "label": "Tu delta de garantías"
     }
   },
   "story": {
@@ -69,6 +72,8 @@
         {
           "title": "El día que la IA te dejó tirado",
           "subtitle": "Le pediste una pantalla de login. Funcionó. Tres días después, alguien la abrió de verdad.",
+          "emoji": "💥",
+          "outro": "El login funcionaba… hasta que alguien lo abrió de verdad. Siguiente parada: por qué el motor no es el coche.",
           "screens": [
             {
               "type": "group-chat",
@@ -128,6 +133,8 @@
         {
           "title": "El motor no es el coche",
           "subtitle": "El vibe coding te da el motor. Lo que decide si el código aguanta es todo lo que le pones alrededor.",
+          "emoji": "⚙️",
+          "outro": "Ya piensas en motor y coche. El delta de garantías es donde se gana el sueldo.",
           "screens": [
             {
               "type": "data-chart",
@@ -189,22 +196,33 @@
                 "frames": [
                   {
                     "caption": "El modelo de IA es el motor. Potente, sí, pero un motor suelto no es un coche.",
-                    "active": ["motor"]
+                    "active": [
+                      "motor"
+                    ]
                   },
                   {
                     "caption": "El harness es la maquinaria que lo rodea: correas, engranajes, sensores de seguridad y una línea de montaje.",
-                    "active": ["motor", "harness"]
+                    "active": [
+                      "motor",
+                      "harness"
+                    ]
                   },
                   {
                     "caption": "Ahí vive el 90% del valor. En Terminal Bench 2.0 —un ranking público de agentes de IA en tareas de terminal— un equipo pasó de fuera del Top 30 al Top 5 sin cambiar el modelo, solo afinando el harness.",
-                    "active": ["harness"],
+                    "active": [
+                      "harness"
+                    ],
                     "badges": {
                       "harness": "Top 30 → Top 5"
                     }
                   },
                   {
                     "caption": "Motor + harness = un coche que aguanta la carretera. Ese es el salto del vibe coding a la ingeniería.",
-                    "active": ["motor", "harness", "coche"]
+                    "active": [
+                      "motor",
+                      "harness",
+                      "coche"
+                    ]
                   }
                 ]
               }
@@ -236,6 +254,8 @@
         {
           "title": "El delta de garantías y los tres niveles",
           "subtitle": "Sube o baja las garantías según lo que te juegues. Tu login vive en los tres niveles, no en uno.",
+          "emoji": "🎚️",
+          "outro": "Ya sabes subir y bajar garantías según lo que te juegas. Ahora, las preguntas antes de dar nada por bueno.",
           "screens": [
             {
               "type": "glossary-text",
@@ -360,15 +380,27 @@
                 "text": "La única regla del nivel 1 es {{saber}} en qué nivel estás. El desastre empieza cuando un {{experimento}} se disfraza de {{producto}}.",
                 "blanks": {
                   "saber": {
-                    "options": ["saber", "acelerar", "olvidar"],
+                    "options": [
+                      "saber",
+                      "acelerar",
+                      "olvidar"
+                    ],
                     "answer": "saber"
                   },
                   "experimento": {
-                    "options": ["experimento", "proyecto", "script"],
+                    "options": [
+                      "experimento",
+                      "proyecto",
+                      "script"
+                    ],
                     "answer": "experimento"
                   },
                   "producto": {
-                    "options": ["producto", "juguete", "borrador"],
+                    "options": [
+                      "producto",
+                      "juguete",
+                      "borrador"
+                    ],
                     "answer": "producto"
                   }
                 }
@@ -379,6 +411,8 @@
         {
           "title": "La checklist antes de dar por bueno nada",
           "subtitle": "Los errores que cometemos todos, yo el primero, y las diez preguntas que los cazan.",
+          "emoji": "🔍",
+          "outro": "Con la checklist en la mano queda lo importante: el 20% que te hace a ti.",
           "screens": [
             {
               "type": "pattern-card",
@@ -468,16 +502,36 @@
                 "id": "checklist-vibe-coding",
                 "completion": "Ese es el filtro. Si estás en el nivel 1 puedes responder «no» a casi todas y dormir tranquilo. Pero si respondes «sí» a la última y «no» a la mayoría, tu vibe coding se está pasando de listo.",
                 "items": [
-                  { "text": "¿Tengo una spec mínima de lo que quería construir?" },
-                  { "text": "¿Sé qué archivos ha tocado el agente?" },
-                  { "text": "¿He revisado las dependencias nuevas que ha añadido?" },
-                  { "text": "¿Hay tests que cubran lo importante?" },
-                  { "text": "¿He pensado en los casos límite?" },
-                  { "text": "¿Puedo explicar lo que hace este código a otra persona?" },
-                  { "text": "¿Sé cómo revertir el cambio si sale mal?" },
-                  { "text": "¿He probado errores reales, no solo el camino feliz?" },
-                  { "text": "¿Hay datos sensibles de por medio?" },
-                  { "text": "¿Esto va a llegar a usuarios reales?" }
+                  {
+                    "text": "¿Tengo una spec mínima de lo que quería construir?"
+                  },
+                  {
+                    "text": "¿Sé qué archivos ha tocado el agente?"
+                  },
+                  {
+                    "text": "¿He revisado las dependencias nuevas que ha añadido?"
+                  },
+                  {
+                    "text": "¿Hay tests que cubran lo importante?"
+                  },
+                  {
+                    "text": "¿He pensado en los casos límite?"
+                  },
+                  {
+                    "text": "¿Puedo explicar lo que hace este código a otra persona?"
+                  },
+                  {
+                    "text": "¿Sé cómo revertir el cambio si sale mal?"
+                  },
+                  {
+                    "text": "¿He probado errores reales, no solo el camino feliz?"
+                  },
+                  {
+                    "text": "¿Hay datos sensibles de por medio?"
+                  },
+                  {
+                    "text": "¿Esto va a llegar a usuarios reales?"
+                  }
                 ]
               }
             }
@@ -486,6 +540,8 @@
         {
           "title": "El 80% que hace la IA y el 20% que te hace a ti",
           "subtitle": "La IA multiplica lo que ya eres. Tu criterio es el otro 20%, y es donde está tu valor.",
+          "emoji": "🧠",
+          "outro": "La IA pone el 80%; tu criterio, el resto. Remata la guía: el marcador te espera.",
           "screens": [
             {
               "type": "tangle-text",
