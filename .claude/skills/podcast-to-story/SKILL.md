@@ -1,7 +1,7 @@
 ---
 name: podcast-to-story
 description: "Convert a podcast episode (ordered .srt transcripts + metadata + highlighted moments) into a Story Studio document — a .story.json in apps/story-studio/content/ that renders as an interactive guide. Fuses the transcripts-to-guide rules (ASR cleanup, Daniel's voice, never invent) with an aggressively-visual module structure, using the widgetron manifest as the output contract. Use when: (1) user invokes /podcast-to-story, (2) user says 'convierte este episodio/transcripción en una guía interactiva / storyline', (3) user wants a .story.json generated from SRT transcripts."
-argument-hint: "[--srt=<file-or-folder>] [--podcast=<id|file>] [--slug=<slug>] [--title=<title>] [--lang=es] [--theme=webreactiva] [--episode=<n>] [--format=entrevista|briefing|juego] [--length=corta|media|larga] [--emphasis=equilibrado|practica|conceptos|motivacion] [--styles=<id,id,…>] [--cta=link:<url>|email-form|none] [--complement=ask|never|auto]"
+argument-hint: "[--srt=<file-or-folder>] [--podcast=<id|file>] [--slug=<slug>] [--title=<title>] [--lang=es] [--theme=webreactiva] [--episode=<n>] [--format=entrevista|briefing|game] [--length=corta|media|larga] [--emphasis=equilibrado|practica|conceptos|motivacion] [--styles=<id,id,…>] [--cta=link:<url>|email-form|none] [--complement=ask|never|auto]"
 user_invocable: true
 ---
 
@@ -58,8 +58,8 @@ and let the preset override the length question (the mold decides):
   [references/format-entrevista.md](references/format-entrevista.md).
 - `briefing` — the playable weekly briefing, for news episodes:
   [references/format-briefing.md](references/format-briefing.md).
-- `juego` — the playable challenge run with lives/HP, for a competitive
-  extra pass over any episode: [references/format-juego.md](references/format-juego.md).
+- `game` — the playable challenge run with lives/HP, for a competitive
+  extra pass over any episode: [references/format-game.md](references/format-game.md).
 
 Everything else in this skill (never invent, cold reader, cadence, fun pass,
 engagement layer, validation loop) applies unchanged inside a preset.
@@ -200,10 +200,13 @@ pipeline already handles media-less stories.
    - **Provenance leak.** No "en el vídeo / en el episodio / en su caso" in the
      body — rewrite to 2nd person or "en el ejemplo".
 
-   Three whole-guide cousins: a running example must be NAMED before its first
+   Four whole-guide cousins: a running example must be NAMED before its first
    use (or the reader spends modules reconstructing it); a narrative frame
-   (`viaje-del-heroe`…) must be DECLARED so its vocabulary doesn't jar; and a
-   provocative title must be PAID OFF in the body (or softened). Worked
+   (`viaje-del-heroe`…) must be DECLARED so its vocabulary doesn't jar; a
+   provocative title must be PAID OFF in the body (or softened); and an idea
+   carried only by the host's specific case (their product, their migration,
+   their numbers) must be LIFTED to a transferable principle in the second
+   person — the anecdote is the source, the takeaway is the lesson. Worked
    before→after examples for every smell above:
    [references/cold-reader-review.md](references/cold-reader-review.md).
 
@@ -214,9 +217,27 @@ teaches what the episode teaches. Every screen must either explain, make the
 reader practice, or make an idea stick; anything that only "covers" content
 gets cut or converted into an exercise.
 
+**And it teaches the reader, not the host.** Episodes carry their ideas inside
+the speaker's own case — their product, their migration, their client, their
+numbers, their Tuesday. That detail is faithful, but faithful-and-useless: the
+reader came to learn something they can apply on Monday, not to tour someone
+else's projects. So lift the idea *out* of the anecdote — keep the transferable
+principle, drop the identifying specifics — and write it in the second person.
+«Migré mi producto premium de 2019 y le añadí seguimiento» becomes «lo que más
+cuesta de un proyecto grande no es el código, es decidir qué merece la pena».
+The host's story is the *source*; the reader's takeaway is the *product*. (This
+is not the never-invent rule bending — you still invent nothing; you generalize
+a real claim instead of transcribing its wrapper.)
+
 - One `storyline` root; **3–7 modules**, each with `title` + `subtitle` and
-  2–5 `screens`. Derive modules from the transcript's natural arc (or one per
-  `.srt` file when the folder is pre-split).
+  2–5 `screens`. **Recording order is not narration order.** A podcast comes
+  out in the sequence things occurred to the speaker — the best idea often
+  buried in the middle or dropped as an aside; a guide is authored for a
+  reader's attention. Group the transcript by *idea*, then sequence those ideas
+  for the strongest teaching arc — by interest and difficulty, not by the
+  clock. The `.srt` files (one per module when pre-split) help you *locate*
+  content; they don't dictate the order you teach it in. Split, merge and
+  reorder across file boundaries whenever a better arc asks for it.
 - **The cover is automatic.** The engine injects `meta.title`/`meta.description`
   into the storyline, which renders them as an opening cover section. So:
   write a strong standalone `meta.title` + `meta.description` (no
@@ -228,6 +249,17 @@ gets cut or converted into an exercise.
   `quote`/`callout-box` that opens a question the guide will answer. The reader
   gets something to touch (or a question to hold) within the first 60 seconds;
   never open the guide with plain `prose`.
+- **Save the best for last; open a loop early.** Resist spending your most
+  interesting, most counterintuitive idea in module 1 — front-loading the
+  punchline flattens the whole arc and leaves nothing to pull the reader
+  through the middle. Instead, name it on the hook as an open question or a
+  promise («hay un multiplicador que casi nadie usa — te lo guardo para el
+  final»), build the setup through the middle modules, and reveal it in the
+  last teaching module so the finale *closes the loop* it opened. That curiosity
+  gap is much of what carries a reader who never heard the audio. It's the
+  open-loop writing style — reach for it as a default, even when the user
+  didn't name it, and *especially* in the `game` format (the boss then closes
+  the loop).
 - **Payoff cadence.** Avoid long stretches without a reader interaction —
   `story lint` warns past 4 passive screens (`cadence`). Treat the number as
   a smell, not a law: a dense topic can carry a longer passive stretch when
@@ -268,8 +300,11 @@ gets cut or converted into an exercise.
   (module boundaries included) — if two adjacent moments want the same widget,
   merge them or convert one.
 - **At least one `quiz` in the second half** — readers should act before the CTA.
-- **Always set `storageKey`** on the storyline (= the slug) so the guide
-  remembers the reading position and offers to resume.
+- **Set `storageKey`** on the storyline (= the slug) so the guide remembers the
+  reading position and offers to resume — **except in the `game` format.** A
+  game's contract is «reload = fresh run» (arcade feel), and the resume bar
+  shares the top edge with the lives HUD, so setting `storageKey` on a game
+  hides the hearts on every reload and fights the format. Omit it there.
 - **Audio moments**: only with real clips. Produce them FIRST with the
   `make-audio-clip` skill (repo web-reactiva-2244): it cuts 2–3 min with
   ffmpeg, transcribes, fixes typos, uploads to the Spreaker "Audioclips" show

@@ -1,4 +1,4 @@
-# Format preset: `juego` — La partida jugable
+# Format preset: `game` — La partida jugable
 
 The competitive extra pass over an episode: the reader doesn't just read, they
 *play a run* with lives on the line. The proven artifact behind it: the hearts
@@ -6,14 +6,14 @@ in Duolingo, the streak in a trivia night, the health bar in Kahoot — a finite
 resource that turns "answer the question" into "don't die." It suits any
 episode whose ideas can be phrased as sharp right/wrong retos.
 
-Set `meta.format: "juego"` in the envelope — `story lint` validates the mold.
+Set `meta.format: "game"` in the envelope — `story lint` validates the mold.
 All the global rules (never invent, cold reader, cadence, variety, engagement
 layer) still apply; this file fixes the STAKES.
 
 ## The one mechanic that matters
 
 `settings.lives` is the format. It feeds **exclusively from `quiz`** — the only
-widget that scores an answer (`answered { correct }`). So a `juego` is built
+widget that scores an answer (`answered { correct }`). So a `game` is built
 around its quizzes: every wrong answer costs a heart, every correct one wins one
 back (redemption, capped at `total`), and at **0 lives the finale withholds its
 reward** — a game-over screen invites a retry instead of celebrating, and the
@@ -62,10 +62,23 @@ same as any guide.
 Per-module `emoji` (the stamp) + `outro` still apply — here they double as the
 "level cleared" beat between rounds.
 
+**Two curves, not one.** Difficulty rises toward the boss — but *interest* has
+to rise with it. Open a loop on the cover or the first screen (promise the
+biggest, most surprising idea «para el final»: the reveal, the multiplier, the
+twist), spend the early worlds on setup and the less flashy fundamentals, and
+place that headline reveal in the LAST teaching world, right before the boss.
+The boss then closes the loop — its correct answer names the very thing you
+promised at the start. A run that fires its best idea in world 1 has a full
+health bar and nothing left to play for.
+
 ## The points/lives contract (state it on the cover)
 
 - **Lives are session-scoped.** A reload is a fresh run — that's the arcade
   feel, not a bug. Say so on the cover so nobody feels cheated by a refresh.
+- **No `storageKey`.** Don't set it on a game. It makes the guide offer to
+  resume, which both contradicts «reload = fresh run» and — because the resume
+  bar shares the top edge with the lives HUD — hides the hearts on every
+  reload. A game shows its hearts from the first screen.
 - **Redemption is real.** A reader at 0 lives is not stuck: scrolling back and
   acing any quiz wins a heart and unlocks the finale. The game-over hint says as
   much. Design at least one quiz late enough that a comeback is possible.
@@ -74,7 +87,7 @@ Per-module `emoji` (the stamp) + `outro` still apply — here they double as the
 
 ## Audio rule (format-specific)
 
-Fragments for the quoted moments only, as in any guide — a `juego` is played at
+Fragments for the quoted moments only, as in any guide — a `game` is played at
 speed. No full-episode audio.
 
 ## What the lint checks for this format
