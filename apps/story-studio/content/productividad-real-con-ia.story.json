@@ -23,6 +23,7 @@
   "story": {
     "type": "storyline",
     "props": {
+      "gated": true,
       "glossary": {
         "POC": "Prueba de concepto: una versión mínima y rápida para comprobar si una idea funciona antes de invertir en construirla del todo.",
         "bypass de permisos": "El modo en que un agente de IA actúa sin pedirte confirmación en cada paso (el «dangerously skip permissions»). Va más rápido, pero tú revisas menos.",
