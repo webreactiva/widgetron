@@ -89,6 +89,12 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     question: "¿Qué imprimirá esto?",
     outputLabel: "Salida",
   },
+  spotTheBug: {
+    prompt: "Toca la línea donde crees que está el bug.",
+    found: "¡Lo encontraste!",
+    notHere: "En esta línea no es — sigue buscando.",
+    tryAgain: "Probar de nuevo",
+  },
   dragAndDrop: {
     check: "Comprobar",
     correct: "¡Todo correcto!",
@@ -170,6 +176,10 @@ export const esLabels: Record<string, Record<string, unknown>> = {
       ],
       dots: "Toca los puntos de progreso de arriba para saltar de módulo.",
       close: "Cerrar",
+    },
+    locked: {
+      title: "Bloqueado",
+      hint: "Responde el reto del módulo anterior para desbloquear este.",
     },
   },
   quote: {

@@ -367,13 +367,16 @@
             {
               "type": "spot-the-bug",
               "props": {
-                "title": "¿Dónde está el bug?",
                 "lines": [
                   { "code": "class Cart {" },
                   { "code": "  #products: Product[] = [];" },
                   { "code": "" },
                   { "code": "  add(product: Product) {" },
-                  { "code": "    this.#products.push(product);" },
+                  {
+                    "code": "    this.#products.push(product);",
+                    "buggy": true,
+                    "explanation": "El carrito no distingue entre «añadir uno nuevo» y «añadir otro igual». Si pulsas dos veces el mismo producto, el total cuenta el doble. La solución está más adelante: introducir un `CartProduct` (producto + cantidad) y tratar al carrito como un mapa, no como una lista."
+                  },
                   { "code": "  }" },
                   { "code": "" },
                   { "code": "  total(): number {" },
@@ -381,8 +384,7 @@
                   { "code": "  }" },
                   { "code": "}" },
                   { "code": "/* Llamada: cart.add(sameProduct); cart.add(sameProduct); cart.total() */" }
-                ],
-                "explanation": "El carrito no distingue entre «añadir uno nuevo» y «añadir otro igual». Si pulsas dos veces el mismo producto, el total cuenta el doble. La solución está más adelante: introducir un `CartProduct` (producto + cantidad) y tratar al carrito como un mapa, no como una lista."
+                ]
               }
             },
             {
@@ -526,7 +528,7 @@
               "props": {
                 "title": "Pídele a tu IA que revise tu Domain",
                 "description": "Copia este prompt, pega una clase de tu proyecto y mira si tu entidad aguanta la prueba de los nueve puntos.",
-                "template": "Actúa como un revisor de arquitectura de software con experiencia en Domain-Driven Design (DDD, el enfoque que pone el lenguaje del negocio en el centro del código).\n\nAnaliza la siguiente clase de TypeScript y dime:\n\n1. ¿Es una Entity o un Value Object? ¿Por qué?\n2. ¿Tiene invariantes (reglas de negocio) en su creación, o se las puede saltar alguien desde fuera?\n3. ¿Expone sus propiedades internas o las encapsula con getters?\n4. ¿Acopla la clase con la base de datos, HTTP o el framework? Si sí, ¿qué parte se ha colado dentro del Domain?\n5. ¿Podría mejorarse aplicando un [[Patrón Factory]] con constructor privado?\n6. Si tiene mucha lógica técnica, ¿debería vivir en un Use Case o un Adapter en vez de aquí?\n7. ¿Cómo la probarías sin levantar la base de datos?\n8. ¿Su nombre refleja un concepto del negocio o es un nombre genérico (Item, Data, Manager)?\n9. ¿Forma parte de un lenguaje compartido con el equipo de producto, o solo lo entiende el equipo técnico?\n\nClase a revisar:\n\n```typescript\n{{pega aquí tu clase}}\n```",
+                "template": "Actúa como un revisor de arquitectura de software con experiencia en Domain-Driven Design (DDD, el enfoque que pone el lenguaje del negocio en el centro del código).\n\nAnaliza la siguiente clase de TypeScript y dime:\n\n1. ¿Es una Entity o un Value Object? ¿Por qué?\n2. ¿Tiene invariantes (reglas de negocio) en su creación, o se las puede saltar alguien desde fuera?\n3. ¿Expone sus propiedades internas o las encapsula con getters?\n4. ¿Acopla la clase con la base de datos, HTTP o el framework? Si sí, ¿qué parte se ha colado dentro del Domain?\n5. ¿Podría mejorarse aplicando un patrón Factory con constructor privado?\n6. Si tiene mucha lógica técnica, ¿debería vivir en un Use Case o un Adapter en vez de aquí?\n7. ¿Cómo la probarías sin levantar la base de datos?\n8. ¿Su nombre refleja un concepto del negocio o es un nombre genérico (Item, Data, Manager)?\n9. ¿Forma parte de un lenguaje compartido con el equipo de producto, o solo lo entiende el equipo técnico?\n\nClase a revisar:\n\n```typescript\n{{pega aquí tu clase}}\n```",
                 "note": "Tip: empieza con tu Entity principal (User, Order, Product…). Las respuestas suelen sacar a la luz al menos un [[Antipatrón del modelo anémico]]."
               }
             }

@@ -18,7 +18,7 @@ guide should convert MOST of them into their matching widget, not into prose.
 | Real numbers compared or a trend | `data-chart` | Only with numbers actually said in the episode |
 | Code explained piece by piece | `code-translation` | THE widget for demystifying a snippet |
 | "What does this print/do?" | `predict-output` | Code is correct; skill = tracing |
-| "There's a mistake here" | `spot-the-bug` | Skill = finding the flawed line |
+| "There's a mistake here" | `spot-the-bug` | Skill = finding the flawed line. Exactly ONE line sets `buggy: true` (with its `explanation` on that line) — validation rejects it otherwise |
 | A sequence of shell commands | `terminal-sim` | Literal commands + output, one per click |
 | A dialogue / two sides arguing / client-server exchange | `group-chat` | Great for dramatized moments of the episode |
 | A misconception worth confronting | `quiz` | Per-option feedback quoting the episode's reasoning |

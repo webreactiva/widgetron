@@ -25,7 +25,14 @@ export const spotTheBugMeta: WidgetMeta = {
         }),
       )
       .min(2)
-      .describe("The code lines, in order; exactly one should set buggy: true."),
+      .describe("The code lines, in order; exactly one should set buggy: true.")
+      // Without exactly one buggy line the exercise is unsolvable (every click
+      // says "keep looking") or ambiguous — a generated guide shipped that way
+      // once; validation is the gate, not prose.
+      .refine((lines) => lines.filter((l) => l.buggy === true).length === 1, {
+        message:
+          "exactly ONE line must set buggy: true (and its explanation lives on that line) — with none the learner can never solve it",
+      }),
   }),
   example: {
     type: "spot-the-bug",
