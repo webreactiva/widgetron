@@ -60,7 +60,7 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | storyline | storyline | `started` | `{}` — reader pressed the cover's Start button |
 | storyline | storyline | `resumed` | `{ top, module? }` — reader used the resume bar |
 | storyline | storyline | `toc_opened` | `{}` — reader opened the mobile module index |
-| storyline | storyline | `result_copied` | `{ correct, answered }` — reader copied their finale result |
+| storyline | storyline | `result_copied` | `{ earned, total }` — reader copied their finale result (beaten challenges over the guide's total) |
 | storyline | storyline | `life_lost` | `{ livesLeft, total }` — game mode (`lives`): a wrong scored answer cost a life |
 | storyline | storyline | `life_restored` | `{ livesLeft, total }` — game mode: a correct answer won a life back |
 | storyline | storyline | `game_over` | `{ total }` — game mode: lives hit 0, the finale reward is withheld |

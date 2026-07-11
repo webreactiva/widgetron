@@ -21,6 +21,14 @@ export const storylineMeta: WidgetMeta = {
       .string()
       .optional()
       .describe("Cover lead line under the title."),
+    minutes: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe(
+        "Total reading-time estimate for the cover badge, in minutes. Story Studio injects it from the document's word count at resolve time; without it the widget measures the rendered text (which undercounts gated guides).",
+      ),
     modules: z
       .array(
         z.object({
@@ -97,6 +105,12 @@ export const storylineMeta: WidgetMeta = {
       .optional()
       .describe(
         "Game mode (opt-in — the signature of the 'game' format): the reader loses a life on each wrong scored answer and wins one back on a correct one. At 0 lives the finale withholds its reward (a game-over screen invites a retry, confetti waits) while the prose stays readable. Session-scoped; scroll variant only.",
+      ),
+    gated: z
+      .boolean()
+      .optional()
+      .describe(
+        "Gated progression (scroll variant): each module after the first stays locked — only its header previews — until the reader answers a scored question in the module before it. Answering the previous module's reto unlocks the next. Requires a quiz in every non-final module or the reader soft-locks. Session-scoped.",
       ),
     variant: z
       .enum(["scroll", "thread"])

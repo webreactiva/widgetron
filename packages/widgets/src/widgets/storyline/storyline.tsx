@@ -42,10 +42,12 @@ export interface StorylineLabels {
   startOver: string;
   /** Finale: heading of the completion section at the end of the course. */
   finaleTitle: React.ReactNode;
-  /** Finale: challenges stat, counted from bubbled `answered` events. */
-  finaleChallenges: (correct: number, answered: number) => React.ReactNode;
-  /** Finale: activities stat, counted from bubbled `completed` events. */
-  finaleActivities: (count: number) => React.ReactNode;
+  /**
+   * Finale: challenges stat — interactions beaten (correct answers + completed
+   * activities) over the guide's total challenges, the same denominator the
+   * cover promises and the challenge meter fills against.
+   */
+  finaleChallenges: (earned: number, total: number) => React.ReactNode;
   /** Finale: session reading time, in whole minutes. */
   finaleTime: (minutes: number) => React.ReactNode;
   /** Game mode: accessible label for the lives HUD ("2 of 3 lives left"). */
@@ -76,10 +78,10 @@ export interface StorylineLabels {
   shareResult: string;
   /** Finale: transient feedback after copying the result. */
   shareCopied: string;
-  /** Finale: clipboard text built from the session score. */
+  /** Finale: clipboard text — beaten challenges over the guide's total. */
   shareText: (
-    correct: number,
-    answered: number,
+    earned: number,
+    total: number,
     title: string,
     url: string,
   ) => string;
@@ -102,6 +104,13 @@ export interface StorylineLabels {
     /** Close-button label. */
     close: string;
   };
+  /** Gated progression: the locked-module preview placeholder. */
+  locked: {
+    /** Heading of the locked panel. */
+    title: string;
+    /** Hint telling the reader how to unlock it. */
+    hint: string;
+  };
 }
 
 export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
@@ -111,9 +120,7 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
   resume: "Resume",
   startOver: "Start from the top",
   finaleTitle: "You've completed the guide!",
-  finaleChallenges: (correct, answered) =>
-    `Challenges passed: ${correct}/${answered}`,
-  finaleActivities: (count) => `Activities completed: ${count}`,
+  finaleChallenges: (earned, total) => `Challenges passed: ${earned}/${total}`,
   finaleTime: (minutes) => `~${minutes} min of reading`,
   livesLabel: (left, total) => `${left} of ${total} lives left`,
   finaleGameOverTitle: "Out of lives!",
@@ -131,8 +138,8 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
   moduleDone: (n) => `Module ${n} ✓`,
   shareResult: "Copy my result",
   shareCopied: "Copied!",
-  shareText: (correct, answered, title, url) =>
-    `I passed ${correct}/${answered} challenges in “${title}” 🏆 → ${url}`,
+  shareText: (earned, total, title, url) =>
+    `I passed ${earned}/${total} challenges in “${title}” 🏆 → ${url}`,
   threadNext: "Next",
   threadPrev: "Back",
   help: {
@@ -147,6 +154,10 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
     ],
     dots: "Tap the progress dots at the top to jump between modules.",
     close: "Close",
+  },
+  locked: {
+    title: "Locked",
+    hint: "Answer the previous module's challenge to unlock this one.",
   },
 };
 
@@ -279,6 +290,13 @@ export interface StorylineProps
   title?: React.ReactNode;
   /** Cover lead line under the title. */
   description?: React.ReactNode;
+  /**
+   * Total reading-time estimate for the cover badge, in minutes. Story Studio
+   * injects it from the document's own copy at resolve time; without it the
+   * widget measures the rendered text — which undercounts `gated` guides
+   * (locked modules render only their header).
+   */
+  minutes?: number;
   modules: StorylineModule[];
   /** Show the "Module 01" eyebrow above each title. Default: true. */
   numbered?: boolean;
@@ -297,6 +315,14 @@ export interface StorylineProps
    * bar at the top of the storyline offers to jump back to the saved spot.
    */
   storageKey?: string;
+  /**
+   * Gated progression (scroll variant): every module after the first stays
+   * locked — only its header shows as a preview — until the reader answers a
+   * scored question in the module before it. Answering the previous module's
+   * reto unlocks the next. Session-scoped; requires a quiz in every non-final
+   * module or the reader soft-locks. Pairs naturally with `lives`.
+   */
+  gated?: boolean;
   /**
    * Closing screen rendered AFTER the built-in completion finale — the natural
    * slot for a CTA, so the reader is celebrated first and pitched second.
@@ -451,6 +477,7 @@ function withCourseProviders(
 function StorylineScroll({
   title,
   description,
+  minutes,
   modules,
   numbered = true,
   moduleLabel,
@@ -461,6 +488,7 @@ function StorylineScroll({
   celebrate = true,
   challenge,
   lives,
+  gated = false,
   variant: _variant,
   labels,
   className,
@@ -506,9 +534,10 @@ function StorylineScroll({
   const posRef = React.useRef({ module: 0, frac: 0 });
   // Cover promise: total estimated reading time, measured after mount.
   const [totalMin, setTotalMin] = React.useState(0);
-  const [descExpanded, setDescExpanded] = React.useState(false);
-  const [descClamped, setDescClamped] = React.useState(false);
-  const descRef = React.useRef<HTMLParagraphElement>(null);
+  // Gated progression (opt-in via `gated`): the highest module index the reader
+  // has unlocked. Module 0 is always open; answering a scored question in
+  // module m unlocks m+1. Session-scoped (never persisted) — a reload restarts.
+  const [unlockedThrough, setUnlockedThrough] = React.useState(0);
   // Share-result feedback.
   const [copied, setCopied] = React.useState(false);
   // Session scoreboard for the finale — child widget events bubble to the
@@ -532,6 +561,17 @@ function StorylineScroll({
   // Mobile module index (bottom sheet) — the rail is desktop-only.
   const [tocOpen, setTocOpen] = React.useState(false);
   const [minutesLeft, setMinutesLeft] = React.useState(0);
+  // Mobile floating chrome (game HUD + TOC pill) hides while the reader
+  // scrolls DOWN, so it can never sit over the control they are about to tap
+  // (on 375px the pill caught quiz taps and the HUD chips covered the text).
+  // It returns on scroll-up (navigation intent) and after answering (feedback
+  // moment). Starts hidden: the cover has its own index and Start button.
+  const [navHidden, setNavHidden] = React.useState(true);
+  // HUD-only override: after an interaction resolves, the chips surface even
+  // mid-read so their feedback (life lost/won, meter tick) is seen. The pill
+  // stays put — reappearing under the finger was the original tap-stealer.
+  const [hudFlash, setHudFlash] = React.useState(false);
+  const lastTop = React.useRef(0);
   const startedAt = React.useRef(0);
   const finished = React.useRef(false);
   // Completion persisted on a previous visit — must survive re-reads.
@@ -586,12 +626,6 @@ function StorylineScroll({
     setTotalMin(Math.ceil(words / WORDS_PER_MINUTE));
   }, [modules]);
 
-  // Show "read more" only when the description actually overflows its clamp.
-  React.useEffect(() => {
-    const p = descRef.current;
-    if (p) setDescClamped(p.scrollHeight > p.clientHeight + 1);
-  }, [description]);
-
   // Segmented progress + active module + position persistence, driven by the
   // container's own scroll. Progress is quantized to modules (goal-gradient):
   // one segment per module, the active one filling as the reader moves through.
@@ -608,6 +642,12 @@ function StorylineScroll({
       requestAnimationFrame(() => {
         const max = el.scrollHeight - el.clientHeight;
         const pct = max > 0 ? (el.scrollTop / max) * 100 : 0;
+        const dy = el.scrollTop - lastTop.current;
+        if (userScroll && Math.abs(dy) > 4) {
+          setNavHidden(dy > 0);
+          setHudFlash(false);
+          lastTop.current = el.scrollTop;
+        }
         const center = el.scrollTop + el.clientHeight / 2;
         let idx = 0;
         moduleRefs.current.forEach((m, i) => {
@@ -711,17 +751,32 @@ function StorylineScroll({
     return onWidgetronEvent((e) => {
       const { source, action, data } = e.detail;
       if (source !== "widget") return;
+      if (action === "answered" || action === "completed") setHudFlash(true);
       if (action === "answered") {
         setScore((s) => ({
           ...s,
           answered: s.answered + 1,
           correct: s.correct + (data?.correct === true ? 1 : 0),
         }));
+        // Gated progression: answering a scored question in module m unlocks
+        // module m+1 (the "final reto of the previous module" gate). The
+        // emitting quiz sits inside its module section, so the module index
+        // comes straight from the DOM — no per-quiz wiring needed.
+        if (gated) {
+          const host = (e.target as HTMLElement | null)?.closest?.(
+            "[data-module-index]",
+          ) as HTMLElement | null;
+          const m = host ? Number(host.dataset.moduleIndex) : NaN;
+          if (!Number.isNaN(m)) setUnlockedThrough((u) => Math.max(u, m + 1));
+        }
         // Lives: lose one on a wrong answer, win one back on a right one
         // (redemption, clamped to [0, total]). Emit + gate transition happen
         // OUTSIDE the setState updater so StrictMode's double-invoke can't
         // double-fire them — the refs are the single source of truth here.
-        if (livesEnabled && (data?.correct === true || data?.correct === false)) {
+        if (
+          livesEnabled &&
+          (data?.correct === true || data?.correct === false)
+        ) {
           const wasOver = gameOverRef.current;
           if (data.correct === false && livesRef.current > 0) {
             livesRef.current -= 1;
@@ -747,7 +802,7 @@ function StorylineScroll({
       } else if (action === "completed")
         setScore((s) => ({ ...s, completed: s.completed + 1 }));
     }, el);
-  }, [livesEnabled, livesTotal, emitStoryline]);
+  }, [livesEnabled, livesTotal, emitStoryline, gated]);
 
   // Reveal screens as they enter the reading viewport.
   React.useEffect(() => {
@@ -764,7 +819,10 @@ function StorylineScroll({
     );
     el.querySelectorAll("[data-reveal]").forEach((n) => io.observe(n));
     return () => io.disconnect();
-  }, [modules]);
+    // `unlockedThrough`: when a gated module unlocks, its screens mount late —
+    // re-run so the observer picks them up (already-revealed nodes keep their
+    // data-visible; the observer only ever adds it).
+  }, [modules, unlockedThrough]);
 
   const resume = () => {
     const el = scrollRef.current;
@@ -803,8 +861,8 @@ function StorylineScroll({
   const copyResult = () => {
     if (!navigator.clipboard) return;
     const text = l.shareText(
-      score.correct,
-      score.answered,
+      challengeEarned,
+      challenges,
       typeof title === "string" ? title : "",
       window.location.href,
     );
@@ -812,8 +870,8 @@ function StorylineScroll({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
       emitStoryline("result_copied", {
-        correct: score.correct,
-        answered: score.answered,
+        earned: challengeEarned,
+        total: challenges,
       });
     });
   };
@@ -911,7 +969,14 @@ function StorylineScroll({
       {(livesEnabled || (challenge != null && challenges > 0)) &&
         saved === null && (
           <div className="pointer-events-none sticky top-2 z-30 h-0">
-            <div className="absolute right-3 flex max-w-[80%] flex-col items-end gap-1.5">
+            <div
+              className={cn(
+                "absolute right-3 flex max-w-[80%] flex-col items-end gap-1.5 transition-opacity duration-300",
+                // On phones the chips sit over the reading column — keep them
+                // off while reading; desktop has margin to spare.
+                navHidden && !hudFlash && "max-sm:opacity-0",
+              )}
+            >
               {livesEnabled && (
                 <div
                   key={livesLeft}
@@ -1111,29 +1176,14 @@ function StorylineScroll({
               {title}
             </h1>
             {description != null && (
-              <>
-                <p
-                  ref={descRef}
-                  className={cn(
-                    "mx-auto mt-5 max-w-prose text-lg text-muted-foreground",
-                    !descExpanded && "line-clamp-2",
-                  )}
-                >
-                  {description}
-                </p>
-                {descClamped && !descExpanded && (
-                  <button
-                    type="button"
-                    onClick={() => setDescExpanded(true)}
-                    className="mt-1 text-sm font-medium text-primary underline-offset-2 hover:underline"
-                  >
-                    {l.readMore}
-                  </button>
-                )}
-              </>
+              <p className="mx-auto mt-5 max-w-prose text-lg text-muted-foreground">
+                {description}
+              </p>
             )}
             <ul className="mt-6 flex flex-wrap justify-center gap-2">
-              {totalMin > 0 && <li className={chip}>{l.coverTime(totalMin)}</li>}
+              {(minutes ?? totalMin) > 0 && (
+                <li className={chip}>{l.coverTime(minutes ?? totalMin)}</li>
+              )}
               <li className={chip}>{l.coverModules(modules.length)}</li>
               {challenges > 0 && (
                 <li className={chip}>{l.coverChallenges(challenges)}</li>
@@ -1207,17 +1257,34 @@ function StorylineScroll({
             )}
           </header>
 
-          <div className="flex flex-col gap-10">
-            {m.screens.map((screen, si) => (
-              <div key={si} data-reveal className={cn(screenWidth, reveal)}>
-                {screen}
+          {gated && i > unlockedThrough ? (
+            /* Locked preview: the header above is the reader's teaser; the
+               body waits until they answer the previous module's reto. */
+            <div data-reveal className={cn("mx-auto w-full max-w-2xl", reveal)}>
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-6 py-14 text-center">
+                <span aria-hidden="true" className="text-2xl">
+                  🔒
+                </span>
+                <p className="font-medium">{l.locked.title}</p>
+                <p className="max-w-xs text-sm text-muted-foreground">
+                  {l.locked.hint}
+                </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-10">
+              {m.screens.map((screen, si) => (
+                <div key={si} data-reveal className={cn(screenWidth, reveal)}>
+                  {screen}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Module send-off — turns the classic drop-off point (end of a
-              section) into a nudge toward the next module. Author-provided. */}
-          {m.outro != null && (
+              section) into a nudge toward the next module. Author-provided.
+              Hidden while the module is locked (nothing to send off yet). */}
+          {m.outro != null && !(gated && i > unlockedThrough) && (
             <div
               data-slot="storyline-module-outro"
               data-reveal
@@ -1274,17 +1341,15 @@ function StorylineScroll({
               <RichText>{l.finaleGameOverHint}</RichText>
             </p>
           )}
-          {(score.answered > 0 ||
-            score.completed > 0 ||
-            elapsedMin !== null) && (
+          {/* One challenges stat over ONE denominator — the same total the
+              cover promises and the challenge meter fills against, so the
+              guide never shows two different scores for the same session. */}
+          {(challenges > 0 || elapsedMin !== null) && (
             <ul className="mt-6 flex flex-wrap justify-center gap-2">
-              {score.answered > 0 && (
+              {challenges > 0 && (
                 <li className={chip}>
-                  {l.finaleChallenges(score.correct, score.answered)}
+                  {l.finaleChallenges(challengeEarned, challenges)}
                 </li>
-              )}
-              {score.completed > 0 && (
-                <li className={chip}>{l.finaleActivities(score.completed)}</li>
               )}
               {elapsedMin !== null && (
                 <li className={chip}>{l.finaleTime(elapsedMin)}</li>
@@ -1312,7 +1377,7 @@ function StorylineScroll({
               ))}
             </ul>
           )}
-          {score.answered > 0 && (
+          {challengeEarned > 0 && (
             <Button variant="outline" className="mt-6" onClick={copyResult}>
               {copied ? l.shareCopied : l.shareResult}
             </Button>
@@ -1415,12 +1480,12 @@ function StorylineScroll({
                 ))}
               </ol>
             </div>
-          ) : (
+          ) : navHidden ? null : (
             <button
               type="button"
               aria-label={l.modulesNav}
               onClick={openToc}
-              className="pointer-events-auto absolute bottom-0 left-1/2 flex h-11 max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full border bg-popover/95 px-4 text-sm text-popover-foreground shadow-wgt backdrop-blur"
+              className="pointer-events-auto absolute bottom-0 left-1/2 flex h-11 max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full border bg-popover/95 px-4 text-sm text-popover-foreground shadow-wgt backdrop-blur motion-safe:animate-wgt-fade-in"
             >
               <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
                 {active + 1}/{modules.length}
@@ -1462,6 +1527,7 @@ type ThreadSlide =
 function StorylineThread({
   title,
   description,
+  minutes: _minutes,
   modules,
   numbered = true,
   moduleLabel,
@@ -1472,6 +1538,7 @@ function StorylineThread({
   celebrate = true,
   challenge: _challenge,
   lives: _lives,
+  gated: _gated,
   variant: _variant,
   labels,
   className,

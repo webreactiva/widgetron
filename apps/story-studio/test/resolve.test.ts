@@ -60,8 +60,17 @@ describe("resolveStory (D-004: injection happens at build time)", () => {
     const resolved = resolveStory(d);
     expect(resolved).toEqual({
       ...d.story,
-      props: { ...d.story.props, title: d.meta.title },
+      // minutes: the cover time promise, estimated from the document's copy
+      // (10 words here → 1 min at 220 wpm).
+      props: { ...d.story.props, title: d.meta.title, minutes: 1 },
     });
+  });
+
+  it("estimates cover minutes from the document's copy, without overriding an explicit prop", () => {
+    expect(resolveStory(doc()).props!.minutes).toBe(1);
+    const explicit = doc();
+    explicit.story.props!.minutes = 12;
+    expect(resolveStory(explicit).props!.minutes).toBe(12);
   });
 
   it("injects meta.title/description as the storyline cover, without overriding explicit props", () => {

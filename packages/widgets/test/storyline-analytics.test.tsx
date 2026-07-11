@@ -138,9 +138,18 @@ describe("Storyline analytics", () => {
   });
 });
 
+// Counts as a declared challenge on the cover and the finale (displayName
+// drives CHALLENGE_TYPES) without pulling in the real quiz widget.
+const FakeQuiz = () => <p>q</p>;
+FakeQuiz.displayName = "Quiz";
+const challengeModules = [
+  { title: "First module", screens: [<FakeQuiz key="a" />, <p key="x">x</p>] },
+  { title: "Second module", screens: [<FakeQuiz key="b" />] },
+];
+
 describe("Storyline finale", () => {
-  it("counts bubbled child events into the finale scoreboard", () => {
-    const { container } = renderStoryline();
+  it("scores bubbled child events against the guide's declared challenge total", () => {
+    const { container } = renderStoryline({ modules: challengeModules });
     const child = container.querySelector("p") as HTMLElement;
 
     act(() => {
@@ -156,6 +165,17 @@ describe("Storyline finale", () => {
         action: "answered",
         data: { index: 0, correct: false },
       });
+    });
+
+    const finale = container.querySelector(
+      "[data-slot=storyline-finale]",
+    ) as HTMLElement;
+    // One beaten out of the guide's 2 declared challenges — the same
+    // denominator the cover promises, so the two can never disagree.
+    expect(finale).toHaveTextContent("Challenges passed: 1/2");
+
+    // A completed activity also counts as a beaten interaction.
+    act(() => {
       emitWidgetronEvent(child, {
         source: "widget",
         widget: "checklist",
@@ -163,12 +183,7 @@ describe("Storyline finale", () => {
         data: { total: 3 },
       });
     });
-
-    const finale = container.querySelector(
-      "[data-slot=storyline-finale]",
-    ) as HTMLElement;
-    expect(finale).toHaveTextContent("Challenges passed: 1/2");
-    expect(finale).toHaveTextContent("Activities completed: 1");
+    expect(finale).toHaveTextContent("Challenges passed: 2/2");
   });
 
   it("ignores the storyline's own events in the scoreboard", () => {
@@ -288,11 +303,31 @@ describe("Storyline progress persistence", () => {
 });
 
 describe("Storyline mobile module index", () => {
+  const findPill = (container: HTMLElement) =>
+    [...container.querySelectorAll("button")].find((b) =>
+      /1\/2/.test(b.textContent ?? ""),
+    );
+
+  it("hides the pill until the reader scrolls up (never under a tap mid-read)", () => {
+    const { container } = renderStoryline();
+    // Hidden on the cover and while scrolling down — it stole taps on 375px.
+    expect(findPill(container)).toBeUndefined();
+    container.scrollTop = 600;
+    fireEvent.scroll(container);
+    expect(findPill(container)).toBeUndefined();
+    // Scrolling up signals navigation intent — the pill comes back.
+    container.scrollTop = 500;
+    fireEvent.scroll(container);
+    expect(findPill(container)).toBeTruthy();
+  });
+
   it("opens the bottom sheet from the pill, emits toc_opened, and jumps to a module", () => {
     const { container } = renderStoryline();
-    const pill = [...container.querySelectorAll("button")].find((b) =>
-      /1\/2/.test(b.textContent ?? ""),
-    )!;
+    container.scrollTop = 600;
+    fireEvent.scroll(container);
+    container.scrollTop = 500;
+    fireEvent.scroll(container);
+    const pill = findPill(container)!;
     expect(pill).toBeTruthy();
     expect(pill.textContent).toContain("First module");
 

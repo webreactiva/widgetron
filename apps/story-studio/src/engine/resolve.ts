@@ -37,6 +37,13 @@ export function resolveStory(doc: StoryDocument): WidgetNode {
       label: doc.settings.lives.label,
     };
 
+  // Cover time promise, estimated from the document's own copy. The widget's
+  // fallback measures rendered text, which undercounts gated guides (locked
+  // modules render only their header) — the JSON sees everything. Same 220 wpm
+  // constant as the widget.
+  const words = countWords(story);
+  if (words > 0) props.minutes ??= Math.ceil(words / 220);
+
   const surprises = doc.settings?.surprises;
   const cta = doc.settings?.cta;
   if (!surprises?.mid && !surprises?.end && !cta) return story;
@@ -93,6 +100,30 @@ export function resolveStory(doc: StoryDocument): WidgetNode {
   if (ctaAtEnd && ctaNode) props.outro = ctaNode;
 
   return story;
+}
+
+// String props that are plumbing, not reader copy — skipped by the word count.
+const NON_COPY_KEYS = new Set([
+  "type", "icon", "layout", "id", "storageKey", "src", "url", "variant",
+]);
+
+/** Words across every string leaf of the tree — the reading-time basis. */
+function countWords(value: unknown): number {
+  if (Array.isArray(value)) {
+    return value.reduce((n: number, v) => n + countWords(v), 0);
+  }
+  if (value && typeof value === "object") {
+    let n = 0;
+    for (const [k, v] of Object.entries(value)) {
+      if (typeof v === "string") {
+        if (!NON_COPY_KEYS.has(k)) n += v.split(/\s+/).filter(Boolean).length;
+      } else {
+        n += countWords(v);
+      }
+    }
+    return n;
+  }
+  return 0;
 }
 
 /** The envelope's CTA policy becomes a plain presentational `cta` node. */

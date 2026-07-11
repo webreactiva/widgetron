@@ -134,9 +134,8 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     resume: "Continuar",
     startOver: "Empezar desde arriba",
     finaleTitle: "¡Has completado la guía!",
-    finaleChallenges: (correct: number, answered: number) =>
-      `Retos superados: ${correct}/${answered}`,
-    finaleActivities: (count: number) => `Actividades completadas: ${count}`,
+    finaleChallenges: (earned: number, total: number) =>
+      `Retos superados: ${earned}/${total}`,
     finaleTime: (minutes: number) => `~${minutes} min de lectura`,
     livesLabel: (left: number, total: number) =>
       `Te quedan ${left} de ${total} vidas`,
@@ -156,8 +155,8 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     moduleDone: (n: number) => `Módulo ${n} ✓`,
     shareResult: "Copiar mi resultado",
     shareCopied: "¡Copiado!",
-    shareText: (correct: number, answered: number, title: string, url: string) =>
-      `Superé ${correct}/${answered} retos de «${title}» 🏆 → ${url}`,
+    shareText: (earned: number, total: number, title: string, url: string) =>
+      `Superé ${earned}/${total} retos de «${title}» 🏆 → ${url}`,
     threadNext: "Siguiente",
     threadPrev: "Atrás",
     help: {
