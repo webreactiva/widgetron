@@ -88,6 +88,10 @@ Backstage references to the source format.
 - **Fix**: "reciclarme profesionalmente". Gloss anglicisms inline or in the `glossary` ("dev rel", "tech-adjacent"), and prefer the Spanish term when it exists.
 
 ## Reminder
-`[[term]]` tooltips only fire inside a `glossary-text` widget (callout/group-chat
-render markdown-plain and would show the literal brackets). To make a glossary
-term clickable, put its `[[mention]]` in a `glossary-text` screen.
+`[[term]]` tooltips fire in ANY author text slot (prose, captions, checklist
+items, quiz feedback, callouts…) — RichText resolves them against the storyline
+`glossary`. A term missing from the glossary renders as plain text with the
+brackets stripped, so a typo'd `[[mention]]` fails silently: keep glossary keys
+and mentions in sync. Exceptions that stay literal: the prompt-template
+`template` body (it is copied to the clipboard verbatim), code shown as code,
+and mermaid `chart` strings — never put `[[term]]` there.

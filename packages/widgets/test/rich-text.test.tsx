@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render } from "@testing-library/react";
 
 import { RichText, renderRich } from "@/primitives/rich-text";
+import { GlossaryProvider } from "@/widgets/glossary";
 
 describe("RichText", () => {
   it("formats bold, italic, code and links from a string", () => {
@@ -57,5 +58,28 @@ describe("RichText", () => {
     );
     expect(container.querySelector("strong")?.textContent).toBe("a");
     expect(container.querySelector("b")?.textContent).toBe("b");
+  });
+
+  it("strips [[term]] brackets when no glossary provider is present", () => {
+    const { container } = render(
+      <RichText>{"a [[value object]] here"}</RichText>,
+    );
+    expect(container.textContent).toBe("a value object here");
+  });
+
+  it("resolves [[term]] to a glossary tooltip term under a GlossaryProvider", () => {
+    const { container } = render(
+      <GlossaryProvider terms={{ "value object": "Immutable + equal by value." }}>
+        <RichText>{"a [[value object]] here"}</RichText>
+      </GlossaryProvider>,
+    );
+    // GlossaryTerm renders its dotted-underline trigger button.
+    const term = container.querySelector("button");
+    expect(term?.textContent).toBe("value object");
+  });
+
+  it("keeps [[term]] literal inside a code span", () => {
+    const { container } = render(<RichText>{"use `[[term]]` syntax"}</RichText>);
+    expect(container.querySelector("code")?.textContent).toBe("[[term]]");
   });
 });

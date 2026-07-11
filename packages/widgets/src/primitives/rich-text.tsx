@@ -28,8 +28,27 @@ import * as React from "react";
 // italic (`*`) so `**` is never read as two emphases; links and code before
 // italic so `*`/`_` inside a URL or code span are left alone. Emphasis requires
 // a non-space right inside the markers, so prose like "2 * 3" is never italic.
+// `[[term]]` glossary tokens resolve through InlineTermContext (group 6); a
+// code span still wins at the same index, so `` `[[x]]` `` stays literal.
 const INLINE =
-  /\*\*(\S(?:[\s\S]*?\S)?)\*\*|\[([^\]]+)\]\(([^)\s]+)\)|`([^`]+)`|\*(\S(?:[\s\S]*?\S)?)\*/;
+  /\*\*(\S(?:[\s\S]*?\S)?)\*\*|\[([^\]]+)\]\(([^)\s]+)\)|`([^`]+)`|\*(\S(?:[\s\S]*?\S)?)\*|\[\[([^\]]+)\]\]/;
+
+/** Renders one `[[term]]` occurrence, given the term name (brackets stripped). */
+export type InlineTermRenderer = (name: string) => React.ReactNode;
+
+/**
+ * How `[[term]]` tokens render. A provider higher up (GlossaryProvider) swaps
+ * in the real affordance — a dotted-underline tooltip term. Without one the
+ * brackets are simply stripped, so raw `[[...]]` syntax never reaches the
+ * reader no matter which text slot the author put it in.
+ */
+export const InlineTermContext =
+  React.createContext<InlineTermRenderer | null>(null);
+
+function InlineTerm({ name }: { name: string }) {
+  const renderTerm = React.useContext(InlineTermContext);
+  return <>{renderTerm ? renderTerm(name) : name}</>;
+}
 
 /** Allow only safe link targets; returns null for anything script-like. */
 function safeHref(raw: string): string | null {
@@ -90,6 +109,8 @@ function parseInline(text: string, key: string): React.ReactNode[] {
       out.push(<code key={k}>{m[4]}</code>);
     } else if (m[5] != null) {
       out.push(<em key={k}>{parseInline(m[5], k)}</em>);
+    } else if (m[6] != null) {
+      out.push(<InlineTerm key={k} name={m[6]} />);
     }
     rest = rest.slice(m.index + m[0].length);
     i++;

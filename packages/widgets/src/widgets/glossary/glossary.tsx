@@ -2,7 +2,11 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/primitives/tooltip";
-import { RichText } from "@/primitives/rich-text";
+import {
+  InlineTermContext,
+  RichText,
+  type InlineTermRenderer,
+} from "@/primitives/rich-text";
 
 /** Term → definition map shared via context. */
 export type GlossaryMap = Record<string, React.ReactNode>;
@@ -14,11 +18,22 @@ export interface GlossaryProviderProps {
   children: React.ReactNode;
 }
 
-/** Defines glossary terms once for everything underneath (e.g. a whole course). */
+/**
+ * Defines glossary terms once for everything underneath (e.g. a whole course).
+ * Also teaches RichText to resolve `[[term]]` tokens, so a term works in ANY
+ * author text slot (captions, checklist items, quiz feedback…), not just in
+ * GlossaryText prose.
+ */
 export function GlossaryProvider({ terms, children }: GlossaryProviderProps) {
+  const renderTerm = React.useCallback<InlineTermRenderer>(
+    (name) => <GlossaryTerm term={name} name={name} />,
+    [],
+  );
   return (
     <GlossaryContext.Provider value={terms}>
-      {children}
+      <InlineTermContext.Provider value={renderTerm}>
+        {children}
+      </InlineTermContext.Provider>
     </GlossaryContext.Provider>
   );
 }
@@ -72,8 +87,6 @@ export function GlossaryTerm({
 
 GlossaryTerm.displayName = "GlossaryTerm";
 
-const TERM_PATTERN = /(\[\[[^\]]+\]\])/g;
-
 export interface GlossaryTextProps
   extends React.HTMLAttributes<HTMLParagraphElement> {
   /** Prose where `[[term]]` becomes a GlossaryTerm resolved from the provider. */
@@ -83,24 +96,19 @@ export interface GlossaryTextProps
 /**
  * GlossaryText — renders prose, turning every `[[term]]` into a GlossaryTerm
  * (resolved from the GlossaryProvider). The composable text primitive behind the
- * dispensa reading flow.
+ * dispensa reading flow. `[[term]]` parsing itself lives in RichText, so terms
+ * work in every text slot; this widget adds the paragraph chrome. Without a
+ * provider, terms fall back to plain text — RichText strips the brackets, and
+ * GlossaryTerm renders undefined-definition terms as prose.
  */
 export function GlossaryText({ text, className, ...props }: GlossaryTextProps) {
-  const parts = text.split(TERM_PATTERN);
   return (
     <p
       data-slot="glossary-text"
       className={cn("leading-relaxed text-foreground", className)}
       {...props}
     >
-      {parts.map((part, i) => {
-        const match = part.match(/^\[\[([^\]]+)\]\]$/);
-        return match ? (
-          <GlossaryTerm key={i} term={match[1]} name={match[1]} />
-        ) : (
-          <RichText key={i}>{part}</RichText>
-        );
-      })}
+      <RichText>{text}</RichText>
     </p>
   );
 }

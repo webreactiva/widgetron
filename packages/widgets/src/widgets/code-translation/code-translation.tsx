@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
 
 export interface CodeTranslationLabels {
   codeLabel: string;
@@ -73,7 +74,9 @@ export function CodeTranslation({
                 <span className="grid size-5 shrink-0 place-items-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
                   {index + 1}
                 </span>
-                <span className="text-card-foreground/90">{line}</span>
+                <span className="text-card-foreground/90">
+                  <RichText>{line}</RichText>
+                </span>
               </li>
             ))}
           </ol>

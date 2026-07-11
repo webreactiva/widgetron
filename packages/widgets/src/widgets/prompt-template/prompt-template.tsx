@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
 import { Check, Copy } from "@/lib/icons";
+import { RichText } from "@/primitives/rich-text";
 
 export interface PromptTemplateLabels {
   /** Eyebrow above the prompt body. */
@@ -139,7 +140,9 @@ export function PromptTemplate({
               : l.copy}
         </Button>
         {note != null && (
-          <span className="text-sm text-muted-foreground">{note}</span>
+          <span className="text-sm text-muted-foreground">
+            <RichText>{note}</RichText>
+          </span>
         )}
       </div>
     </div>

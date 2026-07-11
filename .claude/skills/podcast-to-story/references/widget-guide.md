@@ -32,7 +32,7 @@ guide should convert MOST of them into their matching widget, not into prose.
 | A person or team worth introducing (host, guest, authors) | `profile-card` | Avatar (image or auto-initials), name, role, bio; several people stack into columns. Only with real avatar URLs — initials otherwise |
 | A memorable verbatim sentence | `quote` | Verbatim only; NEVER ownerless — a first-person quote with no `attribution` leaves the reader unsure who speaks. Attribute it; with no profile use a neutral source label (`attribution: "La voz del episodio"` + a `role` for the stance) |
 | One idea that must pop | `callout-box` | aha / info / warning |
-| Jargon used across the guide | storyline `glossary` + `[[term]]` in `glossary-text` | Define once, tooltip everywhere |
+| Jargon used across the guide | storyline `glossary` + `[[term]]` in any text slot | Define once, tooltip everywhere — RichText resolves `[[term]]` in prose, captions, checklist items, quiz feedback… |
 | A ready-to-run AI prompt | `prompt-template` | `{{slots}}` editable + copy button |
 | "Depends on your level/role" content | `profile-quiz` + `profile-gate` | Personalization pair |
 | One evolving graphic narrated in steps | `scrollytelling` | Inside a screen; rare |
