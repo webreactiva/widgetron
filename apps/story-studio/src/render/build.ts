@@ -25,11 +25,17 @@ import { BUILT_IN_THEME_ICON_SETS, parseDesign } from "../engine/theme";
 export interface RenderOptions {
   /** apps/story-studio root. Defaults to this package. */
   appRoot?: string;
+  /**
+   * When set, the generated dist loads Swetrix for this project id and forwards
+   * every `widgetron:event` to it as a custom event. Off by default — the dist
+   * stays vendor-free and self-contained.
+   */
+  swetrixProjectId?: string;
 }
 
 export async function renderStory(
   slug: string,
-  { appRoot }: RenderOptions = {},
+  { appRoot, swetrixProjectId }: RenderOptions = {},
 ): Promise<string> {
   const root = appRoot ?? fileURLToPath(new URL("../..", import.meta.url));
   const file = path.join(root, "content", `${slug}.story.json`);
@@ -62,7 +68,10 @@ export async function renderStory(
     path.join(renderDir, "document.json"),
     JSON.stringify({ meta: doc.meta, audio: doc.audio ?? null, story: resolved }, null, 2),
   );
-  fs.writeFileSync(path.join(renderDir, "index.html"), htmlShell(doc));
+  fs.writeFileSync(
+    path.join(renderDir, "index.html"),
+    htmlShell(doc, { swetrixProjectId }),
+  );
   fs.writeFileSync(
     path.join(renderDir, "main.tsx"),
     mainTsx(resolveThemeIconSet(doc.meta.theme, root)),
@@ -104,8 +113,14 @@ export async function renderStory(
 }
 
 /** Static shell: real metadata + a readable module index before hydration. */
-function htmlShell(doc: StoryDocument): string {
+export function htmlShell(
+  doc: StoryDocument,
+  opts: { swetrixProjectId?: string } = {},
+): string {
   const { meta } = doc;
+  const analytics = opts.swetrixProjectId
+    ? swetrixSnippet(opts.swetrixProjectId)
+    : "";
   const modules = (doc.story.props?.modules ?? []) as Array<{
     title?: string;
     subtitle?: string;
@@ -129,7 +144,7 @@ function htmlShell(doc: StoryDocument): string {
     <meta name="description" content="${escapeHtml(description)}" />
     <script type="module" src="./main.tsx"></script>
     <link rel="stylesheet" href="./styles.css" />
-  </head>
+${analytics}  </head>
   <body>
     <div id="root">
       <main style="max-width: 42rem; margin: 0 auto; padding: 3rem 1.5rem; font-family: system-ui, sans-serif;">
@@ -142,6 +157,58 @@ ${summary}
     </div>
   </body>
 </html>
+`;
+}
+
+/**
+ * The Swetrix loader + a `widgetron:event` → `swetrix.track` forwarder, injected
+ * into the dist `<head>` when `story render --swetrix <id>` (or the
+ * SWETRIX_PROJECT_ID env var) is set. Everything runs in the browser: the loader
+ * is `defer`red, so `swetrix.init` waits for it, while the forwarder attaches
+ * immediately (widget events only fire on interaction, long after load).
+ *
+ * Two Swetrix constraints the docs' illustrative adapter ignores are handled
+ * here: custom event names are sanitised to `[A-Za-z0-9_]` (hyphenated widget
+ * types like `resource-list` would otherwise be rejected) and every `meta` value
+ * is coerced to a string. Only events are tracked — no `trackViews()` pageviews.
+ */
+export function swetrixSnippet(projectId: string): string {
+  const pid = JSON.stringify(projectId);
+  return `    <script src="https://swetrix.org/swetrix.js" defer></script>
+    <script>
+      (function () {
+        function init() { if (window.swetrix) window.swetrix.init(${pid}); }
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", init);
+        } else { init(); }
+        document.addEventListener("widgetron:event", function (event) {
+          if (!window.swetrix) return;
+          var detail = event.detail || {};
+          var meta = {};
+          var data = detail.data;
+          if (data && typeof data === "object") {
+            for (var key in data) {
+              if (Object.prototype.hasOwnProperty.call(data, key)) {
+                var value = data[key];
+                meta[key] = (value !== null && typeof value === "object")
+                  ? JSON.stringify(value)
+                  : String(value);
+              }
+            }
+          }
+          if (detail.id != null) meta.id = String(detail.id);
+          var node = event.target;
+          var section = (node && node.closest)
+            ? node.closest("[data-module-index]")
+            : null;
+          if (section) meta.module = section.getAttribute("data-module-index");
+          var ev = ("wgt_" + detail.widget + "_" + detail.action)
+            .replace(/[^A-Za-z0-9_]/g, "_")
+            .slice(0, 64);
+          window.swetrix.track({ ev: ev, meta: meta });
+        });
+      })();
+    </script>
 `;
 }
 

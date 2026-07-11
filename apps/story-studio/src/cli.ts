@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
  *
  *   pnpm --filter @webreactiva/story-studio story validate <slug|path>
  *   pnpm --filter @webreactiva/story-studio story lint <slug|path> [--score]
- *   pnpm --filter @webreactiva/story-studio story render <slug>
+ *   pnpm --filter @webreactiva/story-studio story render <slug> [--swetrix <projectId>]
  *   pnpm --filter @webreactiva/story-studio story theme <design.md> [outDir]
  *   pnpm --filter @webreactiva/story-studio story manifest [outFile]
  */
@@ -82,7 +82,14 @@ async function main(): Promise<void> {
         return;
       }
       const { renderStory } = await import("./render/build");
-      const outDir = await renderStory(target, { appRoot });
+      // `--swetrix <id>` wins over the SWETRIX_PROJECT_ID env var; when neither
+      // is set the dist stays vendor-free (no analytics injected).
+      const swetrixProjectId =
+        flagValue("--swetrix") ?? process.env.SWETRIX_PROJECT_ID ?? undefined;
+      const outDir = await renderStory(target, { appRoot, swetrixProjectId });
+      if (swetrixProjectId) {
+        console.log(`  ↳ Swetrix analytics wired (project ${swetrixProjectId})`);
+      }
       console.log(`✔ Rendered → ${path.relative(process.cwd(), outDir)}`);
       return;
     }
@@ -122,6 +129,15 @@ async function main(): Promise<void> {
 function usage(hint: string): never {
   console.error(`Usage: story ${hint}`);
   process.exit(1);
+}
+
+/** Read a `--flag value` or `--flag=value` pair from argv (undefined if absent). */
+function flagValue(name: string): string | undefined {
+  const args = process.argv.slice(2);
+  const i = args.indexOf(name);
+  if (i !== -1 && i + 1 < args.length) return args[i + 1];
+  const inline = args.find((a) => a.startsWith(`${name}=`));
+  return inline ? inline.slice(name.length + 1) : undefined;
 }
 
 main().catch((error) => {

@@ -138,6 +138,28 @@ on its own `document` with no extra wiring. To collect them, paste your
 listener (any adapter above) as a `<script>` in the exported `index.html`
 `<head>`.
 
+### Swetrix, wired at build time (`--swetrix`)
+
+Pasting the snippet by hand is lost on the next render (`story render` rebuilds
+the folder from scratch). For a reusable, dist-only hookup, pass the Swetrix
+project id to the build — it injects the loader **and** the forwarder into the
+generated `<head>`:
+
+```bash
+pnpm --filter @webreactiva/story-studio story render <slug> --swetrix <projectId>
+# or, e.g. in CI, via the environment (the flag wins if both are set):
+SWETRIX_PROJECT_ID=<projectId> pnpm --filter @webreactiva/story-studio story render <slug>
+```
+
+Nothing lands in the library or the `.story.json` — the id lives only in the
+exported dist, and omitting it keeps the folder vendor-free. Only widget/story
+**events** are tracked (no `trackViews()` pageviews). The injected forwarder
+differs from the illustrative adapter above in two ways Swetrix requires: event
+names are sanitised to `[A-Za-z0-9_]` (hyphenated widget types like
+`resource-list` would otherwise be rejected) and every `meta` value is coerced
+to a string. See `renderStory`/`swetrixSnippet` in
+`apps/story-studio/src/render/build.ts`.
+
 ## Emitting from your own widget
 
 Inside the library, widgets use the internal hook:

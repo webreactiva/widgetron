@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 
-import { renderStory } from "../src/render/build";
+import { htmlShell, renderStory, swetrixSnippet } from "../src/render/build";
 
 /**
  * End-to-end guarantee for `story render`: a minimal document goes through
@@ -96,5 +96,36 @@ describe("story render pipeline", () => {
     await expect(renderStory("broken", { appRoot })).rejects.toThrow(
       /Invalid document/,
     );
+  });
+});
+
+describe("swetrix analytics injection (opt-in build option)", () => {
+  // A minimal StoryDocument for the shell — the injection lives in the HTML
+  // head, so no Vite build is needed to exercise it.
+  const shellDoc = {
+    meta: { title: "Prod", lang: "es" },
+    story: { type: "storyline", props: { modules: [{ title: "M" }] } },
+  } as unknown as Parameters<typeof htmlShell>[0];
+
+  it("stays vendor-free by default", () => {
+    expect(htmlShell(shellDoc)).not.toContain("swetrix");
+  });
+
+  it("injects the loader + forwarder only when a project id is given", () => {
+    const html = htmlShell(shellDoc, { swetrixProjectId: "Uq2xcyxeqd4h" });
+    expect(html).toContain("https://swetrix.org/swetrix.js");
+    expect(html).toContain('"Uq2xcyxeqd4h"');
+    expect(html).toContain('addEventListener("widgetron:event"');
+  });
+
+  it("sanitises event names to Swetrix's charset and stringifies meta", () => {
+    const snippet = swetrixSnippet("Uq2xcyxeqd4h");
+    // Hyphenated widget types (resource-list, spot-the-bug) must not reach
+    // Swetrix with hyphens — the injected code normalises them.
+    expect(snippet).toContain("/[^A-Za-z0-9_]/g");
+    expect(snippet).toContain("window.swetrix.track(");
+    expect(snippet).toContain("swetrix.init");
+    // Events only — no pageview tracking wired.
+    expect(snippet).not.toContain("trackViews");
   });
 });
