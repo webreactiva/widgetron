@@ -160,6 +160,18 @@ export const esLabels: Record<string, Record<string, unknown>> = {
       `Superé ${correct}/${answered} retos de «${title}» 🏆 → ${url}`,
     threadNext: "Siguiente",
     threadPrev: "Atrás",
+    help: {
+      trigger: "Cómo moverte por la guía",
+      title: "Cómo moverte por la guía",
+      intro: "Es un documento con scroll — léelo a tu ritmo. Con el teclado:",
+      rows: [
+        { keys: "↓ / ↑", desc: "Avanzar y retroceder" },
+        { keys: "Espacio / Shift+Espacio", desc: "Una página abajo o arriba" },
+        { keys: "Inicio / Fin", desc: "Ir al principio o al final" },
+      ],
+      dots: "Toca los puntos de progreso de arriba para saltar de módulo.",
+      close: "Cerrar",
+    },
   },
   quote: {
     saidAt: (timestamp: string) => `Dicho en el ${timestamp}`,

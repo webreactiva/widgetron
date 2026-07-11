@@ -169,7 +169,7 @@ export const storyDocumentSchema = z.object({
         })
         .optional()
         .describe(
-          "Game mode (opt-in — the signature of the `juego` format): the reader loses a life on each wrong scored answer and wins one back on a correct one; at 0 lives the finale withholds its reward while the prose stays readable. Injected into the storyline at resolve time.",
+          "Game mode (opt-in — the signature of the `game` format): the reader loses a life on each wrong scored answer and wins one back on a correct one; at 0 lives the finale withholds its reward while the prose stays readable. Injected into the storyline at resolve time.",
         ),
     })
     .optional(),

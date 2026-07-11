@@ -185,5 +185,12 @@
   --card-foreground: #f0eef9;
   --muted: #2a2a36;
   --muted-foreground: #b5a3e2;
+  /* Dark surfaces for secondary/accent — the light brand values (cream mustard,
+     pale lilac) would otherwise leak in from the light theme and render as
+     near-invisible light-on-light on hover (e.g. quiz option `hover:bg-accent`). */
+  --secondary: #2f2942;
+  --secondary-foreground: #f0eef9;
+  --accent: #37305a;
+  --accent-foreground: #f0eef9;
   --border: rgb(255 255 255 / 0.1);
 }

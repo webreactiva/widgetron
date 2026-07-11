@@ -1,0 +1,345 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Productividad x3 con la IA: el juego",
+    "slug": "productividad-real-con-ia",
+    "lang": "es",
+    "theme": "webreactiva",
+    "description": "Juega el salto de productividad con IA: 3 vidas, cada fallo cuesta un corazón y cada acierto lo recupera. A cero, el premio final espera hasta que remontes. Recargar empieza partida nueva.",
+    "format": "game",
+    "source": { "type": "podcast", "show": "wr", "episode": 347 }
+  },
+  "settings": {
+    "lives": { "total": 3, "label": "Vidas" },
+    "challenge": { "label": "Tu racha" },
+    "cta": {
+      "kind": "link",
+      "title": "Suscríbete a la newsletter",
+      "description": "+7.000 curiosos de la IA te esperan allí.",
+      "buttonLabel": "Suscríbete",
+      "url": "https://webreactiva.com/newsletter"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "glossary": {
+        "POC": "Prueba de concepto: una versión mínima y rápida para comprobar si una idea funciona antes de invertir en construirla del todo.",
+        "bypass de permisos": "El modo en que un agente de IA actúa sin pedirte confirmación en cada paso (el «dangerously skip permissions»). Va más rápido, pero tú revisas menos.",
+        "skill": "Un archivo de instrucciones en Markdown (SKILL.md), dentro de una carpeta concreta, que le enseña a un agente a hacer una tarea paso a paso. Funciona con cualquier agente."
+      },
+      "modules": [
+        {
+          "title": "Suelta el control",
+          "subtitle": "El clic mental que lo empieza todo",
+          "emoji": "🔓",
+          "outro": "Ya te has soltado. Pero atreverte no basta si el trabajo se queda en tu máquina…",
+          "screens": [
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "La IA promete multiplicarte por 4. Lo raro: **no depende de gastar más tokens**. Depende de un cambio de mentalidad, de dónde pones el esfuerzo… y de **un multiplicador que casi nadie usa** —te lo guardo para el final, porque es el que de verdad lo cambia todo.\n\nReto jugable: **3 vidas**, cada fallo cuesta un corazón, cada acierto lo recupera. Empezamos por el clic mental."
+              }
+            },
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "El primer salto no es técnico: es soltar el control. Le das al agente [[bypass de permisos]] para que trabaje sin pararte a cada paso, y te pones la gorra de producto aunque no seas «el experto». Da vértigo —«venga, haz lo que quieras»— pero es justo lo que te desbloquea.\n\n¿Y por qué te atreves ahora? Porque equivocarte salió barato. Montar una [[POC]] ya no te cuesta semanas encerrado, y si falla no pasa nada. Así que por fin lanzas esa idea que llevabas años aparcando."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "El primer salto de productividad con IA va, sobre todo, de…",
+                "options": [
+                  {
+                    "text": "Aprenderte de memoria los mejores prompts",
+                    "feedback": "No es cuestión de trucos memorizados; es un cambio de actitud."
+                  },
+                  {
+                    "text": "Soltar el control: dejar que el agente trabaje y atreverte a fallar barato",
+                    "correct": true,
+                    "feedback": "Eso es. Das permisos, te pones la gorra de producto y arriesgas ideas porque equivocarte ya cuesta poco."
+                  },
+                  {
+                    "text": "Esperar al modelo perfecto antes de empezar nada",
+                    "feedback": "Al revés: el freno era esperar. Ahora empiezas y corriges sobre la marcha."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Que salga de tu máquina",
+          "subtitle": "Publicar e invertir: lo aburrido que sí importa",
+          "emoji": "🚀",
+          "outro": "Publicado y con gasolina en el depósito. Ahora, el giro que casi nadie ve venir…",
+          "screens": [
+            {
+              "type": "flow-diagram",
+              "props": {
+                "nodes": [
+                  {
+                    "label": "Lo generas con IA",
+                    "detail": {
+                      "title": "Construyes rápido",
+                      "description": "Con el agente sacas una app o una herramienta que antes ni te planteabas empezar."
+                    }
+                  },
+                  {
+                    "label": "Lo subes a GitHub",
+                    "active": true,
+                    "detail": {
+                      "title": "Ahí vive el código",
+                      "description": "Es el sitio donde el código queda accesible para cualquiera, con o sin README."
+                    }
+                  },
+                  {
+                    "label": "Otro lo instala con su agente",
+                    "detail": {
+                      "title": "Aunque no sepa programar",
+                      "description": "Le dice a su propio agente: «vete a esta ruta y descárgate esto para instalarlo». Pum, ya está."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "prose",
+              "props": {
+                "children": "Publicar es innegociable: si no lo usas tú en local o no lo puede instalar otra persona, **no cuenta**. El código que se queda en tu portátil no le sirve a nadie, ni a ti.\n\nY para no chocar contra un muro a mitad de faena, **invierte un poco**: lo gratis te corta justo cuando volabas. Con unos pocos dólares al mes te quitas ese techo. Detalle de temporización: casi todos los planes renuevan tu límite por semana o por mes, y justo antes suele quedar **una barra de tokens sin gastar**. Concentra ahí la energía, como quien aprovecha una tarde libre para un proyecto."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Pagas por primera vez tu propia suscripción de tokens. ¿Cuál es el error clásico que casi todos cometemos?",
+                "options": [
+                  {
+                    "text": "Guardar los tokens sin usarlos, por si acaso",
+                    "feedback": "No es lo típico. El problema suele ser justo el contrario."
+                  },
+                  {
+                    "text": "Querer hacerlo TODO de golpe y fundir el límite a cero enseguida",
+                    "correct": true,
+                    "feedback": "Exacto. Con la emoción del primer día te lanzas a todo lo acumulado y te cargas la ventana en cero coma."
+                  },
+                  {
+                    "text": "Usar modelos de pago en vez de los gratis",
+                    "feedback": "El consejo es justo invertir un poco. El fallo no es pagar, es gastarlo todo de golpe."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Sube la mirada",
+          "subtitle": "El código baja de capa; tú subes",
+          "emoji": "🦅",
+          "outro": "Ya vuelas por encima. Falta el arma que multiplica todo esto: la que te prometí al principio.",
+          "screens": [
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "Aquí está el giro que casi nadie ve venir: **el código baja de capa**. Teclear líneas deja de ser el cuello de botella. Lo que sube es tu capacidad de **mirar qué pasa y decidir como producto**: con cuatro datos de qué se usa y qué no —sin perseguir a nadie con nombre y apellidos— sacas oportunidades que antes pagabas caras en herramientas.\n\nEs como volar por encima del código: ves el mapa entero. Cuidado, que las alas son de cera y no conviene acercarse al sol —pero esa vista lo cambia todo."
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "cycle",
+                "items": [
+                  {
+                    "label": "Menos miedo",
+                    "description": "Dejas de temer que alguien te «hackee» o te copie el proyecto en pocas semanas."
+                  },
+                  {
+                    "label": "Construyes",
+                    "description": "Sacas herramientas que jurabas que no sacarías en la vida."
+                  },
+                  {
+                    "label": "Entiendes la IA",
+                    "description": "No solo el software: cómo hablarle, cómo guarda la información y cómo recuperarla."
+                  },
+                  {
+                    "label": "Quieres más",
+                    "description": "Cada logro alimenta el siguiente. Y vuelta a empezar: bola de nieve."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "En este salto, ¿qué gana peso frente a teclear más código a mano?",
+                "options": [
+                  {
+                    "text": "Mirar qué pasa y decidir como producto",
+                    "correct": true,
+                    "feedback": "Eso es. El código baja de capa; leer datos y ver patrones es lo que de verdad multiplica."
+                  },
+                  {
+                    "text": "Escribir más líneas de código tú mismo",
+                    "feedback": "Justo lo que baja de capa: el teclado deja de ser el cuello de botella."
+                  },
+                  {
+                    "text": "Memorizar más APIs y frameworks",
+                    "feedback": "No va por ahí: va de subir la mirada al producto, no de acumular sintaxis."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "El multiplicador (por fin)",
+          "subtitle": "Lo que convierte un 2x en un 5x",
+          "emoji": "🧩",
+          "outro": "Ya tienes el arma. Solo queda demostrar que lo has entendido: jefe final.",
+          "screens": [
+            {
+              "type": "glossary-text",
+              "props": {
+                "text": "Y aquí está el multiplicador que te prometí: crear [[skill]]s a medida. Esto es lo que convierte un 2x en un 4x o un 5x.\n\nLo mejor es que no es magia. Una skill es un archivo de texto (`SKILL.md`) en una carpeta, con los pasos y las decisiones de una tarea escritos para que la IA los siga. Y se juega así: cuando terminas algo que vas a repetir, **generas la skill ahí mismo**, en la propia conversación. La próxima vez no vuelves a currártelo entero —y se cambia en un minuto—."
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "chevrons",
+                "items": [
+                  {
+                    "label": "Haces la tarea",
+                    "description": "Terminas algo que sabes que vas a repetir: un informe, contenido, un changelog."
+                  },
+                  {
+                    "label": "Generas la skill",
+                    "description": "Ahí mismo, en la conversación, la conviertes en un SKILL.md con los pasos."
+                  },
+                  {
+                    "label": "Ahorras la próxima",
+                    "description": "La reutilizas y lo haces en una fracción del tiempo. Ese es el multiplicador."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Por mucho que te lo cuenten, hasta que no creas tu primera skill no eres consciente del poder que tiene."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Técnicamente, ¿qué es una **skill**?",
+                "options": [
+                  {
+                    "text": "Un plugin de pago, exclusivo de un único agente",
+                    "feedback": "No: funciona con cualquier agente y no es patrimonio de nadie, aunque unos lo popularizaran."
+                  },
+                  {
+                    "text": "Un archivo Markdown (SKILL.md) con instrucciones que la IA sigue",
+                    "correct": true,
+                    "feedback": "Eso es. Un fichero de texto en una carpeta concreta: por lo sencillo que es, tiene un poder enorme."
+                  },
+                  {
+                    "text": "Un modelo entrenado a medida con tus datos",
+                    "feedback": "Nada de entrenar modelos. Es solo un documento de instrucciones que el agente lee."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Jefe final",
+          "subtitle": "Todo junto, sin humo",
+          "emoji": "👑",
+          "outro": "Fin de la partida. Lleva estos hábitos a tu propio código —y cuida tu criterio.",
+          "screens": [
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "Antes del jefe final, la letra pequeña. Toda esta velocidad tiene un precio: si sueltas los permisos y **no revisas**, la IA te cuela un fallo gordo sin que te enteres. La red de seguridad son las **revisiones**, manuales o automatizadas.\n\nIr rápido y revisar no son opuestos: son la misma jugada. Aprender a leer lo que hace la IA es parte del salto, no un extra."
+              }
+            },
+            {
+              "type": "figure",
+              "props": {
+                "src": "/productividad-real-con-ia.assets/jefe-final.webp",
+                "alt": "Ilustración pixel art: un monstruo de humo gigante con ojos de moneda del dólar y pedestales que dicen «HYPE» y «404», frente a un pequeño programador que empuña un pergamino luminoso con «SKILL.md» y conserva tres corazones.",
+                "caption": "El jefe final: **El Humo** —el hype que insiste en que basta con gastar más tokens—. Tu arma es una skill; tus vidas, tres.",
+                "credit": "Ilustración original en pixel art para este reto."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "scenario": "Última pantalla con corazones en juego. Si te quedaste sin vidas, acertar aquí te devuelve una y desbloquea el premio.",
+                "question": "**Jefe final.** Con todo lo que has jugado, ¿qué resume mejor de qué depende el salto de productividad con IA?",
+                "options": [
+                  {
+                    "text": "Cuantos más tokens gastes, más productivo eres",
+                    "feedback": "Ese es el titular amarillista. Gastar tokens ayuda, pero es solo un pedazo; sin lo demás no multiplica."
+                  },
+                  {
+                    "text": "La IA sustituye al desarrollador y ya no hace falta entender el código",
+                    "feedback": "No. Sigues teniendo que entender, revisar y tener un plan: eso es justo lo que sostiene el salto."
+                  },
+                  {
+                    "text": "Soltar el control, publicar e invertir un poco —y sobre todo crear skills que multiplican tu trabajo",
+                    "correct": true,
+                    "feedback": "¡Jefe derrotado! Ese era el multiplicador que te prometí al principio: skills a medida sobre una buena mentalidad. Productividad real, sin humo."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "tu-salto-productividad",
+                "items": [
+                  {
+                    "text": "Suelta el control en tu próxima tarea: dale permisos al agente y atrévete a fallar barato",
+                    "hint": "Equivocarte ya sale barato."
+                  },
+                  {
+                    "text": "Publícalo: en local para ti o instalable para otra persona",
+                    "hint": "Si no sale de tu máquina, no cuenta."
+                  },
+                  {
+                    "text": "Invierte un poco en tokens y aprovecha la ventana antes de que renueve tu límite"
+                  },
+                  {
+                    "text": "Sube la mirada: mira qué se usa y qué no antes de construir más"
+                  },
+                  {
+                    "text": "Crea tu primera skill (SKILL.md) a partir de una tarea que repites",
+                    "hint": "El multiplicador de verdad."
+                  },
+                  {
+                    "text": "Revisa lo que hace la IA: al menos una revisión, manual o automatizada"
+                  }
+                ],
+                "completion": "Partida completada. Ahora te toca jugarla en tu propio código. 🎮"
+              }
+            },
+            {
+              "type": "prompt-template",
+              "props": {
+                "template": "Acabo de terminar esta tarea que voy a repetir: {{describe la tarea que acabas de hacer}}.\n\nConviértela en una skill reutilizable: crea un SKILL.md con los pasos, las decisiones clave y cuándo aplicarla, para que la próxima vez la haga en una fracción del tiempo. Dime también qué debería revisar yo antes de fiarme del resultado.",
+                "note": "Guárdalo: ese es el multiplicador. La parte repetible la automatizas; el criterio y la voz siguen siendo tuyos."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

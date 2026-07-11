@@ -87,6 +87,21 @@ export interface StorylineLabels {
   threadNext: string;
   /** Thread variant: previous-slide button. */
   threadPrev: string;
+  /** Keyboard/navigation help: trigger aria-label + dialog copy. */
+  help: {
+    /** aria-label of the help trigger button. */
+    trigger: string;
+    /** Dialog heading (also the `aria-labelledby` target). */
+    title: string;
+    /** Lead line under the heading (the dialog's `aria-describedby`). */
+    intro: string;
+    /** Key → what-it-does rows. */
+    rows: { keys: string; desc: string }[];
+    /** Line about jumping between modules via the dots/index. */
+    dots: string;
+    /** Close-button label. */
+    close: string;
+  };
 }
 
 export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
@@ -120,7 +135,140 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
     `I passed ${correct}/${answered} challenges in “${title}” 🏆 → ${url}`,
   threadNext: "Next",
   threadPrev: "Back",
+  help: {
+    trigger: "How to move through the guide",
+    title: "How to move through the guide",
+    intro:
+      "This is a scrolling document — read at your own pace. With a keyboard:",
+    rows: [
+      { keys: "↓ / ↑", desc: "Move forward and back" },
+      { keys: "Space / Shift+Space", desc: "One page down or up" },
+      { keys: "Home / End", desc: "Jump to the start or the end" },
+    ],
+    dots: "Tap the progress dots at the top to jump between modules.",
+    close: "Close",
+  },
 };
+
+/**
+ * A small always-available "?" affordance pinned to the reading pane, plus the
+ * dialog it opens explaining how to move through the guide (keyboard + module
+ * jumps). Self-contained accessible dialog, no dialog dependency: the trigger
+ * carries `aria-haspopup="dialog"` + `aria-expanded`; the panel is a labelled
+ * `role="dialog"` with `aria-modal`; Escape and a backdrop click close it;
+ * focus moves in on open and returns to the trigger on close; and Tab is
+ * trapped inside so keyboard users can't wander behind the modal.
+ */
+function StorylineHelp({ help }: { help: StorylineLabels["help"] }) {
+  const [open, setOpen] = React.useState(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const titleId = React.useId();
+  const introId = React.useId();
+
+  React.useEffect(() => {
+    if (!open) return;
+    const panel = panelRef.current;
+    panel?.querySelector<HTMLElement>("[data-autofocus]")?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        setOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab" || !panel) return;
+      const focusable = panel.querySelectorAll<HTMLElement>(
+        'button, [href], [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    // Capture phase so Escape closes the dialog before the pane's own handlers.
+    document.addEventListener("keydown", onKeyDown, true);
+    return () => document.removeEventListener("keydown", onKeyDown, true);
+  }, [open]);
+
+  const close = () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  return (
+    <>
+      <div className="pointer-events-none sticky top-2 z-30 h-0">
+        <button
+          ref={triggerRef}
+          type="button"
+          data-slot="storyline-help-trigger"
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-label={help.trigger}
+          className="pointer-events-auto absolute left-3 flex size-7 items-center justify-center rounded-full border bg-popover/95 text-sm font-semibold text-popover-foreground shadow-wgt backdrop-blur transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          <span aria-hidden="true">?</span>
+        </button>
+      </div>
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 motion-safe:animate-wgt-fade-in"
+          onClick={close}
+        >
+          <div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={introId}
+            data-slot="storyline-help-dialog"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm rounded-lg border bg-card p-5 text-card-foreground shadow-wgt"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <h2 id={titleId} className="text-base font-semibold">
+                {help.title}
+              </h2>
+              <button
+                type="button"
+                data-autofocus
+                onClick={close}
+                aria-label={help.close}
+                className="-me-1 -mt-1 flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                <span aria-hidden="true" className="text-lg leading-none">
+                  ✕
+                </span>
+              </button>
+            </div>
+            <p id={introId} className="mt-2 text-sm text-muted-foreground">
+              {help.intro}
+            </p>
+            <dl className="mt-4 space-y-2.5">
+              {help.rows.map((row, i) => (
+                <div key={i} className="flex items-baseline gap-3 text-sm">
+                  <dt className="shrink-0 whitespace-nowrap rounded border bg-muted px-1.5 py-0.5 font-mono text-xs font-medium text-foreground">
+                    {row.keys}
+                  </dt>
+                  <dd className="text-muted-foreground">{row.desc}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-4 text-sm text-muted-foreground">{help.dots}</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 export interface StorylineProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -323,12 +471,23 @@ function StorylineScroll({
   // Keyboard scrolling acts on the focused scroll container, so the reading
   // pane must be focusable (tabIndex on the container below) AND own focus on
   // mount — otherwise Up/Down scroll whatever the host has focused (often the
-  // near-static page) instead of the guide. Only claim focus if the host hasn't
-  // deliberately placed it elsewhere; preventScroll so it never jumps.
+  // near-static page) instead of the guide. The earlier guard only claimed
+  // focus from `document.body`, so after any SPA navigation or button click —
+  // where focus lingers on the clicked link — the pane never got it and the
+  // arrows did nothing. Claim it unless the host has a REAL form field focused
+  // (or focus is already inside the guide); a stale link is not a deliberate
+  // placement. preventScroll so taking focus never jumps the page.
   React.useEffect(() => {
     const el = scrollRef.current;
-    if (el && (!document.activeElement || document.activeElement === document.body))
-      el.focus({ preventScroll: true });
+    if (!el) return;
+    const ae = document.activeElement as HTMLElement | null;
+    const editable =
+      !!ae &&
+      (ae.tagName === "INPUT" ||
+        ae.tagName === "TEXTAREA" ||
+        ae.tagName === "SELECT" ||
+        ae.isContentEditable);
+    if (!editable && !el.contains(ae)) el.focus({ preventScroll: true });
   }, []);
   const moduleRefs = React.useRef<(HTMLElement | null)[]>([]);
   // Dot-nav buttons — roving tabindex + arrow keys walk the modules.
@@ -739,6 +898,11 @@ function StorylineScroll({
           ))}
         </div>
       </div>
+
+      {/* Always-available "how to navigate" affordance (top-left, mirrors the
+          HUD). Explains keyboard scrolling + module jumps in an accessible
+          dialog — helps the keyboard-scroll feature be discoverable. */}
+      <StorylineHelp help={l.help} />
 
       {/* Pinned game HUD — the lives hearts (opt-in) stacked over the challenge
           meter (the guide's own progress narrative that fills as the reader

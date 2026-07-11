@@ -235,7 +235,7 @@ describe("story pacing lint", () => {
     expect(msgs.some((f) => f.message.includes("quote"))).toBe(true);
   });
 
-  it("validates the juego mold: requires lives and enough scored quizzes", () => {
+  it("validates the game mold: requires lives and enough scored quizzes", () => {
     const threeQuizzes = {
       type: "storyline",
       props: {
@@ -250,19 +250,19 @@ describe("story pacing lint", () => {
     // No settings.lives — the format IS the mechanic.
     const noLives = lintStoryDocument({
       version: 1,
-      meta: { ...meta, format: "juego" },
+      meta: { ...meta, format: "game" },
       story: threeQuizzes,
     });
     expect(
       noLives.findings.some(
-        (f) => f.rule === "format-juego" && f.message.includes("settings.lives"),
+        (f) => f.rule === "format-game" && f.message.includes("settings.lives"),
       ),
     ).toBe(true);
 
     // Lives present but too few scored quizzes.
     const fewQuizzes = lintStoryDocument({
       version: 1,
-      meta: { ...meta, format: "juego" },
+      meta: { ...meta, format: "game" },
       settings: { lives: { total: 3 } },
       story: {
         type: "storyline",
@@ -277,31 +277,31 @@ describe("story pacing lint", () => {
     });
     expect(
       fewQuizzes.findings.some(
-        (f) => f.rule === "format-juego" && /quiz/.test(f.message),
+        (f) => f.rule === "format-game" && /quiz/.test(f.message),
       ),
     ).toBe(true);
 
     // Too many lives → warning that game-over is barely reachable.
     const soft = lintStoryDocument({
       version: 1,
-      meta: { ...meta, format: "juego" },
+      meta: { ...meta, format: "game" },
       settings: { lives: { total: 5 } },
       story: threeQuizzes,
     });
     expect(
       soft.findings.some(
-        (f) => f.rule === "format-juego" && f.severity === "warning",
+        (f) => f.rule === "format-game" && f.severity === "warning",
       ),
     ).toBe(true);
 
-    // Well-formed: 3 quizzes, lives below that → no format-juego findings.
+    // Well-formed: 3 quizzes, lives below that → no format-game findings.
     const fit = lintStoryDocument({
       version: 1,
-      meta: { ...meta, format: "juego" },
+      meta: { ...meta, format: "game" },
       settings: { lives: { total: 2 } },
       story: threeQuizzes,
     });
-    expect(fit.findings.some((f) => f.rule === "format-juego")).toBe(false);
+    expect(fit.findings.some((f) => f.rule === "format-game")).toBe(false);
   });
 
   it("warns on an unknown format", () => {

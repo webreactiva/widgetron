@@ -9,7 +9,7 @@ export const storylineMeta: WidgetMeta = {
   summary:
     "The dispensa reading composition: a scroll-driven document of modules that assembles any widgets into a course.",
   whenToUse:
-    "This is the top-level container for generating a whole dispensa/lesson. Use it to sequence many widgets into modules the reader scrolls through (progress bar, module dots with title tooltips, reveal-on-scroll). Put atomic widgets in each module's `screens`. Add `glossary` for [[term]] tooltips across the course, `profile` to personalize it (with ProfileQuiz/ProfileGate screens), and `storageKey` so the course remembers the reading position and offers to resume on the next visit. Add `challenge` for a themed progress meter, or `lives` to turn the guide into a soft game (the 'juego' format): wrong scored answers cost hearts and a game-over withholds the finale reward until the reader wins a life back. Prefer Scrollytelling instead when you need a single graphic that stays pinned while text scrolls past it.",
+    "This is the top-level container for generating a whole dispensa/lesson. Use it to sequence many widgets into modules the reader scrolls through (progress bar, module dots with title tooltips, reveal-on-scroll). Put atomic widgets in each module's `screens`. Add `glossary` for [[term]] tooltips across the course, `profile` to personalize it (with ProfileQuiz/ProfileGate screens), and `storageKey` so the course remembers the reading position and offers to resume on the next visit. Add `challenge` for a themed progress meter, or `lives` to turn the guide into a soft game (the 'game' format): wrong scored answers cost hearts and a game-over withholds the finale reward until the reader wins a life back. Prefer Scrollytelling instead when you need a single graphic that stays pinned while text scrolls past it.",
   schema: z.object({
     title: z
       .string()
@@ -96,7 +96,7 @@ export const storylineMeta: WidgetMeta = {
       })
       .optional()
       .describe(
-        "Game mode (opt-in — the signature of the 'juego' format): the reader loses a life on each wrong scored answer and wins one back on a correct one. At 0 lives the finale withholds its reward (a game-over screen invites a retry, confetti waits) while the prose stays readable. Session-scoped; scroll variant only.",
+        "Game mode (opt-in — the signature of the 'game' format): the reader loses a life on each wrong scored answer and wins one back on a correct one. At 0 lives the finale withholds its reward (a game-over screen invites a retry, confetti waits) while the prose stays readable. Session-scoped; scroll variant only.",
       ),
     variant: z
       .enum(["scroll", "thread"])

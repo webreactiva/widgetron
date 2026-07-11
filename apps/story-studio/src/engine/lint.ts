@@ -330,19 +330,19 @@ export function lintStoryDocument(input: unknown): StoryLint {
     if (quotes < 2) {
       err("format-entrevista", `only ${quotes} quote(s) — the interview must speak in the guest's voice (≥2)`);
     }
-  } else if (format === "juego") {
+  } else if (format === "game") {
     // The mold's whole point is the lives mechanic, fed exclusively by `quiz`
     // (the only scored widget that emits `answered { correct }`).
     const lives = doc.settings?.lives;
     if (!lives) {
-      err("format-juego", "juego without settings.lives — the format IS the lives mechanic");
+      err("format-game", "game without settings.lives — the format IS the lives mechanic");
     }
     const scored = types.filter((t) => t === "quiz").length;
     if (scored < 3) {
-      err("format-juego", `only ${scored} scored quiz(zes) (min 3) — without retos the reader can't lose lives`);
+      err("format-game", `only ${scored} scored quiz(zes) (min 3) — without retos the reader can't lose lives`);
     }
     if (lives && lives.total > scored) {
-      warn("format-juego", `lives (${lives.total}) > scored quizzes (${scored}) — a game-over is barely reachable; lower the lives or add retos`);
+      warn("format-game", `lives (${lives.total}) > scored quizzes (${scored}) — a game-over is barely reachable; lower the lives or add retos`);
     }
   } else if (format) {
     warn("format", `unknown format "${format}" — no mold rules applied`);

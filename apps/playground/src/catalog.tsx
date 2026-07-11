@@ -1870,7 +1870,7 @@ console.log("C");`}
         }),
       },
       {
-        label: "Game mode (juego) — lives on the line: miss a quiz, lose a heart",
+        label: "Game mode (game format) — lives on the line: miss a quiz, lose a heart",
         node: renderWidget({
           ...courseStoryline,
           props: {
