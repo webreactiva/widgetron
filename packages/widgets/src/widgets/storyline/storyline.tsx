@@ -537,7 +537,10 @@ function StorylineScroll({
   // Gated progression (opt-in via `gated`): the highest module index the reader
   // has unlocked. Module 0 is always open; answering a scored question in
   // module m unlocks m+1. Session-scoped (never persisted) — a reload restarts.
+  // `unlockedThroughRef` mirrors it so the scroll effect (a stale closure that
+  // must not re-run per unlock) can gate the finale/`completed` synchronously.
   const [unlockedThrough, setUnlockedThrough] = React.useState(0);
+  const unlockedThroughRef = React.useRef(0);
   // Share-result feedback.
   const [copied, setCopied] = React.useState(false);
   // Session scoreboard for the finale — child widget events bubble to the
@@ -661,9 +664,18 @@ function StorylineScroll({
             : 0;
         setFill(frac);
         posRef.current = { module: idx, frac };
+        // Gated: the finale (and the "finished" payoff) stay locked until the
+        // reader has unlocked the final module — else the short locked previews
+        // let them scroll to the bottom and claim it early.
+        const gateOpen =
+          !gated || unlockedThroughRef.current >= modules.length - 1;
         // Stamps: a module is completed once the reader scrolls past it (all
-        // of them at 100%). Earned stamps persist in the progress JSON.
-        const doneCount = pct >= 100 ? modules.length : idx;
+        // of them at 100%). Under gating, cap by what's actually unlocked — a
+        // locked preview isn't "read". Earned stamps persist in the JSON.
+        const reached = pct >= 100 ? modules.length : idx;
+        const doneCount = gated
+          ? Math.min(reached, unlockedThroughRef.current + 1)
+          : reached;
         let stamped = false;
         for (let i = 0; i < doneCount; i++) {
           if (modules[i]?.emoji && !stampsRef.current.has(i)) {
@@ -685,20 +697,22 @@ function StorylineScroll({
           if (pct >= m && !milestonesEmitted.current.has(m)) {
             milestonesEmitted.current.add(m);
             emitStoryline("scroll_milestone", { percent: m });
-            if (m === 100) emitStoryline("completed", {});
           }
         }
-        // Game mode: while the reader is out of lives the finale withholds its
-        // reward, so the "finished" latch itself waits — otherwise reaching the
-        // end dead would spend the one-shot payoff and redemption could never
-        // fire the confetti. With lives off, gameOverRef is always false.
+        // The "finished" payoff — `completed` event + reading time + confetti —
+        // fires once when the reader genuinely reaches the end. It waits on:
+        // a real user scroll (never a restore), lives left (game mode withholds
+        // the reward at 0, so redemption can still fire it later), and the gate
+        // being open (a gated guide isn't finished until its finale unlocks).
         if (
           pct >= 100 &&
           userScroll &&
           !finished.current &&
-          !gameOverRef.current
+          !gameOverRef.current &&
+          gateOpen
         ) {
           finished.current = true;
+          emitStoryline("completed", {});
           setElapsedMin(
             Math.max(1, Math.round((Date.now() - startedAt.current) / 60000)),
           );
@@ -740,7 +754,7 @@ function StorylineScroll({
       el.removeEventListener("scroll", listener);
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [modules.length, storageKey, celebrate]);
+  }, [modules.length, storageKey, celebrate, gated]);
 
   // Finale scoreboard — count the child widgets' own analytics events as they
   // bubble through the scroll container (source "widget" only; the storyline's
@@ -767,7 +781,11 @@ function StorylineScroll({
             "[data-module-index]",
           ) as HTMLElement | null;
           const m = host ? Number(host.dataset.moduleIndex) : NaN;
-          if (!Number.isNaN(m)) setUnlockedThrough((u) => Math.max(u, m + 1));
+          if (!Number.isNaN(m)) {
+            const next = Math.max(unlockedThroughRef.current, m + 1);
+            unlockedThroughRef.current = next;
+            setUnlockedThrough(next);
+          }
         }
         // Lives: lose one on a wrong answer, win one back on a right one
         // (redemption, clamped to [0, total]). Emit + gate transition happen
@@ -914,6 +932,12 @@ function StorylineScroll({
 
   // Challenge mode: interactions beaten so far, over the guide's total.
   const challengeEarned = Math.min(challenges, score.correct + score.completed);
+
+  // Gated finale: the reward stays locked until the reader has unlocked the
+  // final module (answered every gating reto up to it). Without this the short
+  // locked-module placeholders let the reader scroll straight to the finale —
+  // and reaching the bottom would spend the confetti + `completed` payoff too.
+  const gateComplete = !gated || unlockedThrough >= modules.length - 1;
 
   // Stamp collection shown in the finale — only modules that declare an emoji.
   const stampRow = modules.flatMap((m, i) =>
@@ -1310,15 +1334,32 @@ function StorylineScroll({
           (confetti + session scoreboard), pitched (outro) second. */}
       <section
         data-slot="storyline-finale"
+        data-locked={!gateComplete || undefined}
         className={cn(
           "flex min-h-full flex-col justify-center px-6 py-14 sm:px-10",
           modules.length % 2 === 1 && "bg-muted/40",
         )}
       >
-        <div
-          data-reveal
-          className={cn("mx-auto w-full max-w-2xl text-center", reveal)}
-        >
+        {!gateComplete ? (
+          /* Gated, not yet cleared: the payoff waits behind the same lock the
+             modules use, so the reader can't scroll past the locked previews to
+             claim it early. */
+          <div data-reveal className={cn("mx-auto w-full max-w-2xl", reveal)}>
+            <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-6 py-14 text-center">
+              <span aria-hidden="true" className="text-2xl">
+                🔒
+              </span>
+              <p className="font-medium">{l.locked.title}</p>
+              <p className="max-w-xs text-sm text-muted-foreground">
+                {l.locked.hint}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div
+            data-reveal
+            className={cn("mx-auto w-full max-w-2xl text-center", reveal)}
+          >
           <div
             className={cn(
               "mx-auto mb-6 flex size-14 items-center justify-center rounded-full",
@@ -1382,7 +1423,8 @@ function StorylineScroll({
               {copied ? l.shareCopied : l.shareResult}
             </Button>
           )}
-        </div>
+          </div>
+        )}
       </section>
 
       {outro != null && (
