@@ -31,11 +31,22 @@ export interface RenderOptions {
    * stays vendor-free and self-contained.
    */
   swetrixProjectId?: string;
+  /**
+   * Force the dark token set (`.dark` on `<html>`, `color-scheme: dark`).
+   * Off by default — the dist renders in the aseptic light palette.
+   */
+  dark?: boolean;
+  /**
+   * Multiply the root font size on desktop (viewport ≥ 1024px) by this ratio,
+   * e.g. 1.125 → 18px base. Everything is rem-based, so the whole type scale
+   * grows proportionally; mobile is untouched. Ignored when ≤ 1.
+   */
+  desktopTextScale?: number;
 }
 
 export async function renderStory(
   slug: string,
-  { appRoot, swetrixProjectId }: RenderOptions = {},
+  { appRoot, swetrixProjectId, dark, desktopTextScale }: RenderOptions = {},
 ): Promise<string> {
   const root = appRoot ?? fileURLToPath(new URL("../..", import.meta.url));
   const file = path.join(root, "content", `${slug}.story.json`);
@@ -70,13 +81,16 @@ export async function renderStory(
   );
   fs.writeFileSync(
     path.join(renderDir, "index.html"),
-    htmlShell(doc, { swetrixProjectId }),
+    htmlShell(doc, { swetrixProjectId, dark }),
   );
   fs.writeFileSync(
     path.join(renderDir, "main.tsx"),
     mainTsx(resolveThemeIconSet(doc.meta.theme, root)),
   );
-  fs.writeFileSync(path.join(renderDir, "styles.css"), stylesCss(doc, root, widgetronDir));
+  fs.writeFileSync(
+    path.join(renderDir, "styles.css"),
+    stylesCss(doc, root, widgetronDir, { dark, desktopTextScale }),
+  );
 
   await build({
     configFile: false,
@@ -115,9 +129,10 @@ export async function renderStory(
 /** Static shell: real metadata + a readable module index before hydration. */
 export function htmlShell(
   doc: StoryDocument,
-  opts: { swetrixProjectId?: string } = {},
+  opts: { swetrixProjectId?: string; dark?: boolean } = {},
 ): string {
   const { meta } = doc;
+  const htmlClass = opts.dark ? ' class="dark"' : "";
   const analytics = opts.swetrixProjectId
     ? swetrixSnippet(opts.swetrixProjectId)
     : "";
@@ -136,7 +151,7 @@ export function htmlShell(
   const description = meta.description ?? `Interactive guide: ${meta.title}`;
 
   return `<!doctype html>
-<html lang="${escapeHtml(meta.lang ?? "en")}"${meta.theme ? ` data-theme="${escapeHtml(meta.theme)}"` : ""}>
+<html lang="${escapeHtml(meta.lang ?? "en")}"${meta.theme ? ` data-theme="${escapeHtml(meta.theme)}"` : ""}${htmlClass}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -263,7 +278,12 @@ createRoot(document.getElementById("root")!).render(
 `;
 
 /** Tailwind bridge + widgetron theme layer + optional compiled brand theme. */
-function stylesCss(doc: StoryDocument, appRoot: string, widgetronDir: string): string {
+export function stylesCss(
+  doc: StoryDocument,
+  appRoot: string,
+  widgetronDir: string,
+  opts: { dark?: boolean; desktopTextScale?: number } = {},
+): string {
   const themeCss = resolvePackagePath(
     "@webreactiva/widgetron/styles/theme.css",
   );
@@ -273,6 +293,17 @@ function stylesCss(doc: StoryDocument, appRoot: string, widgetronDir: string): s
 
 html, body, #root { margin: 0; background: var(--background); color: var(--foreground); }
 `;
+  // Forced dark: native form controls, scrollbars and the canvas match the
+  // dark token set the `.dark` class on <html> already switches on.
+  if (opts.dark) {
+    css += `\nhtml.dark { color-scheme: dark; }\n`;
+  }
+  // Desktop-only type scale: rem-based, so bumping the root size grows the
+  // whole scale proportionally above the breakpoint; mobile stays as designed.
+  if (opts.desktopTextScale && opts.desktopTextScale > 1) {
+    const pct = (opts.desktopTextScale * 100).toFixed(3).replace(/\.?0+$/, "");
+    css += `\n@media (min-width: 1024px) { html { font-size: ${pct}%; } }\n`;
+  }
   const theme = doc.meta.theme;
   if (theme && theme !== "webreactiva") {
     const themeCss = path.join(appRoot, "src", "themes", `${theme}.css`);

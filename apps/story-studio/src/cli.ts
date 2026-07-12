@@ -7,7 +7,8 @@ import { fileURLToPath } from "node:url";
  *
  *   pnpm --filter @webreactiva/story-studio story validate <slug|path>
  *   pnpm --filter @webreactiva/story-studio story lint <slug|path> [--score]
- *   pnpm --filter @webreactiva/story-studio story render <slug> [--swetrix <projectId>]
+ *   pnpm --filter @webreactiva/story-studio story render <slug>
+ *       [--swetrix <projectId>] [--dark] [--text-scale <ratio>]
  *   pnpm --filter @webreactiva/story-studio story theme <design.md> [outDir]
  *   pnpm --filter @webreactiva/story-studio story manifest [outFile]
  */
@@ -86,10 +87,24 @@ async function main(): Promise<void> {
       // is set the dist stays vendor-free (no analytics injected).
       const swetrixProjectId =
         flagValue("--swetrix") ?? process.env.SWETRIX_PROJECT_ID ?? undefined;
-      const outDir = await renderStory(target, { appRoot, swetrixProjectId });
+      const dark = hasFlag("--dark");
+      const textScaleRaw = flagValue("--text-scale");
+      const desktopTextScale = textScaleRaw ? Number(textScaleRaw) : undefined;
+      if (textScaleRaw && !(desktopTextScale! > 1)) {
+        usage("render <slug> [--text-scale <ratio>] — ratio must be a number > 1");
+      }
+      const outDir = await renderStory(target, {
+        appRoot,
+        swetrixProjectId,
+        dark,
+        desktopTextScale,
+      });
       if (swetrixProjectId) {
         console.log(`  ↳ Swetrix analytics wired (project ${swetrixProjectId})`);
       }
+      if (dark) console.log("  ↳ Dark theme forced");
+      if (desktopTextScale)
+        console.log(`  ↳ Desktop text scaled ×${desktopTextScale}`);
       console.log(`✔ Rendered → ${path.relative(process.cwd(), outDir)}`);
       return;
     }
@@ -138,6 +153,11 @@ function flagValue(name: string): string | undefined {
   if (i !== -1 && i + 1 < args.length) return args[i + 1];
   const inline = args.find((a) => a.startsWith(`${name}=`));
   return inline ? inline.slice(name.length + 1) : undefined;
+}
+
+/** Presence of a boolean `--flag` in argv. */
+function hasFlag(name: string): boolean {
+  return process.argv.slice(2).includes(name);
 }
 
 main().catch((error) => {

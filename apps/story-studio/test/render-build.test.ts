@@ -3,7 +3,12 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 
-import { htmlShell, renderStory, swetrixSnippet } from "../src/render/build";
+import {
+  htmlShell,
+  renderStory,
+  stylesCss,
+  swetrixSnippet,
+} from "../src/render/build";
 
 /**
  * End-to-end guarantee for `story render`: a minimal document goes through
@@ -127,5 +132,40 @@ describe("swetrix analytics injection (opt-in build option)", () => {
     expect(snippet).toContain("swetrix.init");
     // Events only — no pageview tracking wired.
     expect(snippet).not.toContain("trackViews");
+  });
+});
+
+describe("dark + desktop text-scale build options", () => {
+  const shellDoc = {
+    meta: { title: "Prod", lang: "es" },
+    story: { type: "storyline", props: { modules: [{ title: "M" }] } },
+  } as unknown as Parameters<typeof htmlShell>[0];
+
+  it("leaves <html> in the light palette by default", () => {
+    expect(htmlShell(shellDoc)).not.toContain('class="dark"');
+  });
+
+  it("forces the dark class on <html> when dark is set", () => {
+    const html = htmlShell(shellDoc, { dark: true });
+    expect(html).toMatch(/<html[^>]*class="dark"/);
+  });
+
+  it("emits the dark color-scheme + desktop type scale only when asked", () => {
+    const base = stylesCss(shellDoc, "/app", "/wgt");
+    expect(base).not.toContain("color-scheme: dark");
+    expect(base).not.toContain("@media (min-width: 1024px)");
+
+    const css = stylesCss(shellDoc, "/app", "/wgt", {
+      dark: true,
+      desktopTextScale: 1.125,
+    });
+    expect(css).toContain("html.dark { color-scheme: dark; }");
+    // 1.125 → 112.5% root font-size, desktop only (mobile untouched).
+    expect(css).toContain("@media (min-width: 1024px) { html { font-size: 112.5%; } }");
+  });
+
+  it("ignores a text scale of 1 or below", () => {
+    const css = stylesCss(shellDoc, "/app", "/wgt", { desktopTextScale: 1 });
+    expect(css).not.toContain("@media (min-width: 1024px)");
   });
 });
