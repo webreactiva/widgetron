@@ -6,6 +6,7 @@
     "lang": "es",
     "theme": "webreactiva",
     "description": "Juega el salto de productividad con IA: 3 vidas, cada fallo cuesta un corazón y cada acierto lo recupera. A cero, el premio final espera hasta que remontes. Recargar empieza partida nueva.",
+    "keyword": "El Humo",
     "format": "game",
     "source": { "type": "podcast", "show": "wr", "episode": 347 }
   },
@@ -332,10 +333,19 @@
               }
             },
             {
-              "type": "prompt-template",
+              "type": "keyword-gate",
               "props": {
-                "template": "Acabo de terminar esta tarea que voy a repetir: {{describe la tarea que acabas de hacer}}.\n\nConviértela en una skill reutilizable: crea un SKILL.md con los pasos, las decisiones clave y cuándo aplicarla, para que la próxima vez la haga en una fracción del tiempo. Dime también qué debería revisar yo antes de fiarme del resultado.",
-                "note": "Guárdalo: ese es el multiplicador. La parte repetible la automatizas; el criterio y la voz siguen siendo tuyos."
+                "prompt": "El episodio dejó una palabra. Escríbela para abrir el premio.",
+                "answer": "el humo",
+                "hint": "Empieza por H… y es justo contra lo que luchaste en el jefe final.",
+                "skipLabel": "No escuché el episodio",
+                "reward": {
+                  "type": "prompt-template",
+                  "props": {
+                    "template": "Acabo de terminar esta tarea que voy a repetir: {{describe la tarea que acabas de hacer}}.\n\nConviértela en una skill reutilizable: crea un SKILL.md con los pasos, las decisiones clave y cuándo aplicarla, para que la próxima vez la haga en una fracción del tiempo. Dime también qué debería revisar yo antes de fiarme del resultado.",
+                    "note": "Guárdalo: ese es el multiplicador. La parte repetible la automatizas; el criterio y la voz siguen siendo tuyos."
+                  }
+                }
               }
             }
           ]

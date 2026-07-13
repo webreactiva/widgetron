@@ -101,6 +101,13 @@ export const storyDocumentSchema = z.object({
       .optional()
       .describe('Any available [data-theme] name, e.g. "webreactiva".'),
     description: z.string().optional(),
+    keyword: z
+      .string()
+      .min(1)
+      .optional()
+      .describe(
+        "THE word the episode elevated (R-PALABRA) — a concrete, appropriable noun the reader should carry away (e.g. 'El Humo'), not a generic descriptor. Presented on the cover, defined in its chapter, and recalled at the close via a keyword-gate. Prefer a word the episode already says out loud.",
+      ),
     format: z
       .string()
       .optional()
