@@ -54,10 +54,35 @@ same as any guide.
    voice, a `callout-box`) so the variety rule holds, but ALWAYS land on a
    `quiz`. Raise the difficulty across the run.
 4. **Boss final** — the hardest `quiz` (or two), pulling ideas from across the
-   episode. This is where a careless reader spends their last heart.
-5. **Cierre** — `resource-list` + the CTA (from `settings`). The finale is
-   already handled by the storyline: a scoreboard + confetti if the reader
-   survived, the game-over retry screen if they didn't.
+   episode. This is where a careless reader spends their last heart. **The
+   correct option's `feedback` is ONE sentence built around `meta.keyword`
+   (R-UNA-LÍNEA)** — «Ese es el salto: todo lo demás cae cuando le ganas a **El
+   Humo**.» A victory moment is no place for a four-point recap: four ideas at
+   the climax = zero ideas. The multipoint synthesis belongs in a `checklist`,
+   never in the boss's payoff.
+5. **Cierre** — gate the reward behind a **`keyword-gate`**, then `resource-list`
+   + the CTA (from `settings`). The finale is already handled by the storyline:
+   a scoreboard + confetti if the reader survived, the game-over retry screen if
+   they didn't.
+
+   **The keyword-gate is the premio's door — and the run's best retention move.**
+   After the boss, the reader types `meta.keyword` from memory to unlock the
+   reward: active recall consolidates the episode harder than any multiple-choice.
+   Wire it so the reward that was already going to close the guide (a
+   `prompt-template`, an `outtake`, a bonus skill) lives *inside* the gate's
+   `reward` slot — don't add a screen, gate the one you had. Rules:
+   - `answer` = the word; keep `normalize: true` (case/accents/article don't lock
+     anyone out). `hint` nudges toward it; the idle→hint→ghost escalation means
+     nobody ever gets stuck.
+   - `skipLabel` («No escuché el episodio») + optional `invite` open the reward for
+     a cold reader anyway — the gate is an exercise, not a lock.
+   - The **premio must be real** — never confetti/score-card alone. The finale's
+     copy-my-result IS a score-card, so the gate's `reward` must add something the
+     episode didn't hand over on its own.
+   - It emits `keyword_attempt {correct|hint|ghost|skip}` — the run's recall
+     metric, and the payoff of R-PALABRA: cover presents the word, the boss names
+     it, the gate makes the reader produce it. Reference wiring:
+     `productividad-real-con-ia.story.json` (word = «El Humo»).
 
 Per-module `emoji` (the stamp) + `outro` still apply — here they double as the
 "level cleared" beat between rounds.

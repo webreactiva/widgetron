@@ -156,7 +156,11 @@ pipeline already handles media-less stories.
 2. **Clean the ASR, keep the voice.** Strip indices/timestamps, join fragments
    into sentences, fix speech-to-text artifacts and known podcast gazapos
    (e.g. "Sagger" → "Swagger"). The result must still sound like Daniel:
-   second person, warm, direct, hands-on, zero corporate filler.
+   second person, warm, direct, hands-on, zero corporate filler. **No empty
+   superlatives** (revolucionario, brutal, increíble) and no grand/transcendent
+   tone — the brand is *sin humo*, so is the copy. And **prefer a concrete image
+   to an abstraction**: «lo gratis te corta justo cuando volabas» lands, «optimiza
+   tu flujo de trabajo» evaporates.
 3. **Content language = episode language** (usually Spanish) and set
    `meta.lang` accordingly — widget chrome translates itself via the locale
    packs. (The English-only rule applies to library code, not to content.)
@@ -260,6 +264,16 @@ a real claim instead of transcribing its wrapper.)
   open-loop writing style — reach for it as a default, even when the user
   didn't name it, and *especially* in the `game` format (the boss then closes
   the loop).
+- **One word to carry away (R-PALABRA).** Pick THE word the episode elevates —
+  a concrete, *appropriable* noun the reader keeps («El Humo» ✓), never a generic
+  descriptor («el multiplicador» ✗) — and set it in `meta.keyword`. Prefer a word
+  the episode already says out loud; if you have to coin one, that's a signal the
+  episode wasn't mono-idea (say so in the handoff, don't force it). The word
+  appears at least **three times, always the exact same form**: presented on the
+  first module, defined where it's developed (a `[[glossary]]` term is ideal), and
+  remachada at the close — in the `game` format that close is the `keyword-gate`
+  before the reward (see format-game). A reader who can retype it tomorrow got the
+  episode.
 - **Payoff cadence.** Avoid long stretches without a reader interaction —
   `story lint` warns past 4 passive screens (`cadence`). Treat the number as
   a smell, not a law: a dense topic can carry a longer passive stretch when
@@ -300,6 +314,8 @@ a real claim instead of transcribing its wrapper.)
   (module boundaries included) — if two adjacent moments want the same widget,
   merge them or convert one.
 - **At least one `quiz` in the second half** — readers should act before the CTA.
+  Every wrong option's `feedback` must **teach** (why it's wrong, or what's true
+  instead), never just mark it incorrect — a miss is a teaching moment.
 - **Set `storageKey`** on the storyline (= the slug) so the guide remembers the
   reading position and offers to resume — **except in the `game` format.** A
   game's contract is «reload = fresh run» (arcade feel), and the resume bar
@@ -358,6 +374,10 @@ a real claim instead of transcribing its wrapper.)
      checklist, tangle-text…)?
    - Does the ending pay off — a keepsake screen (checklist, prompt-template)
      before the CTA, not a trailing prose?
+   - **Is the LAST screen the best screen (R-PEAK-END)?** Readers retain peaks
+     and endings, not middles. If your strongest, most counterintuitive material
+     is buried mid-guide, reorder it toward the close or raise the finale reward
+     until the answer is yes.
 
    Fix by upgrading screens, never by adding length.
 7. **Validate, lint and self-correct** until clean:
