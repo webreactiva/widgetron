@@ -6,6 +6,7 @@ import { Icon } from "@/primitives/icon";
 import { quizMeta } from "@/widgets/quiz/quiz.meta";
 import { calloutBoxMeta } from "@/widgets/callout-box/callout-box.meta";
 import { surpriseMeta } from "@/widgets/surprise/surprise.meta";
+import { keywordGateMeta } from "@/widgets/keyword-gate/keyword-gate.meta";
 import { quoteMeta } from "@/widgets/quote/quote.meta";
 import { ctaMeta } from "@/widgets/cta/cta.meta";
 import { promptTemplateMeta } from "@/widgets/prompt-template/prompt-template.meta";
@@ -51,6 +52,7 @@ import { Flashcards } from "@/widgets/flashcards";
 import { Checklist } from "@/widgets/checklist";
 import { CalloutBox } from "@/widgets/callout-box";
 import { Surprise } from "@/widgets/surprise";
+import { KeywordGate } from "@/widgets/keyword-gate";
 import { Quote } from "@/widgets/quote";
 import { Cta } from "@/widgets/cta";
 import { ProfileCard } from "@/widgets/profile-card";
@@ -188,6 +190,18 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
       content: asContent(p.content),
       variants: asContent(p.variants),
       teaser: asContent(p.teaser),
+    }),
+  },
+  "keyword-gate": {
+    ...keywordGateMeta,
+    component: KeywordGate,
+    adapt: (p) => ({
+      ...p,
+      prompt: asContent(p.prompt),
+      reward: asContent(p.reward),
+      hint: asContent(p.hint),
+      skipLabel: asContent(p.skipLabel),
+      invite: asContent(p.invite),
     }),
   },
   quote: {

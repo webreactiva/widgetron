@@ -57,6 +57,13 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     surprise: "Sorpresa",
     reveal: "Revelar",
   },
+  keywordGate: {
+    submit: "Desbloquear",
+    hint: "Pista",
+    incorrect: "Esa no es — inténtalo otra vez.",
+    unlocked: "Desbloqueado",
+    placeholder: "Escribe la palabra…",
+  },
   cta: {
     emailPlaceholder: "tu@ejemplo.com",
     emailLabel: "Tu correo",

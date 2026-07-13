@@ -39,6 +39,7 @@ import {
   SpotTheBug,
   StepCards,
   Surprise,
+  KeywordGate,
   TangleText,
   TerminalSim,
   Timeline,
@@ -209,6 +210,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "predict-output",
       "drag-and-drop",
       "surprise",
+      "keyword-gate",
     ],
   },
   {
@@ -1940,6 +1942,48 @@ console.log("C");`}
                 you optimize.
               </Quote>
             }
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "keyword-gate",
+    name: "KeywordGate",
+    summary:
+      "A gate that reveals a reward once the reader types the guide's keyword from memory — active recall, the strongest retention move. Idle → hint → ghost so nobody stalls; an optional skip opens it for a cold reader (preceded by an invite). Emits `keyword_attempt`, the guide's recall metric. Usable as a storyline screen.",
+    demos: [
+      {
+        label: "Type the word to unlock (JSON-driven reward)",
+        node: renderWidget({
+          type: "keyword-gate",
+          version: 1,
+          props: {
+            prompt: "The episode left one word behind. **Type it.**",
+            answer: "the smoke",
+            hint: "Starts with S — it's what you fought in the final boss.",
+            skipLabel: "I haven't heard it",
+            reward: {
+              type: "callout-box",
+              props: {
+                variant: "aha",
+                children:
+                  "You typed it from memory — that's the episode consolidated. See you in the next one.",
+              },
+            },
+          },
+        } as WidgetNode),
+      },
+      {
+        label: "Hint appears after 3s idle, then a ghost",
+        node: (
+          <KeywordGate
+            prompt="What was the word?"
+            answer="momentum"
+            hintAfterSeconds={3}
+            hint="It's what a free plan cuts right when you had it."
+            reward={<p className="text-sm">Nice — that's the one.</p>}
+            celebrate={false}
           />
         ),
       },

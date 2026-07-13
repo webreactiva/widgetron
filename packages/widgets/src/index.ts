@@ -36,6 +36,7 @@ export * from "@/widgets/checklist";
 export * from "@/widgets/callout-box";
 export * from "@/widgets/quote";
 export * from "@/widgets/surprise";
+export * from "@/widgets/keyword-gate";
 export * from "@/widgets/cta";
 export * from "@/widgets/profile-card";
 export * from "@/widgets/step-cards";
