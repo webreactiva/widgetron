@@ -186,6 +186,35 @@ describe("story pacing lint", () => {
     expect(withoutAudio.findings.some((f) => f.rule === "audio-pending")).toBe(false);
   });
 
+  it("judges a keyword-gate closer by its reward, not the gate itself", () => {
+    const gate = (rewardType: string) => ({
+      type: "keyword-gate",
+      props: { prompt: "x", answer: "y", reward: { type: rewardType, props: {} } },
+    });
+    const endingIn = (last: object) => ({
+      version: 1,
+      meta,
+      story: {
+        type: "storyline",
+        props: {
+          modules: [
+            { title: "One", screens: ["prose", "mermaid-diagram", "quiz"].map(screen) },
+            { title: "Two", screens: ["callout-box", "flashcards", "group-chat"].map(screen) },
+            { title: "Three", screens: [screen("data-chart"), screen("quiz"), last] },
+          ],
+        },
+      },
+    });
+
+    // Reward is a keepsake → the gate counts as a strong closer.
+    const strong = lintStoryDocument(endingIn(gate("prompt-template")));
+    expect(strong.findings.some((f) => f.rule === "keepsake")).toBe(false);
+
+    // Weak reward → the gate does not rescue it.
+    const weak = lintStoryDocument(endingIn(gate("callout-box")));
+    expect(weak.findings.some((f) => f.rule === "keepsake")).toBe(true);
+  });
+
   it("validates the briefing mold: hard length cap and a required quiz", () => {
     const story = (screens: string[]) => ({
       type: "storyline",

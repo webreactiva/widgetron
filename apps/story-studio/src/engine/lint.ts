@@ -44,6 +44,16 @@ const TEXT_TYPES = new Set(["prose", "glossary-text"]);
 // Keepsake closers.
 const KEEPSAKE_TYPES = new Set(["checklist", "prompt-template"]);
 
+// A keyword-gate IS a keepsake closer — judge it by what it unlocks, not by the
+// gate itself (its reward is the takeaway the reader earns).
+function closerType(node: WidgetNode): string {
+  if (node.type === "keyword-gate") {
+    const reward = node.props?.reward as WidgetNode | undefined;
+    if (reward && typeof reward.type === "string") return reward.type;
+  }
+  return node.type;
+}
+
 // Widgets that persist under a RAW `storageKey` (no prefix). checklist and
 // storyline namespace their keys instead — see persistenceKeyOf. These strings
 // mirror the widget code; keep them in sync.
@@ -222,7 +232,7 @@ export function lintStoryDocument(input: unknown): StoryLint {
   }
 
   // --- closer: end with a keepsake (advisory) ---
-  if (n > 0 && !KEEPSAKE_TYPES.has(types[n - 1])) {
+  if (n > 0 && !KEEPSAKE_TYPES.has(closerType(flat[n - 1].node))) {
     warn(
       "keepsake",
       `story ends with "${types[n - 1]}" — a checklist or prompt-template is a stronger closer before the CTA`,
