@@ -28,6 +28,14 @@ import {
   Hotspots,
   Icon,
   Infographic,
+  KineticHeadline,
+  DrawDiagram,
+  ScrollStat,
+  UnmaskStrip,
+  DecodeHeadline,
+  StickyPan,
+  Map as MapWidget,
+  StoryMap,
   MermaidDiagram,
   PatternCard,
   PredictOutput,
@@ -204,6 +212,8 @@ export const categories: { title: string; ids: string[] }[] = [
       "pattern-card",
       "code-translation",
       "resource-list",
+      "kinetic-headline",
+      "decode-headline",
     ],
   },
   {
@@ -237,6 +247,8 @@ export const categories: { title: string; ids: string[] }[] = [
       "flow-diagram",
       "data-chart",
       "infographic",
+      "draw-diagram",
+      "scroll-stat",
       "mermaid-diagram",
       "compare-slider",
       "hotspots",
@@ -253,6 +265,8 @@ export const categories: { title: string; ids: string[] }[] = [
       "guest-reel",
       "video-clip",
       "figure",
+      "unmask-strip",
+      "map",
     ],
   },
   {
@@ -261,7 +275,7 @@ export const categories: { title: string; ids: string[] }[] = [
   },
   { title: "Conversion", ids: ["cta"] },
   { title: "Foundations", ids: ["icon"] },
-  { title: "Compositions", ids: ["storyline", "scrollytelling", "backdrop-section"] },
+  { title: "Compositions", ids: ["storyline", "scrollytelling", "backdrop-section", "sticky-pan", "story-map"] },
 ];
 
 // A mini-dispensa authored as JSON — the dispensa reading flow (Storyline)
@@ -1566,6 +1580,195 @@ export const catalog: CatalogEntry[] = [
               { label: "Defined" },
               { label: "Managed" },
               { label: "Optimizing", description: "Continuous improvement." },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "draw-diagram",
+    name: "DrawDiagram",
+    summary:
+      "A small line diagram whose strokes draw themselves in as it scrolls into view (pathLength=1 + stroke-dashoffset on a scroll-driven timeline). Pure CSS, zero deps; static and fully drawn under reduced motion or without support.",
+    demos: [
+      {
+        label: "Trend line",
+        node: (
+          <DrawDiagram
+            viewBox="0 0 240 120"
+            title="Output climbs once the busywork is cut"
+            paths={[
+              { d: "M20 110 L20 10 M20 110 L230 110", width: 2 },
+              "M20 96 C 80 92, 120 60, 170 40 S 220 16, 228 14",
+            ]}
+            labels={[
+              { x: 24, y: 22, text: "output" },
+              { x: 228, y: 108, text: "time", anchor: "end" },
+            ]}
+            caption="Same team, same week — just less **smoke**."
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "scroll-stat",
+    name: "ScrollStat",
+    summary:
+      "A big metric that counts up from zero as it scrolls into view (a registered @property integer rendered with counter()), with an optional meter bar. Pure CSS, zero deps; shows the final number at rest under reduced motion or without support.",
+    demos: [
+      {
+        label: "Percentage with meter",
+        node: (
+          <ScrollStat
+            value={73}
+            suffix="%"
+            meter
+            label="of the work that *looked* productive shipped **nothing**."
+          />
+        ),
+      },
+      {
+        label: "Multiplier",
+        node: (
+          <ScrollStat
+            value={3}
+            suffix="×"
+            align="center"
+            label="more meetings than the week they actually shipped."
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "kinetic-headline",
+    name: "KineticHeadline",
+    summary:
+      "A display headline that reveals a word at a time as it scrolls into view — the string is split on whitespace and each word rises in, staggered, via pure CSS scroll-driven motion. Zero deps; static and fully legible under reduced motion or without support.",
+    demos: [
+      {
+        label: "H2 headline",
+        node: (
+          <KineticHeadline
+            as="h2"
+            text="Half of what we call productivity is smoke"
+          />
+        ),
+      },
+      {
+        label: "Centered H1",
+        node: (
+          <KineticHeadline
+            as="h1"
+            align="center"
+            text="Ship the honest thing"
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "decode-headline",
+    name: "DecodeHeadline",
+    summary:
+      "A headline that arrives scrambled and resolves character by character when it scrolls into view (decrypting-terminal effect). ~30 lines of own JS, no library; shows the final text immediately under reduced motion.",
+    demos: [
+      {
+        label: "Decrypting headline",
+        node: <DecodeHeadline as="h2" text="The boss was the hype all along" />,
+      },
+    ],
+  },
+  {
+    id: "unmask-strip",
+    name: "UnmaskStrip",
+    summary:
+      "An image that wipes into view behind a moving clip-path edge as it scrolls in. Pure CSS scroll-driven, zero deps; fully shown at rest under reduced motion or without support.",
+    demos: [
+      {
+        label: "Wide strip, wipe left",
+        node: (
+          <UnmaskStrip
+            src="https://picsum.photos/id/1043/1600/900"
+            alt=""
+            direction="left"
+            aspectRatio="3 / 1"
+            caption="The office at 7pm — everyone *looks* busy."
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "sticky-pan",
+    name: "StickyPan",
+    summary:
+      "A horizontal filmstrip that pans sideways as the reader scrolls down; the section pins to the viewport. Pure CSS, zero deps; degrades to a swipeable strip under reduced motion or without support.",
+    demos: [
+      {
+        label: "Three-beat week",
+        node: (
+          <StickyPan
+            panels={[
+              { content: "**Monday.** The board is full of tickets that *sound* like work." },
+              { content: "**Wednesday.** Half are still 'in progress' — nothing shipped." },
+              { content: "**Friday.** One thing reached a user. That's the number that counted." },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "map",
+    name: "Map",
+    summary:
+      "An interactive slippy map (imperative Leaflet, dynamic import; token-free Carto basemap matched to the theme) with theme-colored pins. Wheel-zoom off by default so it never traps page scroll. Host must import 'leaflet/dist/leaflet.css'.",
+    demos: [
+      {
+        label: "City with a pin",
+        node: (
+          <MapWidget
+            center={[40.4168, -3.7038]}
+            zoom={12}
+            markers={[{ lat: 40.4168, lng: -3.7038, label: "Madrid" }]}
+            title="Where the meetup happens"
+            caption="Central Madrid — the venue is a 5-minute walk from the metro."
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "story-map",
+    name: "StoryMap",
+    summary:
+      "A guided map tour: the map pins to the pane and flies from stop to stop as prose cards scroll over it (backdrop-section recipe + Leaflet flyTo). Degrades gracefully; emits step_viewed. Best seen inside a scrolling storyline. Host must import 'leaflet/dist/leaflet.css'.",
+    demos: [
+      {
+        label: "Madrid → Barcelona → Spain",
+        node: (
+          <StoryMap
+            steps={[
+              {
+                content: "It started in a **Madrid** flat — one developer, one newsletter, no plan.",
+                center: [40.4168, -3.7038],
+                zoom: 11,
+                markers: [{ lat: 40.4168, lng: -3.7038, label: "Where it began" }],
+              },
+              {
+                content: "Within a year the audience had spread across **Barcelona** and the coast.",
+                center: [41.3874, 2.1686],
+                zoom: 11,
+                markers: [{ lat: 41.3874, lng: 2.1686, label: "Barcelona" }],
+              },
+              {
+                content: "Today the community reaches the whole Spanish-speaking web.",
+                center: [40.0, -4.0],
+                zoom: 5,
+              },
             ]}
           />
         ),
