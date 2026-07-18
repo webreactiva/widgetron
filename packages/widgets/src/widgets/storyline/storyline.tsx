@@ -906,7 +906,12 @@ function StorylineScroll({
   };
 
   const reveal =
-    "transition-all duration-500 opacity-0 translate-y-5 data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100 motion-reduce:translate-y-0 motion-reduce:opacity-100";
+    "transition-[opacity,translate] duration-(--motion-slow) ease-(--ease-out) opacity-0 translate-y-5 data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100 motion-reduce:translate-y-0 motion-reduce:opacity-100";
+
+  // Module headers reveal child-by-child (eyebrow → title → subtitle): the
+  // observed <header> carries `group` + data-visible, each child staggers in.
+  const revealChild =
+    "transition-[opacity,translate] duration-(--motion-slow) ease-(--ease-out) opacity-0 translate-y-5 group-data-[visible=true]:translate-y-0 group-data-[visible=true]:opacity-100 motion-reduce:translate-y-0 motion-reduce:opacity-100";
 
   const chip =
     "rounded-full border bg-card px-3 py-1 text-sm text-muted-foreground shadow-wgt";
@@ -1038,8 +1043,8 @@ function StorylineScroll({
                 >
                   <div
                     aria-hidden="true"
-                    className="absolute inset-y-0 left-0 bg-primary/25 transition-[width] duration-500"
-                    style={{ width: `${(challengeEarned / challenges) * 100}%` }}
+                    className="absolute inset-y-0 left-0 w-full origin-left bg-primary/25 transition-transform duration-(--motion-slow) ease-(--ease-out)"
+                    style={{ transform: `scaleX(${challengeEarned / challenges})` }}
                   />
                   <span className="relative flex items-center gap-1.5">
                     <span className="truncate font-medium">{challenge}</span>
@@ -1262,20 +1267,34 @@ function StorylineScroll({
             i % 2 === 1 && "bg-muted/40",
           )}
         >
-          <header
-            data-reveal
-            className={cn("mx-auto mb-8 w-full max-w-2xl", reveal)}
-          >
+          <header data-reveal className="group mx-auto mb-8 w-full max-w-2xl">
             {numbered && (
-              <p className="mb-2 font-mono text-sm font-bold uppercase tracking-[0.1em] text-primary">
+              <p
+                className={cn(
+                  "mb-2 font-mono text-sm font-bold uppercase tracking-[0.1em] text-primary",
+                  revealChild,
+                )}
+              >
                 {eyebrow(i)}
               </p>
             )}
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2
+              className={cn(
+                "font-display text-3xl font-bold tracking-tight sm:text-4xl",
+                revealChild,
+                "delay-[70ms]",
+              )}
+            >
               {m.title}
             </h2>
             {m.subtitle != null && (
-              <p className="mt-3 max-w-prose text-lg text-muted-foreground">
+              <p
+                className={cn(
+                  "mt-3 max-w-prose text-lg text-muted-foreground",
+                  revealChild,
+                  "delay-[140ms]",
+                )}
+              >
                 {m.subtitle}
               </p>
             )}

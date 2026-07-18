@@ -81,6 +81,24 @@
 
   /* radius */
   --radius: 0.5rem;
+
+  /* --- motion (one vocabulary for every widget animation) --- */
+  --motion-fast: 140ms; /* press, toggle, hover */
+  --motion-base: 240ms; /* feedback: reveal, state change */
+  --motion-slow: 450ms; /* entrances, progress, payoff */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* celebration only */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Reduced motion: durations collapse to 0ms so every animation and transition
+   built on the motion tokens switches off in this one block. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-slow: 0ms;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -175,6 +193,13 @@
 
   /* sharp corners */
   --radius: 0rem;
+}
+
+/* WR press signature: the button drops into its solid offset shadow. */
+[data-theme="webreactiva"] [data-slot="button"].shadow-wgt:not(:disabled):active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--wgt-shadow-color);
+  scale: none;
 }
 
 [data-theme="webreactiva"].dark,

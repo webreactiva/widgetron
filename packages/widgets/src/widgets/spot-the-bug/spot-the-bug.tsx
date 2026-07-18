@@ -115,7 +115,7 @@ export function SpotTheBug({
                     isCorrect &&
                       "border-l-[var(--success)] bg-[color-mix(in_oklab,var(--success)_18%,transparent)]",
                     isWrong &&
-                      "border-l-[var(--destructive)] bg-[color-mix(in_oklab,var(--destructive)_18%,transparent)]",
+                      "animate-wgt-shake border-l-[var(--destructive)] bg-[color-mix(in_oklab,var(--destructive)_18%,transparent)]",
                   )}
                 >
                   <span
@@ -127,10 +127,10 @@ export function SpotTheBug({
                   <code className="flex-1 whitespace-pre">{line.code}</code>
                   <span aria-hidden className="w-4 shrink-0">
                     {isCorrect && (
-                      <Check className="size-4 text-[var(--success)]" />
+                      <Check className="size-4 animate-wgt-pop text-[var(--success)]" />
                     )}
                     {isWrong && (
-                      <X className="size-4 text-[var(--destructive)]" />
+                      <X className="size-4 animate-wgt-pop text-[var(--destructive)]" />
                     )}
                   </span>
                 </button>

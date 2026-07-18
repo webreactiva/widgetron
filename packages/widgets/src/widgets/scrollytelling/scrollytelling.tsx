@@ -77,7 +77,7 @@ export function Scrollytelling({
               stepRefs.current[i] = el;
             }}
             className={cn(
-              "flex min-h-[70vh] flex-col justify-center border-l-2 pl-5 transition-all duration-300",
+              "flex min-h-[70vh] flex-col justify-center border-l-2 pl-5 transition-[border-color,opacity] duration-(--motion-base)",
               i === active
                 ? "border-primary opacity-100"
                 : "border-transparent opacity-40",

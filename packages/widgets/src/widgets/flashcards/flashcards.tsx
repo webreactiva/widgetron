@@ -143,7 +143,7 @@ export function Flashcards({
         aria-pressed={flipped}
         aria-label={flipped ? l.flipBack : l.flipToReveal}
         onClick={() => setFlipped((f) => !f)}
-        className="group w-full max-w-md [perspective:1200px] outline-none"
+        className="group w-full max-w-md [perspective:1200px] outline-none transition-[translate] duration-(--motion-fast) ease-(--ease-out) hover:-translate-y-0.5"
       >
         <div
           className={cn(

@@ -153,7 +153,13 @@ export function KeywordGate({
         )}
         {...props}
       >
-        <div className="p-4 motion-safe:animate-wgt-fade-up sm:p-6 [&_a]:font-medium [&_a]:text-primary [&_a]:underline">
+        <div
+          className={cn(
+            "p-4 sm:p-6 [&_a]:font-medium [&_a]:text-primary [&_a]:underline",
+            // Earned open gets the spring; a skip is not a celebration.
+            opened === "solve" ? "animate-wgt-unlock" : "animate-wgt-fade-up",
+          )}
+        >
           <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-primary">
             <Gift className="size-4 shrink-0" />
             {l.unlocked}
@@ -200,7 +206,9 @@ export function KeywordGate({
           className={cn(
             "min-h-11 flex-1 rounded-md border bg-background px-4 text-base outline-none transition-colors",
             "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
-            wrong ? "border-destructive" : "border-input focus-visible:border-ring",
+            wrong
+              ? "animate-wgt-shake border-destructive"
+              : "border-input focus-visible:border-ring",
             ghost && "placeholder:italic placeholder:text-muted-foreground/60",
           )}
         />

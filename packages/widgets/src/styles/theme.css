@@ -60,13 +60,18 @@
   --shadow-wgt: var(--wgt-shadow);
   --shadow-wgt-hover: var(--wgt-shadow-hover);
 
-  /* Discreet motion — apply with the `motion-safe:` variant so it respects
-     prefers-reduced-motion. Soft easings that reinforce the message, never
-     distract. */
-  --animate-wgt-fade-in: wgt-fade-in 0.3s ease both;
-  --animate-wgt-fade-up: wgt-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-wgt-scale-in: wgt-scale-in 0.22s ease both;
-  --animate-wgt-pop: wgt-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  /* Discreet motion — durations/easings come from the motion tokens in
+     tokens.css, which collapse to 0ms under prefers-reduced-motion, so the
+     whole system switches off in one place (`motion-safe:` is no longer
+     required, but stays harmless where already used). */
+  --animate-wgt-fade-in: wgt-fade-in var(--motion-base) ease both;
+  --animate-wgt-fade-up: wgt-fade-up var(--motion-slow) var(--ease-out) both;
+  --animate-wgt-scale-in: wgt-scale-in var(--motion-base) ease both;
+  --animate-wgt-pop: wgt-pop var(--motion-base) var(--ease-spring) both;
+  --animate-wgt-shake: wgt-shake calc(var(--motion-base) * 1.2) var(--ease-in-out) both;
+  --animate-wgt-glow: wgt-glow calc(var(--motion-slow) * 1.4) var(--ease-out) both;
+  --animate-wgt-unlock: wgt-unlock var(--motion-slow) var(--ease-spring) both;
+  --animate-wgt-flash: wgt-flash calc(var(--motion-slow) * 1.6) var(--ease-out) both;
 }
 
 @keyframes wgt-fade-in {
@@ -111,6 +116,80 @@
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Universal "no": horizontal shake for a wrong answer. */
+@keyframes wgt-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+/* One-shot success ring that dissipates (never a continuous shadow animation). */
+@keyframes wgt-glow {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--success) 45%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+
+/* Payoff flash: a progress bar hitting 100% brightens once, so the last tick
+   feels different from the ones before it. */
+@keyframes wgt-flash {
+  0% {
+    filter: brightness(1);
+  }
+  30% {
+    filter: brightness(1.35);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+/* Dependency-free confetti particle — driven from lib/confetti.ts when the
+   optional canvas-confetti package isn't installed. --dx/--dy/--rot are set
+   inline per particle. */
+@keyframes wgt-confetti {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+  }
+}
+
+/* Earned reveal: rises, overshoots 2px on the spring, settles. */
+@keyframes wgt-unlock {
+  0% {
+    opacity: 0;
+    transform: translateY(0.6rem) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
   }
 }
 

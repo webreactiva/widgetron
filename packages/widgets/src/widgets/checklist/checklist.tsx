@@ -192,8 +192,12 @@ export function Checklist({
           aria-valuemax={100}
         >
           <div
-            className="h-full rounded-full bg-success transition-[width] duration-300"
-            style={{ width: `${pct}%` }}
+            className={cn(
+              "h-full w-full origin-left rounded-full bg-success transition-transform duration-(--motion-base) ease-(--ease-out)",
+              // Flash only on a reader-triggered completion, never on hydration.
+              allDone && interacted.current && "animate-wgt-flash",
+            )}
+            style={{ transform: `scaleX(${pct / 100})` }}
           />
         </div>
         <span className="text-xs tabular-nums text-muted-foreground">
@@ -205,7 +209,12 @@ export function Checklist({
       {showCompletion && (
         <div
           role="status"
-          className="mt-3 flex items-center gap-2 rounded-md border border-success/30 bg-success/10 px-3 py-2 text-sm font-medium text-success motion-safe:animate-wgt-fade-up"
+          className={cn(
+            "mt-3 flex items-center gap-2 rounded-md border border-success/30 bg-success/10 px-3 py-2 text-sm font-medium text-success",
+            // Pop only when the reader ticks the last item; a hydrated
+            // already-done list appears settled.
+            interacted.current && "animate-wgt-pop",
+          )}
         >
           <Gift className="size-4 shrink-0" aria-hidden />
           <span>

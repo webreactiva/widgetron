@@ -148,9 +148,9 @@ export function PredictOutput({
                   status === "idle" &&
                     "cursor-pointer border-input bg-background hover:border-ring hover:bg-accent",
                   status === "correct" &&
-                    "border-success bg-[color-mix(in_oklab,var(--success)_12%,var(--card))] text-foreground",
+                    "animate-wgt-glow border-success bg-[color-mix(in_oklab,var(--success)_12%,var(--card))] text-foreground",
                   status === "selected-wrong" &&
-                    "border-destructive bg-[color-mix(in_oklab,var(--destructive)_12%,var(--card))] text-foreground",
+                    "animate-wgt-shake border-destructive bg-[color-mix(in_oklab,var(--destructive)_12%,var(--card))] text-foreground",
                   status === "missed" && "border-input opacity-55",
                 )}
               >
@@ -160,9 +160,9 @@ export function PredictOutput({
                     "grid size-5 shrink-0 place-items-center rounded-full border text-current",
                     status === "idle" && "border-muted-foreground/40",
                     status === "correct" &&
-                      "border-success bg-success text-success-foreground",
+                      "animate-wgt-pop border-success bg-success text-success-foreground",
                     status === "selected-wrong" &&
-                      "border-destructive bg-destructive text-destructive-foreground",
+                      "animate-wgt-pop border-destructive bg-destructive text-destructive-foreground",
                     status === "missed" && "border-muted-foreground/30",
                   )}
                 >

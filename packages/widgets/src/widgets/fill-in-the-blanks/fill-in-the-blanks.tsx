@@ -125,9 +125,9 @@ export function FillInTheBlanks({
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                 status === "idle" && "border-input",
                 status === "correct" &&
-                  "border-success bg-[color-mix(in_oklab,var(--success)_12%,var(--card))] text-foreground",
+                  "animate-wgt-glow border-success bg-[color-mix(in_oklab,var(--success)_12%,var(--card))] text-foreground",
                 status === "incorrect" &&
-                  "border-destructive bg-[color-mix(in_oklab,var(--destructive)_12%,var(--card))] text-foreground",
+                  "animate-wgt-shake border-destructive bg-[color-mix(in_oklab,var(--destructive)_12%,var(--card))] text-foreground",
               )}
             >
               <option value="" disabled>

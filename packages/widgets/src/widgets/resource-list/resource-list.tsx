@@ -122,7 +122,7 @@ export function ResourceList({
                 onClick={() =>
                   emit("resource_opened", { kind, href: item.href, index })
                 }
-                className="group flex gap-3 rounded-md border border-transparent p-2 outline-none transition-colors hover:border-border hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring"
+                className="group flex gap-3 rounded-md border border-transparent p-2 outline-none transition-[color,background-color,border-color,translate] duration-(--motion-fast) ease-(--ease-out) hover:-translate-y-0.5 hover:border-border hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground transition-colors group-hover:bg-[color-mix(in_oklab,var(--primary)_12%,var(--muted))] group-hover:text-primary">
                   <Icon icon={KIND_ICON[kind]} className="size-4" aria-hidden />
