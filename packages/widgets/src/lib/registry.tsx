@@ -12,6 +12,7 @@ import { episodePlayerMeta } from "@/widgets/episode-player/episode-player.meta"
 import { interviewTranscriptMeta } from "@/widgets/interview-transcript/interview-transcript.meta";
 import { qaCardMeta } from "@/widgets/qa-card/qa-card.meta";
 import { guestReelMeta } from "@/widgets/guest-reel/guest-reel.meta";
+import { backdropSectionMeta } from "@/widgets/backdrop-section/backdrop-section.meta";
 import { quoteMeta } from "@/widgets/quote/quote.meta";
 import { ctaMeta } from "@/widgets/cta/cta.meta";
 import { promptTemplateMeta } from "@/widgets/prompt-template/prompt-template.meta";
@@ -63,6 +64,7 @@ import { EpisodePlayer } from "@/widgets/episode-player";
 import { InterviewTranscript, type InterviewTurn } from "@/widgets/interview-transcript";
 import { QaCard } from "@/widgets/qa-card";
 import { GuestReel, type GuestReelQuote } from "@/widgets/guest-reel";
+import { BackdropSection, type BackdropStep } from "@/widgets/backdrop-section";
 import { Quote } from "@/widgets/quote";
 import { Cta } from "@/widgets/cta";
 import { ProfileCard } from "@/widgets/profile-card";
@@ -222,6 +224,17 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
       ...p,
       question: asContent(p.question),
       answer: asContent(p.answer),
+    }),
+  },
+  "backdrop-section": {
+    ...backdropSectionMeta,
+    component: BackdropSection,
+    adapt: (p) => ({
+      ...p,
+      steps: (p.steps as BackdropStep[] | undefined)?.map((step) => ({
+        ...step,
+        content: asContent(step.content),
+      })),
     }),
   },
   "guest-reel": {

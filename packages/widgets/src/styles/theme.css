@@ -177,6 +177,33 @@
   }
 }
 
+/* Backdrop drift — the actual parallax in backdrop-section. Scroll-driven CSS
+   only: the section root exposes a view timeline (tracked against its nearest
+   scroll container — the storyline pane when embedded) and the scene drifts a
+   few percent across it. Zero JS, zero main-thread cost; browsers without
+   support, and readers with reduced motion, simply get no drift — the drift
+   carries no meaning, so @supports is the whole fallback story. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-slot="backdrop-section"] {
+      view-timeline: --wgt-backdrop block;
+    }
+    [data-backdrop-drift] {
+      animation: wgt-backdrop-drift linear both;
+      animation-timeline: --wgt-backdrop;
+    }
+  }
+}
+
+@keyframes wgt-backdrop-drift {
+  from {
+    transform: scale(1.08) translateY(2%);
+  }
+  to {
+    transform: scale(1) translateY(-2%);
+  }
+}
+
 /* Playing-state equalizer bars (episode-player active chapter). Runs only
    while audio actually plays — a live-playback indicator, not decoration. */
 @keyframes wgt-eq {

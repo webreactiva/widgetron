@@ -6,6 +6,8 @@ import {
   InterviewTranscript,
   QaCard,
   GuestReel,
+  BackdropSection,
+  Storyline,
   CalloutBox,
   Checklist,
   CodeTranslation,
@@ -258,7 +260,7 @@ export const categories: { title: string; ids: string[] }[] = [
   },
   { title: "Conversion", ids: ["cta"] },
   { title: "Foundations", ids: ["icon"] },
-  { title: "Compositions", ids: ["storyline", "scrollytelling"] },
+  { title: "Compositions", ids: ["storyline", "scrollytelling", "backdrop-section"] },
 ];
 
 // A mini-dispensa authored as JSON — the dispensa reading flow (Storyline)
@@ -1848,6 +1850,95 @@ console.log("C");`}
               { start: 0, end: 4, text: "A spec is the plan you write before any code." },
               { start: 4, end: 9, text: "It captures the intent: what to build, and why." },
               { start: 9, end: 14, text: "Then the spec drives the implementation." },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "backdrop-section",
+    name: "BackdropSection",
+    summary:
+      "A full-pane scene with prose passing over it: the backdrop (an image or a typographic composition of the episode's own words) sticks and fills the reading viewport while short step cards scroll across. Steps advance the scene — swap the image or light up different words. Sticky against the nearest scroll container, so inside a storyline it fills the pane; a token-built scrim keeps the cards legible in both themes. At most one per guide.",
+    demos: [
+      {
+        label: "Words composition (inside a storyline)",
+        node: (
+          <Storyline
+            title="Coding without smoke"
+            description="Scroll into module 1 — the episode's words fill the pane and light up per step."
+            modules={[
+              {
+                title: "The word wall",
+                screens: [
+                  <BackdropSection
+                    key="bd"
+                    backdrop={{
+                      kind: "words",
+                      words: [
+                        { text: "smoke", weight: 5 },
+                        { text: "productivity", weight: 4 },
+                        { text: "metrics", weight: 2 },
+                        { text: "meetings", weight: 2 },
+                        { text: "focus", weight: 3 },
+                        { text: "shipping", weight: 3 },
+                        { text: "backlog", weight: 1 },
+                        { text: "demo", weight: 2 },
+                      ],
+                    }}
+                    steps={[
+                      {
+                        content:
+                          "Half of what we call productivity is **smoke**: motion that photographs well and ships nothing.",
+                        highlight: ["smoke", "productivity"],
+                      },
+                      {
+                        content:
+                          "The tell isn't the metric — it's whether anything reached a user this week.",
+                        highlight: ["shipping", "focus"],
+                      },
+                      {
+                        content:
+                          "You don't beat it with epic. You beat it with *one honest number*.",
+                        highlight: ["metrics"],
+                      },
+                    ]}
+                  />,
+                ],
+              },
+              {
+                title: "Normal modules resume",
+                screens: [
+                  <p key="p" className="text-muted-foreground">
+                    After the last step the backdrop unsticks and the guide
+                    continues as usual.
+                  </p>,
+                ],
+              },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Image scene (standalone)",
+        node: (
+          <BackdropSection
+            backdrop={{
+              kind: "image",
+              src: "https://picsum.photos/id/1015/1600/900",
+              alt: "",
+              focal: "50% 30%",
+            }}
+            steps={[
+              {
+                content:
+                  "Standalone, the scene sticks against the page itself — same pattern, no storyline needed.",
+              },
+              {
+                content:
+                  "Each card is a readable block over a token-built scrim, so it holds in light, dark and branded themes.",
+              },
             ]}
           />
         ),

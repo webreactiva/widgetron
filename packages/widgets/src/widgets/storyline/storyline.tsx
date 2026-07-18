@@ -954,7 +954,9 @@ function StorylineScroll({
   // max-w-5xl. On narrow viewports both caps exceed the screen, so mobile is
   // unaffected — wide displays just get used.
   const screenWidth =
-    "mx-auto w-full max-w-2xl has-[[data-slot=code-translation]]:max-w-5xl has-[[data-slot=mermaid-diagram]]:max-w-5xl has-[[data-slot=data-chart]]:max-w-5xl has-[[data-slot=compare-slider]]:max-w-5xl has-[[data-slot=hotspots]]:max-w-5xl has-[[data-slot=frame-stepper]]:max-w-5xl";
+    // backdrop-section goes full-bleed: uncap the column and cancel the
+    // section's horizontal padding so the scene fills the pane edge to edge.
+    "mx-auto w-full max-w-2xl has-[[data-slot=code-translation]]:max-w-5xl has-[[data-slot=mermaid-diagram]]:max-w-5xl has-[[data-slot=data-chart]]:max-w-5xl has-[[data-slot=compare-slider]]:max-w-5xl has-[[data-slot=hotspots]]:max-w-5xl has-[[data-slot=frame-stepper]]:max-w-5xl has-[[data-slot=backdrop-section]]:w-auto has-[[data-slot=backdrop-section]]:max-w-none has-[[data-slot=backdrop-section]]:-mx-6 sm:has-[[data-slot=backdrop-section]]:-mx-10";
 
   const tree = (
     <div
@@ -965,7 +967,9 @@ function StorylineScroll({
       className={cn(
         // overflow-wrap is inherited — break pathological unbreakable author
         // strings so no generated text can scroll the reading column sideways.
-        "relative h-[600px] overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-wgt outline-none [overflow-wrap:anywhere]",
+        // Size container so full-pane screens (backdrop-section) can size
+        // themselves with cqh units; safe because the height is explicit.
+        "relative h-[600px] overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-wgt outline-none [container-type:size] [overflow-wrap:anywhere]",
         className,
       )}
       {...props}

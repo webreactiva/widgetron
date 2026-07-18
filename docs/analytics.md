@@ -64,6 +64,7 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | widget | interview-transcript | `played` | `{}` — first play per mount |
 | widget | interview-transcript | `turn_selected` | `{ index, start }` — reader clicked a turn to jump there |
 | widget | qa-card | `answer_revealed` | `{ timestamp? }` — the reader opened the answer |
+| widget | backdrop-section | `step_viewed` | `{ index, total }` — active step changed while scrolling the scene (initial step not emitted) |
 | storyline | storyline | `section_viewed` | `{ index, total, title? }` — when the active module changes |
 | storyline | storyline | `scroll_milestone` | `{ percent: 25 \| 50 \| 75 \| 100 }` — monotonic, once per instance |
 | storyline | storyline | `completed` | `{}` — alongside the 100 milestone |

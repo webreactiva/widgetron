@@ -42,6 +42,7 @@ export * from "@/widgets/episode-player";
 export * from "@/widgets/interview-transcript";
 export * from "@/widgets/qa-card";
 export * from "@/widgets/guest-reel";
+export * from "@/widgets/backdrop-section";
 export * from "@/widgets/cta";
 export * from "@/widgets/profile-card";
 export * from "@/widgets/step-cards";
