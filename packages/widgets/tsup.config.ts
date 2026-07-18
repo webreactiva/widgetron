@@ -16,6 +16,7 @@ export default defineConfig({
     "react/jsx-runtime",
     "mermaid",
     "canvas-confetti",
+    "leaflet",
   ],
   async onSuccess() {
     // The styles are plain CSS (no build step) — ship them alongside the JS

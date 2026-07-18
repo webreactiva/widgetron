@@ -32,6 +32,14 @@ import { groupChatMeta } from "@/widgets/group-chat/group-chat.meta";
 import { flowDiagramMeta } from "@/widgets/flow-diagram/flow-diagram.meta";
 import { dataChartMeta } from "@/widgets/data-chart/data-chart.meta";
 import { infographicMeta } from "@/widgets/infographic/infographic.meta";
+import { kineticHeadlineMeta } from "@/widgets/kinetic-headline/kinetic-headline.meta";
+import { drawDiagramMeta } from "@/widgets/draw-diagram/draw-diagram.meta";
+import { scrollStatMeta } from "@/widgets/scroll-stat/scroll-stat.meta";
+import { unmaskStripMeta } from "@/widgets/unmask-strip/unmask-strip.meta";
+import { decodeHeadlineMeta } from "@/widgets/decode-headline/decode-headline.meta";
+import { stickyPanMeta } from "@/widgets/sticky-pan/sticky-pan.meta";
+import { mapMeta } from "@/widgets/map/map.meta";
+import { storyMapMeta } from "@/widgets/story-map/story-map.meta";
 import { mermaidDiagramMeta } from "@/widgets/mermaid-diagram/mermaid-diagram.meta";
 import { compareSliderMeta } from "@/widgets/compare-slider/compare-slider.meta";
 import { hotspotsMeta } from "@/widgets/hotspots/hotspots.meta";
@@ -79,6 +87,14 @@ import { SectionHeader } from "@/widgets/section-header";
 import { Prose } from "@/widgets/prose";
 import { DataChart } from "@/widgets/data-chart";
 import { Infographic } from "@/widgets/infographic";
+import { KineticHeadline } from "@/widgets/kinetic-headline";
+import { DrawDiagram } from "@/widgets/draw-diagram";
+import { ScrollStat } from "@/widgets/scroll-stat";
+import { UnmaskStrip } from "@/widgets/unmask-strip";
+import { DecodeHeadline } from "@/widgets/decode-headline";
+import { StickyPan, type StickyPanPanel } from "@/widgets/sticky-pan";
+import { Map } from "@/widgets/map";
+import { StoryMap, type StoryMapStep } from "@/widgets/story-map";
 import { MermaidDiagram } from "@/widgets/mermaid-diagram";
 import { Scrubber } from "@/widgets/scrubber";
 import { SpotTheBug } from "@/widgets/spot-the-bug";
@@ -318,6 +334,34 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
     ...infographicMeta,
     component: Infographic,
     adapt: adaptIconList("items"),
+  },
+  "kinetic-headline": { ...kineticHeadlineMeta, component: KineticHeadline },
+  "draw-diagram": { ...drawDiagramMeta, component: DrawDiagram },
+  "scroll-stat": { ...scrollStatMeta, component: ScrollStat },
+  "unmask-strip": { ...unmaskStripMeta, component: UnmaskStrip },
+  "decode-headline": { ...decodeHeadlineMeta, component: DecodeHeadline },
+  "sticky-pan": {
+    ...stickyPanMeta,
+    component: StickyPan,
+    adapt: (p) => ({
+      ...p,
+      panels: (p.panels as StickyPanPanel[] | undefined)?.map((panel) => ({
+        ...panel,
+        content: asContent(panel.content),
+      })),
+    }),
+  },
+  map: { ...mapMeta, component: Map },
+  "story-map": {
+    ...storyMapMeta,
+    component: StoryMap,
+    adapt: (p) => ({
+      ...p,
+      steps: (p.steps as StoryMapStep[] | undefined)?.map((step) => ({
+        ...step,
+        content: asContent(step.content),
+      })),
+    }),
   },
   "mermaid-diagram": { ...mermaidDiagramMeta, component: MermaidDiagram },
   scrubber: { ...scrubberMeta, component: Scrubber },

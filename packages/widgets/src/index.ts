@@ -83,6 +83,19 @@ export * from "@/widgets/profile-quiz";
 // Glossary (tooltip terms for the reading flow)
 export * from "@/widgets/glossary";
 
+// Scroll-driven display widgets (pure CSS, zero deps)
+export * from "@/widgets/kinetic-headline";
+export * from "@/widgets/draw-diagram";
+export * from "@/widgets/scroll-stat";
+export * from "@/widgets/unmask-strip";
+export * from "@/widgets/decode-headline";
+export * from "@/widgets/sticky-pan";
+
+// Maps (imperative Leaflet — an optional, lazily-imported dependency; the host
+// app must `import "leaflet/dist/leaflet.css"`).
+export * from "@/widgets/map";
+export * from "@/widgets/story-map";
+
 // Compositions
 export * from "@/widgets/scrollytelling";
 export * from "@/widgets/storyline";

@@ -204,6 +204,69 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   Tier-1 scroll-driven widgets — kinetic-headline, draw-diagram, scroll-stat.
+   Same tech as the backdrop drift above: a view-timeline on the widget root and
+   a scroll-driven animation on its parts. Zero JS, zero deps. The RESTING state
+   is always the *finished* state, so browsers without scroll-driven animations
+   and readers with reduced motion see the final result — only the animation is
+   gated behind @supports + no-preference.
+   -------------------------------------------------------------------------- */
+
+/* kinetic-headline: words rise + fade in, staggered by their --i index. */
+@keyframes wgt-kinetic-word {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* draw-diagram: pathLength=1 normalizes every stroke, so dasharray 1 covers the
+   whole path and the animation walks the offset 1 → 0 to draw it. */
+@keyframes wgt-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+[data-slot="draw-diagram"] path {
+  stroke-dasharray: 1;
+}
+
+/* scroll-stat counts up in JS (IntersectionObserver + rAF, see the component):
+   the pure-CSS @property/counter() trick renders the meter but not the digits
+   reliably, so it lived here and was cut. */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-slot="kinetic-headline"] {
+      view-timeline: --wgt-kinetic block;
+    }
+    [data-slot="kinetic-headline"] .wgt-kinetic-word {
+      animation: wgt-kinetic-word linear both;
+      animation-timeline: --wgt-kinetic;
+      animation-range: cover calc(var(--i, 0) * 6%)
+        cover calc(var(--i, 0) * 6% + 34%);
+    }
+
+    [data-slot="draw-diagram"] svg {
+      view-timeline: --wgt-draw block;
+    }
+    [data-slot="draw-diagram"] path {
+      animation: wgt-draw linear both;
+      animation-timeline: --wgt-draw;
+      animation-range: cover calc(var(--i, 0) * 12%)
+        cover calc(var(--i, 0) * 12% + 55%);
+    }
+  }
+}
+
 /* Playing-state equalizer bars (episode-player active chapter). Runs only
    while audio actually plays — a live-playback indicator, not decoration. */
 @keyframes wgt-eq {
@@ -229,6 +292,77 @@
   100% {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tier-1 (batch 2) scroll-driven widgets — unmask-strip, sticky-pan.
+   Same discipline: resting state = finished (unmask fully revealed) or reachable
+   (sticky-pan is a plain swipeable strip), and the motion is layered on only
+   under @supports + no-preference. decode-headline needs no CSS — its scramble
+   is JS, gated on reduced motion in the component.
+   -------------------------------------------------------------------------- */
+
+/* unmask-strip: a clip-path wipe. Rest = fully revealed; direction picks the keyframe. */
+[data-slot="unmask-strip"] .wgt-unmask-media {
+  clip-path: inset(0);
+}
+@keyframes wgt-wipe-left  { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+@keyframes wgt-wipe-right { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } }
+@keyframes wgt-wipe-up    { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes wgt-wipe-down  { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
+
+/* sticky-pan: base (and reduced-motion) state is a plain swipeable strip so the
+   panels are always reachable; the pin-and-pan layers on only when scroll-driven
+   animations are available. */
+[data-slot="sticky-pan"] .wgt-pan-view {
+  /* ponytail: svh fallback strip height; inside a storyline the enhanced branch
+     below overrides this with 100cqh against the pane. */
+  height: min(70svh, 32rem);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+@keyframes wgt-pan {
+  to {
+    transform: translateX(calc(-100% + 100cqw));
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-slot="unmask-strip"] {
+      view-timeline: --wgt-unmask block;
+    }
+    [data-slot="unmask-strip"] .wgt-unmask-media {
+      animation: linear both;
+      animation-timeline: --wgt-unmask;
+      animation-range: entry 15% cover 55%;
+    }
+    [data-slot="unmask-strip"][data-dir="left"] .wgt-unmask-media { animation-name: wgt-wipe-left; }
+    [data-slot="unmask-strip"][data-dir="right"] .wgt-unmask-media { animation-name: wgt-wipe-right; }
+    [data-slot="unmask-strip"][data-dir="up"] .wgt-unmask-media { animation-name: wgt-wipe-up; }
+    [data-slot="unmask-strip"][data-dir="down"] .wgt-unmask-media { animation-name: wgt-wipe-down; }
+
+    /* A tall section that pins its viewport and pans the track across while
+       pinned (the `contain` range spans exactly the pinned scroll distance). */
+    [data-slot="sticky-pan"] {
+      view-timeline: --wgt-pan block;
+      min-height: calc((var(--wgt-pan-count, 3) + 1) * 78cqh);
+    }
+    [data-slot="sticky-pan"] .wgt-pan-view {
+      position: sticky;
+      top: 0;
+      height: 100cqh;
+      overflow: hidden;
+      scroll-snap-type: none;
+    }
+    [data-slot="sticky-pan"] .wgt-pan-track {
+      width: max-content;
+      animation: wgt-pan linear both;
+      animation-timeline: --wgt-pan;
+      animation-range: contain 0% contain 100%;
+    }
   }
 }
 
