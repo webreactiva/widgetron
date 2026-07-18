@@ -18,9 +18,10 @@ export const VIEWPORTS: Record<
 };
 
 /** The icon collection each theme ships with (part of the theme). */
-const THEME_ICON_SET: Record<"base" | "webreactiva", string> = {
+const THEME_ICON_SET: Record<"base" | "webreactiva" | "podyscroll", string> = {
   base: "lucide",
   webreactiva: "pixelarticons",
+  podyscroll: "pixelarticons",
 };
 
 // Cap the content-sized (desktop/full) frame height. Without a cap, content that
@@ -30,7 +31,7 @@ const MAX_AUTO_HEIGHT = 820;
 
 interface ViewportFrameProps {
   viewport: Viewport;
-  theme: "base" | "webreactiva";
+  theme: "base" | "webreactiva" | "podyscroll";
   dark: boolean;
   lang: Lang;
   children: ReactNode;
@@ -108,7 +109,7 @@ export function ViewportFrame({
   useEffect(() => {
     rootRef.current?.render(
       <div
-        data-theme={theme === "webreactiva" ? "webreactiva" : undefined}
+        data-theme={theme === "base" ? undefined : theme}
         className={`${dark ? "dark " : ""}min-h-64 bg-background p-5 text-foreground`}
       >
         <WidgetronProvider

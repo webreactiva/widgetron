@@ -219,3 +219,90 @@
   --accent-foreground: #f0eef9;
   --border: rgb(255 255 255 / 0.1);
 }
+
+/* ==========================================================================
+   Brand theme — Podyscroll (opt-in: <html data-theme="podyscroll">)
+   "Arcade honesto": papel claro legible, ROJO ARCADE escaso (vida/palabra/win),
+   El Humo (gris) de villano, cantos duros y sombra sólida de cabina, mono-first.
+   Mapeado desde ../../../../design-studio/podyscroll/design.md (fuente de verdad).
+   ========================================================================== */
+[data-theme="podyscroll"] {
+  --background: oklch(97% 0.006 90);   /* papel */
+  --foreground: oklch(22% 0.02 280);   /* tinta CRT */
+  --card: oklch(94% 0.008 90);         /* paper-2 */
+  --card-foreground: oklch(22% 0.02 280);
+  --popover: oklch(97% 0.006 90);
+  --popover-foreground: oklch(22% 0.02 280);
+  --primary: oklch(58% 0.23 25);       /* ROJO ARCADE — vida/palabra/lo que ganas */
+  --primary-foreground: oklch(98% 0.01 25);
+  --secondary: oklch(94% 0.008 90);
+  --secondary-foreground: oklch(22% 0.02 280);
+  --muted: oklch(94% 0.008 90);
+  --muted-foreground: oklch(45% 0.02 280);
+  --accent: oklch(94% 0.008 90);       /* superficie de hover, calmada */
+  --accent-foreground: oklch(22% 0.02 280);
+  --destructive: oklch(58% 0.23 25);   /* rojo alerta (comparte tinta con el peligro arcade) */
+  --destructive-foreground: oklch(98% 0.01 25);
+  --border: oklch(88% 0.008 90);       /* filete */
+  --input: oklch(88% 0.008 90);
+  --ring: oklch(58% 0.23 25);          /* foco rojo */
+
+  --success: oklch(58% 0.15 150);      /* verde "acierto/GO" */
+  --success-foreground: oklch(98% 0.01 150);
+  --warning: oklch(64% 0.012 260);     /* EL HUMO — gris villano */
+  --warning-foreground: oklch(22% 0.02 280);
+  --info: oklch(52% 0.14 240);         /* azul mímeo */
+  --info-foreground: oklch(98% 0.01 240);
+
+  --wgt-callout-aha: oklch(58% 0.23 25);       /* premio = rojo */
+  --wgt-callout-info: oklch(52% 0.14 240);     /* azul */
+  --wgt-callout-warning: oklch(64% 0.012 260); /* humo */
+
+  --brand-1: oklch(58% 0.23 25);
+  --brand-2: oklch(64% 0.012 260);
+  --brand-3: oklch(52% 0.14 240);
+
+  --chart-1: oklch(58% 0.23 25);
+  --chart-2: oklch(52% 0.14 240);
+  --chart-3: oklch(64% 0.012 260);
+  --chart-4: oklch(58% 0.15 150);
+  --chart-5: oklch(45% 0.02 280);
+
+  /* Código en superficie cabina */
+  --wgt-code-bg: oklch(22% 0.02 280);
+  --wgt-code-fg: oklch(88% 0.01 90);
+
+  /* Voz mono-first: JetBrains Mono para display, Inter para cuerpo */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Sombra sólida sin blur — firma de cabina */
+  --wgt-shadow-color: oklch(88% 0.008 90);
+  --wgt-shadow: 0 3px 0 var(--wgt-shadow-color);
+  --wgt-shadow-hover: 0 5px 0 var(--wgt-shadow-color);
+
+  /* Cantos duros = pixel/cabina */
+  --radius: 2px;
+}
+
+/* Variante cabina (superficie de partida): fondo oscuro, rojo intacto. */
+[data-theme="podyscroll"].dark,
+[data-theme="podyscroll"] .dark {
+  --background: oklch(22% 0.02 280);
+  --foreground: oklch(97% 0.006 90);
+  --card: oklch(26% 0.02 280);
+  --card-foreground: oklch(97% 0.006 90);
+  --popover: oklch(26% 0.02 280);
+  --popover-foreground: oklch(97% 0.006 90);
+  --secondary: oklch(30% 0.02 280);
+  --secondary-foreground: oklch(97% 0.006 90);
+  --muted: oklch(30% 0.02 280);
+  --muted-foreground: oklch(74% 0.02 280);
+  --accent: oklch(30% 0.02 280);
+  --accent-foreground: oklch(97% 0.006 90);
+  --border: oklch(100% 0 0 / 0.12);
+  --input: oklch(100% 0 0 / 0.16);
+  --warning-foreground: oklch(97% 0.006 90);
+  --wgt-shadow-color: oklch(100% 0 0 / 0.1);
+}

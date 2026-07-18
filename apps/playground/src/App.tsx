@@ -8,7 +8,7 @@ import {
   type Viewport,
 } from "./components/ViewportFrame";
 
-type Theme = "base" | "webreactiva";
+type Theme = "base" | "webreactiva" | "podyscroll";
 
 const VIEWPORT_ORDER: Viewport[] = ["mobile", "tablet", "desktop", "full"];
 
@@ -17,9 +17,9 @@ const byId = Object.fromEntries(catalog.map((entry) => [entry.id, entry]));
 export function App() {
   const [activeId, setActiveId] = useState(catalog[0]?.id ?? "");
   const [viewport, setViewport] = useState<Viewport>("desktop");
-  const [theme, setTheme] = useState<Theme>("base");
+  const [theme, setTheme] = useState<Theme>("podyscroll");
   const [dark, setDark] = useState(false);
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLang] = useState<Lang>("es");
 
   const active = byId[activeId] ?? catalog[0];
 
@@ -48,6 +48,7 @@ export function App() {
           options={[
             { value: "base", label: "Base" },
             { value: "webreactiva", label: "Web Reactiva" },
+            { value: "podyscroll", label: "Podyscroll" },
           ]}
           onChange={(v) => setTheme(v as Theme)}
         />

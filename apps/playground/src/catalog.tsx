@@ -188,6 +188,7 @@ export interface CatalogEntry {
 
 /** Sidebar grouping (order matters). */
 export const categories: { title: string; ids: string[] }[] = [
+  { title: "Podyscroll", ids: ["podyscroll-juego"] },
   {
     title: "Text & layout",
     ids: [
@@ -476,7 +477,193 @@ function ProfileQuizDemo() {
   );
 }
 
+// Podyscroll — "el juego": a Web Reactiva episode turned into the post-listen
+// game from ../../../../design-studio/podyscroll/idea.md, built ON the real
+// widgets. One JSON tree (what the engine would generate from a transcript):
+// recuperation-practice quizzes cost Vidas, El Humo is the jefe final, and a
+// keyword-gate makes the listener type THE word from memory (the recall metric)
+// before the finale. Rendered with renderWidget(); look from [data-theme="podyscroll"].
+const podyscrollGame: WidgetNode = {
+  type: "storyline",
+  version: 1,
+  props: {
+    title: "Programar sin humo",
+    description:
+      "Web Reactiva · el juego post-escucha. Tres vidas. La palabra, al final.",
+    minutes: 4,
+    challenge: "Tu contrahumo",
+    lives: { total: 3, label: "Vidas" },
+    glossary: {
+      "abstracción prematura":
+        "Generalizar el código antes de tener dos casos reales que lo pidan. El humo más caro de una base de código.",
+      contrahumo:
+        "Enviar lo honesto y medible en vez de lo que impresiona en la demo. El antídoto que bautiza el episodio.",
+    },
+    modules: [
+      {
+        title: "El episodio",
+        subtitle: "Acabas de escucharlo.",
+        emoji: "🎧",
+        outro: "Ya sabes cómo se juega. Primer asalto.",
+        screens: [
+          {
+            type: "section-header",
+            props: {
+              eyebrow: "Post-escucha",
+              title: "No es un test. Es una partida.",
+            },
+          },
+          {
+            type: "prose",
+            props: {
+              children:
+                "Cada acierto te consolida el episodio. Cada fallo te cuesta una vida — y te devuelve la voz del host, porque el fallo enseña.",
+            },
+          },
+          {
+            type: "callout-box",
+            props: {
+              variant: "info",
+              children:
+                "Tres vidas. Al llegar a cero, el jefe final se queda con tu premio hasta que recuperes una.",
+            },
+          },
+        ],
+      },
+      {
+        title: "La trampa del humo",
+        subtitle: "Dónde se cuela.",
+        emoji: "🌫️",
+        outro: "Una menos para el Humo. Sigue.",
+        screens: [
+          {
+            type: "glossary-text",
+            props: {
+              text: "El humo favorito de una base de código es la [[abstracción prematura]]: una factory para un solo producto, una interfaz con una única implementación, un config para un valor que nunca cambia.",
+            },
+          },
+          {
+            type: "quiz",
+            props: {
+              question: "¿Cuándo merece la pena extraer una abstracción?",
+              options: [
+                { text: "Antes del primer caso, por si acaso", feedback: "Eso es humo: flexibilidad que nadie pidió." },
+                { text: "Cuando aparece el segundo caso real que la pide", correct: true, feedback: "Eso. Dos casos, no cero." },
+                { text: "Nunca, la repetición siempre es sana", feedback: "Tampoco: la repetición real sí se abstrae." },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        title: "Contrahumo",
+        subtitle: "El antídoto del episodio.",
+        emoji: "🧯",
+        outro: "Tienes el arma. Falta el jefe.",
+        screens: [
+          {
+            type: "callout-box",
+            props: {
+              variant: "aha",
+              children:
+                "Contrahumo: enviar lo honesto y medible aunque luzca menos en la demo. Se mide el recuerdo; no se promete.",
+            },
+          },
+          {
+            type: "quiz",
+            props: {
+              question: "Viernes, toca decidir qué enviar. ¿Qué es contrahumo?",
+              options: [
+                { text: "La demo que impresiona en la reunión", feedback: "Eso alimenta al Humo." },
+                { text: "Lo pequeño que funciona y puedes medir", correct: true, feedback: "Contrahumo puro." },
+                { text: "Nada, hasta que esté perfecto", feedback: "Parálisis, no antídoto." },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        title: "El jefe final · El Humo",
+        subtitle: "El hype, hecho villano.",
+        emoji: "👾",
+        outro: "Le has visto la cara. Queda la palabra.",
+        screens: [
+          {
+            type: "callout-box",
+            props: {
+              variant: "warning",
+              children:
+                "El Humo promete impacto y no deja huella recuperable. Es el jefe final recurrente de la casa. No se le vence con épica: se le vence con un número.",
+            },
+          },
+          {
+            type: "quiz",
+            props: {
+              question: "El Humo te ofrece un «10× más rápido» sin datos. ¿Qué haces?",
+              options: [
+                { text: "Lo pones en la landing", feedback: "Le acabas de dar de comer." },
+                { text: "Lo mides y publicas el número real, sea cual sea", correct: true, feedback: "Así se apaga el Humo." },
+                { text: "Lo repites más fuerte", feedback: "Más humo no es menos humo." },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        title: "La palabra",
+        subtitle: "Lo único que sobrevive al minuto uno.",
+        emoji: "🔑",
+        screens: [
+          {
+            type: "keyword-gate",
+            props: {
+              prompt: "El episodio dejó una palabra. Tecléala de memoria.",
+              answer: ["contrahumo", "contra humo"],
+              hint: "Empieza por «contra». Es justo lo que le haces al jefe final.",
+              hintAfterSeconds: 6,
+              skipLabel: "No lo he escuchado",
+              invite:
+                "¿Llegas en frío? Escucha el episodio y vuelve — la palabra te esperará.",
+              reward: {
+                type: "callout-box",
+                props: {
+                  variant: "aha",
+                  children:
+                    "La tecleaste de memoria. Eso es el episodio consolidado — no escuchado, recordado. Nos vemos en el próximo.",
+                },
+              },
+            },
+          },
+        ],
+      },
+    ],
+    outro: {
+      type: "cta",
+      props: {
+        variant: "link",
+        title: "¿Cuál es tu humo?",
+        description:
+          "Respóndelo y lo leo en el aire en el próximo episodio. El juego es epílogo de este y prólogo del siguiente.",
+        buttonLabel: "Dejar mi respuesta",
+        url: "https://webreactiva.com",
+      },
+    },
+  },
+};
+
 export const catalog: CatalogEntry[] = [
+  {
+    id: "podyscroll-juego",
+    name: "Podyscroll · el juego",
+    summary:
+      "La idea.md de Podyscroll montada sobre los widgets reales: un episodio de Web Reactiva convertido en juego post-escucha. Vidas que se gastan al fallar, El Humo de jefe final, y un keyword-gate que te hace teclear LA palabra de memoria (la métrica de recuerdo) antes del premio. Todo es un árbol JSON renderizado con renderWidget(); el look sale del tema [data-theme=\"podyscroll\"]. Mejor en Mobile/Tablet (scroll de dispositivo real).",
+    demos: [
+      {
+        label: "El juego post-escucha (JSON) — vidas · jefe final · la palabra",
+        node: renderWidget(podyscrollGame),
+      },
+    ],
+  },
   {
     id: "section-header",
     name: "SectionHeader",
