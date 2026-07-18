@@ -7,9 +7,9 @@ export const infographicMeta: WidgetMeta = {
   version: 1,
   category: "Diagrams & data",
   summary:
-    "Visual-metaphor templates (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs, milestones, chevrons, roadmap, pillars) rendered as dependency-free SVG.",
+    "Visual-metaphor templates (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs, milestones, chevrons, roadmap, pillars, honeycomb, gears, tree, fishbone, donut, versus, bridge, spectrum) rendered as dependency-free SVG.",
   whenToUse:
-    "Reach for this to turn a conceptual relationship into a memorable picture — pick the `layout` whose metaphor matches the idea: 'funnel' for narrowing stages, 'pyramid' for a layered hierarchy, 'cycle' for a repeating loop, 'venn' for overlap, 'iceberg' for visible-vs-hidden, 'balance' for a trade-off, 'target' for nested goals, 'hub' for a center-and-spokes, 'matrix' for a 2x2, 'stairs' for cumulative progress, 'milestones' for stages along a horizontal arrow (alternating icon medallions), 'chevrons' for a compact left-to-right process ribbon, 'roadmap' for a winding journey with stops, 'pillars' for the N pillars holding up one idea. The napkin-style layouts (stairs, milestones, chevrons, roadmap, pillars) render each item's `icon` in the graphic — give every item one; the rest show icons in the legend. Keep `items[].label` to 1–3 words and put longer text in `description` (it becomes a numbered legend). Prefer DataChart instead when you have actual numbers to compare, and FlowDiagram or MermaidDiagram when the point is a step-by-step process rather than a static metaphor.",
+    "Reach for this to turn a conceptual relationship into a memorable picture — pick the `layout` whose metaphor matches the idea: 'funnel' for narrowing stages, 'pyramid' for a layered hierarchy, 'cycle' for a repeating loop, 'venn' for overlap, 'iceberg' for visible-vs-hidden, 'balance' for a trade-off, 'target' for nested goals, 'hub' for a center-and-spokes, 'matrix' for a 2x2, 'stairs' for cumulative progress, 'milestones' for stages along a horizontal arrow (alternating icon medallions), 'chevrons' for a compact left-to-right process ribbon, 'roadmap' for a winding journey with stops, 'pillars' for the N pillars holding up one idea, 'honeycomb' for a cluster of peer concepts, 'gears' for interlocking/interdependent parts, 'tree' for a one-root → N-children hierarchy (set `center` to the root), 'fishbone' for causes feeding one effect (set `center` to the effect), 'donut' for parts of a whole (set `center` to the total/label), 'versus' for a head-to-head A-vs-B comparison (uses the first two items; `center` overrides the 'VS' badge), 'bridge' for crossing a gap in N steps (set `zones` to [start, goal] captions), 'spectrum' for points along a continuum. The napkin-style layouts (stairs, milestones, chevrons, roadmap, pillars, honeycomb, gears, tree, versus, bridge) render each item's `icon` in the graphic — give every item one; the rest show icons in the legend. Keep `items[].label` to 1–3 words and put longer text in `description` (it becomes a numbered legend). Prefer DataChart instead when you have actual numbers to compare, and FlowDiagram or MermaidDiagram when the point is a step-by-step process rather than a static metaphor.",
   schema: z.object({
     layout: z
       .enum([
@@ -27,6 +27,14 @@ export const infographicMeta: WidgetMeta = {
         "chevrons",
         "roadmap",
         "pillars",
+        "honeycomb",
+        "gears",
+        "tree",
+        "fishbone",
+        "donut",
+        "versus",
+        "bridge",
+        "spectrum",
       ])
       .describe("The visual-metaphor template to render."),
     items: z
@@ -51,11 +59,15 @@ export const infographicMeta: WidgetMeta = {
     center: z
       .string()
       .optional()
-      .describe("Center label for 'cycle', 'venn', and 'hub' layouts."),
+      .describe(
+        "Center/anchor label: the hub of 'cycle'/'venn'/'hub'/'donut', the root of 'tree', the effect of 'fishbone', or the badge text of 'versus' (defaults to 'VS').",
+      ),
     zones: z
       .tuple([z.string(), z.string()])
       .optional()
-      .describe("Zone captions for 'iceberg' as [visible, hidden]."),
+      .describe(
+        "Two captions: for 'iceberg' as [visible, hidden]; for 'bridge' as [start, goal].",
+      ),
     tilt: z
       .enum(["left", "right", "equal"])
       .optional()

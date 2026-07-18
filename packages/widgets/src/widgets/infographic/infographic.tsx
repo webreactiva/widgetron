@@ -33,7 +33,15 @@ export type InfographicLayout =
   | "milestones"
   | "chevrons"
   | "roadmap"
-  | "pillars";
+  | "pillars"
+  | "honeycomb"
+  | "gears"
+  | "tree"
+  | "fishbone"
+  | "donut"
+  | "versus"
+  | "bridge"
+  | "spectrum";
 
 export interface InfographicProps extends React.HTMLAttributes<HTMLDivElement> {
   layout: InfographicLayout;
@@ -63,6 +71,62 @@ function chipColor(i: number): string {
 
 const rad = (deg: number): number => (deg * Math.PI) / 180;
 const r1 = (n: number): number => Math.round(n * 10) / 10;
+
+/** Path for an annular sector (donut slice) between two angles (degrees). */
+function annularSector(
+  cx: number,
+  cy: number,
+  outer: number,
+  inner: number,
+  a0: number,
+  a1: number,
+): string {
+  const pt = (deg: number, radius: number): [number, number] => [
+    cx + radius * Math.cos(rad(deg)),
+    cy + radius * Math.sin(rad(deg)),
+  ];
+  const large = a1 - a0 > 180 ? 1 : 0;
+  const [x0, y0] = pt(a0, outer);
+  const [x1, y1] = pt(a1, outer);
+  const [x2, y2] = pt(a1, inner);
+  const [x3, y3] = pt(a0, inner);
+  return (
+    `M${r1(x0)},${r1(y0)} A${outer},${outer} 0 ${large} 1 ${r1(x1)},${r1(y1)} ` +
+    `L${r1(x2)},${r1(y2)} A${inner},${inner} 0 ${large} 0 ${r1(x3)},${r1(y3)} Z`
+  );
+}
+
+/** Icon (or nothing) centered in a box via foreignObject — for filled shapes. */
+function IconGlyph({
+  x,
+  y,
+  size,
+  color,
+  icon,
+}: {
+  x: number;
+  y: number;
+  size: number;
+  color: string;
+  icon: React.ReactNode;
+}): React.ReactElement | null {
+  if (icon == null) return null;
+  return (
+    <foreignObject
+      x={r1(x - size / 2)}
+      y={r1(y - size / 2)}
+      width={size}
+      height={size}
+    >
+      <span
+        className="flex h-full w-full items-center justify-center"
+        style={{ fontSize: size * 0.82, color }}
+      >
+        {icon}
+      </span>
+    </foreignObject>
+  );
+}
 
 interface TextOpts {
   fill?: string;
@@ -1076,6 +1140,484 @@ function pillars(items: InfographicItem[]): Rendered {
   };
 }
 
+function honeycomb(items: InfographicItem[]): Rendered {
+  const n = items.length;
+  const cols = n <= 6 ? Math.min(3, n) : 4;
+  const s = 58; // hex radius (center → vertex)
+  const w = Math.sqrt(3) * s; // flat-to-flat width
+  const vstep = 1.5 * s;
+  const rows = Math.ceil(n / cols);
+  const oddOffset = rows > 1 ? w / 2 : 0;
+  const x0 = (W - (Math.min(n, cols) - 1) * w) / 2 - oddOffset / 2;
+  const y0 = s + 18;
+
+  const hexPoints = (cx: number, cy: number): string =>
+    Array.from({ length: 6 }, (_, k) => {
+      const a = rad(-90 + 60 * k);
+      return `${r1(cx + s * Math.cos(a))},${r1(cy + s * Math.sin(a))}`;
+    }).join(" ");
+
+  const cells = items.map((it, i) => {
+    const col = i % cols;
+    const rowIdx = Math.floor(i / cols);
+    const cx = x0 + col * w + (rowIdx % 2 ? w / 2 : 0);
+    const cy = y0 + rowIdx * vstep;
+    return (
+      <g key={`hc${i}`}>
+        <polygon points={hexPoints(cx, cy)} fill={chipColor(i)} />
+        <IconGlyph x={cx} y={cy - 15} size={30} color="var(--card)" icon={it.icon} />
+        <Txt x={cx} y={cy + (it.icon != null ? 22 : 5)} fill="var(--card)" size={13}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  return { body: cells, H: y0 + (rows - 1) * vstep + s + 22 };
+}
+
+function gears(items: InfographicItem[]): Rendered {
+  const n = items.length;
+  const R = 54;
+  const teeth = 10;
+  const th = 14; // tooth height
+  const tw = 15; // tooth width
+  const spacing = 2 * R * 0.92;
+  const totalW = (n - 1) * spacing + 2 * R;
+  const x0 = (W - totalW) / 2 + R;
+  const cy = R + th + 20;
+  const teethAngle = 360 / teeth;
+
+  const nodes = items.map((it, i) => {
+    const cx = x0 + i * spacing;
+    const phase = i % 2 ? teethAngle / 2 : 0;
+    const cog = Array.from({ length: teeth }, (_, t) => (
+      <rect
+        key={t}
+        x={r1(cx - tw / 2)}
+        y={r1(cy - R - th / 2)}
+        width={tw}
+        height={th}
+        rx={2}
+        fill={chipColor(i)}
+        transform={`rotate(${r1(phase + t * teethAngle)} ${r1(cx)} ${r1(cy)})`}
+      />
+    ));
+    return (
+      <g key={`gr${i}`}>
+        {cog}
+        <circle cx={r1(cx)} cy={cy} r={R - th / 2 + 2} fill={chipColor(i)} />
+        <circle cx={r1(cx)} cy={cy} r={R * 0.42} fill="var(--card)" />
+        {it.icon != null ? (
+          <IconGlyph x={cx} y={cy} size={34} color={chipColor(i)} icon={it.icon} />
+        ) : (
+          <Txt x={cx} y={cy + 6} fill={chipColor(i)} size={18}>
+            {i + 1}
+          </Txt>
+        )}
+        <Txt x={cx} y={cy + R + 34} size={13}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  return { body: nodes, H: cy + R + 52 };
+}
+
+function tree(items: InfographicItem[], center = ""): Rendered {
+  const n = items.length;
+  const topY = 28;
+  const rootW = 176;
+  const rootH = 52;
+  const busY = 116;
+  const childTop = 150;
+  const childH = 58;
+  const gap = 16;
+  const cw = Math.min(150, (560 - gap * (n - 1)) / n);
+  const usable = n * cw + (n - 1) * gap;
+  const startX = (W - usable) / 2;
+  const centers = items.map((_, i) => startX + i * (cw + gap) + cw / 2);
+
+  const connectors = (
+    <g stroke={GRID} strokeWidth={2} fill="none">
+      <line x1={W / 2} y1={topY + rootH} x2={W / 2} y2={busY} />
+      {n > 1 && (
+        <line x1={centers[0]} y1={busY} x2={centers[n - 1]} y2={busY} />
+      )}
+      {centers.map((cx, i) => (
+        <line key={i} x1={r1(cx)} y1={busY} x2={r1(cx)} y2={childTop} />
+      ))}
+    </g>
+  );
+  const root = (
+    <g>
+      <rect
+        x={W / 2 - rootW / 2}
+        y={topY}
+        width={rootW}
+        height={rootH}
+        rx={8}
+        fill={FG}
+      />
+      <Txt x={W / 2} y={topY + rootH / 2 + 5} fill="var(--card)" size={15}>
+        {center}
+      </Txt>
+    </g>
+  );
+  const children = items.map((it, i) => {
+    const cx = centers[i];
+    return (
+      <g key={`tr${i}`}>
+        <rect
+          x={r1(cx - cw / 2)}
+          y={childTop}
+          width={r1(cw)}
+          height={childH}
+          rx={8}
+          fill={chipColor(i)}
+          fillOpacity={0.16}
+          stroke={chipColor(i)}
+          strokeWidth={2}
+        />
+        {it.icon != null && (
+          <IconBadge x={cx} y={childTop} i={i} icon={it.icon} r={15} />
+        )}
+        <Txt x={cx} y={childTop + childH / 2 + 6} size={13}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  return {
+    body: (
+      <>
+        {connectors}
+        {root}
+        {children}
+      </>
+    ),
+    H: childTop + childH + 30,
+  };
+}
+
+function fishbone(items: InfographicItem[], effect = ""): Rendered {
+  const n = items.length;
+  const spineY = 175;
+  const headX = 496; // arrow tip
+  const startX = 44;
+  const boxW = 120;
+  const boxH = 60;
+  const effectX = 504;
+
+  const defs = (
+    <defs>
+      <marker
+        id="ig-fish-arrow"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0,0 L10,5 L0,10 z" fill={MUTED} />
+      </marker>
+    </defs>
+  );
+  const spine = (
+    <line
+      x1={startX}
+      y1={spineY}
+      x2={headX}
+      y2={spineY}
+      stroke={MUTED}
+      strokeWidth={2.5}
+      markerEnd="url(#ig-fish-arrow)"
+    />
+  );
+  const head = (
+    <g>
+      <rect
+        x={effectX}
+        y={spineY - boxH / 2}
+        width={boxW}
+        height={boxH}
+        rx={8}
+        fill={FG}
+      />
+      <Txt x={effectX + boxW / 2} y={spineY + 5} fill="var(--card)" size={14}>
+        {effect}
+      </Txt>
+    </g>
+  );
+
+  const ribs = items.map((it, i) => {
+    const step = (456 - 110) / n;
+    const bx = 110 + step * (i + 0.5);
+    const up = i % 2 === 0;
+    const ex = bx - 46;
+    const ey = spineY + (up ? -80 : 80);
+    return (
+      <g key={`fb${i}`}>
+        <line
+          x1={r1(bx)}
+          y1={spineY}
+          x2={r1(ex)}
+          y2={r1(ey)}
+          stroke={chipColor(i)}
+          strokeWidth={2.5}
+        />
+        <Chip x={ex - 8} y={ey - 8} i={i} size={16} />
+        <Txt x={r1(ex)} y={r1(up ? ey - 14 : ey + 22)} size={12}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  return {
+    body: (
+      <>
+        {defs}
+        {spine}
+        {ribs}
+        {head}
+      </>
+    ),
+    H: 300,
+  };
+}
+
+function donut(items: InfographicItem[], center = ""): Rendered {
+  const n = items.length;
+  const cx = 320;
+  const cy = 190;
+  const R = 150;
+  const r = 86;
+  const pad = n > 1 ? 1.5 : 0; // angular gap between slices
+
+  const slices = items.map((it, i) => {
+    const a0 = -90 + (360 * i) / n + pad;
+    const a1 = -90 + (360 * (i + 1)) / n - pad;
+    const mid = (a0 + a1) / 2;
+    const cos = Math.cos(rad(mid));
+    const anchor = cos > 0.2 ? "start" : cos < -0.2 ? "end" : "middle";
+    const lx = cx + (R + 4) * cos;
+    const ly = cy + (R + 4) * Math.sin(rad(mid));
+    const tx = cx + (R + 22) * cos;
+    const ty = cy + (R + 22) * Math.sin(rad(mid));
+    return (
+      <g key={`dn${i}`}>
+        <path d={annularSector(cx, cy, R, r, a0, a1)} fill={chipColor(i)} />
+        <line x1={r1(lx)} y1={r1(ly)} x2={r1(tx)} y2={r1(ty)} stroke={GRID} strokeWidth={2} />
+        <Txt
+          x={r1(tx + (anchor === "start" ? 4 : anchor === "end" ? -4 : 0))}
+          y={r1(ty + 4)}
+          anchor={anchor}
+          size={12}
+        >
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+
+  const centerLabel = center ? (
+    <Txt x={cx} y={cy + 5} size={15}>
+      {center}
+    </Txt>
+  ) : null;
+
+  return {
+    body: (
+      <>
+        {slices}
+        {centerLabel}
+      </>
+    ),
+    H: 388,
+  };
+}
+
+function versus(items: InfographicItem[], center = "VS"): Rendered {
+  const cardY = 30;
+  const cardH = 200;
+  const cardW = 260;
+  const two = items.slice(0, 2);
+  const cards = two.map((it, i) => {
+    const x = i === 0 ? 40 : 340;
+    return (
+      <g key={`vs${i}`}>
+        <rect
+          x={x}
+          y={cardY}
+          width={cardW}
+          height={cardH}
+          rx={12}
+          fill={chipColor(i)}
+          fillOpacity={0.14}
+          stroke={chipColor(i)}
+          strokeWidth={2}
+        />
+        <rect x={x} y={cardY} width={cardW} height={46} rx={12} fill={chipColor(i)} />
+        <rect x={x} y={cardY + 24} width={cardW} height={22} fill={chipColor(i)} />
+        <Txt x={x + cardW / 2} y={cardY + 30} fill="var(--card)" size={15}>
+          {it.label}
+        </Txt>
+        {it.icon != null && (
+          <IconGlyph
+            x={x + cardW / 2}
+            y={cardY + 130}
+            size={64}
+            color={chipColor(i)}
+            icon={it.icon}
+          />
+        )}
+      </g>
+    );
+  });
+  const badge = (
+    <g>
+      <circle cx={W / 2} cy={cardY + cardH / 2} r={30} fill={FG} />
+      <Txt x={W / 2} y={cardY + cardH / 2 + 6} fill="var(--card)" size={16}>
+        {center || "VS"}
+      </Txt>
+    </g>
+  );
+  return {
+    body: (
+      <>
+        {cards}
+        {badge}
+      </>
+    ),
+    H: 260,
+  };
+}
+
+function bridge(items: InfographicItem[], zones?: [string, string]): Rendered {
+  const n = items.length;
+  const H = 300;
+  const baseY = 236;
+  const bankW = 150;
+  const gapL = bankW;
+  const gapR = W - bankW;
+  const span = gapR - gapL;
+  const peakY = 96;
+  const archY = (t: number): number =>
+    baseY - Math.sin(Math.PI * t) * (baseY - peakY);
+
+  const banks = (
+    <g fill={GRID}>
+      <rect x={0} y={baseY} width={bankW} height={H - baseY} />
+      <rect x={gapR} y={baseY} width={bankW} height={H - baseY} />
+    </g>
+  );
+  const deckPts = Array.from({ length: 41 }, (_, k) => {
+    const t = k / 40;
+    return [gapL + span * t, archY(t)] as const;
+  });
+  const deckD = "M " + deckPts.map(([x, y]) => `${r1(x)} ${r1(y)}`).join(" L ");
+  const deck = (
+    <>
+      <path d={deckD} fill="none" stroke={MUTED} strokeWidth={11} strokeLinecap="round" />
+      <path
+        d={deckD}
+        fill="none"
+        stroke="var(--card)"
+        strokeWidth={2}
+        strokeDasharray="2 10"
+        strokeLinecap="round"
+      />
+    </>
+  );
+  const stones = items.map((it, i) => {
+    const t = (i + 0.5) / n;
+    const x = gapL + span * t;
+    const y = archY(t) - 2;
+    const up = i % 2 === 0;
+    return (
+      <g key={`br${i}`}>
+        <IconBadge x={x} y={y} i={i} icon={it.icon} r={22} />
+        <Txt x={r1(x)} y={r1(up ? y - 34 : y + 44)} size={12}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+  const captions = zones ? (
+    <>
+      <Txt x={bankW / 2} y={baseY + 32} fill={MUTED} size={12} spacing="0.08em">
+        {zones[0].toUpperCase()}
+      </Txt>
+      <Txt x={gapR + bankW / 2} y={baseY + 32} fill={MUTED} size={12} spacing="0.08em">
+        {zones[1].toUpperCase()}
+      </Txt>
+    </>
+  ) : null;
+
+  return {
+    body: (
+      <>
+        {banks}
+        {deck}
+        {stones}
+        {captions}
+      </>
+    ),
+    H,
+  };
+}
+
+function spectrum(items: InfographicItem[]): Rendered {
+  const n = items.length;
+  const midY = 110;
+  const x0 = 64;
+  const x1 = 576;
+  const track = (
+    <line
+      x1={x0}
+      y1={midY}
+      x2={x1}
+      y2={midY}
+      stroke={GRID}
+      strokeWidth={8}
+      strokeLinecap="round"
+    />
+  );
+  const stops = items.map((it, i) => {
+    const x = n > 1 ? x0 + ((x1 - x0) * i) / (n - 1) : (x0 + x1) / 2;
+    const up = i % 2 === 0;
+    return (
+      <g key={`sp${i}`}>
+        <line
+          x1={r1(x)}
+          y1={midY}
+          x2={r1(x)}
+          y2={up ? midY - 22 : midY + 22}
+          stroke={chipColor(i)}
+          strokeWidth={2}
+        />
+        <circle cx={r1(x)} cy={midY} r={9} fill={chipColor(i)} />
+        <Txt x={r1(x)} y={up ? midY - 30 : midY + 42} size={12}>
+          {it.label}
+        </Txt>
+      </g>
+    );
+  });
+  return {
+    body: (
+      <>
+        {track}
+        {stops}
+      </>
+    ),
+    H: 220,
+  };
+}
+
 function render(
   layout: InfographicLayout,
   items: InfographicItem[],
@@ -1113,6 +1655,22 @@ function render(
       return roadmap(items);
     case "pillars":
       return pillars(items);
+    case "honeycomb":
+      return honeycomb(items);
+    case "gears":
+      return gears(items);
+    case "tree":
+      return tree(items, props.center);
+    case "fishbone":
+      return fishbone(items, props.center);
+    case "donut":
+      return donut(items, props.center);
+    case "versus":
+      return versus(items, props.center);
+    case "bridge":
+      return bridge(items, props.zones);
+    case "spectrum":
+      return spectrum(items);
     default:
       return funnel(items);
   }
@@ -1120,11 +1678,12 @@ function render(
 
 /**
  * Infographic — visual-metaphor templates (Napkin.ai methodology) rendered as
- * inline SVG with zero dependencies. Picks one of ten parameterized layouts
- * (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix,
- * stairs). Brand-agnostic: shape fills come from the `--chart-*` theme tokens
- * and text/strokes from the semantic tokens, so it themes automatically
- * (neutral base, brand palette under Web Reactiva).
+ * inline SVG with zero dependencies. Picks one of many parameterized layouts
+ * (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs,
+ * milestones, chevrons, roadmap, pillars, honeycomb, gears, tree, fishbone,
+ * donut, versus, bridge, spectrum). Brand-agnostic: shape fills come from the
+ * `--chart-*` theme tokens and text/strokes from the semantic tokens, so it
+ * themes automatically (neutral base, brand palette under Web Reactiva).
  *
  * Labels inside the SVG stay 1–3 words; longer explanations live in a numbered
  * HTML legend below the graphic, with a color chip matching each shape.
@@ -1142,8 +1701,10 @@ export function Infographic({
 }: InfographicProps) {
   const l = useLabels("infographic", DEFAULT_INFOGRAPHIC_LABELS, labels);
   const { body, H } = render(layout, items, {
+    // Only iceberg falls back to the (localizable) default zone captions; other
+    // zone-aware layouts (bridge) stay caption-free unless the author sets them.
     center,
-    zones: zones ?? l.icebergZones,
+    zones: layout === "iceberg" ? (zones ?? l.icebergZones) : zones,
     tilt,
     axes,
   });
