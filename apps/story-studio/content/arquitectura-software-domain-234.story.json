@@ -109,7 +109,7 @@
             {
               "type": "figure",
               "props": {
-                "src": "/arquitectura-software-domain-234.assets/onion-2-layers.png",
+                "src": "/arquitectura-software-domain-234/assets/onion-2-layers.png",
                 "alt": "Cebolla de dos capas: Infrastructure por fuera, Domain por dentro.",
                 "caption": "La división más básica: dos capas. Infrastructure por fuera (la tecnología, las pantallas, la base de datos), Domain por dentro (la lógica de negocio). El resto de la guía añade capas en medio, pero la regla no cambia: las interiores nunca saben nada de las exteriores.",
                 "credit": "Diagrama de las notas del episodio."
@@ -222,7 +222,7 @@
             {
               "type": "figure",
               "props": {
-                "src": "/arquitectura-software-domain-234.assets/onion-4-layers.png",
+                "src": "/arquitectura-software-domain-234/assets/onion-4-layers.png",
                 "alt": "Cebolla de cuatro capas: Infrastructure, Adapters, Use Cases y Domain.",
                 "caption": "La versión completa con cuatro capas. **Use Cases / Application Services** es la capa más difícil de definir y la que más valor aporta: ahí viven los comandos (cambian el estado) y las queries (lo recuperan). El resto — Infrastructure, Adapters, Domain — ya las tienes en la cabeza.",
                 "credit": "Diagrama de las notas del episodio."
@@ -273,7 +273,7 @@
             {
               "type": "figure",
               "props": {
-                "src": "/arquitectura-software-domain-234.assets/ddd-layered-pie.png",
+                "src": "/arquitectura-software-domain-234/assets/ddd-layered-pie.png",
                 "alt": "Tarta de Domain-Driven Design: Domain central, Application alrededor, y la capa externa dividida en Presentation, Persistence e Infrastructure.",
                 "caption": "Domain-Driven Design lo dibuja como una tarta: la capa externa se divide en tres sectores (Presentation, Persistence, Infrastructure) que apuntan hacia el centro. El Domain sigue siendo el corazón, y la capa de Application (Use Cases) hace de intermediario. La idea es la misma; el dibujo, otro.",
                 "credit": "Diagrama de las notas del episodio."
@@ -297,7 +297,7 @@
             {
               "type": "figure",
               "props": {
-                "src": "/arquitectura-software-domain-234.assets/domain-entity.jpg",
+                "src": "/arquitectura-software-domain-234/assets/domain-entity.jpg",
                 "alt": "Círculo Domain con un rombo dentro etiquetado Entity.",
                 "caption": "Una Entity vive dentro del Domain, con identidad propia (un ID) y comportamiento. Lo que vamos a construir ahora — el Product — es la Entity de este caso de uso.",
                 "credit": "Diagrama de las notas del episodio."
@@ -317,7 +317,7 @@
             {
               "type": "figure",
               "props": {
-                "src": "/arquitectura-software-domain-234.assets/product-entity-code.jpg",
+                "src": "/arquitectura-software-domain-234/assets/product-entity-code.jpg",
                 "alt": "Captura de código TypeScript de product.ts: class Product con #id, #title y #price privados, y un constructor público.",
                 "caption": "El esqueleto del Product: tres propiedades privadas y un constructor. La Entity de Domain empieza aquí. Cuidado con el [[Antipatrón del modelo anémico]] — si este esqueleto se queda así, con todas las reglas en otra capa, ya hemos caído.",
                 "credit": "Código del repositorio de las notas del episodio."
@@ -358,7 +358,7 @@
             {
               "type": "figure",
               "props": {
-                "src": "/arquitectura-software-domain-234.assets/domain-value-object.jpg",
+                "src": "/arquitectura-software-domain-234/assets/domain-value-object.jpg",
                 "alt": "Círculo Domain con un rombo dentro etiquetado Value Object.",
                 "caption": "Un Value Object también vive en el Domain, pero se define por sus valores, no por un ID. Lo ideal es que sea inmutable. El Money que vamos a construir ahora es exactamente eso: una cifra y una moneda, sin identidad propia.",
                 "credit": "Diagrama de las notas del episodio."
@@ -390,7 +390,7 @@
             {
               "type": "figure",
               "props": {
-                "src": "/arquitectura-software-domain-234.assets/cart-add-code.jpg",
+                "src": "/arquitectura-software-domain-234/assets/cart-add-code.jpg",
                 "alt": "Captura de cart.ts: addCartProduct con cláusula de guarda if (quantity < 0) throw new Error, y un find del existingProduct por product.id.",
                 "caption": "El carrito añadiendo productos con la cláusula de guarda: si la cantidad es negativa, lanza un error en vez de aceptar un valor inválido. El Cart no gestiona el error, lo lanza — esa es la diferencia entre una regla de negocio y un detalle técnico.",
                 "credit": "Código del repositorio de las notas del episodio."

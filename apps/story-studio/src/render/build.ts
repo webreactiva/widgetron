@@ -71,7 +71,7 @@ export async function renderStory(
   const widgetronIsSource = widgetronEntry.endsWith(".ts");
   const renderDir = path.join(root, ".render", slug);
   const outDir = path.join(root, "dist", slug);
-  const assetsSrc = path.join(root, "content", `${slug}.assets`);
+  const assetsSrc = path.join(root, "content", slug, "assets");
   fs.rmSync(renderDir, { recursive: true, force: true });
   fs.mkdirSync(renderDir, { recursive: true });
 
@@ -83,9 +83,12 @@ export async function renderStory(
     path.join(renderDir, "index.html"),
     htmlShell(doc, { swetrixProjectId, dark }),
   );
+  const needsLeaflet = /"type"\s*:\s*"(map|story-map)"/.test(
+    JSON.stringify(doc.story),
+  );
   fs.writeFileSync(
     path.join(renderDir, "main.tsx"),
-    mainTsx(resolveThemeIconSet(doc.meta.theme, root)),
+    mainTsx(resolveThemeIconSet(doc.meta.theme, root), needsLeaflet),
   );
   fs.writeFileSync(
     path.join(renderDir, "styles.css"),
@@ -114,11 +117,12 @@ export async function renderStory(
   });
 
   // Figure widgets reference these by absolute URL
-  // (`/arquitectura-software-domain-234.assets/...`) that the inner Vite
-  // build does not parse as an import, so it never copies them. Move them
-  // straight into the final outDir.
+  // (`/arquitectura-software-domain-234/assets/...`) that the inner Vite
+  // build does not parse as an import, so it never copies them. Mirror the
+  // `content/<slug>/assets/` folder to `dist/<slug>/<slug>/assets/` so the
+  // absolute `/<slug>/assets/...` URLs resolve when served at the root.
   if (fs.existsSync(assetsSrc)) {
-    const assetsDst = path.join(outDir, `${slug}.assets`);
+    const assetsDst = path.join(outDir, slug, "assets");
     fs.cpSync(assetsSrc, assetsDst, { recursive: true });
   }
 
@@ -250,10 +254,10 @@ function resolveThemeIconSet(
 }
 
 /** The hydration entry (compiled by the inner Vite build). */
-const mainTsx = (iconSet: string | undefined) => `import { createRoot } from "react-dom/client";
+const mainTsx = (iconSet: string | undefined, needsLeaflet: boolean) => `import { createRoot } from "react-dom/client";
 import { WidgetronProvider, renderWidget, esLabels } from "@webreactiva/widgetron";
 import doc from "./document.json";
-import "./styles.css";
+import "./styles.css";${needsLeaflet ? '\nimport "leaflet/dist/leaflet.css"; // map / story-map widgets' : ""}
 
 const lang: string | undefined = doc.meta.lang ?? undefined;
 const isSpanish = typeof lang === "string" && lang.startsWith("es");

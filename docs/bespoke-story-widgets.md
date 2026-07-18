@@ -155,9 +155,11 @@ Nothing changes in the `.story.json` format — the node is a normal node:
 ```
 apps/story-studio/content/
   git-sin-miedo.story.json
-  git-sin-miedo.components/
-    commit-graph.tsx        ← component + meta + register, one file
-  git-sin-miedo.assets/     ← (existing pattern: same slug-scoped layout)
+  git-sin-miedo/                 ← the story's workspace folder
+    brief.md                     ← the pre-generation brief
+    assets/                      ← images (existing pattern)
+    components/
+      commit-graph.tsx           ← component + meta + register, one file
 ```
 
 Inside the story tree:
