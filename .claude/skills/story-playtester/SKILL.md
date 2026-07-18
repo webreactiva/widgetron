@@ -78,6 +78,18 @@ Gotchas learned the hard way:
   before reading localStorage.
 - Answer a quiz WRONG first, then right: both feedback paths matter, and
   only the correct one should feed the challenge meter.
+- **Scroll-driven widgets** (`kinetic-headline`, `decode-headline`,
+  `draw-diagram`, `unmask-strip`, `sticky-pan`, `story-map`) only play their
+  effect while the reader actually scrolls through them — drive them by
+  scrolling, never judge them from a snap-jump, and expect them static under
+  reduced motion (that's correct, not a bug).
+- **`scroll-stat`** counts up (JS) when it enters view and rests at the REAL
+  number. If it ever shows **0** at rest, that's a real bug to report — the
+  number must always be readable.
+- **`map` / `story-map`**: if tiles render as a broken **L-shaped blob**, the
+  host is missing `import "leaflet/dist/leaflet.css"` — report it as a setup
+  bug, not a content problem. A `map` should be static (no scroll hijack);
+  `story-map` should `flyTo` between stops as you scroll the pane.
 
 ### 4. Report (the deliverable — never edit the story)
 

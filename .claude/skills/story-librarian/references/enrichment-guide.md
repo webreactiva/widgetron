@@ -75,6 +75,8 @@ paywalled, or is unclear → pending, don't cite it.
 | A set of links: further reading, references, related episodes | `resource-list` |
 | Evergreen show links (web/blog/newsletter) | `resource-list` (`kind: link`) |
 | An image URL — diagram, screenshot, chart-as-image | `figure` |
+| A real photo worth a scroll reveal (not just an inline illustration) | `unmask-strip` (real image URL only) |
+| A real place the material points to (a venue, an org's location) | `map` (real `[lat,lng]` only; host imports `leaflet/dist/leaflet.css`) |
 | A before/after pair of images | `compare-slider` |
 | An image that needs clickable annotations | `hotspots` |
 | A published video (youtube/vimeo id or file URL) | `video-clip` |

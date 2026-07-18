@@ -46,6 +46,26 @@ in the manifest. The envelope schema lives in
   `settings`, NEVER inline in the story — the engine injects them at build
   time (D-004 in docs/story-studio-decisions.md).
 
+## Brief first — extract, then build (do NOT skip)
+
+Never go transcript → JSON in one leap: you'd commit to a shape before you
+understand the episode, and the user can't steer until a big JSON exists. First
+read the transcript and write a short **`content/<slug>/brief.md`** (the
+`<slug>/` folder is the story's workspace — more per-story artifacts go there
+later) — the episode's core
+idea, keyword, teaching arc, key moments, detected gaps, and a *recommended*
+format/length/emphasis chosen with the decision trees. Full template + the three
+decision trees (FORMAT / LENGTH / EMPHASIS):
+[references/brief-and-decisions.md](references/brief-and-decisions.md).
+
+**Show the brief to the user and let them tweak it before you generate.** This
+is the low-friction checkpoint: the reader shapes the guide on one page of prose
+instead of answering cold questions or reviewing a 500-line JSON. The brief's
+recommendations then *pre-answer* the calibration round below — you ask only
+what's still open, with the brief's pick as the recommended default. The brief
+scales with ambiguity: a tightly-flagged short episode needs only a one-paragraph
+inline brief; a rich one earns the full artifact.
+
 ## Format presets (`--format`, optional)
 
 Without a format, the output is the default **didactic dispensa** (the
@@ -64,14 +84,20 @@ and let the preset override the length question (the mold decides):
 Everything else in this skill (never invent, cold reader, cadence, fun pass,
 engagement layer, validation loop) applies unchanged inside a preset.
 
-## Ask first (AskUserQuestion, always with a recommended default)
+## Confirm the calibration (AskUserQuestion, brief-driven defaults)
 
-Before outlining, ask — in ONE AskUserQuestion call — whatever of these the
-user hasn't already specified. Never block on anything else; defaults are
-marked with (Recommended):
+The brief already proposed **format, length and emphasis** (via the decision
+trees). So this round is a *confirmation*, not a cold interrogation: ask — in ONE
+AskUserQuestion call — only what the brief left open or the user hasn't fixed via
+flags, and make the brief's pick the (Recommended) default. If the user already
+signed off on the brief and it covers all four, skip straight to outlining. The
+choices:
 
-1. **Length** — Media: 4–5 modules, ~20 screens (Recommended) · Corta: 3
-   modules, ~12 screens · Larga: 6–7 modules, 25+ screens.
+1. **Length** — the guide's "how many slides?" dial. Media: 4–5 modules, ~20
+   screens (Recommended) · Corta: 3 modules, ~12 · Larga: 6–7, 25+. The brief
+   states a concrete target; the levers for dialing either way (merge/split
+   modules, add/cut practice screens, expand/trim examples — never padding, never
+   below the spine) are in [references/brief-and-decisions.md](references/brief-and-decisions.md).
 2. **Emphasis** — Equilibrado (Recommended) · Práctica/acción (more
    step-cards, checklist, prompts) · Conceptos (more diagrams, glossary,
    quizzes) · Motivación (more quotes, callouts, narrative).
@@ -119,19 +145,20 @@ party to host their material):
 
 1. **Inspect every image first** with the `read` tool. Each one needs a real
    caption + credit before it enters the JSON — never invent them.
-2. **Copy** the relevant images into a sibling folder next to the story JSON:
+2. **Copy** the relevant images into the story's workspace folder (the same
+   `content/<slug>/` that holds `brief.md`):
    ```
    apps/story-studio/content/<slug>.story.json
-   apps/story-studio/content/<slug>.assets/<semantic-name>.<ext>
+   apps/story-studio/content/<slug>/assets/<semantic-name>.<ext>
    ```
    Rename to **semantic names** (`onion-4-layers.png`, not `image9.png`).
    Crop out images that don't earn a slot (no signal → no entry); the folder
    rides alongside the slug in git, so a junk image is permanent dead weight.
 3. **Reference them with absolute paths** in the `figure` widget:
-   `src: "/<slug>.assets/<name>.<ext>"`. The dev server (via
+   `src: "/<slug>/assets/<name>.<ext>"`. The dev server (via
    `publicDir: "content"` in `apps/story-studio/vite.config.ts`) serves them
    at the root, and `pnpm story render` copies the whole folder into
-   `dist/<slug>/<slug>.assets/` so the export is self-contained. **No base64,
+   `dist/<slug>/<slug>/assets/` so the export is self-contained. **No base64,
    no external hosting, no `public/` bleed.**
 4. **Credit per image**: the author's own diagrams → "Diagrama de las notas
    del episodio" (or your own caption); borrowed figures (e.g. Uncle Bob's
@@ -245,12 +272,18 @@ a real claim instead of transcribing its wrapper.)
   clock. The `.srt` files (one per module when pre-split) help you *locate*
   content; they don't dictate the order you teach it in. Split, merge and
   reorder across file boundaries whenever a better arc asks for it.
-- **The cover is automatic.** The engine injects `meta.title`/`meta.description`
-  into the storyline, which renders them as an opening cover section. So:
-  write a strong standalone `meta.title` + `meta.description` (no
-  show/episode/date), and NEVER open a module with a `section-header` that
-  repeats the module's own title — module headers render themselves.
-  `section-header` is only for introducing a sub-section mid-module.
+- **The cover and module headers are automatic — never repeat them.** The
+  engine injects `meta.title`/`meta.description` as an opening cover, and each
+  module renders its own `title`/`subtitle` header. So write a strong standalone
+  `meta.title` + `meta.description` (no show/episode/date), and **never open a
+  module with a heading widget that repeats a title already on screen** — that
+  means `section-header` (its `title`) AND the display headlines
+  `kinetic-headline`/`decode-headline` (their `text`) must not echo the module's
+  own `title` (or, on module 1, the cover `meta.title`). The reader would see the
+  same words twice. A `kinetic-headline`/`decode-headline` opening a module is
+  fine only when it's a DIFFERENT punchy line (a claim, a beat), not the title
+  restated; `section-header` is only for a sub-section mid-module. `story lint`
+  now enforces this (`module-opener`: exact display-headline repeat = error).
 - **Open with a hook.** The first screen of module 1 must be interactive or
   built on intrigue — a quiz, decision-tree, tangle-text, or a curiosity-gap
   `quote`/`callout-box` that opens a question the guide will answer. The reader
@@ -340,20 +373,26 @@ a real claim instead of transcribing its wrapper.)
 ## Process
 
 1. **Discover & order** transcripts; report the ordered list.
-2. **Ask the calibration questions** (section above) in one AskUserQuestion
-   call, skipping any the user already answered.
-3. **Read the manifest** (command above), the envelope schema,
+2. **Brief first** (do not skip): read the transcripts and write
+   `apps/story-studio/content/<slug>/brief.md` — thesis, keyword, teaching arc,
+   key moments, gaps, and a recommended format/length/emphasis chosen with the
+   decision trees ([references/brief-and-decisions.md](references/brief-and-decisions.md)).
+   **Show it to the user and fold in their edits** — the steering checkpoint,
+   before any JSON.
+3. **Confirm the calibration**: one AskUserQuestion for whatever the brief left
+   open (its picks are the recommended defaults); read the chosen format preset
+   now, plus `references/writing-styles.md` when a non-default style was chosen.
+4. **Read the manifest** (command above), the envelope schema,
    `references/widget-guide.md` (includes the icon rules), and when relevant
    `references/mermaid-styles.md` (pick the right diagram style, not always a
-   flowchart) and `references/writing-styles.md` (if any style beyond the
-   default mix was chosen).
-4. **Outline**: modules with titles/subtitles + the widget chosen for each
-   screen and WHY (one line each). Show the outline to the user before writing
-   JSON if the scope is large or ambiguous.
-5. **Draft** `apps/story-studio/content/<slug>.story.json`. For long episodes,
+   flowchart).
+5. **Outline** from the confirmed brief: modules with titles/subtitles + the
+   widget chosen for each screen and WHY (one line each). The brief's arc IS the
+   module spine — the outline just assigns widgets to its beats.
+6. **Draft** `apps/story-studio/content/<slug>.story.json`. For long episodes,
    draft modules in parallel with subagents — each gets its transcript chunk,
    the manifest path, the rules above, and returns only its module object.
-6. **Read-back as a cold reader** (do NOT skip). Reread the whole draft as
+7. **Read-back as a cold reader** (do NOT skip). Reread the whole draft as
    someone who never heard the audio: every screen must explain, make the reader
    practice, or make an idea stick ON ITS OWN. Hunt the seven smells in content
    rule 7 (ownerless quotes, unanchored metaphors, sourceless numbers, unglossed
@@ -383,7 +422,7 @@ a real claim instead of transcribing its wrapper.)
      until the answer is yes.
 
    Fix by upgrading screens, never by adding length.
-7. **Validate, lint and self-correct** until clean:
+8. **Validate, lint and self-correct** until clean:
    ```bash
    pnpm --filter @webreactiva/story-studio story validate <slug>
    pnpm --filter @webreactiva/story-studio story lint <slug>
@@ -392,11 +431,11 @@ a real claim instead of transcribing its wrapper.)
    (`storyline.modules[2].screens[1].quiz → …`); fix exactly what they point
    at. The lint enforces the pacing rules above (repetition, prose quota,
    cadence, quiz placement); fix errors, judge warnings.
-8. **Preview**: `pnpm dev:studio` → `http://localhost:5173/s/<slug>` (player)
+9. **Preview**: `pnpm dev:studio` → `http://localhost:5173/s/<slug>` (player)
    and `/s/<slug>/editar` (editor).
    Then **playtest before handing off**: run the `story-playtester` skill on
    the slug — it plays the guide in a real browser (mobile viewport) and
    reports hook/cadence/payoff problems that only rendering reveals. Apply its
    fix list, then hand off to the user for review with the playtest verdict.
-9. **Export** only when the user asks: `pnpm story render <slug>` →
+10. **Export** only when the user asks: `pnpm story render <slug>` →
    `apps/story-studio/dist/<slug>/` (self-contained, uploadable anywhere).

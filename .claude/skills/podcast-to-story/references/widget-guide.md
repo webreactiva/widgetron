@@ -39,6 +39,14 @@ guide should convert MOST of them into their matching widget, not into prose.
 | A number the reader should play with | `tangle-text` (inline) / `scrubber` (panel) | Only with real relationships from the episode |
 | A highlighted audio moment WITH a real clip URL | `audio-clip` | See media rule below |
 | A video the author actually published | `video-clip` | youtube/vimeo id or real src |
+| A single striking number the reader should FEEL (a %, a multiplier, a count) | `scroll-stat` | Whole **positive** integers only — it counts up from 0 on scroll. `meter` for a bar (`max` when not a 0–100 %). One hero figure; use `data-chart` to compare several |
+| A bespoke line sketch that gains from drawing itself in (trend line, arrow, curve, bracket) | `draw-diagram` | Raw SVG `d` paths in a `viewBox`. Does NOT satisfy the "at least one diagram" rule below — that still needs infographic/flow/mermaid/data-chart |
+| A short, punchy claim / thesis / section opener to LAND | `kinetic-headline` | Plain text only (no markdown/`[[term]]`), word-by-word reveal on scroll. Seasoning — at most one per module |
+| A reveal / punchline / the villain's name, with suspense | `decode-headline` | Plain text, scrambles then resolves. A special move; never repeat it in a guide |
+| An ordered sequence read left-to-right (steps, before→after→result, a mini gallery) | `sticky-pan` | Pins and pans horizontally on scroll; 3–6 panels (text and/or real images). Text-only panels are centered statement cards. Max ONE pinned scene per guide |
+| ONE real place that matters (where it happened, a venue) | `map` | Real `[lat,lng]` only (see geo rule). Static, no scroll hijack. Host app must import `leaflet/dist/leaflet.css` |
+| A journey across TWO+ real places | `story-map` | Guided tour; flies between stops on scroll. Counts as a pinned scene (max one); real coords only; needs leaflet.css |
+| A real photograph that deserves a moment of arrival | `unmask-strip` | Wipes in behind a clip-path edge on scroll. Real image URL only (see media rule). Use `figure` for a plain illustrative image |
 
 ## Icons (universal, theme-aware)
 
@@ -80,8 +88,15 @@ elsewhere), `frame-stepper` boxes, and the standalone `icon` widget.
   retelling the same exchange).
 - End with something the reader keeps: `checklist` (persistent) or
   `prompt-template` are strong closers before the injected CTA.
+- **At most ONE pinned scene per guide**, counting `backdrop-section`,
+  `sticky-pan` and `story-map` together. Each one hijacks the scroll to run its
+  effect; stacking them exhausts the reader and dulls the move.
+- **Display headlines are seasoning.** `kinetic-headline` and `decode-headline`
+  are occasional beats (a couple across a whole guide, at most one `decode`).
+  Reach for `section-header` for a normal titled heading — a guide where every
+  module opens with an animated headline reads as a gimmick.
 
-## Media rule (hard)
+## Media & real-world rule (hard)
 
 `audio-clip` and `video-clip` enter the document **only with real URLs provided
 by the user** (or produced first with the `make-audio-clip` skill). Never
@@ -89,6 +104,18 @@ placeholders, never guessed Spreaker links — the generated guide is definitive
 not a demo. When a moment deserves audio but no clip exists yet: leave the
 widget out, and report the exact timestamp range as a pending clip in the
 handoff summary. Omit the envelope's `audio` block entirely until sources exist.
+
+The same "no invented media" rule governs the scroll-driven visual widgets:
+
+- **`unmask-strip`** needs a **real image URL** (same bar as `figure`). No stock
+  placeholders. No image → don't use it.
+- **`map` / `story-map`** need **real coordinates for places the episode actually
+  names**. Never geolocate a metaphor or invent a route — if the episode has one
+  real place, use a single `map`; if it names two-plus real places on a journey,
+  `story-map`; if it names none, use neither.
+- Any guide that renders a `map` or `story-map` requires the host app to
+  `import "leaflet/dist/leaflet.css"` (Story Studio's Player and the `story
+  render` pipeline already do this automatically when the tree contains one).
 
 ## Source-metadata rule (hard)
 
@@ -102,6 +129,9 @@ teaching material; provenance is envelope data.
   reading position and offers to resume on the next visit.
 - `meta.lang` = the episode's language → widget chrome (Module eyebrows, quiz
   buttons, resume bar…) localizes itself via the locale packs.
+- `meta.theme` = `"podyscroll"` by default — the product's own brand and Story
+  Studio's default. Only pick another (`"webreactiva"`, a compiled brand) when
+  the user explicitly asks for it.
 
 ## Engagement layer
 
