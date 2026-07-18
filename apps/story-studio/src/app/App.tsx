@@ -23,14 +23,15 @@ export function navigate(path: string): void {
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
-const THEMES = ["aseptic", "webreactiva", "producto"] as const;
+// podyscroll is the product's own brand ("arcade honesto") and the default.
+const THEMES = ["podyscroll", "aseptic", "webreactiva", "producto"] as const;
 
 export function App() {
   const [route, setRoute] = React.useState<Route>(() =>
     parseRoute(window.location.pathname),
   );
   const [theme, setTheme] = React.useState(
-    () => localStorage.getItem("story-studio-theme") ?? "webreactiva",
+    () => localStorage.getItem("story-studio-theme") ?? "podyscroll",
   );
   const [dark, setDark] = React.useState(
     () => localStorage.getItem("story-studio-dark") === "1",

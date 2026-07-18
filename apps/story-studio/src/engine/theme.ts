@@ -56,6 +56,7 @@ export const KNOWN_TOKENS = new Set([
  */
 export const BUILT_IN_THEME_ICON_SETS: Record<string, string> = {
   webreactiva: "pixelarticons",
+  podyscroll: "pixelarticons",
 };
 
 /** Parse the design.md frontmatter (--- fenced, YAML subset). */
