@@ -1241,7 +1241,7 @@ export const catalog: CatalogEntry[] = [
     id: "infographic",
     name: "Infographic",
     summary:
-      "Napkin-style visual metaphors (funnel, pyramid, cycle, hub, target, matrix…) as inline SVG. Shape fills come from the theme palette; long text goes in a numbered legend.",
+      "Napkin-style visual metaphors — 22 layouts (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs, milestones, chevrons, roadmap, pillars, honeycomb, gears, tree, fishbone, donut, versus, bridge, spectrum) as inline SVG. Shape fills come from the theme palette; long text goes in a numbered legend.",
     demos: [
       {
         label: "Funnel",
@@ -1258,6 +1258,87 @@ export const catalog: CatalogEntry[] = [
         ),
       },
       {
+        label: "Pyramid",
+        node: (
+          <Infographic
+            layout="pyramid"
+            items={[
+              { label: "E2E", description: "A few slow, high-confidence flows." },
+              { label: "Integration", description: "Modules working together." },
+              { label: "Unit", description: "Many fast, focused tests." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Cycle",
+        node: (
+          <Infographic
+            layout="cycle"
+            center="Iterate"
+            items={[
+              { label: "Build" },
+              { label: "Measure" },
+              { label: "Learn" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Venn",
+        node: (
+          <Infographic
+            layout="venn"
+            center="Product"
+            items={[
+              { label: "Desirable", description: "People want it." },
+              { label: "Feasible", description: "We can build it." },
+              { label: "Viable", description: "The business sustains it." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Iceberg",
+        node: (
+          <Infographic
+            layout="iceberg"
+            items={[
+              { label: "The UI", description: "What users actually see." },
+              { label: "Data model" },
+              { label: "Infrastructure" },
+              { label: "Team culture" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Balance",
+        node: (
+          <Infographic
+            layout="balance"
+            tilt="left"
+            items={[
+              { label: "Speed", description: "Ship fast, learn fast." },
+              { label: "Quality", description: "Fewer regressions later." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Target",
+        node: (
+          <Infographic
+            layout="target"
+            items={[
+              { label: "Vision", description: "The north star." },
+              { label: "Strategy", description: "How we get there." },
+              { label: "Tactics", description: "This quarter's moves." },
+            ]}
+          />
+        ),
+      },
+      {
         label: "Hub",
         node: (
           <Infographic
@@ -1269,6 +1350,38 @@ export const catalog: CatalogEntry[] = [
               { label: "CLI" },
               { label: "Webhooks" },
               { label: "Partners" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Matrix (2×2)",
+        node: (
+          <Infographic
+            layout="matrix"
+            axes={{
+              x: ["Not urgent", "Urgent"],
+              y: ["Low impact", "High impact"],
+            }}
+            items={[
+              { label: "Schedule" },
+              { label: "Do now" },
+              { label: "Drop" },
+              { label: "Delegate" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Stairs (icons)",
+        node: (
+          <Infographic
+            layout="stairs"
+            items={[
+              { icon: <Icon icon="book" />, label: "Learn" },
+              { icon: <Icon icon="code" />, label: "Build" },
+              { icon: <Icon icon="upload" />, label: "Ship" },
+              { icon: <Icon icon="trending-up" />, label: "Scale" },
             ]}
           />
         ),
@@ -1327,6 +1440,132 @@ export const catalog: CatalogEntry[] = [
               { icon: <Icon icon="lock" />, label: "Security" },
               { icon: <Icon icon="zap" />, label: "Performance" },
               { icon: <Icon icon="users" />, label: "Community" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Honeycomb (icons)",
+        node: (
+          <Infographic
+            layout="honeycomb"
+            items={[
+              { icon: <Icon icon="shield" />, label: "Trust" },
+              { icon: <Icon icon="target" />, label: "Focus" },
+              { icon: <Icon icon="edit" />, label: "Craft" },
+              { icon: <Icon icon="search" />, label: "Curiosity" },
+              { icon: <Icon icon="megaphone" />, label: "Candor" },
+              { icon: <Icon icon="flag" />, label: "Ownership" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Gears (icons)",
+        node: (
+          <Infographic
+            layout="gears"
+            items={[
+              { icon: <Icon icon="users" />, label: "People", description: "The team and its habits." },
+              { icon: <Icon icon="git-branch" />, label: "Process", description: "How work flows." },
+              { icon: <Icon icon="cpu" />, label: "Technology", description: "The tools underneath." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Tree (icons)",
+        node: (
+          <Infographic
+            layout="tree"
+            center="Engineering"
+            items={[
+              { icon: <Icon icon="layout" />, label: "Frontend" },
+              { icon: <Icon icon="server" />, label: "Backend" },
+              { icon: <Icon icon="cloud" />, label: "Platform" },
+              { icon: <Icon icon="database" />, label: "Data" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Fishbone",
+        node: (
+          <Infographic
+            layout="fishbone"
+            center="Slow page"
+            items={[
+              { label: "Big images", description: "Unoptimized hero assets." },
+              { label: "Blocking JS", description: "Render-blocking scripts." },
+              { label: "N+1 queries", description: "Chatty database access." },
+              { label: "No cache", description: "Nothing memoized at the edge." },
+              { label: "Cold start", description: "Serverless spin-up latency." },
+              { label: "Chatty API", description: "Too many round-trips." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Donut",
+        node: (
+          <Infographic
+            layout="donut"
+            center="A week"
+            items={[
+              { label: "Coding", description: "Deep, uninterrupted work." },
+              { label: "Meetings", description: "Sync and alignment." },
+              { label: "Review", description: "Reading others' code." },
+              { label: "Learning", description: "Docs, talks, side quests." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Versus (icons)",
+        node: (
+          <Infographic
+            layout="versus"
+            items={[
+              {
+                icon: <Icon icon="box" />,
+                label: "Monolith",
+                description: "One deployable — simple to start, harder to scale.",
+              },
+              {
+                icon: <Icon icon="grid" />,
+                label: "Microservices",
+                description: "Independent services — flexible, more moving parts.",
+              },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Bridge (icons)",
+        node: (
+          <Infographic
+            layout="bridge"
+            zones={["Idea", "Shipped"]}
+            items={[
+              { icon: <Icon icon="file-text" />, label: "Spec" },
+              { icon: <Icon icon="edit" />, label: "Prototype" },
+              { icon: <Icon icon="code" />, label: "Build" },
+              { icon: <Icon icon="check" />, label: "Test" },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Spectrum",
+        node: (
+          <Infographic
+            layout="spectrum"
+            items={[
+              { label: "Ad-hoc", description: "Heroics and firefighting." },
+              { label: "Repeatable" },
+              { label: "Defined" },
+              { label: "Managed" },
+              { label: "Optimizing", description: "Continuous improvement." },
             ]}
           />
         ),
@@ -1786,30 +2025,12 @@ console.log("C");`}
       "An audio player with a synced transcript. Custom play/seek controls, a volume control and a speed cycle (both remembered), optional cover art, and a sticky corner mini-player once you scroll past it while it plays. If a transcript is present, each cue highlights as it plays (karaoke) and clicking a cue seeks there. Pass cues inline or fetch them from a URL (JSON / .vtt / .srt). Only one clip on a page plays at a time.",
     demos: [
       {
-        label: "With a synced transcript",
+        label: "Synced transcript (real clip)",
         node: (
           <AudioClip
-            title="Why write a spec first"
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-            transcript={[
-              { start: 0, text: "A spec is the plan you write before any code." },
-              { start: 5, text: "It captures the intent: what to build, and why." },
-              { start: 11, text: "Then the spec drives the implementation." },
-              { start: 17, text: "The model fills in details — you own the direction." },
-              { start: 24, text: "Click any line to jump straight to that moment." },
-            ]}
-          />
-        ),
-      },
-      {
-        label: "Episode moment (context strip)",
-        node: (
-          <AudioClip
-            title="The best commit of my career"
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
-            start={30}
-            end={57}
-            context
+            title="OpenSpec — buenas prácticas"
+            src="/media/openspec-buenas-practicas.mp3"
+            transcriptSrc="/media/openspec-buenas-practicas.srt"
           />
         ),
       },
@@ -1817,36 +2038,27 @@ console.log("C");`}
         label: "Spotlight transcript (sentence in focus)",
         node: (
           <AudioClip
-            title="A confession, line by line"
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+            title="WR 344 · el FOMO de la IA"
+            src="/media/wr344-fomo.mp3"
             transcriptView="spotlight"
-            transcript={[
-              { start: 0, text: "I once kept a dead feature alive for a year." },
-              { start: 5, text: "Nobody used it — the dashboard said so." },
-              { start: 11, text: "But deleting it felt like admitting the year was wasted." },
-              { start: 18, text: "The day I finally removed it, nothing broke." },
-              { start: 24, text: "That silence taught me more than the feature ever did." },
-            ]}
+            transcriptSrc="/media/wr344-fomo.srt"
+          />
+        ),
+      },
+      {
+        label: "With cover art (poster frame)",
+        node: (
+          <AudioClip
+            title="Cuando la especificación manda"
+            poster="/media/spec-manda-poster.jpg"
+            src="/media/spec-manda.mp3"
           />
         ),
       },
       {
         label: "Audio only (no transcript)",
         node: (
-          <AudioClip
-            title="A short clip"
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
-          />
-        ),
-      },
-      {
-        label: "With cover art (poster from the feed)",
-        node: (
-          <AudioClip
-            title="Episode cover pulled from the RSS feed"
-            poster="https://picsum.photos/id/1025/300/300"
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-          />
+          <AudioClip title="WR 344 · el FOMO de la IA" src="/media/wr344-fomo.mp3" />
         ),
       },
     ],
@@ -1861,15 +2073,15 @@ console.log("C");`}
         label: "With chapters (one per module)",
         node: (
           <EpisodePlayer
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
-            title="Coding without smoke"
-            episode="WR 300 · full episode"
-            storageKey="playground-wr300"
+            src="/media/openspec-buenas-practicas.mp3"
+            poster="/media/spec-manda-poster.jpg"
+            title="OpenSpec — buenas prácticas"
+            episode="Guía a fondo · fragmento"
+            storageKey="playground-openspec-bp"
             chapters={[
-              { start: 0, title: "The word of the week" },
-              { start: 60, title: "What smoke is" },
-              { start: 150, title: "The antidote" },
-              { start: 240, title: "The final boss" },
+              { start: 0, title: "Deja que el sistema te pregunte" },
+              { start: 51, title: "La propuesta es el punto de enganche" },
+              { start: 86, title: "El contexto latente: Agents.md" },
             ]}
           />
         ),
@@ -1883,40 +2095,54 @@ console.log("C");`}
       "A two-voice interview exchange laid out editorially (press, not chat bubbles). Host renders in the primary color, guest in --brand-2 — the same speaker identity quote and qa-card use. With a clip, the turn being spoken lights up and clicking a turn jumps the audio there.",
     demos: [
       {
-        label: "Exchange with audio",
+        // Real two-voice exchange from the "spec-manda" clip. No diarization
+        // was available, so turns were split by reading the conversation;
+        // neutral labels avoid attributing a voice to a named person.
+        label: "Exchange with audio (real clip)",
         node: (
           <InterviewTranscript
             speakers={{
-              host: { name: "Daniel Primo", role: "Host" },
-              guest: { name: "Laura G.", role: "Staff engineer" },
+              host: { name: "Speaker A" },
+              guest: { name: "Speaker B" },
             }}
             turns={[
               {
                 speaker: "host",
-                start: 18,
-                text: "How do you spot smoke in a job offer?",
-              },
-              {
-                speaker: "guest",
-                start: 22,
-                text: "When the title has more words than the description of what you'll actually do. *Senior visionary platform evangelist* and the repo has three commits.",
-              },
-              {
-                speaker: "guest",
-                start: 34,
-                text: "Always ask about the last deploy: the date can't lie.",
+                start: 0,
+                text: "Como en este caso el OpenSpec: te genera unos ficheros Markdown que cualquier agente, sin ese framework, podría entender.",
               },
               {
                 speaker: "host",
-                start: 40,
-                text: "The date can't lie. That one goes on a t-shirt.",
+                start: 16.5,
+                text: "Esto se hizo todo cuando los modelos eran un poco más tontorrones y no eran capaces de seguir la línea.",
+              },
+              {
+                speaker: "host",
+                start: 27.8,
+                text: "El SDD, honestamente, está más enfocado a que **nosotros** seamos capaces de trabajar con cierta diligencia sobre lo que vamos a pedir. El guión que tiene que seguir la IA… pero es para nosotros.",
+              },
+              {
+                speaker: "guest",
+                start: 44.2,
+                text: "Sí, bueno: esto es un poco como los sombreros o los pantalones. Al final, esto y el TDD siempre vuelven.",
+              },
+              {
+                speaker: "guest",
+                start: 55.8,
+                text: "En resumidas cuentas, tienes una fuente de verdad que está escrita.",
+              },
+              {
+                speaker: "guest",
+                start: 63.6,
+                text: "Y el código —esto es un poco feo lo que voy a decir— se convierte en una especie de subproducto desechable.",
+              },
+              {
+                speaker: "guest",
+                start: 69.6,
+                text: "Porque, al final, lo que importa es **la especificación**.",
               },
             ]}
-            clip={{
-              src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-              start: 18,
-              end: 44,
-            }}
+            clip={{ src: "/media/spec-manda.mp3", start: 0, end: 71.3 }}
           />
         ),
       },
@@ -1925,14 +2151,17 @@ console.log("C");`}
         node: (
           <InterviewTranscript
             speakers={{
-              host: { name: "Daniel Primo", role: "Host" },
-              guest: { name: "Laura G.", role: "Staff engineer" },
+              host: { name: "Speaker A" },
+              guest: { name: "Speaker B" },
             }}
             turns={[
-              { speaker: "host", text: "What would you tell your junior self?" },
+              {
+                speaker: "host",
+                text: "El SDD está enfocado a que trabajemos con diligencia sobre lo que vamos a pedir.",
+              },
               {
                 speaker: "guest",
-                text: "Finish things. A finished side project is worth more than five half-learned frameworks.",
+                text: "Al final, tienes una fuente de verdad escrita, y el código se vuelve un subproducto desechable. Lo que importa es la especificación.",
               },
             ]}
           />
@@ -1950,12 +2179,12 @@ console.log("C");`}
         label: "Question → revealed answer",
         node: (
           <QaCard
-            question="How do you spot smoke in a job offer?"
-            answer="When the title has more words than the description of what you'll do. Always ask about the last deploy: **the date can't lie**."
-            askedBy="Daniel Primo"
-            answeredBy="Laura G."
-            answeredByRole="Episode guest"
-            timestamp="19:12"
+            question="Con la IA escribiendo el código, ¿qué manda al final?"
+            answer="El código se convierte en una especie de subproducto desechable. Al final, **lo que importa es la especificación**."
+            askedBy="Speaker A"
+            answeredBy="Speaker B"
+            answeredByRole="Cuando la especificación manda"
+            timestamp="1:09"
           />
         ),
       },
@@ -1971,20 +2200,20 @@ console.log("C");`}
         label: "Three quotes from the guest",
         node: (
           <GuestReel
-            guest="Laura G."
-            guestRole="Staff engineer"
+            guest="Speaker B"
+            guestRole="Cuando la especificación manda"
             quotes={[
               {
-                text: "A finished side project is worth more than five half-learned frameworks.",
-                timestamp: "12:40",
+                text: "Tienes una fuente de verdad que está escrita.",
+                timestamp: "0:56",
               },
               {
-                text: "My rule: if I can't explain it without buzzwords, I don't understand it yet.",
-                timestamp: "26:05",
+                text: "El código se convierte en una especie de subproducto desechable.",
+                timestamp: "1:05",
               },
               {
-                text: "Seniority isn't knowing more. It's leaving fewer fires burning when you go.",
-                timestamp: "38:51",
+                text: "Al final, lo que importa es la especificación.",
+                timestamp: "1:09",
               },
             ]}
           />
@@ -1996,47 +2225,68 @@ console.log("C");`}
     id: "karaoke-stage",
     name: "KaraokeStage",
     summary:
-      "The episode's peak moment on a full-width stage: the spoken words light up one by one over the code surface, like Spotify lyrics or TikTok subtitles. Word timing is interpolated inside each sentence-level cue (length + punctuation heuristic) — no word-level ASR needed. Two treatments, one engine: lyrics lines or a beat-by-beat chunk; the reader can switch. Without audio it self-paces from the cue timestamps. Use once or twice per storyline — it is the fortissimo.",
+      "The episode's peak moment on a full-width stage: the spoken words light up one by one over the code surface, like Spotify lyrics or TikTok subtitles. Word timing is interpolated inside each sentence-level cue — or, when a cue carries a real `words` array, each word lights on its true beat. The highlight moves by colour only, so the sentence never reflows. Two treatments, one engine: lyrics lines or one sentence at a time; the reader can switch. Without audio it self-paces from the cue timestamps. Use once or twice per storyline — it is the fortissimo.",
     demos: [
       {
-        label: "Lyrics mode (self-paced, no audio)",
+        // Real per-word timing (spec-manda, 65.9→71.3s): one readable sentence
+        // whose highlight moves word-by-word on the true beat — the `words`
+        // array carries the ASR timestamps, so no interpolation.
+        label: "Word by word (real timing + audio)",
         node: (
           <KaraokeStage
-            eyebrow="WR 300 · 23:14"
-            transcript={[
-              { start: 0, end: 3.4, text: "Smoke is activity that looks like work." },
-              { start: 3.4, end: 7, text: "It demos beautifully and leaves no trace." },
-              { start: 7, end: 10.4, text: "Reordering the backlog. Redecorating Notion." },
-              { start: 10.4, end: 14, text: "Choosing a framework for a product that doesn't exist." },
-              { start: 14, end: 17.5, text: "You don't beat it with epic. You beat it with one honest number." },
-            ]}
-          />
-        ),
-      },
-      {
-        label: "Word-by-word mode (maximum impact)",
-        node: (
-          <KaraokeStage
-            eyebrow="The word of the week"
+            eyebrow="Cuando la especificación manda"
+            src="/media/spec-manda.mp3"
+            start={65.9}
+            end={71.3}
             mode="words"
             transcript={[
-              { start: 0, end: 4, text: "Ship the smallest thing that teaches you something real." },
+              {
+                start: 0,
+                end: 5.4,
+                text: "se convierte en una especie de subproducto desechable, porque al final lo que importa es la especificación",
+                words: [
+                  { start: 0.02, end: 0.34, text: "se" },
+                  { start: 0.34, end: 0.64, text: "convierte" },
+                  { start: 0.64, end: 0.7, text: "en" },
+                  { start: 0.7, end: 0.76, text: "una" },
+                  { start: 0.76, end: 0.88, text: "especie" },
+                  { start: 0.88, end: 1.16, text: "de" },
+                  { start: 1.16, end: 1.6, text: "subproducto" },
+                  { start: 1.68, end: 2.08, text: "desechable," },
+                  { start: 2.24, end: 2.5, text: "porque" },
+                  { start: 2.5, end: 2.56, text: "al" },
+                  { start: 2.56, end: 2.72, text: "final" },
+                  { start: 2.72, end: 2.92, text: "lo" },
+                  { start: 2.92, end: 3.08, text: "que" },
+                  { start: 3.08, end: 3.48, text: "importa" },
+                  { start: 3.68, end: 3.72, text: "es" },
+                  { start: 3.72, end: 3.82, text: "la" },
+                  { start: 3.82, end: 4.62, text: "especificación" },
+                ],
+              },
             ]}
           />
         ),
       },
       {
-        label: "With real audio (fragment window)",
+        label: "Lyrics mode (real audio + transcript)",
         node: (
           <KaraokeStage
-            eyebrow="WR 300 · Programar sin humo"
-            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-            start={10}
-            end={24}
+            eyebrow="WR 344 · el FOMO de la IA"
+            src="/media/wr344-fomo.mp3"
+            transcriptSrc="/media/wr344-fomo.srt"
+          />
+        ),
+      },
+      {
+        label: "Self-paced (no audio)",
+        node: (
+          <KaraokeStage
+            eyebrow="Cuando la especificación manda"
             transcript={[
-              { start: 0, end: 4, text: "A spec is the plan you write before any code." },
-              { start: 4, end: 9, text: "It captures the intent: what to build, and why." },
-              { start: 9, end: 14, text: "Then the spec drives the implementation." },
+              { start: 0, end: 3.2, text: "Tienes una fuente de verdad que está escrita." },
+              { start: 3.2, end: 7, text: "Y el código se convierte en un subproducto desechable." },
+              { start: 7, end: 10.5, text: "Porque, al final, lo que importa es la especificación." },
             ]}
           />
         ),
@@ -2139,22 +2389,38 @@ console.log("C");`}
       "A responsive 16:9 video embed. Plays a direct video file with native controls, or lazy-loads a privacy-friendly YouTube/Vimeo iframe behind a click-to-play poster (no third-party scripts until the learner opts in).",
     demos: [
       {
-        label: "YouTube (click-to-load)",
+        label: "Direct video — real clip (9:16)",
+        node: (
+          <div className="mx-auto max-w-[300px]">
+            <VideoClip
+              src="/media/spec-manda.mp4"
+              poster="/media/spec-manda-poster.jpg"
+              title="Cuando la especificación manda"
+              aspect="9/16"
+            />
+          </div>
+        ),
+      },
+      {
+        label: "Direct video — real clip (9:16)",
+        node: (
+          <div className="mx-auto max-w-[300px]">
+            <VideoClip
+              src="/media/npm-cortafuegos.mp4"
+              poster="/media/npm-cortafuegos-poster.jpg"
+              title="NPM y el cortafuegos anti-malware"
+              aspect="9/16"
+            />
+          </div>
+        ),
+      },
+      {
+        label: "YouTube (click-to-load, privacy embed)",
         node: (
           <VideoClip
             youtube="aqz-KE-bpKQ"
             title="Big Buck Bunny"
             poster="https://i.ytimg.com/vi/aqz-KE-bpKQ/hqdefault.jpg"
-          />
-        ),
-      },
-      {
-        label: "Direct video file",
-        node: (
-          <VideoClip
-            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-            poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg"
-            title="Big Buck Bunny (MP4)"
           />
         ),
       },
@@ -2167,15 +2433,17 @@ console.log("C");`}
       "A standalone image with an optional caption and source credit. References the image by URL, lazy-loads it, and renders a real <figure>/<figcaption>. Crop to a fixed ratio with `aspect`, or leave it to keep the image's natural size; add `href` to link back to the source.",
     demos: [
       {
-        label: "Captioned, cropped to 16:9 with a credit",
+        label: "Captioned poster frame with a credit",
         node: (
-          <Figure
-            src="https://picsum.photos/seed/widgetron-figure/1200/675"
-            alt="An abstract placeholder illustration"
-            caption="The round trip every page load makes — request out, response back."
-            credit="Source: **Web Reactiva**"
-            aspect="16/9"
-          />
+          <div className="mx-auto max-w-[300px]">
+            <Figure
+              src="/media/npm-cortafuegos-poster.jpg"
+              alt="Fotograma del clip sobre el cortafuegos anti-malware de NPM"
+              caption="NPM ahora frena los despliegues maliciosos con un cortafuegos."
+              credit="Source: **Web Reactiva**"
+              aspect="9/16"
+            />
+          </div>
         ),
       },
       {

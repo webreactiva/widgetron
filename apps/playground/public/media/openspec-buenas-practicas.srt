@@ -1,0 +1,348 @@
+1
+00:00:00,000 --> 00:00:01,599
+sobre las buenas prácticas
+
+2
+00:00:01,599 --> 00:00:02,980
+la primera de ellas
+
+3
+00:00:02,980 --> 00:00:03,899
+que te quiero comentar
+
+4
+00:00:03,899 --> 00:00:04,279
+es que
+
+5
+00:00:04,279 --> 00:00:05,440
+es bueno
+
+6
+00:00:05,440 --> 00:00:06,819
+que te haga preguntas
+
+7
+00:00:06,819 --> 00:00:08,920
+el propio sistema
+
+8
+00:00:08,920 --> 00:00:10,300
+cuando está planificando
+
+9
+00:00:10,300 --> 00:00:11,359
+quiero decir
+
+10
+00:00:11,359 --> 00:00:12,219
+cuando lanzas
+
+11
+00:00:12,219 --> 00:00:12,859
+el proposal
+
+12
+00:00:12,859 --> 00:00:13,939
+en este caso
+
+13
+00:00:13,939 --> 00:00:14,960
+o cuando lanzas
+
+14
+00:00:14,960 --> 00:00:16,319
+incluso el opcional
+
+15
+00:00:16,319 --> 00:00:17,159
+explore
+
+16
+00:00:17,159 --> 00:00:17,959
+o cuando estás
+
+17
+00:00:17,959 --> 00:00:18,779
+en las primeras fases
+
+18
+00:00:18,779 --> 00:00:19,420
+de las creaciones
+
+19
+00:00:19,420 --> 00:00:20,279
+de artefactos
+
+20
+00:00:20,279 --> 00:00:20,899
+y lo haces
+
+21
+00:00:20,899 --> 00:00:21,600
+uno a uno
+
+22
+00:00:21,600 --> 00:00:24,360
+toda esa investigación
+
+23
+00:00:24,360 --> 00:00:25,759
+todos esos planes
+
+24
+00:00:25,759 --> 00:00:26,459
+entre comillas
+
+25
+00:00:26,459 --> 00:00:27,479
+que se van generando
+
+26
+00:00:27,479 --> 00:00:28,599
+es bueno que ahí
+
+27
+00:00:28,599 --> 00:00:29,439
+le pidas
+
+28
+00:00:29,439 --> 00:00:30,459
+ya sabes que
+
+29
+00:00:30,459 --> 00:00:31,899
+cuando arrancas
+
+30
+00:00:31,899 --> 00:00:32,659
+el comando
+
+31
+00:00:32,659 --> 00:00:34,139
+el barra opsx
+
+32
+00:00:34,139 --> 00:00:36,699
+propósito
+
+33
+00:00:36,700 --> 00:00:38,992
+o Explore o lo que sea, puedes añadir
+
+34
+00:00:38,992 --> 00:00:41,531
+texto a continuación, que no se te olvide
+
+35
+00:00:41,531 --> 00:00:41,779
+eso.
+
+36
+00:00:41,860 --> 00:00:44,838
+Entonces puedes decirle que te haga un
+
+37
+00:00:44,838 --> 00:00:47,973
+grill me, que te fría preguntas para que
+
+38
+00:00:47,973 --> 00:00:50,716
+vayas completando mejor esa primera
+
+39
+00:00:50,716 --> 00:00:51,500
+propuesta,
+
+40
+00:00:51,620 --> 00:00:53,977
+que es el punto de enganche, el punto de
+
+41
+00:00:53,977 --> 00:00:56,451
+inicio. Luego lo que esté mal o bien se va
+
+42
+00:00:56,451 --> 00:00:57,099
+arrastrando
+
+43
+00:00:57,099 --> 00:00:58,439
+en las fases posteriores.
+
+44
+00:00:58,639 --> 00:01:00,537
+Entonces es una buena práctica invertir
+
+45
+00:01:00,537 --> 00:01:01,219
+tiempo en eso.
+
+46
+00:01:01,579 --> 00:01:03,457
+También te digo porque luego te vas a
+
+47
+00:01:03,457 --> 00:01:04,879
+tener que ahorrar el leerlo,
+
+48
+00:01:05,000 --> 00:01:06,000
+de cierta manera, ¿no?
+
+49
+00:01:06,000 --> 00:01:08,037
+Aunque siempre es recomendable leer todos
+
+50
+00:01:08,037 --> 00:01:09,279
+los artefactos que salen.
+
+51
+00:01:09,860 --> 00:01:12,127
+Evidentemente, si tú ya has hecho unas
+
+52
+00:01:12,127 --> 00:01:13,440
+deliberaciones previas
+
+53
+00:01:13,440 --> 00:01:16,073
+con el sistema para ver por dónde quieres
+
+54
+00:01:16,073 --> 00:01:16,779
+orientarlo,
+
+55
+00:01:17,119 --> 00:01:18,737
+cuáles son tus pensamientos,
+
+56
+00:01:18,737 --> 00:01:19,720
+especificaciones,
+
+57
+00:01:20,059 --> 00:01:21,630
+qué cosas se les pueden escapar que tú ya
+
+58
+00:01:21,630 --> 00:01:22,319
+le quieres añadir,
+
+59
+00:01:22,479 --> 00:01:23,599
+contexto y demás...
+
+60
+00:01:23,599 --> 00:01:25,739
+Ese es un buen punto.
+
+61
+00:01:26,519 --> 00:01:29,181
+Precisamente sobre el contexto hay algo
+
+62
+00:01:29,181 --> 00:01:32,047
+que es relevante y es que en principio los
+
+63
+00:01:32,047 --> 00:01:34,368
+agentes de IA leen sus ficheros de
+
+64
+00:01:34,368 --> 00:01:37,098
+constitución, ficheros de configuración,
+
+65
+00:01:37,098 --> 00:01:39,828
+el Agents.md en el caso de prácticamente
+
+66
+00:01:39,828 --> 00:01:42,421
+todos, el Claude.md en el caso de Claude
+
+67
+00:01:42,421 --> 00:01:42,899
+Code...
+
+68
+00:01:42,900 --> 00:01:46,112
+Cuando arrancan en la conversación y está
+
+69
+00:01:46,112 --> 00:01:49,011
+ahí como latente en memoria. Es bueno
+
+70
+00:01:49,011 --> 00:01:52,145
+tenerlos porque la ejecución será mejor.
+
+71
+00:01:52,145 --> 00:01:55,279
+Por ejemplo, si tú en ese fichero tienes
+
+72
+00:01:55,279 --> 00:01:58,099
+que exigido que tiene que hacer TDD,
+
+73
+00:01:58,099 --> 00:02:01,556
+o que tienes una determinada configuración
+
+74
+00:02:01,556 --> 00:02:02,379
+específica
+
+75
+00:02:02,379 --> 00:02:03,900
+para hacer el backend o el frontend
+
+76
+00:02:03,900 --> 00:02:05,717
+aunque es cierto que según el modelo ya lo
+
+77
+00:02:05,717 --> 00:02:06,279
+voy a inferir
+
+78
+00:02:06,279 --> 00:02:08,992
+de la propia construcción de cómo está
+
+79
+00:02:08,992 --> 00:02:11,419
+hecha la arquitectura del proyecto
+
+80
+00:02:11,419 --> 00:02:14,819
+es bueno tenerlo ahí presente
+
+81
+00:02:14,819 --> 00:02:18,759
+de hecho si deliberadamente lo eliminas
+
+82
+00:02:18,759 --> 00:02:22,915
+es probable que quizás no sea tan completo
+
+83
+00:02:22,915 --> 00:02:24,399
+como tú esperas
+
+84
+00:02:24,399 --> 00:02:26,360
+aunque como te digo
+
+85
+00:02:26,360 --> 00:02:27,720
+siempre es bueno insistir
+
+86
+00:02:27,720 --> 00:02:29,259
+en el hecho de decir
+
+87
+00:02:29,259 --> 00:02:30,399
+bueno pues vamos a lanzar esto
+
