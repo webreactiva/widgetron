@@ -24,7 +24,7 @@ export function App() {
   const active = byId[activeId] ?? catalog[0];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground md:h-screen md:overflow-hidden">
       {/* Top bar */}
       <header className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-border px-5 py-3">
         <div className="mr-auto flex items-baseline gap-2">
@@ -72,9 +72,9 @@ export function App() {
         </button>
       </header>
 
-      <div className="flex flex-1 flex-col md:flex-row">
+      <div className="flex flex-1 flex-col md:min-h-0 md:flex-row">
         {/* Sidebar grouped by category */}
-        <nav className="shrink-0 border-b border-border p-3 md:w-64 md:border-b-0 md:border-r">
+        <nav className="shrink-0 border-b border-border p-3 md:h-full md:w-64 md:overflow-y-auto md:border-b-0 md:border-r">
           {categories.map((cat) => (
             <div key={cat.title} className="mb-4">
               <p className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
