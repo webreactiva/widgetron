@@ -165,6 +165,9 @@ pipeline already handles media-less stories.
    `meta.lang` accordingly — widget chrome translates itself via the locale
    packs. (The English-only rule applies to library code, not to content.)
 4. **Verbatim quotes stay verbatim**, attributed via the `quote` widget.
+   Provenance always: when the SRT gives you the moment, fill `timestamp`
+   («23:14») — and `clip` when a real audio clip exists (rule 5). A quote
+   whose minute is known but omitted throws away free credibility.
 5. **Never invent media.** `audio-clip`/`video-clip` and the envelope's
    `audio` block enter the document only with REAL URLs the user provided (or
    clips produced first with `make-audio-clip`). No placeholders — the output
