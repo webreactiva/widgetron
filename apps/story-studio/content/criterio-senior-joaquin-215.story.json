@@ -1,0 +1,236 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Ser senior no es saber más: es tener criterio",
+    "slug": "criterio-senior-joaquin-215",
+    "lang": "es",
+    "theme": "podyscroll",
+    "description": "Joaquín Martí lleva casi 20 años de frontend: cofundó Hanzo, montó equipos, se pegó contra el legacy. Destila qué separa de verdad a un senior, cómo entrar y pasar procesos de selección sin morir en el intento, y por qué la arquitectura empieza por separar bien las piezas.",
+    "keyword": "criterio",
+    "format": "entrevista",
+    "source": {
+      "type": "podcast",
+      "show": "wrp",
+      "episode": 215,
+      "title": "Web Reactiva Premium 215 — Joaquín Martí, senior de verdad",
+      "host": "Daniel Primo",
+      "guest": "Joaquín Martí",
+      "lang": "es"
+    }
+  },
+  "settings": {
+    "challenge": { "label": "Tu criterio" }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "criterio-senior-joaquin-215",
+      "modules": [
+        {
+          "title": "El personaje",
+          "subtitle": "Quién es Joaquín — y la pregunta que vertebra la charla.",
+          "emoji": "🧭",
+          "outro": "Ya sabes de quién te fías. Ahora, la conversación que lo demuestra.",
+          "screens": [
+            {
+              "type": "profile-card",
+              "props": {
+                "people": [
+                  {
+                    "name": "Joaquín Martí",
+                    "role": "Arquitecto de front · cofundador y Tech Lead de Hanzo (12 años)",
+                    "bio": "Valenciano afincado en Praga, casi 20 años programando. Agencias pequeñas, startups, una época de freelance, Domestika — y sobre todo **Hanzo**, que arrancó él solo y acabó con 15 personas en tecnología. Hoy reescribe el frontend *legacy* de una empresa danesa que lleva con el mismo código desde 2009."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Alguien lleva 5 años programando; otra persona, 20. ¿Qué hace «senior» de verdad a la segunda?",
+                "options": [
+                  { "text": "Saber más frameworks y librerías", "feedback": "No. Joaquín ha visto gente con muchos años que no toca los frameworks de moda, y gente con pocos años y muchos conocimientos. No va de eso." },
+                  { "text": "Tener criterio para ver los riesgos y dar garantías", "correct": true, "feedback": "Eso es — y es la palabra que vertebra toda la charla. «La seniority viene de la experiencia que te da **criterio**, y el criterio te lleva a dar garantías»: el proyecto sale porque viste las áreas grises antes de que explotaran." },
+                  { "text": "Los años en el sector", "feedback": "Los años ayudan, pero Joaquín se dice «igual de senior que alguien que lleva 5», según el perfil. No es un contador de años." }
+                ]
+              }
+            },
+            {
+              "type": "timeline",
+              "props": {
+                "items": [
+                  { "time": "1998", "icon": "mouse-pointer", "title": "Cacharrea con FrontPage", "description": "Hace HTML y CSS con la herramienta de Microsoft casi sin saber que lo son. Aprende a su bola." },
+                  { "time": "2001", "icon": "banknote", "title": "El primer sueldo (en pesetas)", "description": "Becario en una revista de turismo de Valencia: maqueta la revista en papel y hereda su portal en PHP, con logos dando vueltas incluidos." },
+                  { "time": "~2010", "icon": "box", "title": "Un CMS solo, por probar", "description": "Se monta un gestor entero para trastear con CodeIgniter; los uploads, con un plugin de Flash porque «te daba el progreso de la subida»." },
+                  { "time": "2014", "icon": "users", "title": "Hanzo pasa de 3 a 12", "description": "El equipo crece y cada cual escribe código a su manera. «O pones procesos o estás perdido» — ahí descubre la arquitectura." },
+                  { "time": "Hoy", "icon": "anchor", "title": "Legacy danés de 2009", "description": "Arquitecto de front reescribiendo, pieza a pieza, un código que nadie tiene entero en la cabeza, mientras sigue dando valor." }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "He hecho muchísimas cosas sin tener ni idea de lo que estaba haciendo. Tiraba para adelante y no sé cómo he sobrevivido.",
+                "attribution": "Joaquín Martí",
+                "role": "20 años de oficio, contados sin épica"
+              }
+            }
+          ]
+        },
+        {
+          "title": "La conversación",
+          "subtitle": "Junior, senior y la palabra que lo cambia todo.",
+          "emoji": "🥊",
+          "outro": "Criterio. Guárdate la palabra: la vas a teclear al final.",
+          "screens": [
+            {
+              "type": "group-chat",
+              "props": {
+                "title": "¿Cuándo se pasa de junior a senior?",
+                "messages": [
+                  { "from": "Daniel", "text": "¿Cuándo se pasa de junior a senior?", "side": "right" },
+                  { "from": "Joaquín", "text": "Separar entre junior y senior me parece peligroso. Hay decenas de habilidades y niveles; clasificar el valor de las personas en binario, encendido/apagado, me rompe la cabeza.", "side": "left" },
+                  { "from": "Joaquín", "text": "Para mí la seniority viene de la experiencia que te da criterio. Y el criterio te lleva a dar garantías: el proyecto sale en tiempo y forma porque has identificado las áreas grises y los riesgos.", "side": "left" },
+                  { "from": "Daniel", "text": "O sea, no va de saber más.", "side": "right" },
+                  { "from": "Joaquín", "text": "He visto gente con poca experiencia y muchos conocimientos a la que había que pararle los pies porque ponía el proyecto en riesgo. Y gente con muchos años que no conoce los frameworks de moda. No va de conocimientos: va de criterio.", "side": "left" }
+                ]
+              }
+            },
+            {
+              "type": "fill-in-the-blanks",
+              "props": {
+                "text": "Según Joaquín, la seniority viene de la {{fuente}} que te da {{palabra}}, y eso te lleva a dar {{fin}}.",
+                "blanks": {
+                  "fuente": { "options": ["experiencia", "carrera", "suerte"], "answer": "experiencia" },
+                  "palabra": { "options": ["criterio", "velocidad", "autoridad"], "answer": "criterio" },
+                  "fin": { "options": ["garantías", "órdenes", "excusas"], "answer": "garantías" }
+                }
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "He aprendido mucho de pegarme hostias, de los fracasos más que de los éxitos. A veces haces algo bien y no te enteras, porque no pasa nada malo.",
+                "attribution": "Joaquín Martí"
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "El atajo mental de toda la charla: **el criterio no se estudia, se acumula** — sobre todo cuando algo sale mal. Por eso un senior es conservador en lo que importa: «de diez decisiones conservadoras, siempre hay dos o tres que salvan el proyecto»."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Las ideas que te llevas",
+          "subtitle": "De cómo entrar a cómo no reescribirlo todo en cinco años.",
+          "emoji": "💡",
+          "outro": "Teoría hecha. Te queda decidir una cosa sobre tu propia carrera.",
+          "screens": [
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "spectrum",
+                "items": [
+                  { "label": "Años", "description": "El tiempo en el sector. Necesario, pero no suficiente — no es un contador." },
+                  { "label": "Conocimientos", "description": "Frameworks, librerías, técnicas. Ayudan, pero solos pueden poner un proyecto en riesgo." },
+                  { "label": "Criterio", "description": "La experiencia (y los fracasos) que te hacen ver los riesgos y las áreas grises antes." },
+                  { "label": "Garantías", "description": "El resultado: el proyecto sale en tiempo y forma. Eso es ser senior." }
+                ]
+              }
+            },
+            {
+              "type": "flashcards",
+              "props": {
+                "cards": [
+                  { "front": "Al entrar, evalúa tú a la empresa", "back": "No solo te evalúan a ti. Busca un sitio donde puedas progresar, no donde te dejen solo con tareas y ansiedad. El encaje cultural pesa más que el conocimiento." },
+                  { "front": "El live-coding no va de terminar", "back": "Va de cómo colaboras. Lee bien, pregunta requisitos y casos límite, piensa en voz alta. Si no acabas la tarea, no suele pasar nada." },
+                  { "front": "El home-task se comenta", "back": "Pide tiempo. Comenta el código mucho más que en tu trabajo y escribe un README con tus decisiones y los siguientes pasos: lo verán sin ti delante." },
+                  { "front": "La arquitectura empieza por separar", "back": "Trocea en unidades pequeñas (componentes, funciones) que testeas aisladas y luego compones. «Si separas bien, el testing sale solo.»" },
+                  { "front": "Management es voluntario", "back": "«Puedes perder un buen técnico y ganar un mal manager.» Muchas empresas ya te dejan crecer sin dejar de programar. Da el paso solo si lo eliges." }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Te atascas a mitad de un live-coding. ¿Qué importa más para pasarlo?",
+                "options": [
+                  { "text": "Terminar la función como sea, en silencio", "feedback": "No. «Si no completas la tarea, no suele pasar nada.» El silencio esconde justo lo que evalúan." },
+                  { "text": "Decir en voz alta dónde te has atascado y seguir razonando", "correct": true, "feedback": "Eso es. El live-coding mide cómo colaboras y comunicas, no si terminas. Tu ganancia está en el razonamiento en voz alta." },
+                  { "text": "Pedir cambiar a una tarea para casa", "feedback": "No es la salida. Ambas formas incomodan; el truco es comunicar, no huir." }
+                ]
+              }
+            },
+            {
+              "type": "step-cards",
+              "props": {
+                "steps": [
+                  { "icon": "book-open", "title": "Lee y repite la pregunta", "description": "Nervioso, se lee en diagonal. Repite el enunciado en voz alta: «¿he entendido esto?». Confirmar antes de teclear te ahorra resolver el problema equivocado." },
+                  { "icon": "help-circle", "title": "Pregunta requisitos y casos límite", "description": "¿Vienen siempre números o puede llegar vacío? ¿Está ordenado? Preguntar demuestra criterio antes de escribir una línea." },
+                  { "icon": "terminal", "title": "Prueba con un console.log", "description": "Antes de dar la solución por buena, comprueba con un par de casos que hace lo que esperas — incluidos los raros." },
+                  { "icon": "message-square", "title": "Piensa en voz alta", "description": "Programar es el último paso. Tu ganancia está en el razonamiento comentado: que vean que te lo curras, aunque te olvides cómo se hace un map." }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Tu turno",
+          "subtitle": "Una decisión, una palabra y una plantilla para el lunes.",
+          "emoji": "🎯",
+          "outro": "Con criterio. Nos escuchamos en el siguiente.",
+          "screens": [
+            {
+              "type": "decision-tree",
+              "props": {
+                "start": "q1",
+                "nodes": {
+                  "q1": {
+                    "prompt": "Llevas años y te empujan hacia gestionar personas y hojas de cálculo. ¿Qué quieres?",
+                    "options": [
+                      { "label": "Seguir en lo técnico", "to": "tech" },
+                      { "label": "Me atrae gestionar equipos", "to": "mgmt" },
+                      { "label": "Ni idea, me están empujando", "to": "pushed" }
+                    ]
+                  },
+                  "tech": {
+                    "prompt": "Quieres seguir tocando código.",
+                    "outcome": "Busca empresas con career path técnico: muchas (sobre todo en EE. UU., y ya algo en Europa) tienen varios niveles de ingeniería para crecer sin pasar a gestión. «Te prometemos que no te vas a ir nunca a management si no quieres.»"
+                  },
+                  "mgmt": {
+                    "prompt": "Te atrae la gestión.",
+                    "outcome": "Adelante, pero consciente: es otra carrera, de fondo, y no es fácil. Hazlo voluntario, no por inercia. Conoces gente feliz ahí… y gente que quiere volver."
+                  },
+                  "pushed": {
+                    "prompt": "Te empujan sin haberlo elegido.",
+                    "outcome": "Cuidado: «puedes perder un buen técnico y ganar un mal manager». Antes de levantar la mano o irte, mira si hay un engineering manager (rol de personas, no de código) que te quite ese marrón."
+                  }
+                }
+              }
+            },
+            {
+              "type": "keyword-gate",
+              "props": {
+                "prompt": "Una palabra resume qué te hace senior. Escríbela para abrir el cierre.",
+                "answer": "criterio",
+                "hint": "Empieza por C. No es conocimiento ni años: es lo que te deja ver los riesgos y dar garantías.",
+                "skipLabel": "No escuché el episodio",
+                "reward": {
+                  "type": "prompt-template",
+                  "props": {
+                    "title": "Audita tu próximo proceso de selección",
+                    "template": "Empresa: {{empresa}}.\nLo que dice su oferta, con sus palabras exactas: {{palabras de la oferta}}.\nMi experiencia contada con ESAS mismas palabras: {{tu encaje}}.\nLo que le preguntaré yo a la empresa: {{¿dónde podré progresar? ¿con quién trabajaré?}}",
+                    "note": "El consejo de Joaquín, en plantilla: estudia la empresa, habla su idioma y recuerda que tú también la evalúas a ella."
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

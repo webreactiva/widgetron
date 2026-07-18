@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Aprender a programar programando: la historia malandriner de Tere",
+    "slug": "aprender-programando-tere-115",
+    "lang": "es",
+    "theme": "podyscroll",
+    "description": "Tere limpia casas y construye tiendas online. Autodidacta desde 1990, a trompicones y sin escuela que la empujara, acaba de pagar su primera cuota de autónoma. Su historia es la del espíritu malandriner: aprender a programar programando.",
+    "keyword": "malandriner",
+    "source": {
+      "type": "podcast",
+      "show": "wrp",
+      "episode": 115,
+      "title": "Web Reactiva Premium 115 — Tere, malandriner en portada",
+      "host": "Daniel Primo",
+      "guest": "Tere P. Bernal",
+      "lang": "es"
+    }
+  },
+  "settings": {
+    "challenge": {
+      "label": "Tu racha malandriner"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "aprender-programando-tere-115",
+      "modules": [
+        {
+          "title": "Una malandrina en portada",
+          "subtitle": "Tere limpia casas y construye tiendas online. Las dos cosas, a la vez.",
+          "screens": [
+            {
+              "type": "decode-headline",
+              "props": { "text": "Limpia casas. Y construye tiendas.", "as": "h2" }
+            },
+            {
+              "type": "prose",
+              "props": {
+                "children": "Tere P. Bernal es empleada del hogar en dos casas. También levanta tiendas online con WordPress. En su bio se define con cinco palabras: **aprender a programar programando** — aprender a hacer las cosas haciéndolas.\n\nDaniel la presenta como una **malandrina**: capacidad de superación, esfuerzo y cero excusas. No está en el diccionario, pero se reconoce en cuanto la escuchas."
+              }
+            },
+            {
+              "type": "map",
+              "props": {
+                "center": [40.4168, -3.7038],
+                "zoom": 12,
+                "markers": [
+                  { "lat": 40.4168, "lng": -3.7038, "label": "Academia de ofimática · 1990" }
+                ],
+                "title": "Madrid, 1990",
+                "caption": "Aquí empezó todo: una academia de ofimática en Madrid. **dBase III**, MS-DOS y un primer contacto con el código que, entonces, «parecía algo muy lejano»."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Tere lleva programando, a ratos, ¿desde cuándo?",
+                "options": [
+                  { "text": "Desde hace un par de años", "feedback": "Mucho antes. Lo suyo es una carrera de fondo, no un sprint." },
+                  { "text": "Desde 2010, más o menos", "feedback": "Aún antes. Piensa en disquetes." },
+                  { "text": "Desde 1990, con dBase III", "correct": true, "feedback": "Eso es. Una academia en Madrid, dBase III y MS-DOS. Treinta años de idas y venidas hasta su primera factura." }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "El camino, a trompicones",
+          "subtitle": "De dBase III a WooCommerce, sin línea recta y sin escuela que la empujara.",
+          "screens": [
+            {
+              "type": "kinetic-headline",
+              "props": { "text": "De dBase III a WooCommerce", "as": "h2" }
+            },
+            {
+              "type": "sticky-pan",
+              "props": {
+                "panels": [
+                  { "content": "**1990 · Academia en Madrid.** dBase III y los primeros comandos. «Desde el dBase III ya me gustaba mucho.»" },
+                  { "content": "**Clipper.** Un curso de microinformática de la Comunidad de Madrid. Más código, un poco más cerca." },
+                  { "content": "**UNED.** Modula 2 y Java. No terminó la carrera, pero tocó, probó y siguió." },
+                  { "content": "**La primera web.** PHP, HTML y CSS para el turismo rural de un primo. Su primer proyecto de verdad." },
+                  { "content": "**Hoy · WordPress + WooCommerce.** Lo más práctico para su situación — y donde ve demanda real." }
+                ]
+              }
+            },
+            {
+              "type": "draw-diagram",
+              "props": {
+                "viewBox": "0 0 240 120",
+                "title": "La curva real de aprender sola",
+                "paths": [
+                  { "d": "M20 110 L20 10 M20 110 L232 110", "width": 2 },
+                  "M22 100 C 55 98, 66 72, 92 80 S 128 44, 158 54 S 206 20, 230 16"
+                ],
+                "labels": [
+                  { "x": 24, "y": 104, "text": "1990" },
+                  { "x": 230, "y": 14, "text": "hoy", "anchor": "end" }
+                ],
+                "caption": "Nunca fue una línea recta: cursos sueltos, lenguajes que se quedaron por el camino y el **síndrome de los tutoriales**. Pero siempre hacia arriba."
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "El gran enemigo no fue el código: fue **dispersarse**. «Hay tanta información…» — YouTube, Udemy, daily.dev en cada pestaña nueva. Tere lo llama *pajarear*. Le pasa a todo el mundo; el truco es volver a centrarse."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Según Tere, ¿qué es lo que más le costó en todo el camino?",
+                "options": [
+                  { "text": "Los sistemas de pago (Stripe, RedSys)", "feedback": "Le dieron guerra — sobre todo RedSys —, pero no fue lo que más le costó." },
+                  { "text": "El inglés y no dispersarse", "correct": true, "feedback": "Eso es. «El inglés lo llevo fatal» y «no dispersarme, porque hay tanta información». Los dos frenos más humanos que hay." },
+                  { "text": "Instalar Windows", "feedback": "Eso lo ha hecho «infinidad» de veces — es de lo que mejor se le da." }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Ahora o nunca",
+          "subtitle": "El salto al precipicio: de las prácticas al alta de autónoma.",
+          "screens": [
+            {
+              "type": "scroll-stat",
+              "props": {
+                "value": 30,
+                "label": "años entre su primer **dBase III**, en 1990, y su primera cuota de autónoma. El camino largo también cuenta."
+              }
+            },
+            {
+              "type": "prose",
+              "props": {
+                "children": "El 31 de diciembre pagó su **primera cuota de autónoma**. «Me he tirado al precipicio», dice — y lo hace justo cuando entra en sus últimos 15 años de cotización.\n\nNo es un impulso: es un cálculo. *Ahora o nunca.*"
+              }
+            },
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "spectrum",
+                "items": [
+                  { "label": "Stripe", "description": "Pones el cajetín de la tarjeta y pasa su magia. Lo más fácil." },
+                  { "label": "PayPal", "description": "El punto intermedio, cuando el cliente lo pide." },
+                  { "label": "RedSys", "description": "La pasarela de la banca española. Más lenta y más difícil — la domó a base de configurarla." }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Tu turno",
+          "subtitle": "Lo que ya ha construido — y el reto que te deja a ti.",
+          "screens": [
+            {
+              "type": "checklist",
+              "props": {
+                "id": "frenos-malandriner",
+                "items": [
+                  { "text": "Abro daily.dev y me voy detrás de cinco temas nuevos", "hint": "El pajareo. A Tere le pasa; a ti también." },
+                  { "text": "El inglés me frena más de lo que admito", "hint": "«Lo llevo fatal», dijo. Y aun así, adelante." },
+                  { "text": "Empiezo cursos que no termino", "hint": "El síndrome de los tutoriales, con nombre y apellidos." },
+                  { "text": "Pospongo cobrar «porque aún soy nuevo/a»", "hint": "Tere cobró poquito en sus primeras webs. Empezar cuenta." }
+                ]
+              }
+            },
+            {
+              "type": "scroll-stat",
+              "props": {
+                "value": 2,
+                "meter": true,
+                "max": 2,
+                "label": "tiendas ya en producción: una de **vinos** y otra de **cepillos ecológicos** — con pagos y envíos resueltos."
+              }
+            },
+            {
+              "type": "keyword-gate",
+              "props": {
+                "prompt": "Tere encarna una palabra. Escríbela para abrir el cierre.",
+                "answer": "malandriner",
+                "hint": "Empieza por M… y es el espíritu con el que Daniel la presenta: superación y esfuerzo.",
+                "skipLabel": "No escuché el episodio",
+                "reward": {
+                  "type": "prompt-template",
+                  "props": {
+                    "title": "Empieza tu diario «programa en pantuflas»",
+                    "template": "Hoy he construido o configurado: {{qué hiciste}}.\nLo etiqueto como #hito.\nLo que más me costó: {{el obstáculo}}.\nMañana, un paso pequeño: {{siguiente paso}}.",
+                    "note": "El reto de Daniel: anota cada día lo que creas, por pequeño que sea. El día de las vacas flacas te lo miras y ves todo lo que has conseguido."
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
