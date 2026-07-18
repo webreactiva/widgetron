@@ -177,6 +177,18 @@
   }
 }
 
+/* Playing-state equalizer bars (episode-player active chapter). Runs only
+   while audio actually plays — a live-playback indicator, not decoration. */
+@keyframes wgt-eq {
+  0%,
+  100% {
+    height: 4px;
+  }
+  50% {
+    height: 12px;
+  }
+}
+
 /* Earned reveal: rises, overshoots 2px on the spring, settles. */
 @keyframes wgt-unlock {
   0% {

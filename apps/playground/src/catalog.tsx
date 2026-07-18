@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 import {
   AudioClip,
+  KaraokeStage,
+  EpisodePlayer,
+  InterviewTranscript,
+  QaCard,
+  GuestReel,
   CalloutBox,
   Checklist,
   CodeTranslation,
@@ -234,7 +239,19 @@ export const categories: { title: string; ids: string[] }[] = [
       "hotspots",
     ],
   },
-  { title: "Media", ids: ["audio-clip", "video-clip", "figure"] },
+  {
+    title: "Media",
+    ids: [
+      "audio-clip",
+      "episode-player",
+      "karaoke-stage",
+      "interview-transcript",
+      "qa-card",
+      "guest-reel",
+      "video-clip",
+      "figure",
+    ],
+  },
   {
     title: "AI & personalization",
     ids: ["prompt-template", "profile-quiz", "profile-provider", "profile-gate"],
@@ -1596,6 +1613,35 @@ console.log("C");`}
         ),
       },
       {
+        label: "Episode moment (context strip)",
+        node: (
+          <AudioClip
+            title="The best commit of my career"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            start={30}
+            end={57}
+            context
+          />
+        ),
+      },
+      {
+        label: "Spotlight transcript (sentence in focus)",
+        node: (
+          <AudioClip
+            title="A confession, line by line"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+            transcriptView="spotlight"
+            transcript={[
+              { start: 0, text: "I once kept a dead feature alive for a year." },
+              { start: 5, text: "Nobody used it — the dashboard said so." },
+              { start: 11, text: "But deleting it felt like admitting the year was wasted." },
+              { start: 18, text: "The day I finally removed it, nothing broke." },
+              { start: 24, text: "That silence taught me more than the feature ever did." },
+            ]}
+          />
+        ),
+      },
+      {
         label: "Audio only (no transcript)",
         node: (
           <AudioClip
@@ -1609,8 +1655,200 @@ console.log("C");`}
         node: (
           <AudioClip
             title="Episode cover pulled from the RSS feed"
-            poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg"
+            poster="https://picsum.photos/id/1025/300/300"
             src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "episode-player",
+    name: "EpisodePlayer",
+    summary:
+      "The whole episode as the storyline's header player: cover, title, chapters that map the guide's modules (click one to jump the audio), and the shared sticky mini-player so you can listen while reading. Resume position persists per storageKey; speed and volume are the reader's global preferences, shared with AudioClip. One per storyline.",
+    demos: [
+      {
+        label: "With chapters (one per module)",
+        node: (
+          <EpisodePlayer
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+            title="Coding without smoke"
+            episode="WR 300 · full episode"
+            storageKey="playground-wr300"
+            chapters={[
+              { start: 0, title: "The word of the week" },
+              { start: 60, title: "What smoke is" },
+              { start: 150, title: "The antidote" },
+              { start: 240, title: "The final boss" },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "interview-transcript",
+    name: "InterviewTranscript",
+    summary:
+      "A two-voice interview exchange laid out editorially (press, not chat bubbles). Host renders in the primary color, guest in --brand-2 — the same speaker identity quote and qa-card use. With a clip, the turn being spoken lights up and clicking a turn jumps the audio there.",
+    demos: [
+      {
+        label: "Exchange with audio",
+        node: (
+          <InterviewTranscript
+            speakers={{
+              host: { name: "Daniel Primo", role: "Host" },
+              guest: { name: "Laura G.", role: "Staff engineer" },
+            }}
+            turns={[
+              {
+                speaker: "host",
+                start: 18,
+                text: "How do you spot smoke in a job offer?",
+              },
+              {
+                speaker: "guest",
+                start: 22,
+                text: "When the title has more words than the description of what you'll actually do. *Senior visionary platform evangelist* and the repo has three commits.",
+              },
+              {
+                speaker: "guest",
+                start: 34,
+                text: "Always ask about the last deploy: the date can't lie.",
+              },
+              {
+                speaker: "host",
+                start: 40,
+                text: "The date can't lie. That one goes on a t-shirt.",
+              },
+            ]}
+            clip={{
+              src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+              start: 18,
+              end: 44,
+            }}
+          />
+        ),
+      },
+      {
+        label: "Readable only (no audio)",
+        node: (
+          <InterviewTranscript
+            speakers={{
+              host: { name: "Daniel Primo", role: "Host" },
+              guest: { name: "Laura G.", role: "Staff engineer" },
+            }}
+            turns={[
+              { speaker: "host", text: "What would you tell your junior self?" },
+              {
+                speaker: "guest",
+                text: "Finish things. A finished side project is worth more than five half-learned frameworks.",
+              },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "qa-card",
+    name: "QaCard",
+    summary:
+      "The question as the hook, the answer as the reward — the same reveal mechanic the rest of the library uses. Speaker identity follows the transversal pattern (asker = primary, answerer = --brand-2). Works with no audio; with a clip the revealed answer plays in the original voice.",
+    demos: [
+      {
+        label: "Question → revealed answer",
+        node: (
+          <QaCard
+            question="How do you spot smoke in a job offer?"
+            answer="When the title has more words than the description of what you'll do. Always ask about the last deploy: **the date can't lie**."
+            askedBy="Daniel Primo"
+            answeredBy="Laura G."
+            answeredByRole="Episode guest"
+            timestamp="19:12"
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "guest-reel",
+    name: "GuestReel",
+    summary:
+      "A horizontal scroll-snap reel with the best things the guest said, built for the thumb on mobile. Each card is a regular Quote (monogram, minute, optional audio clip). Use it to close an interview module with 3–5 quotes.",
+    demos: [
+      {
+        label: "Three quotes from the guest",
+        node: (
+          <GuestReel
+            guest="Laura G."
+            guestRole="Staff engineer"
+            quotes={[
+              {
+                text: "A finished side project is worth more than five half-learned frameworks.",
+                timestamp: "12:40",
+              },
+              {
+                text: "My rule: if I can't explain it without buzzwords, I don't understand it yet.",
+                timestamp: "26:05",
+              },
+              {
+                text: "Seniority isn't knowing more. It's leaving fewer fires burning when you go.",
+                timestamp: "38:51",
+              },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "karaoke-stage",
+    name: "KaraokeStage",
+    summary:
+      "The episode's peak moment on a full-width stage: the spoken words light up one by one over the code surface, like Spotify lyrics or TikTok subtitles. Word timing is interpolated inside each sentence-level cue (length + punctuation heuristic) — no word-level ASR needed. Two treatments, one engine: lyrics lines or a beat-by-beat chunk; the reader can switch. Without audio it self-paces from the cue timestamps. Use once or twice per storyline — it is the fortissimo.",
+    demos: [
+      {
+        label: "Lyrics mode (self-paced, no audio)",
+        node: (
+          <KaraokeStage
+            eyebrow="WR 300 · 23:14"
+            transcript={[
+              { start: 0, end: 3.4, text: "Smoke is activity that looks like work." },
+              { start: 3.4, end: 7, text: "It demos beautifully and leaves no trace." },
+              { start: 7, end: 10.4, text: "Reordering the backlog. Redecorating Notion." },
+              { start: 10.4, end: 14, text: "Choosing a framework for a product that doesn't exist." },
+              { start: 14, end: 17.5, text: "You don't beat it with epic. You beat it with one honest number." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Word-by-word mode (maximum impact)",
+        node: (
+          <KaraokeStage
+            eyebrow="The word of the week"
+            mode="words"
+            transcript={[
+              { start: 0, end: 4, text: "Ship the smallest thing that teaches you something real." },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "With real audio (fragment window)",
+        node: (
+          <KaraokeStage
+            eyebrow="WR 300 · Programar sin humo"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            start={10}
+            end={24}
+            transcript={[
+              { start: 0, end: 4, text: "A spec is the plan you write before any code." },
+              { start: 4, end: 9, text: "It captures the intent: what to build, and why." },
+              { start: 9, end: 14, text: "Then the spec drives the implementation." },
+            ]}
           />
         ),
       },

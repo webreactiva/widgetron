@@ -8,7 +8,7 @@ export const audioClipMeta: WidgetMeta = {
   summary:
     "A custom audio player with an optional synced, clickable karaoke transcript.",
   whenToUse:
-    "Use to embed a piece of audio — a clip, an interview, a pronunciation example — with custom play/seek controls and, optionally, a transcript that highlights and auto-scrolls each cue as it plays and lets the learner click a line to jump there. Reach for it for sound-only material; prefer VideoClip when there is moving picture to show. Provide a transcript inline via `transcript`, or fetch one (.json/.vtt/.srt) via `transcriptSrc`. With `start`/`end` it plays only that fragment of `src` (an episode file can serve many clips); transcript timestamps are then fragment-relative — use the fragment's cut .srt, not the episode's.",
+    "Use to embed a piece of audio — a clip, an interview, a pronunciation example — with custom play/seek controls and, optionally, a transcript that highlights and auto-scrolls each cue as it plays and lets the learner click a line to jump there. Reach for it for sound-only material; prefer VideoClip when there is moving picture to show. Provide a transcript inline via `transcript`, or fetch one (.json/.vtt/.srt) via `transcriptSrc`. With `start`/`end` it plays only that fragment of `src` (an episode file can serve many clips); transcript timestamps are then fragment-relative — use the fragment's cut .srt, not the episode's. For an episode moment worth surfacing, turn on `context` (a strip naming the source minute and clip length). Set `transcriptView: \"spotlight\"` for 20–60s fragments where what's said matters sentence by sentence — the spoken line grows and lights up while the rest wait dimmed.",
   schema: z.object({
     src: z.string().describe("Audio source URL (required)."),
     start: z
@@ -52,6 +52,18 @@ export const audioClipMeta: WidgetMeta = {
       .optional()
       .describe(
         "Show a sticky corner mini-player once playback starts and the main player scrolls out of view. Default: true.",
+      ),
+    context: z
+      .boolean()
+      .optional()
+      .describe(
+        "Header strip naming where the clip comes from: 'Episode moment · 23:14 · 0:27' (source minute from `start`, plus clip length). Default: false.",
+      ),
+    transcriptView: z
+      .enum(["compact", "spotlight"])
+      .optional()
+      .describe(
+        "Transcript presentation. 'compact' (default) is the scrolling list; 'spotlight' enlarges and lights the sentence being spoken — for fragments read line by line.",
       ),
   }),
   example: {

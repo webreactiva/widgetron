@@ -55,6 +55,15 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | widget | quote | `clip_opened` | `{ start? }` — reader expanded the audio of the quoted moment |
 | widget | surprise | `revealed` | `{ variant, variants }` — which pool entry the reveal landed on |
 | widget | keyword-gate | `keyword_attempt` | `{ result: "correct" \| "hint" \| "ghost" \| "skip" }` — once per gate. `correct` (no hint shown) is recall demonstrated; `skip` is a cold reader entering the reward |
+| widget | karaoke-stage | `played` | `{ mode }` — first play per mount |
+| widget | karaoke-stage | `mode_changed` | `{ mode: "lines" \| "words" }` — reader switched the typographic treatment |
+| widget | karaoke-stage | `completed` | `{ mode }` — playback reached the end (once per mount) |
+| widget | episode-player | `played` | `{}` — first play per mount |
+| widget | episode-player | `chapter_selected` | `{ index, start }` — reader jumped the audio to a chapter |
+| widget | episode-player | `completed` | `{}` — ≥90% of the episode listened (once per mount) |
+| widget | interview-transcript | `played` | `{}` — first play per mount |
+| widget | interview-transcript | `turn_selected` | `{ index, start }` — reader clicked a turn to jump there |
+| widget | qa-card | `answer_revealed` | `{ timestamp? }` — the reader opened the answer |
 | storyline | storyline | `section_viewed` | `{ index, total, title? }` — when the active module changes |
 | storyline | storyline | `scroll_milestone` | `{ percent: 25 \| 50 \| 75 \| 100 }` — monotonic, once per instance |
 | storyline | storyline | `completed` | `{}` — alongside the 100 milestone |

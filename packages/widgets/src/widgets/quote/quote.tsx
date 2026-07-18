@@ -53,6 +53,16 @@ export interface QuoteProps
   labels?: Partial<QuoteLabels>;
 }
 
+/** "Laura García" → "LG". Initials of the first two words, uppercased. */
+export function initials(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
 /** Seconds → "23:14" / "1:02:45". */
 function formatClock(seconds: number): string {
   const total = Math.max(0, Math.floor(seconds));
@@ -112,12 +122,23 @@ export function Quote({
         <RichText>{children}</RichText>
       </blockquote>
       {(attribution != null || role != null) && (
-        <figcaption className="mt-3 text-sm text-muted-foreground">
-          {attribution != null && (
-            <span className="font-semibold text-foreground">{attribution}</span>
+        <figcaption className="mt-3 flex items-center gap-2.5 text-sm text-muted-foreground">
+          {/* Monogram instead of an avatar — we never have photos. */}
+          {typeof attribution === "string" && attribution.trim() !== "" && (
+            <span
+              aria-hidden
+              className="grid size-8 shrink-0 place-items-center rounded-full border border-primary/35 bg-[color-mix(in_oklab,var(--primary)_16%,var(--card))] font-display text-xs font-bold text-primary"
+            >
+              {initials(attribution)}
+            </span>
           )}
-          {attribution != null && role != null && <span aria-hidden> · </span>}
-          {role != null && <span>{role}</span>}
+          <span>
+            {attribution != null && (
+              <span className="font-semibold text-foreground">{attribution}</span>
+            )}
+            {attribution != null && role != null && <span aria-hidden> · </span>}
+            {role != null && <span>{role}</span>}
+          </span>
         </figcaption>
       )}
       {clip ? (

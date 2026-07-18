@@ -7,6 +7,11 @@ import { quizMeta } from "@/widgets/quiz/quiz.meta";
 import { calloutBoxMeta } from "@/widgets/callout-box/callout-box.meta";
 import { surpriseMeta } from "@/widgets/surprise/surprise.meta";
 import { keywordGateMeta } from "@/widgets/keyword-gate/keyword-gate.meta";
+import { karaokeStageMeta } from "@/widgets/karaoke-stage/karaoke-stage.meta";
+import { episodePlayerMeta } from "@/widgets/episode-player/episode-player.meta";
+import { interviewTranscriptMeta } from "@/widgets/interview-transcript/interview-transcript.meta";
+import { qaCardMeta } from "@/widgets/qa-card/qa-card.meta";
+import { guestReelMeta } from "@/widgets/guest-reel/guest-reel.meta";
 import { quoteMeta } from "@/widgets/quote/quote.meta";
 import { ctaMeta } from "@/widgets/cta/cta.meta";
 import { promptTemplateMeta } from "@/widgets/prompt-template/prompt-template.meta";
@@ -53,6 +58,11 @@ import { Checklist } from "@/widgets/checklist";
 import { CalloutBox } from "@/widgets/callout-box";
 import { Surprise } from "@/widgets/surprise";
 import { KeywordGate } from "@/widgets/keyword-gate";
+import { KaraokeStage } from "@/widgets/karaoke-stage";
+import { EpisodePlayer } from "@/widgets/episode-player";
+import { InterviewTranscript, type InterviewTurn } from "@/widgets/interview-transcript";
+import { QaCard } from "@/widgets/qa-card";
+import { GuestReel, type GuestReelQuote } from "@/widgets/guest-reel";
 import { Quote } from "@/widgets/quote";
 import { Cta } from "@/widgets/cta";
 import { ProfileCard } from "@/widgets/profile-card";
@@ -190,6 +200,39 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
       content: asContent(p.content),
       variants: asContent(p.variants),
       teaser: asContent(p.teaser),
+    }),
+  },
+  "karaoke-stage": { ...karaokeStageMeta, component: KaraokeStage },
+  "episode-player": { ...episodePlayerMeta, component: EpisodePlayer },
+  "interview-transcript": {
+    ...interviewTranscriptMeta,
+    component: InterviewTranscript,
+    adapt: (p) => ({
+      ...p,
+      turns: (p.turns as InterviewTurn[] | undefined)?.map((turn) => ({
+        ...turn,
+        text: asContent(turn.text),
+      })),
+    }),
+  },
+  "qa-card": {
+    ...qaCardMeta,
+    component: QaCard,
+    adapt: (p) => ({
+      ...p,
+      question: asContent(p.question),
+      answer: asContent(p.answer),
+    }),
+  },
+  "guest-reel": {
+    ...guestReelMeta,
+    component: GuestReel,
+    adapt: (p) => ({
+      ...p,
+      quotes: (p.quotes as GuestReelQuote[] | undefined)?.map((quote) => ({
+        ...quote,
+        text: asContent(quote.text),
+      })),
     }),
   },
   "keyword-gate": {

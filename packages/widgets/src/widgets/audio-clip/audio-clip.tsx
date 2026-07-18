@@ -19,6 +19,8 @@ export interface AudioClipLabels {
   /** Accessible label for the seek slider. */
   seek: string;
   transcript: React.ReactNode;
+  /** Eyebrow of the `context` strip, e.g. "Episode moment". */
+  contextMoment: React.ReactNode;
   restart: string;
   /** Accessible label for the playback-speed control. */
   speed: string;
@@ -37,6 +39,7 @@ export const DEFAULT_AUDIO_CLIP_LABELS: AudioClipLabels = {
   pause: "Pause",
   seek: "Seek",
   transcript: "Transcript",
+  contextMoment: "Episode moment",
   restart: "Restart",
   speed: "Playback speed",
   volume: "Volume",
@@ -47,13 +50,13 @@ export const DEFAULT_AUDIO_CLIP_LABELS: AudioClipLabels = {
 };
 
 /** Playback rates the speed control cycles through. */
-const RATES = [1, 1.25, 1.5, 1.75, 2] as const;
+export const RATES = [1, 1.25, 1.5, 1.75, 2] as const;
 /** Speed and volume are global reader preferences, shared across clips. */
-const RATE_KEY = "widgetron-audio-rate";
-const VOL_KEY = "widgetron-audio-volume";
+export const RATE_KEY = "widgetron-audio-rate";
+export const VOL_KEY = "widgetron-audio-volume";
 /** Resume position is per-track. */
-const POS_PREFIX = "widgetron-audio-pos:";
-const SAVE_THROTTLE_MS = 4000;
+export const POS_PREFIX = "widgetron-audio-pos:";
+export const SAVE_THROTTLE_MS = 4000;
 
 // --- Single-active-clip coordination -------------------------------------
 // Widget instances are independent, but only one clip should ever play — and
@@ -62,10 +65,25 @@ const SAVE_THROTTLE_MS = 4000;
 // rest, which pause themselves and hide their sticky.
 let activeClipId: string | null = null;
 const activeClipListeners = new Set<() => void>();
-function activateClip(id: string) {
+/** Claim page-wide audio exclusivity (shared with KaraokeStage and friends). */
+export function activateClip(id: string) {
   if (activeClipId === id) return;
   activeClipId = id;
   activeClipListeners.forEach((notify) => notify());
+}
+/** Subscribe to active-clip changes; returns an unsubscribe. */
+export function subscribeActiveClip(listener: () => void): () => void {
+  activeClipListeners.add(listener);
+  return () => {
+    activeClipListeners.delete(listener);
+  };
+}
+export function getActiveClipId(): string | null {
+  return activeClipId;
+}
+/** Release the active slot when the owning widget unmounts. */
+export function releaseClip(id: string) {
+  if (activeClipId === id) activeClipId = null;
 }
 
 export interface AudioClipProps
@@ -100,6 +118,18 @@ export interface AudioClipProps
    * player scrolls out of view. Default: true.
    */
   sticky?: boolean;
+  /**
+   * Header strip naming where the clip comes from: "Episode moment · 23:14 ·
+   * 0:27" — the source minute (from `start`) and the clip length, visible
+   * before pressing play. Default: false.
+   */
+  context?: boolean;
+  /**
+   * Transcript presentation. "compact" (default) is the scrolling list;
+   * "spotlight" enlarges and lights the sentence being spoken while the rest
+   * wait dimmed — for fragments where what's said matters line by line.
+   */
+  transcriptView?: "compact" | "spotlight";
   labels?: Partial<AudioClipLabels>;
 }
 
@@ -148,7 +178,7 @@ function prefersReducedMotion(): boolean {
 }
 
 /** mm:ss formatter. Non-finite/negative values render as 0:00. */
-function formatTime(seconds: number): string {
+export function formatTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) seconds = 0;
   const total = Math.floor(seconds);
   const m = Math.floor(total / 60);
@@ -161,7 +191,7 @@ function formatRate(rate: number): string {
   return `${rate}×`;
 }
 
-function readNumber(key: string, min: number, max: number): number | null {
+export function readNumber(key: string, min: number, max: number): number | null {
   if (typeof window === "undefined") return null;
   try {
     const v = Number(window.localStorage.getItem(key));
@@ -171,7 +201,7 @@ function readNumber(key: string, min: number, max: number): number | null {
   }
 }
 
-function writeNumber(key: string, value: number): void {
+export function writeNumber(key: string, value: number): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(key, String(value));
@@ -206,7 +236,7 @@ function parseClockRange(line: string): { start: number; end: number } | null {
 }
 
 /** Parse .srt or .vtt text into cues. Handles WEBVTT headers and cue numbers. */
-function parseCueText(text: string): TranscriptCue[] {
+export function parseCueText(text: string): TranscriptCue[] {
   const cues: TranscriptCue[] = [];
   const normalized = text.replace(/^﻿/, "").replace(/\r\n?/g, "\n");
   const blocks = normalized.split(/\n\n+/);
@@ -229,7 +259,7 @@ function parseCueText(text: string): TranscriptCue[] {
 }
 
 /** Coerce a fetched JSON array into TranscriptCue[]. Returns [] if unusable. */
-function parseJsonCues(data: unknown): TranscriptCue[] {
+export function parseJsonCues(data: unknown): TranscriptCue[] {
   if (!Array.isArray(data)) return [];
   const cues: TranscriptCue[] = [];
   for (const item of data) {
@@ -254,6 +284,57 @@ function parseJsonCues(data: unknown): TranscriptCue[] {
   return cues;
 }
 
+/**
+ * Resolve transcript cues: inline `transcript` wins; otherwise fetch
+ * `transcriptSrc` (.json array / .vtt / .srt) on mount. Shared by AudioClip
+ * and KaraokeStage.
+ */
+export function useTranscriptCues(
+  transcript: TranscriptCue[] | undefined,
+  transcriptSrc: string | undefined,
+): TranscriptCue[] {
+  const [fetchedCues, setFetchedCues] = React.useState<TranscriptCue[]>([]);
+
+  React.useEffect(() => {
+    if (!transcriptSrc) return;
+    if (transcript && transcript.length > 0) return;
+    let cancelled = false;
+    const controller =
+      typeof AbortController !== "undefined" ? new AbortController() : undefined;
+
+    fetch(transcriptSrc, { signal: controller?.signal })
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error("transcript"))))
+      .then((raw) => {
+        if (cancelled) return;
+        const trimmed = raw.trim();
+        let parsed: TranscriptCue[] = [];
+        if (trimmed.startsWith("[")) {
+          try {
+            parsed = parseJsonCues(JSON.parse(trimmed));
+          } catch {
+            parsed = [];
+          }
+        } else {
+          parsed = parseCueText(raw);
+        }
+        if (!cancelled) setFetchedCues(parsed);
+      })
+      .catch(() => {
+        // Network/abort/parse failure — silently render no transcript.
+      });
+
+    return () => {
+      cancelled = true;
+      controller?.abort();
+    };
+  }, [transcriptSrc, transcript]);
+
+  return React.useMemo<TranscriptCue[]>(
+    () => (transcript && transcript.length > 0 ? transcript : fetchedCues),
+    [transcript, fetchedCues],
+  );
+}
+
 /** Latest cue whose start <= currentTime. -1 before the first cue. */
 function findActiveCueIndex(cues: TranscriptCue[], currentTime: number): number {
   let active = -1;
@@ -265,7 +346,7 @@ function findActiveCueIndex(cues: TranscriptCue[], currentTime: number): number 
 }
 
 /** A filled range input — used for both the seek bar and the volume slider. */
-function FilledRange({
+export function FilledRange({
   value,
   max,
   step,
@@ -307,7 +388,7 @@ function FilledRange({
 }
 
 /** Compact text button that cycles playback speed. */
-function SpeedButton({
+export function SpeedButton({
   rate,
   onCycle,
   label,
@@ -339,7 +420,7 @@ function SpeedButton({
  * hover/focus, so it stays out of the way until wanted (YouTube-style). The
  * icon click mutes/unmutes; the slider fine-tunes the level.
  */
-function VolumeControl({
+export function VolumeControl({
   volume,
   muted,
   onToggle,
@@ -378,6 +459,119 @@ function VolumeControl({
   );
 }
 
+export interface MiniPlayerLabels {
+  play: string;
+  pause: string;
+  seek: string;
+  volume: string;
+  /** Current mute-toggle label ("Mute" / "Unmute"). */
+  muteToggle: string;
+  speed: string;
+  /** Accessible label for the mini-player region. */
+  region: string;
+  close: string;
+}
+
+/**
+ * Sticky corner mini-player — the shared piece behind AudioClip's and
+ * EpisodePlayer's listen-while-you-read mode. Renders into a portal; the
+ * parent decides when it shows and drives the same audio element.
+ */
+export function MiniPlayer({
+  poster,
+  isPlaying,
+  currentTime,
+  duration,
+  onTogglePlay,
+  onSeek,
+  volume,
+  muted,
+  onToggleMute,
+  onVolume,
+  rate,
+  onCycleRate,
+  onClose,
+  labels,
+}: {
+  poster?: string;
+  isPlaying: boolean;
+  currentTime: number;
+  duration: number;
+  onTogglePlay: () => void;
+  onSeek: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  volume: number;
+  muted: boolean;
+  onToggleMute: () => void;
+  onVolume: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  rate: number;
+  onCycleRate: () => void;
+  onClose: () => void;
+  labels: MiniPlayerLabels;
+}) {
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <div
+      role="region"
+      aria-label={labels.region}
+      data-slot="audio-clip-mini"
+      className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-md items-center gap-2 rounded-xl border bg-card p-2.5 text-card-foreground shadow-lg motion-safe:animate-wgt-fade-up sm:inset-x-auto sm:right-4 sm:left-auto sm:w-96"
+    >
+      {poster && (
+        <img
+          src={poster}
+          alt=""
+          className="size-9 shrink-0 rounded-md border object-cover"
+        />
+      )}
+      <Button
+        type="button"
+        size="icon"
+        className="size-9 shrink-0"
+        aria-label={isPlaying ? labels.pause : labels.play}
+        onClick={onTogglePlay}
+      >
+        {isPlaying ? <Pause className="size-4" /> : <Play className="size-4" />}
+      </Button>
+
+      <FilledRange
+        value={currentTime}
+        max={duration > 0 ? duration : 1}
+        step="any"
+        onChange={onSeek}
+        label={labels.seek}
+        valueText={`${formatTime(currentTime)} / ${formatTime(duration)}`}
+        className="h-1.5 min-w-0 flex-1"
+      />
+
+      <span className="shrink-0 text-[10px] tabular-nums text-muted-foreground">
+        {formatTime(currentTime)}
+      </span>
+
+      <VolumeControl
+        volume={volume}
+        muted={muted}
+        onToggle={onToggleMute}
+        onChange={onVolume}
+        toggleLabel={labels.muteToggle}
+        volumeLabel={labels.volume}
+      />
+
+      <SpeedButton rate={rate} onCycle={onCycleRate} label={labels.speed} />
+
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label={labels.close}
+        className="grid size-7 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <X className="size-4" />
+      </button>
+    </div>,
+    document.body,
+  );
+}
+MiniPlayer.displayName = "MiniPlayer";
+
 /**
  * AudioClip — a custom audio player with an optional synced transcript. Plays a
  * hidden <audio> through custom controls (play/pause, a clickable seek bar,
@@ -406,6 +600,8 @@ export function AudioClip({
   transcriptSrc,
   storageKey,
   sticky = true,
+  context = false,
+  transcriptView = "compact",
   labels,
   className,
   ...props
@@ -416,7 +612,6 @@ export function AudioClip({
   const scrollBoxRef = React.useRef<HTMLDivElement>(null);
   const activeCueRef = React.useRef<HTMLButtonElement>(null);
 
-  const [fetchedCues, setFetchedCues] = React.useState<TranscriptCue[]>([]);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
@@ -451,11 +646,7 @@ export function AudioClip({
   const restoredRef = React.useRef(false);
   const lastSaveRef = React.useRef(0);
 
-  // Inline transcript wins; otherwise use whatever we fetched.
-  const cues = React.useMemo<TranscriptCue[]>(
-    () => (transcript && transcript.length > 0 ? transcript : fetchedCues),
-    [transcript, fetchedCues],
-  );
+  const cues = useTranscriptCues(transcript, transcriptSrc);
   const hasTranscript = cues.length > 0;
 
   // Restore the reader's global preferences (speed, volume) on mount.
@@ -483,41 +674,6 @@ export function AudioClip({
     volumeRef.current = volume;
     mutedRef.current = muted;
   }, [rate, volume, muted]);
-
-  // Fetch the transcript on mount if a URL is given and no inline cues exist.
-  React.useEffect(() => {
-    if (!transcriptSrc) return;
-    if (transcript && transcript.length > 0) return;
-    let cancelled = false;
-    const controller =
-      typeof AbortController !== "undefined" ? new AbortController() : undefined;
-
-    fetch(transcriptSrc, { signal: controller?.signal })
-      .then((r) => (r.ok ? r.text() : Promise.reject(new Error("transcript"))))
-      .then((raw) => {
-        if (cancelled) return;
-        const trimmed = raw.trim();
-        let parsed: TranscriptCue[] = [];
-        if (trimmed.startsWith("[")) {
-          try {
-            parsed = parseJsonCues(JSON.parse(trimmed));
-          } catch {
-            parsed = [];
-          }
-        } else {
-          parsed = parseCueText(raw);
-        }
-        if (!cancelled) setFetchedCues(parsed);
-      })
-      .catch(() => {
-        // Network/abort/parse failure — silently render no transcript.
-      });
-
-    return () => {
-      cancelled = true;
-      controller?.abort();
-    };
-  }, [transcriptSrc, transcript]);
 
   // Wire the <audio> element events to local state.
   React.useEffect(() => {
@@ -704,6 +860,7 @@ export function AudioClip({
   const effectiveMuted = muted || volume === 0;
   const volumeToggleLabel = effectiveMuted ? l.unmute : l.mute;
   const showMini = sticky && isActive && !inView && !dismissed;
+  const spotlight = transcriptView === "spotlight";
 
   return (
     <div
@@ -716,6 +873,20 @@ export function AudioClip({
       {...props}
     >
       <audio ref={audioRef} src={src} preload="metadata" className="hidden" />
+
+      {context && (
+        <div
+          data-slot="audio-clip-context"
+          className="flex items-center gap-2 border-b bg-muted px-4 py-2 font-mono text-[0.7rem] uppercase tracking-wider text-muted-foreground"
+        >
+          <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-primary" />
+          <span className="truncate">
+            {l.contextMoment}
+            {clipStart > 0 && <> · {formatTime(clipStart)}</>}
+            {duration > 0 && <> · {formatTime(duration)}</>}
+          </span>
+        </div>
+      )}
 
       <div className="flex items-center gap-4 p-4">
         {poster && (
@@ -799,10 +970,21 @@ export function AudioClip({
                   onClick={() => seekTo(cue.start)}
                   aria-current={isActive ? "true" : undefined}
                   className={cn(
-                    "block w-full rounded-md px-2 py-1.5 text-left text-sm leading-relaxed transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    isActive
-                      ? "font-medium text-card-foreground [background-color:color-mix(in_oklab,var(--primary)_14%,transparent)]"
-                      : "text-muted-foreground hover:bg-muted",
+                    "block w-full rounded-md text-left leading-relaxed outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    spotlight
+                      ? cn(
+                          // Spotlight: the sentence being spoken grows and
+                          // lights up; the rest wait dimmed.
+                          "border-l-[3px] border-transparent px-3.5 py-2 text-[0.95rem] text-muted-foreground transition-[color,background-color,font-size] duration-(--motion-base) hover:bg-muted",
+                          isActive &&
+                            "border-l-primary text-[1.05rem] font-medium text-card-foreground [background-color:color-mix(in_oklab,var(--primary)_10%,transparent)]",
+                        )
+                      : cn(
+                          "px-2 py-1.5 text-sm transition-colors",
+                          isActive
+                            ? "font-medium text-card-foreground [background-color:color-mix(in_oklab,var(--primary)_14%,transparent)]"
+                            : "text-muted-foreground hover:bg-muted",
+                        ),
                   )}
                 >
                   {cue.text}
@@ -813,76 +995,37 @@ export function AudioClip({
         </div>
       )}
 
-      {showMini &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div
-            role="region"
-            aria-label={l.miniPlayer}
-            data-slot="audio-clip-mini"
-            className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-md items-center gap-2 rounded-xl border bg-card p-2.5 text-card-foreground shadow-lg motion-safe:animate-wgt-fade-up sm:inset-x-auto sm:right-4 sm:left-auto sm:w-96"
-          >
-            {poster && (
-              <img
-                src={poster}
-                alt=""
-                className="size-9 shrink-0 rounded-md border object-cover"
-              />
-            )}
-            <Button
-              type="button"
-              size="icon"
-              className="size-9 shrink-0"
-              aria-label={isPlaying ? l.pause : l.play}
-              onClick={togglePlay}
-            >
-              {isPlaying ? (
-                <Pause className="size-4" />
-              ) : (
-                <Play className="size-4" />
-              )}
-            </Button>
-
-            <FilledRange
-              value={currentTime}
-              max={duration > 0 ? duration : 1}
-              step="any"
-              onChange={onSeek}
-              label={l.seek}
-              valueText={`${formatTime(currentTime)} / ${formatTime(duration)}`}
-              className="h-1.5 min-w-0 flex-1"
-            />
-
-            <span className="shrink-0 text-[10px] tabular-nums text-muted-foreground">
-              {formatTime(currentTime)}
-            </span>
-
-            <VolumeControl
-              volume={volume}
-              muted={effectiveMuted}
-              onToggle={toggleMute}
-              onChange={onVolume}
-              toggleLabel={volumeToggleLabel}
-              volumeLabel={l.volume}
-            />
-
-            <SpeedButton rate={rate} onCycle={cycleRate} label={l.speed} />
-
-            <button
-              type="button"
-              onClick={() => {
-                const audio = audioRef.current;
-                if (audio && !audio.paused) audio.pause();
-                setDismissed(true);
-              }}
-              aria-label={l.close}
-              className="grid size-7 shrink-0 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <X className="size-4" />
-            </button>
-          </div>,
-          document.body,
-        )}
+      {showMini && (
+        <MiniPlayer
+          poster={poster}
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
+          onTogglePlay={togglePlay}
+          onSeek={onSeek}
+          volume={volume}
+          muted={effectiveMuted}
+          onToggleMute={toggleMute}
+          onVolume={onVolume}
+          rate={rate}
+          onCycleRate={cycleRate}
+          onClose={() => {
+            const audio = audioRef.current;
+            if (audio && !audio.paused) audio.pause();
+            setDismissed(true);
+          }}
+          labels={{
+            play: l.play,
+            pause: l.pause,
+            seek: l.seek,
+            volume: l.volume,
+            muteToggle: volumeToggleLabel,
+            speed: l.speed,
+            region: l.miniPlayer,
+            close: l.close,
+          }}
+        />
+      )}
     </div>
   );
 }
