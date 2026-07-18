@@ -11,6 +11,13 @@ export interface TranscriptCue {
   start: number;
   end?: number;
   text: string;
+  /**
+   * Optional real per-word timing (seconds, same timeline as `start`). When
+   * present, KaraokeStage lights each word on its true beat instead of
+   * interpolating from the cue's length — accurate word-by-word karaoke over a
+   * still-readable sentence. `text` stays the source of truth for display.
+   */
+  words?: { text: string; start: number; end: number }[];
 }
 
 export interface AudioClipLabels {

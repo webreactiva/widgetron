@@ -80,6 +80,15 @@ interface TimedWord {
  */
 function timeWords(cues: TranscriptCue[]): TimedWord[][] {
   return cues.map((cue, c) => {
+    // Real per-word timing wins when the cue carries it — accurate beats over a
+    // stable sentence, no interpolation guesswork.
+    if (cue.words && cue.words.length) {
+      return cue.words.map((w) => ({
+        text: w.text,
+        start: w.start,
+        end: w.end,
+      }));
+    }
     const cueEnd =
       cue.end ??
       cues[c + 1]?.start ??
@@ -104,10 +113,12 @@ function timeWords(cues: TranscriptCue[]): TimedWord[][] {
  * KaraokeStage — the episode's peak moment on a full-width stage: the spoken
  * words light up one by one over the code surface (the "recording booth"),
  * like Spotify lyrics or TikTok subtitles. Two typographic treatments, one
- * engine: "lines" (stacked lyrics) and "words" (beat-by-beat chunk). Word
- * timing is interpolated inside each SRT cue (length + punctuation
- * heuristic), so the everyday sentence-level transcript is enough. Without
- * `src` it self-paces from the cue timestamps. Use once or twice per
+ * engine: "lines" (stacked lyrics) and "words" (one sentence at a time). Word
+ * timing is interpolated inside each SRT cue (length + punctuation heuristic),
+ * so the everyday sentence-level transcript is enough — or, when a cue carries a
+ * real `words` array, each word lights on its true beat. Either way the
+ * highlight moves by color + glow only (never weight, padding or scale), so the
+ * words never reflow. Without `src` it self-paces from the cue timestamps. Use once or twice per
  * storyline at most — it is the fortissimo.
  */
 export function KaraokeStage({
@@ -390,19 +401,28 @@ export function KaraokeStage({
           </div>
         ) : (
           <div className="absolute inset-0 grid place-items-center px-6 text-center">
-            <p className="max-w-[16ch] font-display text-4xl font-extrabold leading-tight text-balance @md/karaoke:text-5xl">
+            {/* One sentence at a time, big and centered. The highlight moves by
+                color + glow only — never padding, weight or scale — so the words
+                never reflow or resize as the beat advances. */}
+            <p className="max-w-[20ch] font-display text-3xl font-extrabold leading-tight text-balance @md/karaoke:text-4xl">
               {activeWords.map((word, wi) => {
                 const now = time >= word.start && time < word.end;
                 const past = time >= word.end;
                 return (
                   <React.Fragment key={wi}>
                     <span
-                      className={cn(
-                        "inline-block transition-colors duration-150",
-                        now &&
-                          "rounded-md bg-[var(--wgt-code-property)] px-[0.18em] text-[var(--wgt-code-bg)] motion-safe:animate-wgt-pop",
-                      )}
-                      style={now || past ? undefined : { color: dimText }}
+                      className="transition-[color,text-shadow] duration-200 ease-(--ease-out)"
+                      style={
+                        now
+                          ? {
+                              color: "var(--wgt-code-property)",
+                              textShadow:
+                                "0 0 26px color-mix(in oklab, var(--wgt-code-property) 55%, transparent)",
+                            }
+                          : past
+                            ? undefined
+                            : { color: dimText }
+                      }
                     >
                       {word.text}
                     </span>{" "}
