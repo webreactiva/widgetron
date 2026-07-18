@@ -89,6 +89,7 @@ group(
   "callout-box", "code-translation", "glossary-term", "glossary-text",
   "pattern-card", "profile-card", "prose", "quote", "resource-list",
   "section-header", "step-cards", "timeline",
+  "kinetic-headline", "decode-headline",
 );
 group(
   "Interactive",
@@ -98,12 +99,12 @@ group(
 group(
   "Diagrams & data",
   "compare-slider", "data-chart", "flow-diagram", "hotspots",
-  "infographic", "mermaid-diagram",
+  "infographic", "mermaid-diagram", "draw-diagram", "scroll-stat",
 );
 group("Reactive", "frame-stepper", "group-chat", "scrubber", "tangle-text", "terminal-sim");
 group("AI & personalization", "profile-gate", "profile-provider", "profile-quiz", "prompt-template");
-group("Media", "audio-clip", "figure", "video-clip");
-group("Compositions", "scrollytelling", "storyline");
+group("Media", "audio-clip", "figure", "video-clip", "map", "unmask-strip");
+group("Compositions", "scrollytelling", "storyline", "sticky-pan", "story-map");
 group("Conversion", "cta");
 
 interface StoryModule {
@@ -239,18 +240,49 @@ export function lintStoryDocument(input: unknown): StoryLint {
     );
   }
 
-  // --- opener: a module must not open with a section-header repeating its own
-  // title (module headers render themselves) — advisory. ---
+  // --- opener: a module must not open with a heading widget that repeats a
+  // title already on screen. `section-header` (props.title) and the display
+  // headlines `kinetic-headline`/`decode-headline` (props.text) all render a
+  // heading; echoing the module's own title (or, on module 1, the cover's
+  // meta.title) shows the reader the same words twice. A display headline
+  // repeating the title EXACTLY is a hard error (it carries nothing else);
+  // section-header (which can add an eyebrow/icon/description) and near-matches
+  // are advisory. ---
+  const HEADLINE_PROP: Record<string, string> = {
+    "section-header": "title",
+    "kinetic-headline": "text",
+    "decode-headline": "text",
+  };
+  const coverTitle =
+    typeof doc.meta.title === "string" ? norm(doc.meta.title) : "";
   modules.forEach((mod, mi) => {
     const first = (mod.screens ?? [])[0];
-    if (first?.type === "section-header" && typeof mod.title === "string") {
-      const headline = first.props?.title;
-      if (typeof headline === "string" && norm(headline) === norm(mod.title)) {
-        warn(
-          "module-opener",
-          `module ${mi + 1} opens with a section-header repeating its title — module headers render themselves`,
-        );
-      }
+    const prop = first ? HEADLINE_PROP[first.type] : undefined;
+    if (!first || !prop) return;
+    const raw = (first.props as Record<string, unknown> | undefined)?.[prop];
+    if (typeof raw !== "string") return;
+    const h = norm(raw);
+    const mt = typeof mod.title === "string" ? norm(mod.title) : "";
+    const display = first.type !== "section-header";
+    if (mt && h === mt) {
+      (display ? err : warn)(
+        "module-opener",
+        `module ${mi + 1} opens with a ${first.type} ("${raw}") repeating its own title — the module header already renders it; use a different line or drop it`,
+      );
+    } else if (mt && (h.includes(mt) || mt.includes(h))) {
+      warn(
+        "module-opener",
+        `module ${mi + 1} opens with a ${first.type} echoing its title ("${raw}") — vary it or drop it`,
+      );
+    } else if (
+      mi === 0 &&
+      coverTitle &&
+      (h === coverTitle || coverTitle.includes(h) || h.includes(coverTitle))
+    ) {
+      warn(
+        "module-opener",
+        `module 1 opens with a ${first.type} echoing the cover title — the cover already renders it`,
+      );
     }
   });
 
