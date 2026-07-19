@@ -110,6 +110,7 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     incorrect: "Algo no encaja aún — inténtalo de nuevo.",
     reset: "Reiniciar",
     instructions: "Toca un elemento y luego su pareja — o arrástralo.",
+    dropHere: "Suéltalo aquí",
   },
   groupChat: {
     next: "Siguiente",
