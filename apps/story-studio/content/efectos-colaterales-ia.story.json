@@ -1,0 +1,436 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Programar con IA sin perder el control",
+    "slug": "efectos-colaterales-ia",
+    "lang": "es",
+    "theme": "webreactiva",
+    "keyword": "El Semáforo",
+    "description": "Usas IA cada día. Esto es lo que te da y lo que te quita —dormir menos, una adicción sin sustancia, mediocridad si dejas de exigir— y un semáforo de tres colores para decidir qué delegar y qué guardarte. En 12 minutos sales sabiendo dónde poner el límite.",
+    "source": {
+      "type": "podcast",
+      "show": "wrp",
+      "number": 355,
+      "title": "Efectos colaterales (buenos y malos) del uso de la IA a diario",
+      "author": "Daniel Primo",
+      "date": "2026-05-13",
+      "lang": "es"
+    }
+  },
+  "audio": {
+    "clips": [
+      { "id": "fomo", "src": "https://api.spreaker.com/v2/episodes/71994820/download.mp3?key=SZNpjEvYtWgp--71994820", "start": 108, "end": 122 },
+      { "id": "adiccion", "src": "https://api.spreaker.com/v2/episodes/71994825/download.mp3?key=SZNpjEvYtWgp--71994825", "end": 139 },
+      { "id": "media", "src": "https://api.spreaker.com/v2/episodes/71994821/download.mp3?key=SZNpjEvYtWgp--71994821", "start": 86, "end": 99 },
+      { "id": "semaforo", "src": "https://api.spreaker.com/v2/episodes/71994824/download.mp3?key=SZNpjEvYtWgp--71994824", "end": 143 },
+      { "id": "inversion", "src": "https://api.spreaker.com/v2/episodes/71994826/download.mp3?key=SZNpjEvYtWgp--71994826", "end": 82 }
+    ]
+  },
+  "settings": {
+    "surprises": {
+      "mid": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Vas por la mitad. Guárdate esta para cuando tengas prisa.",
+          "content": {
+            "type": "callout-box",
+            "props": {
+              "variant": "aha",
+              "children": "**Que otro lo haga más rápido con IA no quiere decir que lo haga mejor.** La velocidad te la regala la herramienta; la calidad se la tienes que exigir tú. Son dos ejes distintos, no te dejes confundir el uno con el otro."
+            }
+          }
+        }
+      },
+      "end": {
+        "type": "surprise",
+        "props": {
+          "teaser": "Una última cosa para llevarte: un prompt.",
+          "content": {
+            "type": "prompt-template",
+            "props": {
+              "template": "Actúa como un revisor senior exigente. Revisa este {{código o texto}} y no te conformes con que «funcione»: dime dónde está por debajo del estándar, qué harías tú distinto y cómo elevarlo a la parte donde las cosas están de verdad bien hechas. Sé concreto, crítico y sin florituras.",
+              "note": "El prompt para no quedarte en la media."
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "kind": "link",
+      "placement": "end",
+      "title": "Pon dinamita de verdad a tu futuro profesional",
+      "description": "Los audios que has escuchado salen de Web Reactiva Premium: developers inquietos afilando el criterio cada semana, sin humo.",
+      "buttonLabel": "Ver Web Reactiva Premium",
+      "url": "https://webreactiva.com/premium"
+    }
+  },
+  "story": {
+    "type": "storyline",
+    "props": {
+      "storageKey": "efectos-colaterales-ia",
+      "minutes": 12,
+      "glossary": {
+        "semáforo": "El método de tres colores para decidir cuánto dejas hacer a la IA: verde (transformaciones mecánicas y migraciones), amarillo (features donde tú sigues accionando) y rojo (autenticación, pagos, permisos y datos sensibles: los haces tú).",
+        "adicción sin sustancia": "Engancharte a una herramienta digital sin una droga de por medio: te roba horas y sueño por el «una más y lo dejo». Daniel avisa de que saldrá en las noticias como tema problemático.",
+        "elevar la media": "La IA tiende a la media, y la media, sin exigencia, es mediocre. Elevarla es imponerle tu criterio de calidad para que devuelva algo bien hecho, no solo aceptable."
+      },
+      "modules": [
+        {
+          "title": "No tienes que probarlo todo",
+          "subtitle": "Cada semana sale algo nuevo. La primera habilidad es elegir qué ignoras.",
+          "emoji": "🌀",
+          "outro": "Ese es el primer efecto colateral: la prisa. Ahora, los que no se ven.",
+          "screens": [
+            {
+              "type": "qa-card",
+              "props": {
+                "question": "Con la IA sacando novedades cada semana, ¿tienes que probarlas todas para no quedarte atrás?",
+                "answer": "No. Toma solo lo que te interesa; siempre te vas a quedar atrás con algo, y no pasa nada. Es más: **la tecnología que queda atrás, entre comillas, es la base real para crecer.**",
+                "answeredBy": "Daniel Primo",
+                "timestamp": "15:40",
+                "clip": {
+                  "src": "https://api.spreaker.com/v2/episodes/71994820/download.mp3?key=SZNpjEvYtWgp--71994820",
+                  "start": 108,
+                  "end": 122
+                }
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "Vamos a mirar de frente lo que la IA te da y lo que te quita cuando la usas **a diario**. Habrá efectos malos y efectos buenos. Y te llevarás un **semáforo** de tres colores para saber, en dos segundos, qué dejar en sus manos y qué no. Guárdalo: lo montamos entero antes del final.\n\nPorque el marketing del software es el de siempre —sacar novedades a pico y pala para no caer en el olvido— y con la IA no hay excepción. La primera decisión es qué ignoras."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Una adicción sin sustancia",
+          "subtitle": "El efecto colateral que casi nadie nombra: no trabajas más, duermes menos.",
+          "emoji": "🌙",
+          "outro": "Reconocerlo es media cura. La otra media: no perder el filo.",
+          "screens": [
+            {
+              "type": "backdrop-section",
+              "props": {
+                "backdrop": {
+                  "kind": "words",
+                  "words": [
+                    { "text": "enganchado", "weight": 5 },
+                    { "text": "adicción", "weight": 5 },
+                    { "text": "sueño", "weight": 4 },
+                    { "text": "«una más»", "weight": 3 },
+                    { "text": "internet", "weight": 3 },
+                    { "text": "noticias", "weight": 3 },
+                    { "text": "1999", "weight": 2 },
+                    { "text": "tokens", "weight": 2 },
+                    { "text": "horas", "weight": 2 }
+                  ]
+                },
+                "steps": [
+                  {
+                    "content": "Hay un efecto colateral que casi nadie nombra en voz alta: no es que trabajes más, es que **te quedas *enganchado*** y duermes menos.",
+                    "highlight": ["enganchado", "sueño"]
+                  },
+                  {
+                    "content": "El «una más y lo dejo» no es nuevo. Es la misma sensación de descubrir **internet en 1999**: un mundo que no se acababa. Solo que ahora cabe en una pestaña.",
+                    "highlight": ["«una más»", "internet", "1999"]
+                  },
+                  {
+                    "content": "Daniel lo llama una **adicción sin sustancia**. Y avisa: esto va a salir en las noticias.",
+                    "highlight": ["adicción", "noticias"]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "audio-clip",
+              "props": {
+                "src": "https://api.spreaker.com/v2/episodes/71994825/download.mp3?key=SZNpjEvYtWgp--71994825",
+                "end": 139,
+                "title": "«Es muy tarde, Dani»",
+                "storageKey": "eci-clip-adiccion",
+                "waveform": true,
+                "peaks": [0.598,0.35,0.803,0.583,0.217,0.295,0.779,0.954,0.831,0.955,0.728,0.885,0.775,0.651,0.566,0.453,0.888,0.574,0.711,0.402,0.851,0.476,0.874,0.675,0.909,0.701,0.759,0.679,0.609,0.515,0.531,0.527,0.779,0.367,0.391,0.422,0.386,0.036,0.845,0.883,0.704,0.879,0.873,0.344,0.644,0.639,0.722,0.106,0.81,0.8,0.78,0.03,0.356,0.154,0.723,0.871,0.768,0.701,0.599,0.786,0.85,0.66,0.237,0.704,0.693,0.278,0.403,0.451,0.751,0.51,0.73,0.759,0.598,0.723,0.682,0.739,0.884,0.28,0.503,0.468,0.701,0.809,0.987,1,0.351,0.489,0.888,0.588,0.946,0.792,0.978,0.663,0.906,0.734,0.356,0.335,0.841,0.822,0.731,0.602,0.325,0.689,0.973,0.423,0.867,0.829,0.753,0.94,0.841,0.778,0.644,0.904,0.585,0.374,0.478,0.645,0.373,0.858,0.528,0.573,0.88,0.834,0.848,0.627,0.623,0.364,0.867,0.861,0.59,0.618,0.593,0.441,0.41,0.74,0.562,0.848,0.514,0.262,0.643,0.712,0.242,0.076,0.863,0.921,0.196,0.905,0.443,0.951,0.789,0.675,0.754,0.786,0.241,0.689,0.796,0.827,0.788,0.097,0.388,0.923,0.926,0.541,0.618,0.792,0.686,0.525,0.728,0.285,0.486,0.345,0.767,0.72,0.804,0.858,0.661,0.722,0.534,0.769,0.63,0.434,0.935,0.488,0.581,0.501,0.445,0.592,0.558,0.276,0.622,0.297,0.431,0.787,0.524,0.742,0.622,0.62,0.562,0.548,0.422,0.45,0.661,0.553,0.667,0.505,0.661,0.736,0.3,0.261,0.539,0.931,0.736,0.843,0.514,0.436,0.859,0.425,0.79,0.866,0.819,0.608,0.584,0.724,0.393,0.803,0.564,0.427,0.844,0.819,0.36,0.671,0.651,0.846,0.663,0.939,0.822,0.449,0.686,0.754,0.453,0.681],
+                "waveHeight": 64,
+                "transcriptView": "spotlight",
+                "transcript": [
+                  { "start": 21.6, "end": 50, "text": "El efecto que nadie nombra: no es dormir poco por trabajar, es que estas herramientas generan adicción." },
+                  { "start": 50, "end": 78, "text": "Incluso la propia IA me lo dijo: «es muy tarde, Dani, quizás esto lo podrías dejar para mañana». Y le hice caso." },
+                  { "start": 78, "end": 114, "text": "Te van enredando. Como cuando descubrí internet en el 99: enganchadísimo por las noches, un mundo que no se acababa." },
+                  { "start": 114, "end": 139, "text": "Es una adicción sin sustancia. Y va a salir en las noticias." }
+                ]
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "eci-enganche",
+                "celebrate": false,
+                "items": [
+                  { "text": "Sigo con «una tarea más» cuando ya debería haber parado." },
+                  { "text": "He perdido la noción de la hora programando con la IA." },
+                  { "text": "Duermo menos desde que la uso a diario." },
+                  { "text": "Abro el agente sin una tarea concreta, solo por si acaso." }
+                ],
+                "completion": "Si has marcado alguna, no eres raro: es exactamente el enganche del que habla Daniel. Reconocerlo ya es media cura."
+              }
+            }
+          ]
+        },
+        {
+          "title": "No pierdas el filo",
+          "subtitle": "La IA tiende a la media. Tu trabajo es no dejar que la media te arrastre.",
+          "emoji": "🧠",
+          "outro": "Ya sabes que hay que exigir. ¿Y qué le dejas tocar y qué no? Un semáforo.",
+          "screens": [
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "info",
+                "children": "Daniel tiene una broma recurrente: imagina que te dedicas a **criar cangrejos azules en aguas profundas**. Si de verdad te importa, querrás criar los mejores… y no perderás la capacidad crítica de juzgar si lo que te devuelve la IA sirve o no. Cambia los cangrejos por tu trabajo real y la idea aguanta."
+              }
+            },
+            {
+              "type": "karaoke-stage",
+              "props": {
+                "mode": "lines",
+                "eyebrow": "Escúchalo en su voz · 31:56",
+                "src": "https://api.spreaker.com/v2/episodes/71994821/download.mp3?key=SZNpjEvYtWgp--71994821",
+                "start": 86,
+                "end": 99,
+                "transcript": [
+                  { "start": 0, "end": 3, "text": "Si no, y lo digo siempre, la IA tiende a la media." },
+                  { "start": 3, "end": 6.5, "text": "Y la media, sin describir nada, es mediocre." },
+                  { "start": 7, "end": 12.5, "text": "Tú tienes que elevar la media a la parte donde las cosas están bien hechas." }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "question": "Un compañero entrega la misma feature en la mitad de tiempo usando IA. ¿Qué te dice eso sobre la calidad de su trabajo?",
+                "options": [
+                  { "text": "Que la ha hecho mejor que tú", "feedback": "No necesariamente. Que otro vaya más rápido no significa que lo haga mejor: velocidad y calidad son ejes distintos." },
+                  { "text": "Nada por sí solo", "correct": true, "feedback": "Exacto. La IA te da velocidad casi gratis, pero la calidad se la tienes que exigir tú: tiende a la media, y la media es mediocre." },
+                  { "text": "Que la IA ya cumple los estándares de calidad sola", "feedback": "Ojalá. La IA no cumple estándares porque sí; solo si tú se lo exiges. Si no, se queda en la media." }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "El semáforo",
+          "subtitle": "Tres colores para decidir, en dos segundos, cuánto la dejas hacer.",
+          "emoji": "🚦",
+          "outro": "Verde, amarillo, rojo. Pero cuando el rojo sale mal, ¿quién responde?",
+          "screens": [
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "stairs",
+                "items": [
+                  { "label": "Verde", "icon": "🟢", "description": "**Barra libre.** Crear carpetas, transformaciones mecánicas y, sobre todo, **migraciones**: es sorprendentemente buena y caza *corner cases* que a ti se te escaparían." },
+                  { "label": "Amarillo", "icon": "🟡", "description": "**Tú al volante.** Features normales: la IA resuelve una parte, te escribe los tests, te hace una revisión… pero **sigues accionando tú**." },
+                  { "label": "Rojo", "icon": "🔴", "description": "**No lo toca.** Autenticación, pagos, permisos y **datos sensibles**. «No me toques nada, que ya lo hago yo.»" }
+                ]
+              }
+            },
+            {
+              "type": "drag-and-drop",
+              "props": {
+                "items": [
+                  { "id": "rename", "label": "Renombrar una variable en 40 archivos", "target": "verde" },
+                  { "id": "migrate", "label": "Migrar de una librería de fechas a otra", "target": "verde" },
+                  { "id": "tests", "label": "Escribir los tests de una feature que ya diseñaste tú", "target": "amarillo" },
+                  { "id": "landing", "label": "Maquetar una pantalla nueva, contigo revisando", "target": "amarillo" },
+                  { "id": "auth", "label": "El login con OAuth y las sesiones", "target": "rojo" },
+                  { "id": "pagos", "label": "La pasarela de pagos", "target": "rojo" }
+                ],
+                "targets": [
+                  { "id": "verde", "label": "🟢 Verde · barra libre" },
+                  { "id": "amarillo", "label": "🟡 Amarillo · tú accionas" },
+                  { "id": "rojo", "label": "🔴 Rojo · lo haces tú" }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "scenario": "Vas a preparar una campaña y necesitas tocar la tabla con los correos de tus usuarios. Le pides ayuda a la IA.",
+                "question": "¿En qué zona del semáforo estás?",
+                "options": [
+                  { "text": "🟢 Verde", "feedback": "No. Son datos de personas reales: un fallo aquí no es un corner case, es un incidente de privacidad." },
+                  { "text": "🟡 Amarillo", "feedback": "Casi, pero Daniel lo sube: con datos sensibles es «ámbar tirando a rojo». Vas despacio y revisando cada paso." },
+                  { "text": "🔴 Rojo", "correct": true, "feedback": "Eso. Datos sensibles, permisos, pagos y autenticación: la IA acompaña, pero accionas y firmas tú." }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "El rojo existe por una razón incómoda: **cuando algo sale mal, no responde la IA. Respondes tú.** En la próxima reunión donde alguien lo tape con un «lo hizo la IA», ya sabrás que esa excusa no existe."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Tú firmas, no la IA",
+          "subtitle": "Cuando algo sale mal, no hay a quién echarle la culpa. Solo tu nombre.",
+          "emoji": "✍️",
+          "outro": "Suena severo. Y sin embargo, hay un lado luminoso en todo esto.",
+          "screens": [
+            {
+              "type": "decode-headline",
+              "props": { "text": "La IA se lava las manos", "as": "h2" }
+            },
+            {
+              "type": "audio-clip",
+              "props": {
+                "src": "https://api.spreaker.com/v2/episodes/71994824/download.mp3?key=SZNpjEvYtWgp--71994824",
+                "end": 143,
+                "title": "El semáforo, en su voz",
+                "storageKey": "eci-clip-semaforo",
+                "waveform": true,
+                "peaks": [0.469,0.47,0.946,0.921,0.48,0.364,0.498,0.515,0.697,0.534,0.625,0.926,0.467,0.784,0.942,0.661,0.736,0.427,0.272,0.327,0.518,0.398,0.761,0.881,0.74,0.648,0.666,0.571,0.9,0.547,0.944,0.339,0.362,0.359,0.941,0.497,0.607,0.781,0.806,0.884,0.424,0.69,0.7,0.739,0.331,0.219,0.427,0.177,0.927,0.895,0.737,0.574,0.59,0.424,0.528,0.65,0.692,0.392,0.423,0.51,0.597,0.915,0.792,0.911,0.556,0.693,0.696,0.49,0.843,0.91,0.805,0.899,0.645,0.419,0.448,0.475,0.537,0.57,0.729,0.513,0.165,0.591,0.701,0.452,0.169,0.805,0.753,0.385,0.573,0.948,0.438,0.574,0.505,0.79,0.629,0.669,0.693,0.794,0.319,0.682,0.051,0.872,0.891,0.522,0.071,0.813,0.867,0.747,0.427,0.74,0.894,0.635,0.954,0.617,0.506,0.516,0.693,0.483,0.796,0.403,0.627,0.615,0.251,0.896,0.002,0.382,0.723,0.886,0.648,1,0.624,0.172,0.852,0.857,0.791,0.722,0.681,0.775,0.506,0.767,0.861,0.555,0.61,0.737,0.261,0.696,0.426,0.037,0.761,0.561,0.603,0.898,0.702,0.603,0.303,0.479,0.599,0.331,0.721,0.656,0.226,0.301,0.469,0.022,0.897,0.643,0.955,0.573,0.725,0.68,0.909,0.779,0.595,0.831,0.609,0.595,0.903,0.353,0.813,0.693,0.617,0.79,0.209,0.862,0.598,0.643,0.693,0.904,0.768,0.739,0.401,0.759,0.487,0.428,0.386,0.743,0.408,0.84,0.483,0.684,0.899,0.639,0.798,0.245,0.688,0.775,0.734,0.221,0.705,0.355,0.759,0.672,0.865,0.589,0.567,0.534,0.501,0.73,0.776,0.769,0.869,0.875,0.402,0.77,0.936,0.446,0.667,0.488,0.301,0.642,0.575,0.869,0.648,0.7,0.844,0.764,0.812,0.466,0.582,0.344],
+                "waveHeight": 64,
+                "transcriptView": "spotlight",
+                "transcript": [
+                  { "start": 2, "end": 28, "text": "Zona verde: carpetas, transformaciones mecánicas y migraciones. Es muy buena migrando y detecta los corner cases." },
+                  { "start": 28, "end": 60, "text": "Zona amarilla: features donde la IA participa —te crea los tests, te hace una revisión— pero sigues accionando tú." },
+                  { "start": 60, "end": 100, "text": "Y el semáforo rojo: autenticación, pagos, permisos, datos sensibles. «Ahí no me toques nada, que ya lo hago yo.»" },
+                  { "start": 100, "end": 143, "text": "Eres tú quien controla, no al revés. Tú eres el responsable. Aunque se oiga: «es que lo hizo la IA y lo hizo mal»." }
+                ]
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "scenario": "En una revisión, un endpoint de pagos que generó la IA deja pasar cargos duplicados a producción.",
+                "question": "¿De quién es la responsabilidad?",
+                "options": [
+                  { "text": "De la IA, que escribió el código", "feedback": "No. «Lo hizo la IA» no es una defensa: la IA no responde de nada. El código lo firmaste tú." },
+                  { "text": "Tuya: tú tienes la última palabra", "correct": true, "feedback": "Eso. Eres tú quien controla y quien firma. Por eso los pagos van en rojo: ahí accionas y revisas tú." },
+                  { "text": "Del proveedor de la herramienta", "feedback": "Tampoco. El proveedor quiere que vayas rápido y que creas que la IA lo hace todo; lo que entregas sigue siendo tuyo." }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "aha",
+                "children": "**Eres tú quien controla, no al revés.** Los proveedores quieren convencerte de que la IA lo puede hacer *todo* —y en parte tienen razón—, pero tu [[semáforo]] no cambia de color porque tú tengas prisa, ni porque la tenga el cliente. La última palabra es tuya porque la responsabilidad también lo es."
+              }
+            }
+          ]
+        },
+        {
+          "title": "Inversión, no sustituto",
+          "subtitle": "El lado bueno, el que sí funciona: llegar a donde antes no alcanzabas.",
+          "emoji": "🌱",
+          "outro": "Ese es el trato justo. Vamos a recogerlo todo en una foto.",
+          "screens": [
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "versus",
+                "items": [
+                  { "label": "Sustituto", "icon": "🚫", "description": "Le sueltas la tarea, aceptas lo que escupe y sigues. Vas más rápido hacia donde **ya sabías ir**. No aprendes nada nuevo." },
+                  { "label": "Inversión", "icon": "🌱", "description": "La usas para llegar a **donde antes no alcanzabas** —una auth que nunca montaste— y lo completas con lo que investigas. Es formación." }
+                ]
+              }
+            },
+            {
+              "type": "audio-clip",
+              "props": {
+                "src": "https://api.spreaker.com/v2/episodes/71994826/download.mp3?key=SZNpjEvYtWgp--71994826",
+                "end": 82,
+                "title": "«Lo veo como una inversión»",
+                "storageKey": "eci-clip-inversion",
+                "waveform": true,
+                "peaks": [0.318,0.793,0.89,0.887,0.795,0.516,0.032,0.507,0.626,0.503,0.508,0.634,0.469,0.79,0.949,0.916,0.008,0.307,0.748,0.818,0.197,0.061,0.18,0.488,0.692,0.744,0.323,0.227,0.369,0.615,0.724,0.527,0.546,0.509,0.732,0.288,0.039,0.322,0.415,0.82,0.516,0.541,0.521,0.55,0.611,0.541,0.769,0.319,0.331,0.632,0.602,0.256,0.203,0.274,0.009,0.478,0.793,0.715,0.88,0.023,0.154,0.244,0.525,0.104,0.919,0.442,0.713,0.82,0.372,0.298,0.348,0.489,0.858,0.25,0.628,0.734,0.434,0.009,0.128,0.743,0.826,0.824,0.888,0.905,0.082,0.001,0.087,0.375,0.566,0.383,0.723,0.698,0.674,0.497,0.73,0.223,0.091,0.586,0.49,0.357,0.691,0.739,0.294,0.718,0.526,0.591,0.636,0.135,0.295,0.604,0.491,0.004,0.711,0.601,0.774,0.598,0.08,0.543,0.736,0.81,0.508,0.397,0.735,0.478,0.458,0.313,0.54,0.446,0.3,0.395,0.135,0.003,0.004,0.893,0.813,0.669,0.387,0.763,0.632,0.545,0.191,0.007,0.825,0.73,0.247,0.324,0.79,0.64,0.819,0.274,0.368,0.665,0.79,0.196,0.356,0.49,0.675,0.58,0.241,0.728,0.652,0.79,0.333,0.554,0.735,0.903,0.429,0.746,0.829,0.014,0.093,0.929,0.849,0.147,0.491,0.521,0.157,0.043,0.117,0.316,0.639,0.431,0.029,0.11,0.821,0.885,0.676,0.471,0.427,0.368,0.545,0.608,0.284,0.467,0.6,0.348,0.002,0.366,0.271,0.637,0.7,0.639,0.782,0.938,0.63,0.564,0.784,0.765,0.549,0.626,0.751,0.536,0.469,0.57,0.717,0.649,0.151,0.012,0.4,0.648,0.81,0.646,0.558,0.44,0.449,0.545,0.559,0.744,0.253,0.123,0.003,0.052,0.002,0.9,1,0.767,0.919,0.744,0.717,0.501],
+                "waveHeight": 64,
+                "transcriptView": "spotlight",
+                "transcript": [
+                  { "start": 0, "end": 24, "text": "Soy más activo que antes en mi formación: llego a sitios donde antes no llegaba, como sistemas de autenticación que nunca había hecho." },
+                  { "start": 24, "end": 48, "text": "Invierto en esa formación con la IA para que me lleve de la mano, y lo completo con lo que investigo y leo. No es 50-50." },
+                  { "start": 48, "end": 66, "text": "Lo veo como una inversión en formación, no como algo que me vaya a quitar el trabajo." },
+                  { "start": 66, "end": 80, "text": "Estoy aprendiendo cosas de programación de hace muchos años." }
+                ]
+              }
+            },
+            {
+              "type": "callout-box",
+              "props": {
+                "variant": "warning",
+                "children": "Un veneno concreto que evitar: **volcar una conversación cruda para que la IA te genere la tarea, la issue o la historia de usuario «y chimpún», a producción.** Nadie se la va a leer. Los requisitos no se redactan solo con IA: busca un punto intermedio donde quede documentado y siga siendo entendible por un humano."
+              }
+            },
+            {
+              "type": "quiz",
+              "props": {
+                "scenario": "Tras una conversación larga con la IA, tienes clara una tarea nueva que hay que documentar.",
+                "question": "¿Qué haces con eso?",
+                "options": [
+                  { "text": "La vuelcas tal cual en una issue y la mandas a producción", "feedback": "Ese es el veneno: nadie se la va a leer. Los requisitos no se redactan solo con IA y «chimpún»." },
+                  { "text": "Buscas un punto intermedio: que quede documentado y entendible por un humano", "correct": true, "feedback": "Eso. Ni escribirlo todo a mano ni soltarlo crudo: un término medio que otra persona pueda leer y accionar." },
+                  { "text": "La borras y lo reescribes entero tú a mano", "feedback": "No hace falta el otro extremo. La IA puede ayudarte a documentar; la clave es que siga siendo legible y accionable." }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Tu relación sostenible con la IA",
+          "subtitle": "Ni pánico ni barra libre. Lo que te llevas para el lunes.",
+          "emoji": "🤝",
+          "outro": "Ya tienes tu semáforo y tu criterio. El resto es practicarlo. 👇",
+          "screens": [
+            {
+              "type": "infographic",
+              "props": {
+                "layout": "milestones",
+                "items": [
+                  { "label": "Elige qué ignoras", "description": "No pruebas cada novedad. Lo que se queda atrás es tu base para crecer." },
+                  { "label": "Cuida el enganche", "description": "«Una más» es adicción sin sustancia. Ponle un límite a la noche." },
+                  { "label": "Eleva la media", "description": "La IA tiende a lo mediocre. La calidad se la exiges tú." },
+                  { "label": "Usa el semáforo", "description": "Verde delega, amarillo supervisa, rojo lo haces tú." },
+                  { "label": "Firma tu trabajo", "description": "Cuando sale mal, respondes tú. La IA se lava las manos." },
+                  { "label": "Inviértelo, no lo sustituyas", "description": "Úsala para llegar a donde antes no alcanzabas." }
+                ]
+              }
+            },
+            {
+              "type": "quote",
+              "props": {
+                "children": "Si quieres hacerlo de verdad bien, y eres consciente de tus limitaciones pero sabes que puedes mejorar… no hay tanto que temer.",
+                "attribution": "Daniel Primo",
+                "timestamp": "31:30",
+                "clip": {
+                  "src": "https://api.spreaker.com/v2/episodes/71994821/download.mp3?key=SZNpjEvYtWgp--71994821",
+                  "start": 60,
+                  "end": 75
+                }
+              }
+            },
+            {
+              "type": "checklist",
+              "props": {
+                "id": "eci-relacion",
+                "items": [
+                  { "text": "Ten tu semáforo en la cabeza antes de delegar: ¿verde, amarillo o rojo?", "hint": "Rojo = autenticación, pagos, permisos, datos sensibles." },
+                  { "text": "Exige calidad: eleva la media, no aceptes lo primero que te devuelve.", "hint": "La media, sin exigencia, es mediocre." },
+                  { "text": "Trátala como inversión, no como sustituto: úsala para llegar donde antes no llegabas." },
+                  { "text": "Ponle un límite a la noche: «una más» es el enganche hablando." },
+                  { "text": "Toma solo lo que te interesa; quedarte atrás con algo es normal." }
+                ],
+                "completion": "Esa es tu relación sostenible con la IA. Ni pánico, ni barra libre: criterio."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
