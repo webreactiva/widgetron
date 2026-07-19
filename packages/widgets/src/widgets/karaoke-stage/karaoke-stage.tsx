@@ -377,7 +377,7 @@ export function KaraokeStage({
                     return (
                       <React.Fragment key={wi}>
                         <span
-                          className="transition-colors duration-150"
+                          className="transition-colors duration-(--motion-fast)"
                           style={
                             now
                               ? {
@@ -411,7 +411,7 @@ export function KaraokeStage({
                 return (
                   <React.Fragment key={wi}>
                     <span
-                      className="transition-[color,text-shadow] duration-200 ease-(--ease-out)"
+                      className="transition-[color,text-shadow] duration-(--motion-base) ease-(--ease-out)"
                       style={
                         now
                           ? {
