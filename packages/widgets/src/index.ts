@@ -70,6 +70,7 @@ export * from "@/widgets/group-chat";
 
 // Media embeds (audio with transcript karaoke, video, captioned image)
 export * from "@/widgets/audio-clip";
+export * from "@/widgets/radial-audiogram";
 export * from "@/widgets/video-clip";
 export * from "@/widgets/figure";
 

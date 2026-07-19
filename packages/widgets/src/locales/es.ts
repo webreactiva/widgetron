@@ -132,6 +132,11 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     miniPlayer: "Mini reproductor",
     close: "Cerrar mini reproductor",
   },
+  radialAudiogram: {
+    play: "Reproducir",
+    pause: "Pausa",
+    restart: "Reiniciar",
+  },
   episodePlayer: {
     play: "Reproducir",
     pause: "Pausa",

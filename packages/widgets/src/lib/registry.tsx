@@ -51,6 +51,7 @@ import { patternCardMeta } from "@/widgets/pattern-card/pattern-card.meta";
 import { codeTranslationMeta } from "@/widgets/code-translation/code-translation.meta";
 import { timelineMeta } from "@/widgets/timeline/timeline.meta";
 import { audioClipMeta } from "@/widgets/audio-clip/audio-clip.meta";
+import { radialAudiogramMeta } from "@/widgets/radial-audiogram/radial-audiogram.meta";
 import { videoClipMeta } from "@/widgets/video-clip/video-clip.meta";
 import { figureMeta } from "@/widgets/figure/figure.meta";
 import { resourceListMeta } from "@/widgets/resource-list/resource-list.meta";
@@ -107,6 +108,7 @@ import { DragAndDrop } from "@/widgets/drag-and-drop";
 import { Hotspots } from "@/widgets/hotspots";
 import { GroupChat } from "@/widgets/group-chat";
 import { AudioClip } from "@/widgets/audio-clip";
+import { RadialAudiogram } from "@/widgets/radial-audiogram";
 import { VideoClip } from "@/widgets/video-clip";
 import { Figure } from "@/widgets/figure";
 import { ResourceList } from "@/widgets/resource-list";
@@ -387,6 +389,7 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
   },
   "group-chat": { ...groupChatMeta, component: GroupChat },
   "audio-clip": { ...audioClipMeta, component: AudioClip },
+  "radial-audiogram": { ...radialAudiogramMeta, component: RadialAudiogram },
   "video-clip": { ...videoClipMeta, component: VideoClip },
   figure: {
     ...figureMeta,

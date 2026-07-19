@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { openspecPeaks } from "./openspec-peaks";
 import {
   AudioClip,
+  RadialAudiogram,
   KaraokeStage,
   EpisodePlayer,
   InterviewTranscript,
@@ -258,6 +260,7 @@ export const categories: { title: string; ids: string[] }[] = [
     title: "Media",
     ids: [
       "audio-clip",
+      "radial-audiogram",
       "episode-player",
       "karaoke-stage",
       "interview-transcript",
@@ -664,6 +667,25 @@ const podyscrollGame: WidgetNode = {
     },
   },
 };
+
+// Live-caption cues for the RadialAudiogram demos, timed from the real
+// openspec-buenas-practicas.srt (starts are the audio's actual timestamps;
+// adjacent ASR fragments are merged into readable lines).
+const openspecCues = [
+  { start: 0, text: "Sobre las buenas prácticas," },
+  { start: 1.6, text: "la primera de ellas que te quiero comentar," },
+  { start: 3.9, text: "es que es bueno" },
+  { start: 5.44, text: "que te haga preguntas" },
+  { start: 6.82, text: "el propio sistema" },
+  { start: 8.92, text: "cuando está planificando." },
+  { start: 10.3, text: "Quiero decir, cuando lanzas el proposal en este caso," },
+  { start: 13.94, text: "o cuando lanzas incluso el opcional *explore*," },
+  { start: 17.16, text: "o cuando estás en las primeras fases de las creaciones de artefactos," },
+  { start: 20.28, text: "y lo haces uno a uno," },
+  { start: 21.6, text: "toda esa investigación," },
+  { start: 24.36, text: "todos esos planes, entre comillas, que se van generando," },
+  { start: 27.48, text: "es bueno que ahí le pidas…" },
+];
 
 export const catalog: CatalogEntry[] = [
   {
@@ -2276,6 +2298,60 @@ console.log("C");`}
         label: "Audio only (no transcript)",
         node: (
           <AudioClip title="WR 344 · el FOMO de la IA" src="/media/wr344-fomo.mp3" />
+        ),
+      },
+    ],
+  },
+  {
+    id: "radial-audiogram",
+    name: "RadialAudiogram",
+    summary:
+      "A circular 'Headliner'-style audiogram: a ring of bars drawn from the clip's REAL peaks that breathes with the audio's loudness and fills as it plays, with the live caption beside it. Sound-only, bold, and honest — the ring IS the real waveform, not fabricated bars. Needs precomputed peaks (extract server-side with ffmpeg, so no cross-origin decode). Press play to see it animate. One per guide — it's the fortissimo.",
+    demos: [
+      {
+        label: "Circular audiogram (real peaks, live caption)",
+        node: (
+          <RadialAudiogram
+            src="/media/openspec-buenas-practicas.mp3"
+            end={30}
+            eyebrow="OpenSpec · 00:14"
+            title="Buenas prácticas"
+            peaks={openspecPeaks}
+            bars={72}
+            size={240}
+            transcript={openspecCues}
+          />
+        ),
+      },
+      {
+        label: "No transcript — the ring is the whole point",
+        node: (
+          <RadialAudiogram
+            src="/media/openspec-buenas-practicas.mp3"
+            end={30}
+            eyebrow="OpenSpec · 00:14"
+            title="Escucha el fragmento"
+            peaks={openspecPeaks}
+            bars={80}
+            size={200}
+          />
+        ),
+      },
+      {
+        label: "Skinned — custom color, denser bars, thin strokes",
+        node: (
+          <RadialAudiogram
+            src="/media/openspec-buenas-practicas.mp3"
+            end={30}
+            eyebrow="OpenSpec · 00:14"
+            title="**Deja** que te pregunte"
+            peaks={openspecPeaks}
+            bars={112}
+            size={260}
+            barWidth={2}
+            color="var(--info)"
+            transcript={openspecCues}
+          />
         ),
       },
     ],
