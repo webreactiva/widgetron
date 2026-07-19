@@ -4,6 +4,7 @@ import { Play, Pause, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 
 /** A single transcript cue. Times are in seconds. */
@@ -906,7 +907,9 @@ export function AudioClip({
 
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           {title != null && (
-            <p className="truncate font-semibold leading-tight">{title}</p>
+            <p className="truncate font-semibold leading-tight">
+              <RichText>{title}</RichText>
+            </p>
           )}
 
           <div className="flex items-center gap-3">

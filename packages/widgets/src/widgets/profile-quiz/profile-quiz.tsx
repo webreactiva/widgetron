@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 import { RotateCcw } from "@/lib/icons";
 
@@ -261,13 +262,15 @@ export function ProfileQuiz({
           qi === index ? (
             <div key={q.id} className="motion-safe:animate-wgt-fade-up">
               {intro != null && qi === 0 && (
-                <p className="mb-3 text-sm text-muted-foreground">{intro}</p>
+                <p className="mb-3 text-sm text-muted-foreground">
+                  <RichText>{intro}</RichText>
+                </p>
               )}
               <p className="flex items-baseline gap-2 font-display text-lg font-semibold leading-snug">
                 <span className="font-mono text-xs font-bold uppercase tracking-wide text-primary">
                   {l.step(qi + 1, questions.length)}
                 </span>
-                {q.question}
+                <RichText>{q.question}</RichText>
               </p>
               <div className="mt-4 flex flex-col gap-2">
                 {q.options.map((o) => (
@@ -277,10 +280,12 @@ export function ProfileQuiz({
                     onClick={() => pick(q, o.value)}
                     className="flex min-h-11 w-full flex-col items-start gap-0.5 rounded-md border border-input bg-background px-4 py-2.5 text-left text-sm transition-colors outline-none hover:border-ring hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                   >
-                    <span className="font-medium text-foreground">{o.label}</span>
+                    <span className="font-medium text-foreground">
+                      <RichText>{o.label}</RichText>
+                    </span>
                     {o.description != null && (
                       <span className="text-muted-foreground">
-                        {o.description}
+                        <RichText>{o.description}</RichText>
                       </span>
                     )}
                   </button>
