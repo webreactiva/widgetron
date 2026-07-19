@@ -17,6 +17,7 @@ export default defineConfig({
     "mermaid",
     "canvas-confetti",
     "leaflet",
+    "wavesurfer.js",
   ],
   async onSuccess() {
     // The styles are plain CSS (no build step) — ship them alongside the JS

@@ -2225,7 +2225,7 @@ console.log("C");`}
     id: "audio-clip",
     name: "AudioClip",
     summary:
-      "An audio player with a synced transcript. Custom play/seek controls, a volume control and a speed cycle (both remembered), optional cover art, and a sticky corner mini-player once you scroll past it while it plays. If a transcript is present, each cue highlights as it plays (karaoke) and clicking a cue seeks there. Pass cues inline or fetch them from a URL (JSON / .vtt / .srt). Only one clip on a page plays at a time.",
+      "An audio player with a synced transcript. Custom play/seek controls, a volume control and a speed cycle (both remembered), optional cover art, and a sticky corner mini-player once you scroll past it while it plays. If a transcript is present, each cue highlights as it plays (karaoke) and clicking a cue seeks there. Pass cues inline or fetch them from a URL (JSON / .vtt / .srt). Opt into `waveform` to draw the real decoded audio as the seek bar (lazy wavesurfer.js, short clips only, needs CORS on the host, falls back to the slider). Only one clip on a page plays at a time.",
     demos: [
       {
         label: "Synced transcript (real clip)",
@@ -2234,6 +2234,20 @@ console.log("C");`}
             title="OpenSpec — buenas prácticas"
             src="/media/openspec-buenas-practicas.mp3"
             transcriptSrc="/media/openspec-buenas-practicas.srt"
+          />
+        ),
+      },
+      {
+        label: "Audiogram (real waveform, configurable)",
+        node: (
+          <AudioClip
+            title="OpenSpec — buenas prácticas"
+            src="/media/openspec-buenas-practicas.mp3"
+            transcriptSrc="/media/openspec-buenas-practicas.srt"
+            transcriptView="spotlight"
+            waveform
+            waveHeight={72}
+            barWidth={3}
           />
         ),
       },
