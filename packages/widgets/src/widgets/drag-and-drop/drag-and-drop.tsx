@@ -4,6 +4,8 @@ import { Check, RotateCcw, X } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
+import { fireConfetti } from "@/lib/confetti";
 import { RichText } from "@/primitives/rich-text";
 
 export interface DragItem {
@@ -45,6 +47,8 @@ export interface DragAndDropProps extends React.HTMLAttributes<HTMLDivElement> {
   targets: DropTarget[];
   /** Customizable / translatable strings. */
   labels?: Partial<DragAndDropLabels>;
+  /** Fire confetti the moment the board becomes fully correct. Default: true. */
+  celebrate?: boolean;
 }
 
 type ChipStatus = "idle" | "selected" | "correct" | "wrong";
@@ -62,10 +66,12 @@ export function DragAndDrop({
   items,
   targets,
   labels,
+  celebrate = true,
   className,
   ...props
 }: DragAndDropProps) {
   const l = useLabels("dragAndDrop", DEFAULT_DRAG_AND_DROP_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("drag-and-drop");
 
   const [placement, setPlacement] = React.useState<Record<string, string | null>>(
     () => {
@@ -79,15 +85,32 @@ export function DragAndDrop({
 
   /** Source chip for a native drag-in-progress (progressive enhancement only). */
   const dragItemId = React.useRef<string | null>(null);
+  const completedRef = React.useRef(false);
 
   const allPlaced = items.every((item) => placement[item.id] != null);
   const allCorrect = items.every((item) => placement[item.id] === item.target);
 
   function place(itemId: string, targetId: string | null) {
-    setPlacement((prev) => ({ ...prev, [itemId]: targetId }));
+    const next = { ...placement, [itemId]: targetId };
+    setPlacement(next);
     setSelected(null);
-    // Changing placement after checking re-arms the feedback.
-    setChecked(false);
+    const nowCorrect = items.every((item) => next[item.id] === item.target);
+    if (nowCorrect) {
+      setChecked(true);
+      if (!completedRef.current) {
+        completedRef.current = true;
+        emit("completed", { items: items.length });
+        if (celebrate) void fireConfetti();
+      }
+    } else {
+      completedRef.current = false;
+      setChecked(false);
+    }
+  }
+
+  function handleCheck() {
+    setChecked(true);
+    emit("checked", { correct: allCorrect });
   }
 
   function handleChipClick(itemId: string) {
@@ -134,6 +157,7 @@ export function DragAndDrop({
 
   return (
     <div
+      ref={ref}
       data-slot="drag-and-drop"
       data-checked={checked || undefined}
       className={cn(
@@ -291,7 +315,7 @@ export function DragAndDrop({
         <Button
           size="sm"
           disabled={!allPlaced}
-          onClick={() => setChecked(true)}
+          onClick={handleCheck}
         >
           {l.check}
         </Button>

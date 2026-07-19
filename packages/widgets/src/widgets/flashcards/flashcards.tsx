@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Check, ChevronLeft, ChevronRight, RotateCcw, X } from "@/lib/icons";
 
+import { fireConfetti } from "@/lib/confetti";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { RichText } from "@/primitives/rich-text";
@@ -50,6 +51,8 @@ export interface FlashcardsProps
   labels?: Partial<FlashcardsLabels>;
   /** Fired when the learner grades a card. */
   onGrade?: (index: number, knew: boolean) => void;
+  /** Fire confetti when the deck is completed. Default: true. */
+  celebrate?: boolean;
 }
 
 /**
@@ -61,6 +64,7 @@ export function Flashcards({
   cards,
   labels,
   onGrade,
+  celebrate = true,
   className,
   ...props
 }: FlashcardsProps) {
@@ -96,6 +100,7 @@ export function Flashcards({
         known: Object.values(nextGrades).filter(Boolean).length,
         total,
       });
+      if (celebrate) void fireConfetti();
     }
     const nextUngraded = findNextUngraded(index, nextGrades, total);
     setFlipped(false);
@@ -114,7 +119,7 @@ export function Flashcards({
         ref={ref}
         data-slot="flashcards"
         className={cn(
-          "rounded-lg border bg-card p-6 text-center text-card-foreground shadow-wgt motion-safe:animate-wgt-pop",
+          "rounded-lg border bg-card p-6 text-center text-card-foreground shadow-wgt motion-safe:animate-wgt-unlock",
           className,
         )}
         {...props}
@@ -163,7 +168,7 @@ export function Flashcards({
             </div>
           </div>
           {/* Back */}
-          <div className="absolute inset-0 grid overflow-y-auto rounded-lg border border-primary/40 bg-[color-mix(in_oklab,var(--primary)_6%,var(--card))] p-6 text-center shadow-wgt [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <div className="absolute inset-0 grid overflow-y-auto rounded-lg border border-primary/40 bg-[color-mix(in_oklab,var(--primary)_6%,var(--card))] p-6 text-center shadow-wgt [backface-visibility:hidden] [transform:rotateY(180deg)] group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background">
             <div className="m-auto">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">
                 {l.answer}

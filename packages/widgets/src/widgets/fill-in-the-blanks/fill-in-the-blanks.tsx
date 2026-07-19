@@ -4,6 +4,8 @@ import { Check, RotateCcw } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
+import { fireConfetti } from "@/lib/confetti";
 
 export interface Blank {
   /** Choices shown in the dropdown. `answer` must be one of these. */
@@ -37,6 +39,8 @@ export interface FillInTheBlanksProps
   blanks: Record<string, Blank>;
   /** Customizable / translatable strings. */
   labels?: Partial<FillInTheBlanksLabels>;
+  /** Fire confetti when every blank is correct. Default: true. */
+  celebrate?: boolean;
 }
 
 type Part =
@@ -67,10 +71,12 @@ export function FillInTheBlanks({
   text,
   blanks,
   labels,
+  celebrate = true,
   className,
   ...props
 }: FillInTheBlanksProps) {
   const l = useLabels("fillBlanks", DEFAULT_FILL_IN_THE_BLANKS_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("fill-in-the-blanks");
   const reactId = React.useId();
   const [chosen, setChosen] = React.useState<Record<string, string>>({});
   const [checked, setChecked] = React.useState(false);
@@ -92,6 +98,17 @@ export function FillInTheBlanks({
     if (checked) setChecked(false);
   }
 
+  function handleCheck() {
+    if (checked && allCorrect) return;
+    setChecked(true);
+    if (allCorrect) {
+      emit("completed", { blanks: ids.length });
+      if (celebrate) void fireConfetti();
+    } else {
+      emit("checked", { correct: false });
+    }
+  }
+
   function handleReset() {
     setChosen({});
     setChecked(false);
@@ -99,6 +116,7 @@ export function FillInTheBlanks({
 
   return (
     <div
+      ref={ref}
       data-slot="fill-in-the-blanks"
       data-checked={checked || undefined}
       className={cn(
@@ -161,7 +179,7 @@ export function FillInTheBlanks({
         <Button
           type="button"
           disabled={!allFilled}
-          onClick={() => setChecked(true)}
+          onClick={handleCheck}
         >
           <Check />
           {l.check}

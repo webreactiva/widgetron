@@ -101,6 +101,8 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     found: "¡Lo encontraste!",
     notHere: "En esta línea no es — sigue buscando.",
     tryAgain: "Probar de nuevo",
+    foundInTries: (n: number) =>
+      `Lo encontraste en ${n} ${n === 1 ? "intento" : "intentos"}`,
   },
   dragAndDrop: {
     check: "Comprobar",

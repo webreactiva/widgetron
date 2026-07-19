@@ -33,6 +33,10 @@ export const spotTheBugMeta: WidgetMeta = {
         message:
           "exactly ONE line must set buggy: true (and its explanation lives on that line) — with none the learner can never solve it",
       }),
+    celebrate: z
+      .boolean()
+      .optional()
+      .describe("Fire confetti when the buggy line is found. Default: true."),
   }),
   example: {
     type: "spot-the-bug",
