@@ -38,15 +38,21 @@ question ──► search wiki/ (index.md → pages)
    - extends an existing page → add/replace a **section** there;
    - a genuinely new unit/pattern/comparison → a **new page** of the right type.
    Only write on a yes.
-4. **When filing:** use the one template — real `sources:` for what you read,
-   today's `updated:`, current `git rev-parse --short HEAD` as `synced:`. Add an
-   ASCII diagram if the answer is a flow. Add the line to `index.md`, append a
-   `log.md` entry. Do **not** touch `.state.json` — filing a page out of band
-   must not advance the repo checkpoint.
-5. If you wrote anything, run `scripts/wiki-lint.sh`.
+4. **When filing:** use the one template — real, **narrow** `sources:` for what
+   you read, today's `updated:`, current `git rev-parse --short HEAD` as
+   `synced:`, and `confidence: inferred` if the answer is your reading rather
+   than something the code states. Add an ASCII diagram if the answer is a flow.
+   Link the new page from the pages it relates to (an unlinked page is an orphan
+   nobody finds), add the line to `index.md`, append a `log.md` entry. Do **not**
+   touch `.state.json` — filing a page out of band must not advance the repo
+   checkpoint.
+5. If you wrote anything, run `pnpm wiki:lint`.
 
 ## Notes
 
 - Descriptive, not normative: file what the code *does*, not what it *should*.
 - Don't file trivia or anything already in `CLAUDE.md` — link instead.
 - One question, one focused answer. Filing back is the bonus, not the goal.
+- When the wiki didn't have the answer, **say so**: that gap is a finding, and
+  naming it is what makes the wiki grow in the right direction.
+- Answering never modifies code, and never re-stamps another page's `synced:`.

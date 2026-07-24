@@ -13,12 +13,11 @@ the template, the `sources:` / `synced:` mechanics, and the `.state.json`
 checkpoint.
 
 ```
-.state.json last_indexed_commit ─┐
-                                 ▼
-   git diff <last>..HEAD ──► changed code files (minus .wikiignore)
-                                 │  grep each file against pages' sources:
-                                 ▼
-   affected pages ──► re-read code ──► rewrite stale sections (bump synced:)
+pnpm wiki:drift --json
+   │  repo axis: commits since .state.json's last_indexed_commit
+   │  page axis: pages whose sources: moved past their own synced:
+   ▼
+   stale[] ──► read ONLY that diff ──► rewrite stale sections (bump synced:)
                                  │
    new code → propose page   ·   moved/deleted → orphan page
                                  ▼
@@ -27,21 +26,31 @@ checkpoint.
 
 ## The loop
 
-1. **Detect the change.** Read the checkpoint and diff against it, excluding the
-   wiki's own churn:
+1. **Detect the change.** `pnpm wiki:drift --json` answers both halves at once:
+   `repo` (commits since the checkpoint) and `stale[]` (the exact pages whose
+   `sources:` moved past their own `synced:`). If nothing is stale and the repo
+   is current, say so and stop.
    ```sh
+   pnpm wiki:drift --json          # { repo, stale[], skipped[], fresh[] }
    last=$(sed -n 's/.*"last_indexed_commit": *"\([a-f0-9]*\)".*/\1/p' wiki/.state.json)
-   git diff --name-only "$last" HEAD -- ':(exclude)wiki'
+   git log --oneline "$last"..HEAD
    ```
-   (`--since` overrides `$last`.) If empty, say so and stop.
-2. **Map changes → pages.** For each changed file, find the pages whose
-   `sources:` cover it: `grep -rl "<file>" wiki --include='*.md'`. That list is
-   exactly what to touch — no guessing.
+   (`--since` overrides `$last`.)
+2. **Read the diff, not the repo.** `stale[]` already maps changed files to
+   pages — no grepping, no guessing. For each stale page read **only** its own
+   diff: `git diff <its synced> HEAD -- <its sources>`. The diff is the work.
+   Any page in `skipped[]` has a broken contract; fix that first.
 3. **Reconcile.** Re-read the *current* code and rewrite only the **stale
    sections** of those pages (not the whole page — preserve human edits). Refresh
    any ASCII diagram whose boxes no longer match the code. The wiki is
    descriptive: if unsure, the code wins. Bump each touched page's `updated:` /
    `synced:`.
+
+   When the change **contradicts** what the page claimed, don't overwrite in
+   silence: state what it used to be and what changed it, with the SHA. That is
+   the part git tells badly, and it is what the wiki is for. Re-check
+   `confidence:` while you are there — a page marked `inferred` whose rationale
+   you have now confirmed becomes `high`, and vice versa.
 4. **New & orphan.** Changed files no page's `sources` cover → propose a new page.
    `sources` pointing at moved/deleted files → mark the page orphaned and fix it.
 5. **Refresh `index.md`** for any page added, retitled, or with a changed
@@ -54,13 +63,18 @@ checkpoint.
    - <page>: <what changed and why>
    - new: <path>   /   orphan: <path>
    ```
-7. **Verify:** `scripts/wiki-lint.sh` (per-page integrity + staleness) and
-   `scripts/wiki-coverage.sh` (tracked code no page claims, filtered by
-   `wiki/.wikiignore`). Resolve every unclaimed subsystem: add a page or ignore
-   it in `.wikiignore` on purpose.
+7. **Verify:** `pnpm wiki` — integrity, staleness and coverage in one pass. Fix
+   every error; resolve every unclaimed subsystem by adding a page or ignoring it
+   in `.wikiignore` on purpose.
 
 ## Notes
 
 - Scope with `--path` when a diff is large; log what you deferred so it doesn't
   read as "covered everything".
 - This never runs from a git hook. The hook only *notifies*; a human runs this.
+- **Never re-stamp `synced:` on a page you did not re-read against the code.**
+  Touching it "while you're in there" is how the wiki starts lying.
+- Never modify code in a wiki pass. Found a bug? Note it on the page and tell the
+  user.
+- Close by summarising **what the wiki now knows that it didn't** — not a list of
+  files. A big commit touching 5-10 pages is the system working.

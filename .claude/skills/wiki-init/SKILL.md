@@ -8,15 +8,18 @@ user_invocable: true
 # wiki-init — bootstrap the code wiki
 
 Seed `wiki/` from the code as it is right now. Run once. After this, day-to-day
-updates go through **wiki-update**; questions through **wiki-ask**.
+updates go through **wiki-update**, questions through **wiki-ask**, and periodic
+content review through **wiki-review**.
 
 **Read [`wiki/CONVENTIONS.md`](../../../wiki/CONVENTIONS.md) first** — the layout,
-the five page types, the one template, the `.state.json` checkpoint and the
-ASCII-diagram convention all live there, not here.
+the five page types, the one template, `confidence:`, the `.state.json`
+checkpoint, the writing rules and the ASCII-diagram convention all live there,
+not here.
 
 ```
 CODE @ HEAD
    │  survey: manifests, lib/registry, widgets/, primitives/, lib/, apps/
+   │  + git log --oneline  ← the why lives in the history, not in any file
    ▼
 map the page tree ── architecture · flows · concepts · components · decisions
    │  one template per page · real sources: · synced: = base sha
@@ -24,7 +27,7 @@ map the page tree ── architecture · flows · concepts · components · deci
 index.md  +  log.md (first entry)  +  .state.json { last_indexed_commit: HEAD }
    │
    ▼
-wiki-lint.sh + wiki-coverage.sh   (must pass before done)
+pnpm wiki          (must pass before done)
 ```
 
 ## Steps
@@ -33,6 +36,8 @@ wiki-lint.sh + wiki-coverage.sh   (must pass before done)
    and suggest `wiki-update` — init is not for re-running.
 2. **Record the base SHA:** `git rev-parse HEAD`. Its short form is every page's
    `synced:`; its full form is `last_indexed_commit` in `.state.json`.
+   Also read `git log --oneline` end to end: the history is why the code looks
+   like this, and it is material that lives in no file.
 3. **Map the repo** at the altitude of the taxonomy — do NOT write one page per
    file:
    - `architecture.md` — the monorepo, the layers, the JSON-node system, build.
@@ -41,8 +46,10 @@ wiki-lint.sh + wiki-coverage.sh   (must pass before done)
    - `components/` — one **module** page per subsystem, plus **component** pages
      only for units complex enough to earn one (the rest grow on demand).
    - `decisions/` — "which widget when", seeded from each `whenToUse`.
-4. **Every page** gets the template with real `sources:` (verify the paths) and
-   the base `synced:`. Add a small **ASCII diagram** to each `flow` /
+4. **Every page** gets the template with real `sources:` (verify the paths, and
+   keep them **narrow** — never claim a whole app or package) and the base
+   `synced:`. Mark anything you reconstructed rather than read with
+   `confidence: inferred`. Add a small **ASCII diagram** to each `flow` /
    `architecture` page — boxes labelled with real file/symbol names (see the
    Diagrams rules in CONVENTIONS). Stay high-altitude; never transcribe code.
 5. **Write `index.md`** grouped by type, one line per page (its `responsibility`).
@@ -53,8 +60,8 @@ wiki-lint.sh + wiki-coverage.sh   (must pass before done)
      ## <date> · wiki-init
      - seeded N pages across architecture/flows/concepts/components/decisions
      ```
-7. **Verify:** `scripts/wiki-lint.sh` and `scripts/wiki-coverage.sh` must pass —
-   required keys present, no page born stale, no subsystem left unclaimed (add a
+7. **Verify:** `pnpm wiki` must come back clean — required keys present, no page
+   born stale, no broken link, no orphan page, no subsystem left unclaimed (add a
    page or ignore it in `.wikiignore` on purpose).
 
 ## Don'ts
@@ -62,3 +69,9 @@ wiki-lint.sh + wiki-coverage.sh   (must pass before done)
 - Don't restate `CLAUDE.md`; link to it.
 - Don't invent `sources:` paths — grep/verify each.
 - Don't fan out to a page per widget on the first pass; modules first.
+- Don't leave the bootstrap half-finished with links to pages you never wrote.
+  Either write the page or drop the link — `pnpm wiki:lint` will not let a
+  dangling promise pass, and a wiki that fails its own lint on day one teaches
+  everyone to ignore it.
+- Don't invent a rationale you cannot source. Ask the user, or mark it
+  `confidence: inferred`.
