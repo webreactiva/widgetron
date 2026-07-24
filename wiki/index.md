@@ -4,8 +4,9 @@ An LLM-maintained knowledge base derived from the code. Descriptive, not
 normative — the code is the source of truth. Read
 [CONVENTIONS.md](./CONVENTIONS.md) for how it's structured and maintained.
 
-Maintained by three skills: `wiki-init` (seed), `wiki-update` (reconcile with the
-code), `wiki-ask` (answer & file back). Start here, then open a page.
+Maintained by four skills: `wiki-init` (seed), `wiki-update` (reconcile with the
+code), `wiki-ask` (answer & file back), `wiki-review` (audit the content). Health
+checks: `pnpm wiki`. Start here, then open a page.
 
 ## Architecture
 

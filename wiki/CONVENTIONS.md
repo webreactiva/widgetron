@@ -1,8 +1,8 @@
 # Wiki conventions — the schema file
 
 This is the single source of truth for how the code wiki is structured and
-maintained. The three skills (`wiki-init`, `wiki-update`, `wiki-ask`) all read
-from here; do not restate these rules inside them.
+maintained. The four skills (`wiki-init`, `wiki-update`, `wiki-ask`,
+`wiki-review`) all read from here; do not restate these rules inside them.
 
 The wiki is an **LLM-maintained knowledge base derived from the code**. It is
 **descriptive, never normative** — when the wiki and the code disagree, the
@@ -10,6 +10,27 @@ code wins and the wiki gets corrected. It **complements `CLAUDE.md`**, never
 restates it: the wiki carries the *why* and the cross-cutting flows that no
 single file holds; conventions/rules live in `CLAUDE.md` and are linked, not
 copied.
+
+Two boundaries are never crossed:
+
+- **A wiki pass never modifies code.** It touches `wiki/**` and nothing else. If
+  it finds a bug along the way it notes it on the page and tells the user.
+- **`synced:` is never re-stamped without re-reading the page against the code.**
+  That field is the only guarantee the wiki is not lying; faking it turns the
+  wiki into noise shaped like truth.
+
+## The rule that decides whether a page earns its place
+
+> **The wiki holds what the code cannot say.**
+
+Yes: the *why*, the invariants, the flows that cross files, the discarded
+alternatives, the history of a decision, the places where three things must
+change together, what breaks in practice.
+
+No: signatures, prop lists, export enumerations, option tables. `tsc`, the
+`*.meta.ts` files and `getWidgetManifestJSON()` already say that, and duplicating
+it guarantees it rots. When you need to point at code, **link**:
+`packages/widgets/src/lib/registry.tsx:439`.
 
 ## Layout
 
@@ -29,6 +50,11 @@ wiki/
 
 `CONVENTIONS.md`, `.state.json`, `.wikiignore`, `index.md` and `log.md` are **not
 pages** (no frontmatter); everything else is a page and carries the template below.
+
+The toolchain that enforces this schema lives outside `wiki/`, in
+`scripts/wiki/` (`drift` · `coverage` · `lint`, behind `pnpm wiki`) plus the
+post-commit notifier `scripts/wiki-hook.sh`. When the scripts and this file
+disagree, **this file wins** and the scripts get fixed.
 
 ## The five page types
 
@@ -55,6 +81,7 @@ sources:          # code paths this page documents — the link to git
   - packages/widgets/src/widgets/quiz/quiz.tsx
 updated:          # YYYY-MM-DD of the last reconcile
 synced:           # short SHA this page was last reconciled against
+confidence:       # high | inferred — optional, absent means high
 related:          # links to sibling pages (optional)
   - ./flashcards.md
 ---
@@ -63,23 +90,51 @@ related:          # links to sibling pages (optional)
 ```
 
 Each type adds at most **one** key: `flow` a `trigger:`, `decision` an
-`options:`, `entity` a `siblings:`. That is the whole schema — one template,
-not seventeen.
+`options:`, `entity` a `siblings:`, `concept` an `applies_to:`. That is the whole
+schema — one template, not seventeen.
 
-Two fields do the heavy lifting:
+Three fields do the heavy lifting:
 
-- **`sources:`** is the inverted index. `wiki-update` maps a changed file to the
-  pages that document it by grepping `sources:`. Keep it accurate: a page whose
-  `sources` point at moved/deleted files is the #1 cause of drift.
+- **`sources:`** is the inverted index. It is what lets `wiki:drift` map a
+  changed file back to the pages that document it, so `wiki-update` never has to
+  guess. Keep it accurate: a page whose `sources` point at moved/deleted files is
+  the #1 cause of drift. Be
+  **specific** — a `sources:` entry that claims a whole app or package makes
+  coverage read green for code nobody ever wrote up, and `wiki:lint` warns about
+  exactly that. Globs are allowed (`.../widgets/*/*.meta.ts`); a wildcard-free
+  directory means `dir/**`.
 - **`synced:`** is per-page staleness. If any of a page's `sources` changed
   after its `synced` SHA, the page is stale — that is exactly what the hook and
-  lint detect.
+  `wiki:drift` detect.
+- **`confidence:`** separates *read* from *deduced*. `high` (the default, so it
+  can be omitted) means "I read this in the code". `inferred` means "this is my
+  reading and it may be wrong" — use it for intent, rationale and history you
+  reconstructed rather than found. A wiki that does not mark the difference stops
+  being trustworthy within two months. Prefer asking the user over guessing; when
+  you do guess, say so here.
 
 ## Cross-links & language
 
-- Plain markdown links only: `[text](./other.md)`. No wikilinks.
+- Plain markdown links only: `[text](./other.md)`. **No wikilinks** — widgetron
+  uses `[[term]]` for RichText glossary terms and the two would collide.
 - English, like the rest of the repo.
 - Group `index.md` by page type; each line is the page's `responsibility`.
+- Link generously. `wiki:lint` reports pages nothing links to, and an orphan page
+  is usually a page nobody will ever find.
+
+## Writing a page
+
+- Open with what it is and why it exists. Never "this document describes…".
+- **Prose over bullet lists.** Six bullets of three words each is usually a
+  paragraph nobody wrote.
+- Point at code with `path:line`, not by transcribing it.
+- A page that does not fit in two screens is usually two pages.
+- When a change **contradicts** what a page claimed, do not silently overwrite:
+  say what it used to be and what changed it, with the SHA. That is the part git
+  does not tell well, and it is the most valuable thing a wiki accumulates.
+- On a `decision` page the valuable half is **the discarded alternative and
+  why**. If neither the code nor the commit messages hold it, ask the user
+  instead of inventing it — or mark the page `confidence: inferred`.
 
 ## State & log
 
@@ -119,17 +174,37 @@ that describe a process.
 
 ## Health checks
 
-Deterministic, plain `git` + `grep`/`awk`, no LLM. The post-commit hook runs the
-first two after every commit; run lint yourself after any `wiki-*` edit.
+Deterministic, `git` only, no LLM. One CLI, three questions:
 
-- **`scripts/wiki-drift.sh`** — staleness: commits (and code files) since
-  `.state.json`'s `last_indexed_commit`, excluding `.wikiignore` patterns. "Has
-  the code moved past the wiki?"
-- **`scripts/wiki-coverage.sh`** — coverage: tracked code that **no** page's
-  `sources` claims, filtered by **`wiki/.wikiignore`**. "Is all the code in the
-  wiki?" Resolve each cluster by adding a page (usually a module page) or, if it
-  is genuinely out of scope, by ignoring it in `.wikiignore` — a conscious call,
-  not silence.
-- **`scripts/wiki-lint.sh`** — per-page integrity: required keys present,
-  `sources` that still exist, and per-page **staleness** (a `source` changed
-  after the page's `synced` SHA).
+```bash
+pnpm wiki              # all three, human report — silent parts stay silent
+pnpm wiki:drift        # is the wiki behind the code?
+pnpm wiki:coverage     # is all the code in the wiki?
+pnpm wiki:lint         # is the wiki internally sound?
+```
+
+Flags: `--json` (machine-readable, for the skills), `--strict` (exit 1 on any
+finding — CI), `-v` (list every file instead of a summary).
+
+- **`drift`** — staleness on **both** axes. Repo: commits and code files since
+  `.state.json`'s `last_indexed_commit`, excluding `.wikiignore`. Page: for each
+  page, whether any of its `sources` changed since its own `synced` SHA. It
+  compares against the **working tree**, so uncommitted edits count too.
+- **`coverage`** — tracked code that **no** page's `sources` claims, filtered by
+  **`wiki/.wikiignore`**. Resolve each cluster by adding a page (usually a module
+  page) or, if it is genuinely out of scope, by ignoring it in `.wikiignore` — a
+  conscious call, not silence.
+- **`lint`** — integrity: required keys, valid `type` / `confidence` / `updated`,
+  a `synced` that is a real commit, sources that still match a tracked file,
+  over-broad sources, broken markdown links (body **and** `related:`, plus
+  `index.md`'s own), orphan pages, and pages missing from `index.md`.
+
+Exit codes: a plain run fails (1) only on **lint errors** — a broken wiki.
+Staleness and coverage are debt, not breakage; use `--strict` to fail on those
+too. The post-commit hook (`scripts/wiki-hook.sh`) runs `drift` and `coverage`
+only, never fails a commit, and never calls an LLM.
+
+What a machine cannot check — contradictions between pages, claims that expired,
+concepts cited with no page, pages that only restate signatures, missing
+subsystems — is the job of the **`wiki-review`** skill, and it proposes rather
+than edits.
