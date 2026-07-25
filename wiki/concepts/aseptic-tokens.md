@@ -7,7 +7,6 @@ sources:
   - packages/widgets/src/styles/tokens.css
   - packages/widgets/src/styles/theme.css
   - packages/widgets/src/styles/index.css
-updated: 2026-07-24
 synced: c032ded
 related:
   - ../architecture.md

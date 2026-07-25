@@ -7,7 +7,6 @@ sources:
   - packages/widgets/src/lib/analytics.ts
   - packages/widgets/src/lib/use-widget-events.ts
   - docs/analytics.md
-updated: 2026-07-24
 synced: c032ded
 related:
   - ./i18n-labels.md

@@ -5,7 +5,6 @@ responsibility: The interactive learning widgets — how each is structured, the
 sources:
   - packages/widgets/src/widgets
   - packages/widgets/src/lib/registry.tsx
-updated: 2026-07-24
 synced: c032ded
 related:
   - ./widgets/quiz.md

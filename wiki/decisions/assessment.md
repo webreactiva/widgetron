@@ -10,7 +10,6 @@ sources:
   - packages/widgets/src/widgets/predict-output/predict-output.meta.ts
   - packages/widgets/src/widgets/spot-the-bug/spot-the-bug.meta.ts
   - packages/widgets/src/widgets/profile-quiz/profile-quiz.meta.ts
-updated: 2026-07-24
 synced: c032ded
 related:
   - ../components/widgets/quiz.md

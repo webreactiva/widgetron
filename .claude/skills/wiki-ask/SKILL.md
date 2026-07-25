@@ -39,8 +39,8 @@ question ──► search wiki/ (index.md → pages)
    - a genuinely new unit/pattern/comparison → a **new page** of the right type.
    Only write on a yes.
 4. **When filing:** use the one template — real, **narrow** `sources:` for what
-   you read, today's `updated:`, current `git rev-parse --short HEAD` as
-   `synced:`, and `confidence: inferred` if the answer is your reading rather
+   you read, current `git rev-parse --short HEAD` as `synced:`, and
+   `confidence: inferred` if the answer is your reading rather
    than something the code states. Add an ASCII diagram if the answer is a flow.
    Link the new page from the pages it relates to (an unlinked page is an orphan
    nobody finds), add the line to `index.md`, append a `log.md` entry. Do **not**

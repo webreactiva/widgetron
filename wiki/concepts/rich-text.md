@@ -5,7 +5,6 @@ applies_to: every author-facing free-text slot
 responsibility: How plain strings from JSON become formatted inline content (bold, italic, code, links, breaks, glossary terms) with no markdown dependency.
 sources:
   - packages/widgets/src/primitives/rich-text.tsx
-updated: 2026-07-24
 synced: c032ded
 related:
   - ./ai-generation-surface.md

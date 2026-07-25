@@ -4,7 +4,6 @@ type: entity
 responsibility: The shadcn-compatible building blocks every widget composes on — button, universal icon, tooltip, and the RichText text layer.
 sources:
   - packages/widgets/src/primitives
-updated: 2026-07-24
 synced: c032ded
 related:
   - ../concepts/rich-text.md

@@ -79,7 +79,6 @@ type:             # entity | concept | flow | decision | architecture
 responsibility:   # ONE sentence: what this page is responsible for (feeds index.md)
 sources:          # code paths this page documents — the link to git
   - packages/widgets/src/widgets/quiz/quiz.tsx
-updated:          # YYYY-MM-DD of the last reconcile
 synced:           # short SHA this page was last reconciled against
 confidence:       # high | inferred — optional, absent means high
 related:          # links to sibling pages (optional)
@@ -89,9 +88,18 @@ related:          # links to sibling pages (optional)
 <!-- body: stay high-altitude, do NOT transcribe the code -->
 ```
 
-Each type adds at most **one** key: `flow` a `trigger:`, `decision` an
-`options:`, `entity` a `siblings:`, `concept` an `applies_to:`. That is the whole
-schema — one template, not seventeen.
+Five required keys, three optional. **That is the whole schema** — one template,
+not seventeen, and no per-type variants to remember.
+
+A page may carry any other key it finds useful (`trigger:` on a flow,
+`options:` on a decision, `siblings:` on an entity). The parser keeps them and
+the lint ignores them: they are notes for the reader, not contract. A key only
+joins the schema when something actually reads it.
+
+There is deliberately **no date field**. `synced:` already answers the question
+that matters — *how old is this knowledge?* — and answers it better: run
+`git show -s --format=%cs <synced>` and you get the date of the commit the page
+was verified against, not the day someone typed into the frontmatter.
 
 Three fields do the heavy lifting:
 
@@ -194,10 +202,26 @@ finding — CI), `-v` (list every file instead of a summary).
   **`wiki/.wikiignore`**. Resolve each cluster by adding a page (usually a module
   page) or, if it is genuinely out of scope, by ignoring it in `.wikiignore` — a
   conscious call, not silence.
-- **`lint`** — integrity: required keys, valid `type` / `confidence` / `updated`,
-  a `synced` that is a real commit, sources that still match a tracked file,
-  over-broad sources, broken markdown links (body **and** `related:`, plus
-  `index.md`'s own), orphan pages, and pages missing from `index.md`.
+- **`lint`** — integrity: required keys, valid `type` / `confidence`, a `synced`
+  that is a real commit, sources that still match a tracked file, over-broad
+  sources, broken markdown links (body **and** `related:`, plus `index.md`'s
+  own), orphan pages, and pages missing from `index.md`. It also warns once the
+  wiki grows past `INDEX_SCALE_LIMIT` pages — see below.
+
+### Retrieval, and when index-first stops working
+
+`wiki-ask` reads `index.md` and drills down. That works while the one-line
+summaries still *discriminate*; past enough pages, a dozen of them look equally
+plausible for the same question and the index only lists instead of ranking.
+The pattern this wiki is built on puts that ceiling around "~hundreds of pages"
+and reaches for a search engine there.
+
+We have no search layer, and at this size we do not need one — but "we'll notice
+when we do" is not a plan, so the lint carries the tripwire: past
+`INDEX_SCALE_LIMIT` (`scripts/wiki/lib.mjs`) it asks for a decision. The cheap
+answer when that day comes is BM25 over page bodies, recomputed per run — no
+stored index to go stale, no dependency, same `git`-only footprint. Embeddings
+would mean infrastructure and are a different conversation.
 
 Exit codes: a plain run fails (1) only on **lint errors** — a broken wiki.
 Staleness and coverage are debt, not breakage; use `--strict` to fail on those

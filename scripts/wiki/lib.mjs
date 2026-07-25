@@ -13,15 +13,22 @@ export const TYPES = ["architecture", "flow", "entity", "concept", "decision"];
 /** `confidence:` values. Absent means `high` — see CONVENTIONS § The one template. */
 export const CONFIDENCE = ["high", "inferred"];
 
-/** Frontmatter keys every page must carry. */
-export const REQUIRED_KEYS = [
-  "title",
-  "type",
-  "responsibility",
-  "sources",
-  "updated",
-  "synced",
-];
+/**
+ * Frontmatter keys every page must carry. Deliberately five: a page's date is
+ * not one of them, because `synced:` already answers the question that matters
+ * ("how old is this knowledge?") via `git show -s --format=%cs <sha>`.
+ * Pages may carry any other key freely; the schema does not police them.
+ */
+export const REQUIRED_KEYS = ["title", "type", "responsibility", "sources", "synced"];
+
+/**
+ * Page count past which reading index.md first stops discriminating: too many
+ * one-line summaries look plausible for the same question. A conservative
+ * marker anchored to the pattern's own "~hundreds of pages", not a measured
+ * threshold — its job is to bring the retrieval decision back to a human
+ * instead of letting it be forgotten.
+ */
+export const INDEX_SCALE_LIMIT = 80;
 
 /** Files inside wiki/ that are not pages (no frontmatter contract). */
 export const NON_PAGES = new Set(["CONVENTIONS.md", "index.md", "log.md"]);

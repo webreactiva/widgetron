@@ -43,8 +43,8 @@ pnpm wiki:drift --json
 3. **Reconcile.** Re-read the *current* code and rewrite only the **stale
    sections** of those pages (not the whole page — preserve human edits). Refresh
    any ASCII diagram whose boxes no longer match the code. The wiki is
-   descriptive: if unsure, the code wins. Bump each touched page's `updated:` /
-   `synced:`.
+   descriptive: if unsure, the code wins. Re-stamp each touched page's `synced:`
+   — and only those you actually re-read.
 
    When the change **contradicts** what the page claimed, don't overwrite in
    silence: state what it used to be and what changed it, with the SHA. That is

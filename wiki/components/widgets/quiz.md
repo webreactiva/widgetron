@@ -7,7 +7,6 @@ sources:
   - packages/widgets/src/widgets/quiz/quiz.tsx
   - packages/widgets/src/widgets/quiz/quiz.meta.ts
   - packages/widgets/src/widgets/quiz/index.ts
-updated: 2026-07-24
 synced: c032ded
 related:
   - ../../decisions/assessment.md

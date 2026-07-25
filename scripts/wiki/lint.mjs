@@ -8,6 +8,7 @@ import { join } from "node:path";
 
 import {
   CONFIDENCE,
+  INDEX_SCALE_LIMIT,
   NON_PAGES,
   REQUIRED_KEYS,
   TYPES,
@@ -23,8 +24,6 @@ import {
   relatedLinks,
   trackedFiles,
 } from "./lib.mjs";
-
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function run({ root, wikiDir }) {
   const findings = [];
@@ -84,9 +83,6 @@ export function run({ root, wikiDir }) {
         page.id,
       );
 
-    if (meta.updated && !DATE_RE.test(meta.updated))
-      add("error", `\`updated: ${meta.updated}\` is not YYYY-MM-DD`, page.id);
-
     if (meta.synced && !commitExists(meta.synced))
       add("error", `\`synced: ${meta.synced}\` is not a commit in this repo`, page.id);
 
@@ -121,6 +117,17 @@ export function run({ root, wikiDir }) {
 
   for (const [rel, count] of inbound)
     if (count === 0) add("warn", "orphan: no other page links here", rel.replace(/\.md$/, ""));
+
+  // Retrieval scale. `wiki-ask` reads index.md first and drills down; past a
+  // certain page count that stops ranking and only lists. Surfacing it here is
+  // what keeps the "do we need real search?" decision from being forgotten.
+  if (pages.length > INDEX_SCALE_LIMIT)
+    add(
+      "warn",
+      `${pages.length} pages — past ~${INDEX_SCALE_LIMIT}, reading index.md first stops ` +
+        `discriminating between them. Decide on ranked search over page bodies, or raise ` +
+        `INDEX_SCALE_LIMIT on purpose.`,
+    );
 
   const errors = findings.filter((f) => f.level === "error");
   const warnings = findings.filter((f) => f.level === "warn");

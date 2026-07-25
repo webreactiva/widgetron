@@ -7,7 +7,6 @@ sources:
   - apps/playground
   - apps/story-studio
   - package.json
-updated: 2026-07-24
 synced: c032ded
 related:
   - ./flows/render-widget.md

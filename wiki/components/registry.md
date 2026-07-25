@@ -6,7 +6,6 @@ sources:
   - packages/registry/build-registry.mjs
   - packages/registry/registry.json
   - packages/registry/components.json
-updated: 2026-07-24
 synced: c032ded
 related:
   - ../architecture.md
