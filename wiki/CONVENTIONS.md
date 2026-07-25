@@ -8,12 +8,29 @@ inside them.
 
 | verb | what it does |
 | ---- | ------------ |
-| **`wiki-ingest`** | take code in — seeds the wiki if empty, otherwise reconciles the diff since the checkpoint |
+| **`wiki-ingest`** | take code in — seeds if empty, reconciles the diff, or ingests a part you aim it at |
 | **`wiki-query`** | answer a question, and file the answer back if it is worth keeping |
 | **`wiki-lint`** | is the wiki sound? `pnpm wiki` for what a machine can decide, `--deep` for what needs reading |
 
 The deterministic engine (`scripts/wiki/`) sits underneath those verbs; you
 should not have to think about it to use the wiki.
+
+### Growth is deliberate, never a big bang
+
+The wiki is **never** written in one sitting. Seeding draws the avenues and
+stops; from then on the wiki grows one part at a time, with a human reviewing
+each pass. `wiki-ingest <path>` (or `.` / `all`) is that aimed mode, and the
+backlog it works from is computed for you:
+
+```
+wiki:coverage  → code no page claims, grouped by folder   (finite, mechanical)
+wiki-lint --deep → missing flows, orphan concepts, thin pages (qualitative)
+```
+
+Those two lists are the wiki's to-do. When the code stops changing, they are the
+**only** thing that still generates work — reconciling a diff cannot see code
+that never moved. A hundred pages produced in one pass is a hundred pages nobody
+reviewed, which is worse than the gap it closed.
 
 The wiki is an **LLM-maintained knowledge base derived from the code**. It is
 **descriptive, never normative** — when the wiki and the code disagree, the
