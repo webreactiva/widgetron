@@ -247,8 +247,9 @@ export function sourcePatterns(meta, root) {
  *   "page"     → resolves inside wiki/ (compare against page ids / non-pages)
  *   "repo"     → resolves outside wiki/ (compare against the filesystem)
  *   "external" → http(s), mailto, bare anchors — never checked
- * The wiki links with plain markdown on purpose: `[[term]]` is widgetron's
- * glossary syntax in RichText, and reusing it here would collide.
+ * The wiki links with plain markdown on purpose: wikilink syntax (`[[term]]`)
+ * tends to collide with whatever the host project already uses it for — in this
+ * repo, RichText glossary terms.
  */
 export function markdownLinks(body, pageRel, wikiDir, root) {
   const prose = body.replace(/```[\s\S]*?```/g, "").replace(/`[^`\n]*`/g, "");

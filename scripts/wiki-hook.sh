@@ -1,6 +1,6 @@
 #!/bin/sh
 # scripts/wiki-hook.sh — post-commit NOTIFIER for the code wiki.
-# Runs the two deterministic debt signals so you know when to run /wiki-update:
+# Runs the two deterministic debt signals so you know when to run /wiki-ingest:
 #   drift    — code changed since wiki/.state.json's checkpoint, and pages whose
 #              own `sources:` moved past their `synced:`
 #   coverage — tracked code no page's `sources:` claims

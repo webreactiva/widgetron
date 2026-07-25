@@ -81,7 +81,7 @@ export function report(res, { verbose } = {}) {
     console.log(
       `${color.yellow("behind")}    repo — ${res.repo.commits} commit(s) not indexed ` +
         `(${res.repo.files} code file(s)) since ${shortSha(res.repo.last)} ` +
-        color.dim("-> /wiki-update"),
+        color.dim("-> /wiki-ingest"),
     );
   } else if (res.repo.status === "unknown-checkpoint") {
     found++;
@@ -90,7 +90,7 @@ export function report(res, { verbose } = {}) {
     );
   } else if (res.repo.status === "no-checkpoint") {
     found++;
-    console.log(`${color.red("broken")}    repo — no wiki/.state.json checkpoint ${color.dim("-> /wiki-init")}`);
+    console.log(`${color.red("broken")}    repo — no wiki/.state.json checkpoint ${color.dim("-> /wiki-ingest")}`);
   }
 
   for (const item of res.stale) {

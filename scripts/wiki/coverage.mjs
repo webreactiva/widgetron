@@ -40,7 +40,7 @@ export function report(res, { verbose } = {}) {
   if (!res.unclaimed.length) return 0;
   console.log(
     `${color.yellow("uncovered")} ${res.unclaimed.length} of ${res.indexable} tracked code file(s) ` +
-      `claimed by no page ${color.dim("-> /wiki-update")}`,
+      `claimed by no page ${color.dim("-> /wiki-ingest")}`,
   );
   for (const { dir, count } of res.clusters)
     console.log(`    ${String(count).padStart(5)}  ${color.dim(dir)}`);
