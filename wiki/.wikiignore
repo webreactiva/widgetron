@@ -13,6 +13,7 @@ scripts/**
 
 # lockfiles, builds, generated assets
 pnpm-lock.yaml
+apps/*/index.html
 **/dist/**
 apps/*/public/**
 apps/story-studio/content/**

@@ -4,9 +4,10 @@ An LLM-maintained knowledge base derived from the code. Descriptive, not
 normative — the code is the source of truth. Read
 [CONVENTIONS.md](./CONVENTIONS.md) for how it's structured and maintained.
 
-Maintained by four skills: `wiki-init` (seed), `wiki-update` (reconcile with the
-code), `wiki-ask` (answer & file back), `wiki-review` (audit the content). Health
-checks: `pnpm wiki`. Start here, then open a page.
+Maintained by three verbs: **`wiki-ingest`** (take the code in — seeds, then
+reconciles), **`wiki-query`** (answer a question and file the answer back) and
+**`wiki-lint`** (is it sound? `--deep` also reads the pages). Start here, then
+open a page.
 
 ## Architecture
 
@@ -15,6 +16,7 @@ checks: `pnpm wiki`. Start here, then open a page.
 ## Flows
 
 - [Render a widget node](./flows/render-widget.md) — how a `{ type, props }` node becomes a React element (registry → migrate → adapt → render).
+- [From .story.json to a published guide](./flows/story-pipeline.md) — envelope check, deterministic injection, tree validation, pacing gate, static build.
 
 ## Concepts
 
@@ -31,6 +33,8 @@ checks: `pnpm wiki`. Start here, then open a page.
 - [Primitives](./components/primitives.md) — button, universal icon, tooltip, RichText.
 - [lib](./components/lib.md) — registry, meta, i18n, analytics, formula, icons, utils.
 - [registry (shadcn distribution)](./components/registry.md) — generates a shadcn registry from the widget source so widgets install via `npx shadcn add`.
+- [Story Studio](./components/story-studio.md) — the app that turns a `.story.json` into a publishable interactive guide: engine, CLI, local editor.
+- [Playground](./components/playground.md) — previews every widget in a truthful device frame; where a new widget is verified by eye.
 
 ## Decisions
 

@@ -1,8 +1,19 @@
 # Wiki conventions — the schema file
 
 This is the single source of truth for how the code wiki is structured and
-maintained. The four skills (`wiki-init`, `wiki-update`, `wiki-ask`,
-`wiki-review`) all read from here; do not restate these rules inside them.
+maintained. The three skills all read from here; do not restate these rules
+inside them.
+
+**Three verbs**, borrowed from the pattern this wiki is built on:
+
+| verb | what it does |
+| ---- | ------------ |
+| **`wiki-ingest`** | take code in — seeds the wiki if empty, otherwise reconciles the diff since the checkpoint |
+| **`wiki-query`** | answer a question, and file the answer back if it is worth keeping |
+| **`wiki-lint`** | is the wiki sound? `pnpm wiki` for what a machine can decide, `--deep` for what needs reading |
+
+The deterministic engine (`scripts/wiki/`) sits underneath those verbs; you
+should not have to think about it to use the wiki.
 
 The wiki is an **LLM-maintained knowledge base derived from the code**. It is
 **descriptive, never normative** — when the wiki and the code disagree, the
@@ -104,7 +115,7 @@ was verified against, not the day someone typed into the frontmatter.
 Three fields do the heavy lifting:
 
 - **`sources:`** is the inverted index. It is what lets `wiki:drift` map a
-  changed file back to the pages that document it, so `wiki-update` never has to
+  changed file back to the pages that document it, so `wiki-ingest` never has to
   guess. Keep it accurate: a page whose `sources` point at moved/deleted files is
   the #1 cause of drift. Be
   **specific** — a `sources:` entry that claims a whole app or package makes
@@ -151,15 +162,16 @@ The **repo-level checkpoint** lives in `wiki/.state.json`:
     {"version": 1, "last_indexed_commit": "<full sha>"}
 
 `last_indexed_commit` means "every commit up to here is reflected in the wiki".
-`wiki-update` reads it to compute the diff base and advances it to HEAD *only
-after* the touched pages verify; `wiki-init` writes it; `wiki-ask` does **not**
-move it (it files individual pages out of band). Read it with:
+`wiki-ingest` reads it to compute the diff base and advances it to HEAD *only
+after* the touched pages verify — and writes it in the first place when seeding.
+`wiki-query` and `wiki-lint` never move it: they file or audit out of band, and
+cannot claim the whole repo is indexed. Read it with:
 
     sed -n 's/.*"last_indexed_commit": *"\([a-f0-9]*\)".*/\1/p' wiki/.state.json
 
 `log.md` is the human-readable **narrative** — append-only, one entry per run:
 
-    ## 2026-07-24 · wiki-update
+    ## 2026-07-24 · wiki-ingest
     - quiz.md: quiz.tsx gained the keyword-gate prop
     - new: components/widgets/radial-audiogram.md
 
@@ -210,7 +222,7 @@ finding — CI), `-v` (list every file instead of a summary).
 
 ### Retrieval, and when index-first stops working
 
-`wiki-ask` reads `index.md` and drills down. That works while the one-line
+`wiki-query` reads `index.md` and drills down. That works while the one-line
 summaries still *discriminate*; past enough pages, a dozen of them look equally
 plausible for the same question and the index only lists instead of ranking.
 The pattern this wiki is built on puts that ceiling around "~hundreds of pages"
@@ -230,5 +242,28 @@ only, never fails a commit, and never calls an LLM.
 
 What a machine cannot check — contradictions between pages, claims that expired,
 concepts cited with no page, pages that only restate signatures, missing
-subsystems — is the job of the **`wiki-review`** skill, and it proposes rather
-than edits.
+subsystems — is the job of **`wiki-lint --deep`**, which reads the pages as text
+and proposes rather than edits.
+
+## Porting this to another repo
+
+The engine is repo-agnostic: `scripts/wiki/*.mjs` reads only `git`, this file's
+schema and `wiki/.wikiignore`. To reuse the system elsewhere, copy
+`scripts/wiki/`, `scripts/wiki-hook.sh`, the three skills and this file, then
+change exactly four things:
+
+1. **`wiki/.wikiignore`** — the paths that never count as documentable code in
+   that repo (tests, lockfiles, build config, generated assets).
+2. **The `wiki` scripts in `package.json`** — or call
+   `node scripts/wiki/wiki.mjs` directly if the project has no package manager
+   convention. Nothing else in the engine assumes pnpm.
+3. **`WORKSPACE_ROOT_RE` in `scripts/wiki/lib.mjs`** — it recognises
+   `apps/<name>` and `packages/<name>` as workspace roots to flag over-broad
+   `sources:`. A non-monorepo wants a different pattern, or none.
+4. **The examples in this file** — the page-type table, the template and the
+   "what the code already says" list name widgetron's own files. Swap them for
+   that repo's equivalents; the *rules* around them travel unchanged.
+
+The five page types, the one template, the three verbs and both health axes are
+domain-independent by design. Nothing above assumes React, TypeScript or a
+monorepo.
