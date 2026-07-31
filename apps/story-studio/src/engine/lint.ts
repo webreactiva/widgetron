@@ -89,17 +89,19 @@ group(
   "callout-box", "code-translation", "glossary-term", "glossary-text",
   "pattern-card", "profile-card", "prose", "quote", "resource-list",
   "section-header", "step-cards", "timeline",
-  "kinetic-headline", "decode-headline",
+  "kinetic-headline", "decode-headline", "code-diff", "tabs",
 );
 group(
   "Interactive",
   "checklist", "decision-tree", "drag-and-drop", "fill-in-the-blanks",
   "flashcards", "predict-output", "quiz", "spot-the-bug", "surprise",
+  "sort-steps", "estimate-slider", "reflection",
 );
 group(
   "Diagrams & data",
   "compare-slider", "data-chart", "flow-diagram", "hotspots",
   "infographic", "mermaid-diagram", "draw-diagram", "scroll-stat",
+  "comparison-table",
 );
 group("Reactive", "frame-stepper", "group-chat", "scrubber", "tangle-text", "terminal-sim");
 group("AI & personalization", "profile-gate", "profile-provider", "profile-quiz", "prompt-template");

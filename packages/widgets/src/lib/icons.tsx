@@ -63,6 +63,10 @@ export const ChevronLeft = makeIcon("ChevronLeft", <path d="m15 18-6-6 6-6" />);
 
 export const ChevronRight = makeIcon("ChevronRight", <path d="m9 18 6-6-6-6" />);
 
+export const ChevronUp = makeIcon("ChevronUp", <path d="m18 15-6-6-6 6" />);
+
+export const ChevronDown = makeIcon("ChevronDown", <path d="m6 9 6 6 6-6" />);
+
 export const ArrowRight = makeIcon(
   "ArrowRight",
   <>

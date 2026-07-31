@@ -65,6 +65,12 @@ export * from "@/widgets/timeline";
 export * from "@/widgets/fill-in-the-blanks";
 export * from "@/widgets/predict-output";
 export * from "@/widgets/drag-and-drop";
+export * from "@/widgets/sort-steps";
+export * from "@/widgets/estimate-slider";
+export * from "@/widgets/reflection";
+export * from "@/widgets/code-diff";
+export * from "@/widgets/tabs";
+export * from "@/widgets/comparison-table";
 export * from "@/widgets/hotspots";
 export * from "@/widgets/group-chat";
 

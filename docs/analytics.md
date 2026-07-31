@@ -56,6 +56,12 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | widget | fill-in-the-blanks | `completed` | `{ blanks }` — every blank correct (once) |
 | widget | drag-and-drop | `checked` | `{ correct }` — reader pressed Check |
 | widget | drag-and-drop | `completed` | `{ items }` — board fully correct (once per solve) |
+| widget | sort-steps | `reordered` | `{ from, to }` — reader moved a step |
+| widget | sort-steps | `checked` | `{ correct, misplaced }` — reader pressed Check |
+| widget | sort-steps | `completed` | `{ steps }` — the whole sequence is right (once per solve) |
+| widget | estimate-slider | `estimated` | `{ guess, answer, offBy, close }` — reader committed a guess |
+| widget | reflection | `saved` | `{ length }` — **never the answer's text**, which stays on the device |
+| widget | tabs | `tab_changed` | `{ index }` — reader opened another variant |
 | widget | cta | `clicked` | `{ variant: "link", url }` |
 | widget | cta | `submitted` | `{ ok }` — **never the email** |
 | widget | resource-list | `resource_opened` | `{ kind, href, index }` |

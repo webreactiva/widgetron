@@ -24,6 +24,12 @@ import { decisionTreeMeta } from "@/widgets/decision-tree/decision-tree.meta";
 import { fillInTheBlanksMeta } from "@/widgets/fill-in-the-blanks/fill-in-the-blanks.meta";
 import { predictOutputMeta } from "@/widgets/predict-output/predict-output.meta";
 import { dragAndDropMeta } from "@/widgets/drag-and-drop/drag-and-drop.meta";
+import { sortStepsMeta } from "@/widgets/sort-steps/sort-steps.meta";
+import { estimateSliderMeta } from "@/widgets/estimate-slider/estimate-slider.meta";
+import { reflectionMeta } from "@/widgets/reflection/reflection.meta";
+import { codeDiffMeta } from "@/widgets/code-diff/code-diff.meta";
+import { tabsMeta } from "@/widgets/tabs/tabs.meta";
+import { comparisonTableMeta } from "@/widgets/comparison-table/comparison-table.meta";
 import { tangleTextMeta } from "@/widgets/tangle-text/tangle-text.meta";
 import { scrubberMeta } from "@/widgets/scrubber/scrubber.meta";
 import { frameStepperMeta } from "@/widgets/frame-stepper/frame-stepper.meta";
@@ -105,6 +111,12 @@ import { Timeline } from "@/widgets/timeline";
 import { FillInTheBlanks } from "@/widgets/fill-in-the-blanks";
 import { PredictOutput } from "@/widgets/predict-output";
 import { DragAndDrop } from "@/widgets/drag-and-drop";
+import { SortSteps } from "@/widgets/sort-steps";
+import { EstimateSlider } from "@/widgets/estimate-slider";
+import { Reflection } from "@/widgets/reflection";
+import { CodeDiff } from "@/widgets/code-diff";
+import { Tabs, type TabItem } from "@/widgets/tabs";
+import { ComparisonTable, type ComparisonColumn, type ComparisonRow } from "@/widgets/comparison-table";
 import { Hotspots } from "@/widgets/hotspots";
 import { GroupChat } from "@/widgets/group-chat";
 import { AudioClip } from "@/widgets/audio-clip";
@@ -382,6 +394,84 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
   "fill-in-the-blanks": { ...fillInTheBlanksMeta, component: FillInTheBlanks },
   "predict-output": { ...predictOutputMeta, component: PredictOutput },
   "drag-and-drop": { ...dragAndDropMeta, component: DragAndDrop },
+  "sort-steps": {
+    ...sortStepsMeta,
+    component: SortSteps,
+    adapt: (p) => ({
+      ...p,
+      items: Array.isArray(p.items)
+        ? p.items.map((item) =>
+            item && typeof item === "object"
+              ? {
+                  ...item,
+                  label: asContent((item as { label?: unknown }).label),
+                  hint: asContent((item as { hint?: unknown }).hint),
+                }
+              : item,
+          )
+        : p.items,
+    }),
+  },
+  "estimate-slider": {
+    ...estimateSliderMeta,
+    component: EstimateSlider,
+    adapt: (p) => ({
+      ...p,
+      question: asContent(p.question),
+      reveal: asContent(p.reveal),
+      source: asContent(p.source),
+    }),
+  },
+  reflection: {
+    ...reflectionMeta,
+    component: Reflection,
+    adapt: (p) => ({
+      ...p,
+      prompt: asContent(p.prompt),
+      hint: asContent(p.hint),
+      modelAnswer: asContent(p.modelAnswer),
+    }),
+  },
+  "code-diff": {
+    ...codeDiffMeta,
+    component: CodeDiff,
+    adapt: (p) => ({
+      ...p,
+      filename: asContent(p.filename),
+      notes: asContent(p.notes),
+    }),
+  },
+  tabs: {
+    ...tabsMeta,
+    component: Tabs,
+    adapt: (p) => ({
+      ...p,
+      items: (p.items as TabItem[] | undefined)?.map((item) => ({
+        ...item,
+        label: asContent(item.label),
+        icon: asIcon(item.icon),
+        content: asContent(item.content),
+      })),
+    }),
+  },
+  "comparison-table": {
+    ...comparisonTableMeta,
+    component: ComparisonTable,
+    adapt: (p) => ({
+      ...p,
+      caption: asContent(p.caption),
+      columns: (p.columns as ComparisonColumn[] | undefined)?.map((column) => ({
+        ...column,
+        label: asContent(column.label),
+        note: asContent(column.note),
+      })),
+      rows: (p.rows as ComparisonRow[] | undefined)?.map((row) => ({
+        ...row,
+        label: asContent(row.label),
+        hint: asContent(row.hint),
+      })),
+    }),
+  },
   hotspots: {
     ...hotspotsMeta,
     component: Hotspots,

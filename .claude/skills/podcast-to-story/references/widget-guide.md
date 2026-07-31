@@ -17,6 +17,7 @@ guide should convert MOST of them into their matching widget, not into prose.
 | A conceptual relationship (center+spokes, layers, trade-off, hidden depth…) | `infographic` | Pick the `layout` metaphor: hub, pyramid, iceberg, balance, funnel, cycle, venn, matrix, target — or the napkin-style ones with an `icon` per item: `stairs`, `milestones`, `chevrons` (process ribbon), `roadmap` (winding journey), `pillars` |
 | Real numbers compared or a trend | `data-chart` | Only with numbers actually said in the episode |
 | Code explained piece by piece | `code-translation` | THE widget for demystifying a snippet |
+| A CHANGE to code: refactor, fix, before/after | `code-diff` | Pass both full versions — it computes the diff. `notes` carry the plain-language why |
 | "What does this print/do?" | `predict-output` | Code is correct; skill = tracing |
 | "There's a mistake here" | `spot-the-bug` | Skill = finding the flawed line. Exactly ONE line sets `buggy: true` (with its `explanation` on that line) — validation rejects it otherwise |
 | A sequence of shell commands | `terminal-sim` | Literal commands + output, one per click |
@@ -24,7 +25,12 @@ guide should convert MOST of them into their matching widget, not into prose.
 | A misconception worth confronting | `quiz` | Per-option feedback quoting the episode's reasoning |
 | Recall of a sentence/definition with exact wording | `fill-in-the-blanks` | Blanks inside the real sentence |
 | Items that belong to categories | `drag-and-drop` | Classification as the lesson |
+| An ordered procedure whose ORDER is the lesson | `sort-steps` | The reader rebuilds the sequence; author writes `items` already correct |
+| A counter-intuitive NUMBER the reader will get wrong | `estimate-slider` | They guess on a slider, commit, then see the real value. Only with a number actually said |
+| A question only the reader can answer (their code, their week) | `reflection` | Open answer, saved on their device; `modelAnswer` appears only after they commit. One or two per guide, at a module's close |
 | "It depends" advice | `decision-tree` | Different paths → different recommendations |
+| Several options weighed across the same criteria | `comparison-table` | Booleans → check/cross, values verbatim; `highlight` the recommended column |
+| The same lesson in several equivalent forms (npm/pnpm/yarn, JS/TS) | `tabs` | Panels hold any widget. Never for content everyone must read — what is closed is invisible |
 | Terms/definitions worth memorizing | `flashcards` | Self-paced, ungraded |
 | An ordered procedure the reader will DO | `step-cards` | Actions, not events |
 | Events/milestones over time | `timeline` | With expandable descriptions |
