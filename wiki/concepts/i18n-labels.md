@@ -6,7 +6,7 @@ responsibility: How every user-facing widget string is customizable and translat
 sources:
   - packages/widgets/src/lib/i18n.tsx
   - packages/widgets/src/locales/es.ts
-synced: c032ded
+synced: 763c574
 related:
   - ./analytics-events.md
 ---

@@ -6,7 +6,7 @@ responsibility: How the library exposes itself to an AI agent — per-widget zod
 sources:
   - packages/widgets/src/lib/registry.tsx
   - packages/widgets/src/lib/widget-meta.ts
-synced: c032ded
+synced: 763c574
 related:
   - ../flows/render-widget.md
   - ../decisions/assessment.md

@@ -5,14 +5,15 @@ responsibility: The interactive learning widgets — how each is structured, the
 sources:
   - packages/widgets/src/widgets
   - packages/widgets/src/lib/registry.tsx
-synced: c032ded
+synced: 763c574
 related:
   - ./widgets/quiz.md
+  - ./widgets/code-diff.md
   - ../decisions/assessment.md
   - ../flows/render-widget.md
 ---
 
-The bulk of the library: ~57 widgets, each a self-contained folder. This is a
+The bulk of the library: ~61 widgets, each a self-contained folder. This is a
 **module** page — component pages under `widgets/` document individual units.
 
 ## Anatomy of a widget
@@ -33,19 +34,36 @@ list** of what exists.
 ## Families (by teaching intent)
 
 - **Assessment** — quiz, flashcards, fill-in-the-blanks, predict-output,
-  spot-the-bug, profile-quiz. See [which one when](../decisions/assessment.md).
+  spot-the-bug, sort-steps, estimate-slider, reflection, profile-quiz. See
+  [which one when](../decisions/assessment.md).
 - **Narrative & scroll** — storyline, scrollytelling, backdrop-section,
   sticky-pan, story-map, frame-stepper, scroll-stat.
 - **Media** — audio-clip, radial-audiogram, karaoke-stage, episode-player,
   video-clip, figure.
 - **Diagrams & data** — flow-diagram, mermaid-diagram, draw-diagram,
-  decision-tree, data-chart, infographic, timeline.
+  decision-tree, data-chart, infographic, timeline, comparison-table.
 - **Text & motion** — kinetic-headline, decode-headline, tangle-text,
-  unmask-strip, prose, section-header, callout-box, quote.
+  unmask-strip, prose, section-header, callout-box, quote, code-translation,
+  [code-diff](./widgets/code-diff.md), tabs.
 - **Interactive extras** — drag-and-drop, hotspots, compare-slider, scrubber,
   terminal-sim, group-chat, keyword-gate, cta, checklist.
 
 (Grouping is descriptive; each widget's real `category` lives in its meta.)
+
+## Deterministic initial state
+
+Three widgets start in a state the reader did not choose — sort-steps scrambles
+its steps, surprise picks a variant, flashcards orders a deck — and none of them
+may reach for `Math.random()` while rendering: server and client would disagree
+and hydration would tear. `sort-steps.tsx:57` is the worked example — a mulberry32
+PRNG with a constant seed, plus a guard that swaps two items when the "shuffle"
+happens to land on the answer. Same input, same starting order, every render and
+every environment.
+
+The same instinct runs through the reward side: confetti and completion banners
+fire only on an interaction the reader actually performed, never on the hydration
+of an already-finished state (`checklist.tsx`, `reflection.tsx`, `sort-steps.tsx`
+all keep a ref for exactly this).
 
 ## Adding one
 

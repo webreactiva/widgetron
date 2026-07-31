@@ -4,7 +4,7 @@ type: entity
 responsibility: The Vite app that previews every widget in a truthful device frame — the place a new widget is verified by eye.
 sources:
   - apps/playground/src
-synced: f5cb894
+synced: 763c574
 related:
   - ./widgets.md
   - ../architecture.md

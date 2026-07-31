@@ -28,8 +28,9 @@ open a page.
 
 ## Components
 
-- [Widgets](./components/widgets.md) — the ~57 widgets: anatomy, families, authoritative list.
+- [Widgets](./components/widgets.md) — the ~61 widgets: anatomy, families, authoritative list.
   - [Quiz](./components/widgets/quiz.md) — single-question multiple-choice with per-option feedback.
+  - [CodeDiff](./components/widgets/code-diff.md) — before/after code in one unified block; the widget computes the line diff itself.
 - [Primitives](./components/primitives.md) — button, universal icon, tooltip, RichText.
 - [lib](./components/lib.md) — registry, meta, i18n, analytics, formula, icons, utils.
 - [registry (shadcn distribution)](./components/registry.md) — generates a shadcn registry from the widget source so widgets install via `npx shadcn add`.
@@ -38,4 +39,4 @@ open a page.
 
 ## Decisions
 
-- [Which assessment widget?](./decisions/assessment.md) — quiz vs flashcards vs fill-in-the-blanks vs predict-output vs spot-the-bug vs profile-quiz.
+- [Which assessment widget?](./decisions/assessment.md) — quiz vs flashcards vs fill-in-the-blanks vs predict-output vs spot-the-bug vs drag-and-drop vs sort-steps vs estimate-slider vs reflection vs profile-quiz.

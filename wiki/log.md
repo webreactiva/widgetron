@@ -75,3 +75,37 @@ was undocumented while coverage read green.
 - checkpoint unchanged: no new commits, this pass closed coverage debt.
 - result: 16 pages, coverage complete with narrow sources — the first honest
   green. The previous one was a false green hiding 27 files.
+
+## 2026-07-31 · wiki-ingest (reconcile → 763c574)
+
+Four commits since the checkpoint, but only one touched code: `763c574` added
+six widgets (sort-steps, estimate-slider, reflection, code-diff, tabs,
+comparison-table). The other three were the wiki's own toolchain.
+
+- decisions/assessment.md: the biggest change. Six options → ten, and a new
+  closing section on **the two that grade nothing** — estimate-slider and
+  reflection are in the assessment family precisely because they withhold the
+  answer, which is the opposite of what the other eight do. Also folded in
+  drag-and-drop, which belonged there before and was missing.
+- new: components/widgets/code-diff.md — the one new widget that hides a
+  mechanism (LCS line diff, `LCS_CELL_BUDGET` degradation, and *why* the author
+  passes two full snippets instead of pre-tagged lines: an agent writes these
+  props, and mis-tagged lines produce a diff that renders perfectly and lies).
+- components/widgets.md: 57 → 61, families updated, and a new **deterministic
+  initial state** section. sort-steps could not shuffle with `Math.random()`
+  without tearing hydration; that constraint already governed surprise,
+  flashcards and every confetti burst in the library, and no page said so.
+- components/registry.md: **contradiction recorded.** The page claimed the
+  shadcn registry "never drifts". It had drifted 22 widgets — `registry.json`
+  held 41 items against 55 widget folders, so `npx shadcn add` could not install
+  any of them. Regenerated in `763c574`. Also noted, not fixed: the generator's
+  `INTERNAL` map is missing five `@/…` modules (rich-text, confetti,
+  use-widget-events, analytics, leaflet), so most emitted items ship incomplete
+  registry dependencies.
+- concepts/analytics-events.md: the PII boundary now has a rule and two
+  examples — where a widget holds reader-authored text the event carries a
+  measure of it, never the text (`cta` → `{ ok }`, `reflection` → `{ length }`).
+- re-stamped after re-reading, no substantive change: architecture,
+  components/lib, components/playground, concepts/ai-generation-surface,
+  concepts/i18n-labels, flows/render-widget, flows/story-pipeline.
+- checkpoint advanced to 763c574.

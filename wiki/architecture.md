@@ -5,7 +5,7 @@ responsibility: The monorepo map, the library's layers, and how a JSON node beco
 sources:
   - packages/widgets/src/index.ts
   - package.json
-synced: f5cb894
+synced: 763c574
 related:
   - ./flows/render-widget.md
   - ./concepts/ai-generation-surface.md

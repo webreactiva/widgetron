@@ -7,7 +7,7 @@ sources:
   - packages/widgets/src/lib/analytics.ts
   - packages/widgets/src/lib/use-widget-events.ts
   - docs/analytics.md
-synced: c032ded
+synced: 763c574
 related:
   - ./i18n-labels.md
 ---
@@ -29,6 +29,11 @@ hosts subscribe and forward wherever they like (Swetrix, GTM, …).
 ## The contract
 
 - `action` is snake_case; `data` is JSON-serializable and never carries PII.
+  Where a widget holds reader-authored text, the payload carries a **measure of
+  it, never the text**: `cta` emits `{ ok }` and not the email; `reflection`
+  emits `{ length }` and not the answer, which never leaves `localStorage` on
+  the reader's device (`reflection.tsx:118`, and a test asserts the text is
+  absent from the event).
 - Hosts subscribe via `onWidgetronEvent` (`WIDGETRON_EVENT` constant).
 - Storyline tags each module `<section>` with `data-module-index` and emits
   `section_viewed` / `scroll_milestone` / `completed`.

@@ -4,7 +4,7 @@ type: entity
 responsibility: The non-visual core — the JSON registry, metadata, i18n, analytics, formula, icons and utilities that widgets share.
 sources:
   - packages/widgets/src/lib
-synced: c032ded
+synced: 763c574
 related:
   - ../flows/render-widget.md
   - ../concepts/ai-generation-surface.md

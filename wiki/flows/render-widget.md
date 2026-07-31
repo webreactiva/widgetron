@@ -5,7 +5,7 @@ trigger: renderWidget(node) is called with a { type, version?, props } node — 
 responsibility: How a serializable JSON node becomes a rendered React element — registry lookup, migrate, adapt, render.
 sources:
   - packages/widgets/src/lib/registry.tsx
-synced: c032ded
+synced: 763c574
 related:
   - ../concepts/ai-generation-surface.md
   - ../concepts/rich-text.md

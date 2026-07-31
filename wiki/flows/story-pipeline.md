@@ -9,7 +9,7 @@ sources:
   - apps/story-studio/src/engine/validate.ts
   - apps/story-studio/src/engine/lint.ts
   - apps/story-studio/src/render/build.ts
-synced: f5cb894
+synced: 763c574
 related:
   - ../components/story-studio.md
   - ./render-widget.md
