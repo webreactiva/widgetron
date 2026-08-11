@@ -109,3 +109,16 @@ comparison-table). The other three were the wiki's own toolchain.
   components/lib, components/playground, concepts/ai-generation-surface,
   concepts/i18n-labels, flows/render-widget, flows/story-pipeline.
 - checkpoint advanced to 763c574.
+
+## 2026-08-11 · tooling
+- the notifier is now wired at both real work boundaries: `.git/hooks/post-commit`
+  (per clone, **symlink** — the copy that was installed here would have stopped
+  tracking edits to the script) and a checked-in `SessionStart` hook in
+  `.claude/settings.json` (`startup|resume`, same script), so an agent opens the
+  session already knowing the wiki is behind.
+- nothing on `Stop`/end-of-turn, on purpose: `drift` compares against the working
+  tree, so it would fire mid-task on every uncommitted edit, and an ingest pass is
+  judgement, not something to queue after each turn. Recorded in
+  CONVENTIONS §Wiring the signal.
+- no CI check yet — the repo has no `.github/workflows/`; `pnpm wiki --strict` is
+  the hook to hang it on when it does.

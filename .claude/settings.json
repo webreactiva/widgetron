@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh scripts/wiki-hook.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

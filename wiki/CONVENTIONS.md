@@ -81,7 +81,8 @@ pages** (no frontmatter); everything else is a page and carries the template bel
 
 The toolchain that enforces this schema lives outside `wiki/`, in
 `scripts/wiki/` (`drift` · `coverage` · `lint`, behind `pnpm wiki`) plus the
-post-commit notifier `scripts/wiki-hook.sh`. When the scripts and this file
+notifier `scripts/wiki-hook.sh` (post-commit + `SessionStart`, see
+§Wiring the signal). When the scripts and this file
 disagree, **this file wins** and the scripts get fixed.
 
 ## The five page types
@@ -254,8 +255,30 @@ would mean infrastructure and are a different conversation.
 
 Exit codes: a plain run fails (1) only on **lint errors** — a broken wiki.
 Staleness and coverage are debt, not breakage; use `--strict` to fail on those
-too. The post-commit hook (`scripts/wiki-hook.sh`) runs `drift` and `coverage`
-only, never fails a commit, and never calls an LLM.
+too.
+
+### Wiring the signal (not the writing)
+
+`scripts/wiki-hook.sh` runs `drift` and `coverage`, is silent when clean, never
+fails a commit and never calls an LLM. It is wired at the two boundaries that
+are real limits of work — writing the wiki stays a human's call:
+
+```bash
+ln -sf ../../scripts/wiki-hook.sh .git/hooks/post-commit   # per clone, symlink
+```
+
+- **post-commit** — tells *you*, right after a commit, that the wiki is behind.
+  Symlink it, don't copy it: a copy silently stops tracking edits to the script.
+- **`SessionStart`** (`.claude/settings.json`, `startup|resume`) — runs the same
+  script so an **agent starts the session knowing** the wiki is N commits
+  behind, instead of discovering it when asked. Checked in, so every clone gets
+  it; the git hook is per-clone and needs the `ln` above.
+
+Nothing fires on `Stop`/end-of-turn on purpose. `drift` compares against the
+**working tree**, so mid-task — with uncommitted edits — it would fire on every
+turn, and the useful part of an ingest pass is judgement (this contradicts that
+page, this deserves its own page), which does not survive being queued after
+every turn.
 
 What a machine cannot check — contradictions between pages, claims that expired,
 concepts cited with no page, pages that only restate signatures, missing
