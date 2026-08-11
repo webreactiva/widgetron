@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { openspecPeaks } from "./openspec-peaks";
 import {
   AudioClip,
+  RadialAudiogram,
   KaraokeStage,
   EpisodePlayer,
   InterviewTranscript,
@@ -10,12 +12,15 @@ import {
   Storyline,
   CalloutBox,
   Checklist,
+  CodeDiff,
   CodeTranslation,
+  ComparisonTable,
   CompareSlider,
   Cta,
   DataChart,
   DecisionTree,
   DragAndDrop,
+  EstimateSlider,
   Figure,
   FillInTheBlanks,
   Flashcards,
@@ -47,13 +52,16 @@ import {
   Prose,
   Quiz,
   Quote,
+  Reflection,
   renderWidget,
   ResourceList,
   Scrubber,
   SectionHeader,
+  SortSteps,
   SpotTheBug,
   StepCards,
   Surprise,
+  Tabs,
   KeywordGate,
   TangleText,
   TerminalSim,
@@ -211,6 +219,8 @@ export const categories: { title: string; ids: string[] }[] = [
       "timeline",
       "pattern-card",
       "code-translation",
+      "code-diff",
+      "tabs",
       "resource-list",
       "kinetic-headline",
       "decode-headline",
@@ -227,6 +237,9 @@ export const categories: { title: string; ids: string[] }[] = [
       "fill-in-the-blanks",
       "predict-output",
       "drag-and-drop",
+      "sort-steps",
+      "estimate-slider",
+      "reflection",
       "surprise",
       "keyword-gate",
     ],
@@ -251,6 +264,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "scroll-stat",
       "mermaid-diagram",
       "compare-slider",
+      "comparison-table",
       "hotspots",
     ],
   },
@@ -258,6 +272,7 @@ export const categories: { title: string; ids: string[] }[] = [
     title: "Media",
     ids: [
       "audio-clip",
+      "radial-audiogram",
       "episode-player",
       "karaoke-stage",
       "interview-transcript",
@@ -664,6 +679,25 @@ const podyscrollGame: WidgetNode = {
     },
   },
 };
+
+// Live-caption cues for the RadialAudiogram demos, timed from the real
+// openspec-buenas-practicas.srt (starts are the audio's actual timestamps;
+// adjacent ASR fragments are merged into readable lines).
+const openspecCues = [
+  { start: 0, text: "Sobre las buenas prácticas," },
+  { start: 1.6, text: "la primera de ellas que te quiero comentar," },
+  { start: 3.9, text: "es que es bueno" },
+  { start: 5.44, text: "que te haga preguntas" },
+  { start: 6.82, text: "el propio sistema" },
+  { start: 8.92, text: "cuando está planificando." },
+  { start: 10.3, text: "Quiero decir, cuando lanzas el proposal en este caso," },
+  { start: 13.94, text: "o cuando lanzas incluso el opcional *explore*," },
+  { start: 17.16, text: "o cuando estás en las primeras fases de las creaciones de artefactos," },
+  { start: 20.28, text: "y lo haces uno a uno," },
+  { start: 21.6, text: "toda esa investigación," },
+  { start: 24.36, text: "todos esos planes, entre comillas, que se van generando," },
+  { start: 27.48, text: "es bueno que ahí le pidas…" },
+];
 
 export const catalog: CatalogEntry[] = [
   {
@@ -2137,6 +2171,218 @@ console.log("C");`}
     ],
   },
   {
+    id: "sort-steps",
+    name: "SortSteps",
+    summary:
+      "A procedure arrives scrambled and the reader rebuilds its order — move buttons on touch and keyboard, drag on desktop.",
+    demos: [
+      {
+        label: "Ship a change",
+        node: (
+          <SortSteps
+            items={[
+              { id: "branch", label: "Create a branch from `main`" },
+              {
+                id: "commit",
+                label: "Commit the change",
+                hint: "A message that explains **why**, not what.",
+              },
+              { id: "push", label: "Push the branch to the remote" },
+              { id: "pr", label: "Open a pull request and ask for review" },
+              { id: "merge", label: "Merge once CI is green" },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "estimate-slider",
+    name: "EstimateSlider",
+    summary:
+      "The reader guesses a number, commits, and only then sees the real one next to their guess. Intuition first, data second.",
+    demos: [
+      {
+        label: "Time writing code",
+        node: (
+          <EstimateSlider
+            question="What share of a developer's week actually goes into writing new code?"
+            min={0}
+            max={100}
+            step={5}
+            answer={30}
+            tolerance={10}
+            unit=" %"
+            reveal="Reading, reviewing, meetings and debugging eat most of the week — which is why **making code readable** pays off more than typing it faster."
+            source="Source: the episode's own numbers."
+          />
+        ),
+      },
+      {
+        label: "Cost of a bug",
+        node: (
+          <EstimateSlider
+            question="How much more does a bug cost to fix in production than in code review?"
+            min={1}
+            max={100}
+            answer={30}
+            tolerance={8}
+            unit="×"
+            reveal="Every stage it survives adds context to rebuild: the branch is gone, the author moved on, and now it needs a hotfix."
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "reflection",
+    name: "Reflection",
+    summary:
+      "An open question answered in the reader's own words. Saved on their device; the model answer only shows up after they commit.",
+    demos: [
+      {
+        label: "Swallowed errors",
+        node: (
+          <Reflection
+            id="playground-reflection"
+            prompt="Where in your own project does an error get swallowed silently?"
+            hint="One concrete file or function is worth more than a general answer."
+            modelAnswer="The usual suspects are `catch` blocks that only `console.log`, and `fetch` calls that never check `res.ok` — the failure shows up later, far from its cause."
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "code-diff",
+    name: "CodeDiff",
+    summary:
+      "Before and after in one unified block — the widget computes the diff itself and marks every line that moved.",
+    demos: [
+      {
+        label: "Check the response",
+        node: (
+          <CodeDiff
+            filename="src/users.ts"
+            before={`async function getUsers() {
+  const res = await fetch('/api/users')
+  return res.json()
+}`}
+            after={`async function getUsers() {
+  const res = await fetch('/api/users')
+  if (!res.ok) throw new Error(\`Users: \${res.status}\`)
+  return res.json()
+}`}
+            notes={[
+              "A failed request used to return the error page's JSON as if it were users.",
+              "Throwing on `!res.ok` moves the failure to where it can be handled.",
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "tabs",
+    name: "Tabs",
+    summary:
+      "Equivalent versions of the same content behind a tab strip. Panels hold any widget; arrow keys move between tabs.",
+    demos: [
+      {
+        label: "Install it",
+        node: (
+          <Tabs
+            items={[
+              {
+                label: "pnpm",
+                icon: <Icon icon="package" />,
+                content: (
+                  <TerminalSim
+                    commands={[
+                      { cmd: "pnpm add @webreactiva/widgetron", output: "+ @webreactiva/widgetron 0.0.1" },
+                    ]}
+                  />
+                ),
+              },
+              {
+                label: "npm",
+                icon: <Icon icon="package" />,
+                content: (
+                  <TerminalSim
+                    commands={[
+                      { cmd: "npm install @webreactiva/widgetron", output: "added 1 package in 2s" },
+                    ]}
+                  />
+                ),
+              },
+              {
+                label: "yarn",
+                icon: <Icon icon="package" />,
+                content: (
+                  <TerminalSim
+                    commands={[
+                      { cmd: "yarn add @webreactiva/widgetron", output: "success Saved 1 new dependency." },
+                    ]}
+                  />
+                ),
+              },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "Plain text panels",
+        node: (
+          <Tabs
+            items={[
+              {
+                label: "Junior",
+                content:
+                  "Start by **reading** the error. Nine times out of ten the stack trace already names the file and the line.",
+              },
+              {
+                label: "Senior",
+                content:
+                  "Start by asking what changed. `git log -S` on the failing symbol beats reading the trace twice.",
+              },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "comparison-table",
+    name: "ComparisonTable",
+    summary:
+      "A criteria × options matrix. Booleans become check/cross, values stay verbatim, and one column can carry the recommendation.",
+    demos: [
+      {
+        label: "Package managers",
+        node: (
+          <ComparisonTable
+            caption="Picking a package manager for a monorepo."
+            columns={[
+              { label: "npm", note: "bundled with Node" },
+              { label: "pnpm", note: "workspaces first", highlight: true },
+              { label: "yarn", note: "berry" },
+            ]}
+            rows={[
+              {
+                label: "Disk usage",
+                hint: "Across ten projects sharing dependencies.",
+                cells: ["High", "Lowest — one global store", "Medium"],
+              },
+              { label: "Workspaces", cells: [true, true, true] },
+              { label: "Strict dependencies", cells: [false, true, false] },
+              { label: "Plug'n'Play", cells: [false, null, true] },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
     id: "hotspots",
     name: "Hotspots",
     summary:
@@ -2225,7 +2471,7 @@ console.log("C");`}
     id: "audio-clip",
     name: "AudioClip",
     summary:
-      "An audio player with a synced transcript. Custom play/seek controls, a volume control and a speed cycle (both remembered), optional cover art, and a sticky corner mini-player once you scroll past it while it plays. If a transcript is present, each cue highlights as it plays (karaoke) and clicking a cue seeks there. Pass cues inline or fetch them from a URL (JSON / .vtt / .srt). Only one clip on a page plays at a time.",
+      "An audio player with a synced transcript. Custom play/seek controls, a volume control and a speed cycle (both remembered), optional cover art, and a sticky corner mini-player once you scroll past it while it plays. If a transcript is present, each cue highlights as it plays (karaoke) and clicking a cue seeks there. Pass cues inline or fetch them from a URL (JSON / .vtt / .srt). Opt into `waveform` to draw the real decoded audio as the seek bar (lazy wavesurfer.js, short clips only, needs CORS on the host, falls back to the slider). Only one clip on a page plays at a time.",
     demos: [
       {
         label: "Synced transcript (real clip)",
@@ -2234,6 +2480,20 @@ console.log("C");`}
             title="OpenSpec — buenas prácticas"
             src="/media/openspec-buenas-practicas.mp3"
             transcriptSrc="/media/openspec-buenas-practicas.srt"
+          />
+        ),
+      },
+      {
+        label: "Audiogram (real waveform, configurable)",
+        node: (
+          <AudioClip
+            title="OpenSpec — buenas prácticas"
+            src="/media/openspec-buenas-practicas.mp3"
+            transcriptSrc="/media/openspec-buenas-practicas.srt"
+            transcriptView="spotlight"
+            waveform
+            waveHeight={72}
+            barWidth={3}
           />
         ),
       },
@@ -2262,6 +2522,60 @@ console.log("C");`}
         label: "Audio only (no transcript)",
         node: (
           <AudioClip title="WR 344 · el FOMO de la IA" src="/media/wr344-fomo.mp3" />
+        ),
+      },
+    ],
+  },
+  {
+    id: "radial-audiogram",
+    name: "RadialAudiogram",
+    summary:
+      "A circular 'Headliner'-style audiogram: a ring of bars drawn from the clip's REAL peaks that breathes with the audio's loudness and fills as it plays, with the live caption beside it. Sound-only, bold, and honest — the ring IS the real waveform, not fabricated bars. Needs precomputed peaks (extract server-side with ffmpeg, so no cross-origin decode). Press play to see it animate. One per guide — it's the fortissimo.",
+    demos: [
+      {
+        label: "Circular audiogram (real peaks, live caption)",
+        node: (
+          <RadialAudiogram
+            src="/media/openspec-buenas-practicas.mp3"
+            end={30}
+            eyebrow="OpenSpec · 00:14"
+            title="Buenas prácticas"
+            peaks={openspecPeaks}
+            bars={72}
+            size={240}
+            transcript={openspecCues}
+          />
+        ),
+      },
+      {
+        label: "No transcript — the ring is the whole point",
+        node: (
+          <RadialAudiogram
+            src="/media/openspec-buenas-practicas.mp3"
+            end={30}
+            eyebrow="OpenSpec · 00:14"
+            title="Escucha el fragmento"
+            peaks={openspecPeaks}
+            bars={80}
+            size={200}
+          />
+        ),
+      },
+      {
+        label: "Skinned — custom color, denser bars, thin strokes",
+        node: (
+          <RadialAudiogram
+            src="/media/openspec-buenas-practicas.mp3"
+            end={30}
+            eyebrow="OpenSpec · 00:14"
+            title="**Deja** que te pregunte"
+            peaks={openspecPeaks}
+            bars={112}
+            size={260}
+            barWidth={2}
+            color="var(--info)"
+            transcript={openspecCues}
+          />
         ),
       },
     ],

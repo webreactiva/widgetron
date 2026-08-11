@@ -1,9 +1,11 @@
 import * as React from "react";
-import { Check, RotateCcw, X } from "@/lib/icons";
+import { Check, GripVertical, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
+import { fireConfetti } from "@/lib/confetti";
 import { RichText } from "@/primitives/rich-text";
 
 export interface DragItem {
@@ -28,6 +30,8 @@ export interface DragAndDropLabels {
   incorrect: React.ReactNode;
   reset: React.ReactNode;
   instructions: React.ReactNode;
+  /** Hint shown inside an empty zone once a chip is picked up. */
+  dropHere: React.ReactNode;
 }
 
 export const DEFAULT_DRAG_AND_DROP_LABELS: DragAndDropLabels = {
@@ -36,6 +40,7 @@ export const DEFAULT_DRAG_AND_DROP_LABELS: DragAndDropLabels = {
   incorrect: "Some don't match yet — try again.",
   reset: "Reset",
   instructions: "Tap an item, then tap its match — or drag it.",
+  dropHere: "Drop here",
 };
 
 export interface DragAndDropProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -45,9 +50,23 @@ export interface DragAndDropProps extends React.HTMLAttributes<HTMLDivElement> {
   targets: DropTarget[];
   /** Customizable / translatable strings. */
   labels?: Partial<DragAndDropLabels>;
+  /** Fire confetti the moment the board becomes fully correct. Default: true. */
+  celebrate?: boolean;
 }
 
 type ChipStatus = "idle" | "selected" | "correct" | "wrong";
+
+/** Shared tile shell: a physical, grabbable chip. */
+const TILE_BASE =
+  "group/chip inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium " +
+  "transition-[transform,box-shadow,border-color,background-color] duration-150 ease-out " +
+  "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card";
+
+/** Grabbable tile at rest: resting shadow, lifts on hover, presses on active. */
+const TILE_IDLE =
+  "cursor-grab border-input bg-background shadow-wgt hover:border-ring hover:bg-accent hover:shadow-wgt-hover " +
+  "motion-safe:hover:-translate-y-0.5 active:cursor-grabbing motion-safe:active:translate-y-0 active:shadow-wgt " +
+  "motion-reduce:transform-none";
 
 /**
  * DragAndDrop — categorize/match archetype: place each item into its correct
@@ -55,17 +74,23 @@ type ChipStatus = "idle" | "selected" | "correct" | "wrong";
  * interaction (tap a chip to select it, then tap a zone to drop it there; tap a
  * placed chip to send it back to the pool). Native HTML5 drag is layered on top
  * as a progressive enhancement and never required. Mobile-first: chips and zones
- * are large tap targets and the layout stacks. All copy is customizable /
- * translatable via `labels` (or globally through WidgetronProvider).
+ * are large tap targets and the layout stacks.
+ *
+ * Tactile by design: chips read as physical tiles (grip handle, resting shadow,
+ * a lift on hover and a press on active, a "picked-up" state when selected), and
+ * an armed zone tints toward the accent + invites a drop — so the affordance is
+ * visible, not guessed. All copy is customizable / translatable via `labels`.
  */
 export function DragAndDrop({
   items,
   targets,
   labels,
+  celebrate = true,
   className,
   ...props
 }: DragAndDropProps) {
   const l = useLabels("dragAndDrop", DEFAULT_DRAG_AND_DROP_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("drag-and-drop");
 
   const [placement, setPlacement] = React.useState<Record<string, string | null>>(
     () => {
@@ -76,18 +101,38 @@ export function DragAndDrop({
   );
   const [selected, setSelected] = React.useState<string | null>(null);
   const [checked, setChecked] = React.useState(false);
+  /** Zone currently under a native drag, for a live drop-target highlight. */
+  const [dragOver, setDragOver] = React.useState<string | null>(null);
 
   /** Source chip for a native drag-in-progress (progressive enhancement only). */
   const dragItemId = React.useRef<string | null>(null);
+  const completedRef = React.useRef(false);
 
   const allPlaced = items.every((item) => placement[item.id] != null);
   const allCorrect = items.every((item) => placement[item.id] === item.target);
+  const armed = selected != null;
 
   function place(itemId: string, targetId: string | null) {
-    setPlacement((prev) => ({ ...prev, [itemId]: targetId }));
+    const next = { ...placement, [itemId]: targetId };
+    setPlacement(next);
     setSelected(null);
-    // Changing placement after checking re-arms the feedback.
-    setChecked(false);
+    const nowCorrect = items.every((item) => next[item.id] === item.target);
+    if (nowCorrect) {
+      setChecked(true);
+      if (!completedRef.current) {
+        completedRef.current = true;
+        emit("completed", { items: items.length });
+        if (celebrate) void fireConfetti();
+      }
+    } else {
+      completedRef.current = false;
+      setChecked(false);
+    }
+  }
+
+  function handleCheck() {
+    setChecked(true);
+    emit("checked", { correct: allCorrect });
   }
 
   function handleChipClick(itemId: string) {
@@ -116,6 +161,7 @@ export function DragAndDrop({
 
   function handleDragEnd() {
     dragItemId.current = null;
+    setDragOver(null);
   }
 
   function handleZoneDrop(
@@ -123,6 +169,7 @@ export function DragAndDrop({
     targetId: string,
   ) {
     event.preventDefault();
+    setDragOver(null);
     const itemId =
       event.dataTransfer.getData("text/plain") || dragItemId.current;
     dragItemId.current = null;
@@ -134,8 +181,10 @@ export function DragAndDrop({
 
   return (
     <div
+      ref={ref}
       data-slot="drag-and-drop"
       data-checked={checked || undefined}
+      data-armed={armed || undefined}
       className={cn(
         "@container/dnd rounded-lg border bg-card p-4 text-card-foreground shadow-wgt sm:p-6",
         className,
@@ -157,13 +206,20 @@ export function DragAndDrop({
             onDragStart={(event) => handleDragStart(event, item.id)}
             onDragEnd={handleDragEnd}
             className={cn(
-              "cursor-pointer rounded-md border px-3 py-2 font-mono text-sm transition-colors",
-              "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
+              TILE_BASE,
               selected === item.id
-                ? "border-ring bg-accent text-accent-foreground ring-2 ring-primary"
-                : "border-input bg-background hover:border-ring hover:bg-accent",
+                ? "-translate-y-0.5 cursor-grabbing border-primary bg-accent text-accent-foreground shadow-wgt-hover ring-2 ring-primary motion-safe:animate-wgt-pop motion-reduce:transform-none"
+                : TILE_IDLE,
             )}
           >
+            <GripVertical
+              className={cn(
+                "size-3.5 shrink-0 transition-colors",
+                selected === item.id
+                  ? "text-primary"
+                  : "text-muted-foreground/50 group-hover/chip:text-muted-foreground",
+              )}
+            />
             <RichText>{item.label}</RichText>
           </button>
         ))}
@@ -179,6 +235,7 @@ export function DragAndDrop({
           const placedItems = items.filter(
             (item) => placement[item.id] === target.id,
           );
+          const isOver = dragOver === target.id;
           return (
             <button
               key={target.id}
@@ -186,19 +243,36 @@ export function DragAndDrop({
               aria-label={
                 typeof target.label === "string" ? target.label : undefined
               }
+              data-armed={armed || undefined}
+              data-over={isOver || undefined}
               onClick={() => handleZoneClick(target.id)}
               onDragOver={(event) => event.preventDefault()}
+              onDragEnter={() => setDragOver(target.id)}
+              onDragLeave={(event) => {
+                // Ignore leaves into child elements of the same zone.
+                if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                  setDragOver((prev) => (prev === target.id ? null : prev));
+                }
+              }}
               onDrop={(event) => handleZoneDrop(event, target.id)}
               className={cn(
-                "flex min-h-24 w-full flex-col gap-2 rounded-md border-2 border-dashed p-3 text-left transition-colors",
+                "flex min-h-24 w-full flex-col gap-2 rounded-lg border-2 p-3 text-left",
+                "transition-[transform,border-color,background-color,box-shadow] duration-150 ease-out",
                 "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
-                selected != null
-                  ? "cursor-pointer border-ring bg-accent/40"
-                  : "cursor-default border-input",
+                isOver
+                  ? "scale-[1.01] cursor-copy border-solid border-primary bg-[color-mix(in_oklab,var(--primary)_12%,var(--card))] shadow-wgt-hover ring-2 ring-primary/30 motion-reduce:transform-none"
+                  : armed
+                    ? "cursor-pointer border-dashed border-primary/50 bg-[color-mix(in_oklab,var(--primary)_6%,var(--card))]"
+                    : "cursor-default border-dashed border-input",
               )}
             >
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 <RichText>{target.label}</RichText>
+                {placedItems.length > 0 && (
+                  <span className="rounded-full bg-muted px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none tabular-nums text-muted-foreground">
+                    {placedItems.length}
+                  </span>
+                )}
               </span>
               <div className="flex flex-wrap gap-2">
                 {placedItems.map((item) => {
@@ -233,26 +307,37 @@ export function DragAndDrop({
                       }
                       onDragEnd={handleDragEnd}
                       className={cn(
-                        "inline-flex cursor-pointer items-center gap-1.5 rounded-md border px-3 py-2 font-mono text-sm transition-colors",
-                        "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
-                        status === "idle" &&
-                          "border-input bg-background hover:border-ring hover:bg-accent",
+                        TILE_BASE,
+                        status === "idle" && TILE_IDLE,
                         status === "correct" &&
-                          "border-success bg-[color-mix(in_oklab,var(--success)_12%,var(--card))] text-foreground",
+                          "border-success bg-[color-mix(in_oklab,var(--success)_14%,var(--card))] text-foreground shadow-wgt",
                         status === "wrong" &&
-                          "border-destructive bg-[color-mix(in_oklab,var(--destructive)_12%,var(--card))] text-foreground",
+                          "border-destructive bg-[color-mix(in_oklab,var(--destructive)_14%,var(--card))] text-foreground shadow-wgt motion-safe:animate-wgt-shake",
                       )}
                     >
-                      {status === "correct" && (
-                        <Check className="size-3.5 text-success" />
-                      )}
-                      {status === "wrong" && (
-                        <X className="size-3.5 text-destructive" />
+                      {status === "correct" ? (
+                        <Check className="size-3.5 shrink-0 text-success" />
+                      ) : status === "wrong" ? (
+                        <X className="size-3.5 shrink-0 text-destructive" />
+                      ) : (
+                        <GripVertical className="size-3.5 shrink-0 text-muted-foreground/50 transition-colors group-hover/chip:text-muted-foreground" />
                       )}
                       <RichText>{item.label}</RichText>
                     </span>
                   );
                 })}
+                {placedItems.length === 0 && (
+                  <span
+                    className={cn(
+                      "pointer-events-none flex min-h-9 items-center rounded-md border border-dashed px-3 text-xs transition-colors",
+                      armed
+                        ? "border-primary/40 text-primary/80"
+                        : "border-transparent text-transparent",
+                    )}
+                  >
+                    <RichText>{l.dropHere}</RichText>
+                  </span>
+                )}
               </div>
             </button>
           );
@@ -283,16 +368,13 @@ export function DragAndDrop({
             setPlacement(cleared);
             setSelected(null);
             setChecked(false);
+            setDragOver(null);
           }}
         >
           <RotateCcw />
           {l.reset}
         </Button>
-        <Button
-          size="sm"
-          disabled={!allPlaced}
-          onClick={() => setChecked(true)}
-        >
+        <Button size="sm" disabled={!allPlaced} onClick={handleCheck}>
           {l.check}
         </Button>
       </div>

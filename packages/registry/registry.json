@@ -138,6 +138,9 @@
         "education",
         "media"
       ],
+      "dependencies": [
+        "wavesurfer.js"
+      ],
       "registryDependencies": [
         "https://widgetron.dev/r/widgetron-button.json",
         "https://widgetron.dev/r/widgetron-i18n.json",
@@ -148,6 +151,26 @@
       "files": [
         {
           "path": "../widgets/src/widgets/audio-clip/audio-clip.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "backdrop-section",
+      "type": "registry:component",
+      "title": "Backdrop Section",
+      "description": "A full-pane scene (image or a typographic composition of the episode's words) that sticks while short prose cards scroll over it.",
+      "categories": [
+        "education",
+        "compositions"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/backdrop-section/backdrop-section.tsx",
           "type": "registry:component"
         }
       ]
@@ -184,6 +207,7 @@
         "interactive"
       ],
       "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
         "https://widgetron.dev/r/widgetron-icons.json",
         "https://widgetron.dev/r/widgetron-tokens.json",
         "https://widgetron.dev/r/widgetron-utils.json"
@@ -191,6 +215,27 @@
       "files": [
         {
           "path": "../widgets/src/widgets/checklist/checklist.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "code-diff",
+      "type": "registry:component",
+      "title": "Code Diff",
+      "description": "Before and after code in one unified block: every added and removed line marked, with plain-language notes.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/code-diff/code-diff.tsx",
           "type": "registry:component"
         }
       ]
@@ -205,6 +250,7 @@
         "text & layout"
       ],
       "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
         "https://widgetron.dev/r/widgetron-tokens.json",
         "https://widgetron.dev/r/widgetron-utils.json"
       ],
@@ -232,6 +278,51 @@
       "files": [
         {
           "path": "../widgets/src/widgets/compare-slider/compare-slider.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "comparison-table",
+      "type": "registry:component",
+      "title": "Comparison Table",
+      "description": "A criteria × options matrix — booleans as check/cross, values verbatim, one column highlightable as the recommendation.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/comparison-table/comparison-table.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "cta",
+      "type": "registry:component",
+      "title": "Cta",
+      "description": "A call-to-action with two variants: an external link, or an email-capture form with privacy consent.",
+      "categories": [
+        "education",
+        "conversion"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/cta/cta.tsx",
           "type": "registry:component"
         }
       ]
@@ -281,6 +372,26 @@
       ]
     },
     {
+      "name": "decode-headline",
+      "type": "registry:component",
+      "title": "Decode Headline",
+      "description": "A headline that arrives scrambled and resolves character by character when it scrolls into view — decrypting-terminal effect, static under reduced motion.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/decode-headline/decode-headline.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "drag-and-drop",
       "type": "registry:component",
       "title": "Drag And Drop",
@@ -299,6 +410,93 @@
       "files": [
         {
           "path": "../widgets/src/widgets/drag-and-drop/drag-and-drop.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "draw-diagram",
+      "type": "registry:component",
+      "title": "Draw Diagram",
+      "description": "A small line diagram whose strokes draw themselves in as it scrolls into view — pure CSS, static under reduced motion.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/draw-diagram/draw-diagram.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "episode-player",
+      "type": "registry:component",
+      "title": "Episode Player",
+      "description": "The whole episode as a header player: cover, chapters that map the guide's modules, and a sticky mini-player to listen while reading.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/audio-clip.json",
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/episode-player/episode-player.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "estimate-slider",
+      "type": "registry:component",
+      "title": "Estimate Slider",
+      "description": "The reader guesses a number on a slider, commits, and then sees the real value next to their guess.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-formula.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/estimate-slider/estimate-slider.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "figure",
+      "type": "registry:component",
+      "title": "Figure",
+      "description": "An image with an optional caption and source credit — a captioned figure.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/figure/figure.tsx",
           "type": "registry:component"
         }
       ]
@@ -439,6 +637,29 @@
       ]
     },
     {
+      "name": "guest-reel",
+      "type": "registry:component",
+      "title": "Guest Reel",
+      "description": "A horizontal scroll-snap reel with the best things the guest said — each card a regular quote.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/quote.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/guest-reel/guest-reel.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "hotspots",
       "type": "registry:component",
       "title": "Hotspots",
@@ -448,6 +669,7 @@
         "diagrams & data"
       ],
       "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
         "https://widgetron.dev/r/widgetron-tokens.json",
         "https://widgetron.dev/r/widgetron-utils.json"
       ],
@@ -462,10 +684,101 @@
       "name": "infographic",
       "type": "registry:component",
       "title": "Infographic",
-      "description": "Visual-metaphor templates (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs) rendered as dependency-free SVG.",
+      "description": "Visual-metaphor templates (funnel, pyramid, cycle, venn, iceberg, balance, target, hub, matrix, stairs, milestones, chevrons, roadmap, pillars, honeycomb, gears, tree, fishbone, donut, versus, bridge, spectrum) rendered as dependency-free SVG.",
       "categories": [
         "education",
         "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/infographic/infographic.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "interview-transcript",
+      "type": "registry:component",
+      "title": "Interview Transcript",
+      "description": "A two-voice interview exchange laid out editorially, with per-speaker identity and an optional audio clip that lights up the turn being spoken.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/audio-clip.json",
+        "https://widgetron.dev/r/quote.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/interview-transcript/interview-transcript.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "karaoke-stage",
+      "type": "registry:component",
+      "title": "Karaoke Stage",
+      "description": "A full-width stage where the spoken words light up one by one — Spotify-lyrics / TikTok-subtitle treatment for the episode's peak moment.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/audio-clip.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/karaoke-stage/karaoke-stage.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "keyword-gate",
+      "type": "registry:component",
+      "title": "Keyword Gate",
+      "description": "A gate that reveals a reward once the reader types the guide's keyword from memory (active recall).",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/keyword-gate/keyword-gate.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "kinetic-headline",
+      "type": "registry:component",
+      "title": "Kinetic Headline",
+      "description": "A display headline that reveals a word at a time as it scrolls into view — pure CSS scroll-driven motion, static under reduced motion.",
+      "categories": [
+        "education",
+        "text & layout"
       ],
       "registryDependencies": [
         "https://widgetron.dev/r/widgetron-tokens.json",
@@ -473,7 +786,31 @@
       ],
       "files": [
         {
-          "path": "../widgets/src/widgets/infographic/infographic.tsx",
+          "path": "../widgets/src/widgets/kinetic-headline/kinetic-headline.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "map",
+      "type": "registry:component",
+      "title": "Map",
+      "description": "An interactive slippy map (imperative Leaflet, token-free Carto basemap, theme-matched) with theme-colored pins.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "dependencies": [
+        "leaflet"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/map/map.tsx",
           "type": "registry:component"
         }
       ]
@@ -548,6 +885,26 @@
       ]
     },
     {
+      "name": "profile-card",
+      "type": "registry:component",
+      "title": "Profile Card",
+      "description": "People cards — avatar (image or auto-initials), name, role and bio; several people stack into container-aware columns.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/profile-card/profile-card.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "profile-quiz",
       "type": "registry:component",
       "title": "Profile Quiz",
@@ -613,6 +970,30 @@
       ]
     },
     {
+      "name": "qa-card",
+      "type": "registry:component",
+      "title": "Qa Card",
+      "description": "The question as the hook, the answer as the reward — a reveal card for one round question→answer from an interview.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/audio-clip.json",
+        "https://widgetron.dev/r/quote.json",
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/qa-card/qa-card.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "quiz",
       "type": "registry:component",
       "title": "Quiz",
@@ -620,9 +1001,6 @@
       "categories": [
         "education",
         "interactive"
-      ],
-      "dependencies": [
-        "canvas-confetti"
       ],
       "registryDependencies": [
         "https://widgetron.dev/r/widgetron-button.json",
@@ -634,6 +1012,117 @@
       "files": [
         {
           "path": "../widgets/src/widgets/quiz/quiz.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "quote",
+      "type": "registry:component",
+      "title": "Quote",
+      "description": "A highlighted pull-quote / testimonial that attributes words to a person.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/audio-clip.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/quote/quote.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "radial-audiogram",
+      "type": "registry:component",
+      "title": "Radial Audiogram",
+      "description": "A circular 'Headliner'-style audiogram: a ring of bars drawn from the clip's real peaks that animates with the audio, with the live caption beside it.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/radial-audiogram/radial-audiogram.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "reflection",
+      "type": "registry:component",
+      "title": "Reflection",
+      "description": "An open question the reader answers in their own words; the answer persists on their device, and a perspective is revealed only after they commit.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/reflection/reflection.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "resource-list",
+      "type": "registry:component",
+      "title": "Resource List",
+      "description": "A titled list of external links — 'keep exploring', further reading, or references.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icon.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/resource-list/resource-list.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "scroll-stat",
+      "type": "registry:component",
+      "title": "Scroll Stat",
+      "description": "A big metric that counts up from zero as it scrolls into view, with an optional meter bar — pure CSS, static under reduced motion.",
+      "categories": [
+        "education",
+        "diagrams & data"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/scroll-stat/scroll-stat.tsx",
           "type": "registry:component"
         }
       ]
@@ -703,6 +1192,29 @@
       ]
     },
     {
+      "name": "sort-steps",
+      "type": "registry:component",
+      "title": "Sort Steps",
+      "description": "A scrambled procedure the reader puts back in order, graded step by step.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/sort-steps/sort-steps.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "spot-the-bug",
       "type": "registry:component",
       "title": "Spot The Bug",
@@ -746,6 +1258,49 @@
       ]
     },
     {
+      "name": "sticky-pan",
+      "type": "registry:component",
+      "title": "Sticky Pan",
+      "description": "A horizontal filmstrip that pans sideways as the reader scrolls down — pins to the viewport; degrades to a swipeable strip under reduced motion or without support.",
+      "categories": [
+        "education",
+        "compositions"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/sticky-pan/sticky-pan.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "story-map",
+      "type": "registry:component",
+      "title": "Story Map",
+      "description": "A guided map tour: the map pins to the pane and flies from stop to stop as short prose cards scroll over it.",
+      "categories": [
+        "education",
+        "compositions"
+      ],
+      "dependencies": [
+        "leaflet"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/story-map/story-map.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "storyline",
       "type": "registry:component",
       "title": "Storyline",
@@ -757,12 +1312,61 @@
       "registryDependencies": [
         "https://widgetron.dev/r/glossary.json",
         "https://widgetron.dev/r/profile-quiz.json",
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icon.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
         "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-tooltip.json",
         "https://widgetron.dev/r/widgetron-utils.json"
       ],
       "files": [
         {
           "path": "../widgets/src/widgets/storyline/storyline.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "surprise",
+      "type": "registry:component",
+      "title": "Surprise",
+      "description": "A reveal wrapper: keeps a payload hidden until the reader opens it, with a small reveal moment.",
+      "categories": [
+        "education",
+        "interactive"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-button.json",
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-icons.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/surprise/surprise.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:component",
+      "title": "Tabs",
+      "description": "Equivalent versions of the same content behind a tab strip — the reader opens the one that applies to them.",
+      "categories": [
+        "education",
+        "text & layout"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-i18n.json",
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/tabs/tabs.tsx",
           "type": "registry:component"
         }
       ]
@@ -828,6 +1432,26 @@
       "files": [
         {
           "path": "../widgets/src/widgets/timeline/timeline.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "unmask-strip",
+      "type": "registry:component",
+      "title": "Unmask Strip",
+      "description": "An image that wipes into view behind a moving clip-path edge as it scrolls in — pure CSS, fully shown under reduced motion.",
+      "categories": [
+        "education",
+        "media"
+      ],
+      "registryDependencies": [
+        "https://widgetron.dev/r/widgetron-tokens.json",
+        "https://widgetron.dev/r/widgetron-utils.json"
+      ],
+      "files": [
+        {
+          "path": "../widgets/src/widgets/unmask-strip/unmask-strip.tsx",
           "type": "registry:component"
         }
       ]

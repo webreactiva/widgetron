@@ -1,0 +1,41 @@
+# Paths that never count as indexable code for the wiki.
+# Git pathspec globs, one per line. Consumed by scripts/wiki-coverage.sh
+# (and /wiki-update when deciding what needs a page).
+# NOTE: git's `**/*.ext` does not match repo-root files, so root-level plumbing
+# is listed literally below.
+
+# the wiki, docs, tooling and agent config
+wiki/**
+docs/**
+.claude/**
+scripts/**
+**/*.md
+
+# lockfiles, builds, generated assets
+pnpm-lock.yaml
+apps/*/index.html
+**/dist/**
+apps/*/public/**
+apps/story-studio/content/**
+
+# tests
+**/*.test.ts
+**/*.test.tsx
+**/*.snap
+
+# build / package plumbing (not documented as code)
+**/package.json
+**/tsconfig*.json
+**/*.config.ts
+**/*.config.mjs
+**/vitest.setup.ts
+**/.gitignore
+
+# repo-root plumbing (globs above don't reach the root)
+CLAUDE.md
+README.md
+.gitignore
+.npmrc
+opencode.json
+pnpm-workspace.yaml
+tsconfig.base.json

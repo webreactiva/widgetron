@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
+// Completing the deck now celebrates (confetti); jsdom has no canvas, so mock
+// the optional dep to a no-op — otherwise the fallback's timer leaks past teardown.
+vi.mock("canvas-confetti", () => ({ default: vi.fn() }));
 
 import { Flashcards } from "@/widgets/flashcards";
 import {

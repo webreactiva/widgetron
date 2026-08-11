@@ -29,6 +29,10 @@ export const predictOutputMeta: WidgetMeta = {
       )
       .optional()
       .describe("Optional multiple-choice predictions. When omitted, a 'Reveal output' button is shown instead."),
+    celebrate: z
+      .boolean()
+      .optional()
+      .describe("Fire confetti on a correct answer. Default: true."),
   }),
   example: {
     type: "predict-output",

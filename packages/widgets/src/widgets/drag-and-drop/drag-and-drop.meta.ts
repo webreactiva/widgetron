@@ -30,6 +30,10 @@ export const dragAndDropMeta: WidgetMeta = {
       )
       .min(2)
       .describe("The drop zones items get placed into."),
+    celebrate: z
+      .boolean()
+      .optional()
+      .describe("Fire confetti the moment the board is fully correct. Default: true."),
   }),
   example: {
     type: "drag-and-drop",

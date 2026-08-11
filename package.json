@@ -16,7 +16,11 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "check": "pnpm -r typecheck && pnpm -r test && pnpm build",
-    "registry:build": "pnpm --filter @webreactiva/registry build"
+    "registry:build": "pnpm --filter @webreactiva/registry build",
+    "wiki": "node scripts/wiki/wiki.mjs",
+    "wiki:drift": "node scripts/wiki/wiki.mjs drift",
+    "wiki:coverage": "node scripts/wiki/wiki.mjs coverage",
+    "wiki:lint": "node scripts/wiki/wiki.mjs lint"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

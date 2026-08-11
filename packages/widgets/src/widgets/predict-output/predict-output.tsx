@@ -3,7 +3,10 @@ import { Check, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
+import { fireConfetti } from "@/lib/confetti";
 
 export interface PredictOption {
   /** The predicted-output text shown to the learner. */
@@ -52,6 +55,8 @@ export interface PredictOutputProps
   options?: PredictOption[];
   /** Customizable / translatable strings. */
   labels?: Partial<PredictOutputLabels>;
+  /** Fire confetti on a correct answer. Default: true. */
+  celebrate?: boolean;
 }
 
 type OptionStatus = "idle" | "correct" | "selected-wrong" | "missed";
@@ -83,10 +88,12 @@ export function PredictOutput({
   question,
   options,
   labels,
+  celebrate = true,
   className,
   ...props
 }: PredictOutputProps) {
   const l = useLabels("predictOutput", DEFAULT_PREDICT_OUTPUT_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("predict-output");
   const [selected, setSelected] = React.useState<number | null>(null);
   const [revealed, setRevealed] = React.useState(false);
 
@@ -100,6 +107,9 @@ export function PredictOutput({
     if (selected !== null) return;
     setSelected(index);
     setRevealed(true);
+    const correct = Boolean(options?.[index]?.correct);
+    emit("answered", { index, correct });
+    if (correct && celebrate) void fireConfetti();
   }
 
   function handleReveal() {
@@ -115,6 +125,7 @@ export function PredictOutput({
 
   return (
     <div
+      ref={ref}
       data-slot="predict-output"
       data-answered={answered || undefined}
       className={cn(
@@ -128,7 +139,7 @@ export function PredictOutput({
       </pre>
 
       <p className="mt-4 font-display text-base font-semibold leading-snug">
-        {prompt}
+        <RichText>{prompt}</RichText>
       </p>
 
       {hasOptions ? (
@@ -195,7 +206,9 @@ export function PredictOutput({
           <p className="mb-0.5 font-semibold">
             {isCorrect ? l.correct : l.incorrect}
           </p>
-          <p className="text-card-foreground/90">{selectedOption.feedback}</p>
+          <p className="text-card-foreground/90">
+            <RichText>{selectedOption.feedback}</RichText>
+          </p>
         </div>
       )}
 

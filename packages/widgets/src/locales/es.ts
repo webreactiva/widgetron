@@ -101,6 +101,8 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     found: "¡Lo encontraste!",
     notHere: "En esta línea no es — sigue buscando.",
     tryAgain: "Probar de nuevo",
+    foundInTries: (n: number) =>
+      `Lo encontraste en ${n} ${n === 1 ? "intento" : "intentos"}`,
   },
   dragAndDrop: {
     check: "Comprobar",
@@ -108,6 +110,47 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     incorrect: "Algo no encaja aún — inténtalo de nuevo.",
     reset: "Reiniciar",
     instructions: "Toca un elemento y luego su pareja — o arrástralo.",
+    dropHere: "Suéltalo aquí",
+  },
+  sortSteps: {
+    instructions: "Ordena los pasos y luego comprueba.",
+    check: "Comprobar orden",
+    correct: "¡Ese es el orden correcto!",
+    incorrect: "Todavía no — los pasos marcados están fuera de sitio.",
+    reset: "Barajar otra vez",
+    moveUp: "Subir",
+    moveDown: "Bajar",
+  },
+  estimateSlider: {
+    submit: "Fijar mi respuesta",
+    tryAgain: "Probar otra vez",
+    yourGuess: "Tu estimación",
+    actual: "El número real",
+    close: "Bien — te has quedado cerca.",
+    off: "Te desvías",
+    slider: "Tu estimación",
+  },
+  reflection: {
+    save: "Guardar mi respuesta",
+    committed: "Respuesta guardada",
+    saved: "Guardada en este dispositivo — sigue escribiendo para cambiarla.",
+    modelAnswer: "Una forma de verlo",
+    placeholder: "Escríbelo con tus palabras…",
+    answer: "Tu respuesta",
+  },
+  codeDiff: {
+    added: "añadidas",
+    removed: "eliminadas",
+    whatChanged: "Qué ha cambiado",
+  },
+  tabs: {
+    tablist: "Variantes",
+  },
+  comparisonTable: {
+    criteria: "",
+    yes: "Sí",
+    no: "No",
+    unknown: "No aplica",
   },
   groupChat: {
     next: "Siguiente",
@@ -128,6 +171,11 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     unmute: "Activar sonido",
     miniPlayer: "Mini reproductor",
     close: "Cerrar mini reproductor",
+  },
+  radialAudiogram: {
+    play: "Reproducir",
+    pause: "Pausa",
+    restart: "Reiniciar",
   },
   episodePlayer: {
     play: "Reproducir",

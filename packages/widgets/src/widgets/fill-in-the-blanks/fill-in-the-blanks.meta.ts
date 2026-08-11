@@ -25,6 +25,10 @@ export const fillInTheBlanksMeta: WidgetMeta = {
         }),
       )
       .describe("The blanks keyed by the id used in `text`."),
+    celebrate: z
+      .boolean()
+      .optional()
+      .describe("Fire confetti when every blank is correct. Default: true."),
   }),
   example: {
     type: "fill-in-the-blanks",

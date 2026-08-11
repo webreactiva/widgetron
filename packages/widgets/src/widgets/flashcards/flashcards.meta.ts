@@ -20,6 +20,10 @@ export const flashcardsMeta: WidgetMeta = {
       )
       .min(1)
       .describe("The deck of flip cards, shown one at a time."),
+    celebrate: z
+      .boolean()
+      .optional()
+      .describe("Fire confetti when the deck is completed. Default: true."),
   }),
   example: {
     type: "flashcards",

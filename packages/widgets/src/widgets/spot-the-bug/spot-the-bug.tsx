@@ -3,7 +3,10 @@ import { Check, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
+import { useWidgetEvents } from "@/lib/use-widget-events";
+import { fireConfetti } from "@/lib/confetti";
 
 export interface BugLine {
   /** The code shown on this line. A plain string is rendered verbatim; pass a
@@ -24,6 +27,8 @@ export interface SpotTheBugLabels {
   notHere: React.ReactNode;
   /** Label for the reset control shown after solving. */
   tryAgain: React.ReactNode;
+  /** Success caption showing how many tries it took. */
+  foundInTries: (attempts: number) => React.ReactNode;
 }
 
 export const DEFAULT_SPOT_THE_BUG_LABELS: SpotTheBugLabels = {
@@ -31,6 +36,7 @@ export const DEFAULT_SPOT_THE_BUG_LABELS: SpotTheBugLabels = {
   found: "You found it!",
   notHere: "Not this line — keep looking.",
   tryAgain: "Try again",
+  foundInTries: (n) => `Found it in ${n} ${n === 1 ? "try" : "tries"}`,
 };
 
 export interface SpotTheBugProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -38,6 +44,8 @@ export interface SpotTheBugProps extends React.HTMLAttributes<HTMLDivElement> {
   lines: BugLine[];
   /** Customizable / translatable strings. */
   labels?: Partial<SpotTheBugLabels>;
+  /** Fire confetti when the buggy line is found. Default: true. */
+  celebrate?: boolean;
 }
 
 /**
@@ -53,10 +61,13 @@ export interface SpotTheBugProps extends React.HTMLAttributes<HTMLDivElement> {
 export function SpotTheBug({
   lines,
   labels,
+  celebrate = true,
   className,
   ...props
 }: SpotTheBugProps) {
   const l = useLabels("spotTheBug", DEFAULT_SPOT_THE_BUG_LABELS, labels);
+  const { ref, emit } = useWidgetEvents("spot-the-bug");
+  const [attempts, setAttempts] = React.useState(0);
   const [selected, setSelected] = React.useState<number | null>(null);
   const [wrong, setWrong] = React.useState<number | null>(null);
 
@@ -65,24 +76,31 @@ export function SpotTheBug({
 
   function handleSelect(index: number) {
     if (solved) return;
+    const attempt = attempts + 1;
+    setAttempts(attempt);
     if (lines[index]?.buggy) {
       setSelected(index);
       setWrong(null);
+      emit("solved", { attempts: attempt });
+      if (celebrate) void fireConfetti();
     } else {
       setSelected(index);
       setWrong(index);
+      emit("guessed", { index, correct: false });
     }
   }
 
   function reset() {
     setSelected(null);
     setWrong(null);
+    setAttempts(0);
   }
 
   const buggyLine = lines.find((line) => line.buggy);
 
   return (
     <div
+      ref={ref}
       data-slot="spot-the-bug"
       data-solved={solved || undefined}
       className={cn(
@@ -152,7 +170,10 @@ export function SpotTheBug({
             <Check className="size-3.5" />
           </span>
           <div className="text-card-foreground/90">
-            {buggyLine?.explanation ?? l.found}
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-success">
+              {l.foundInTries(attempts)}
+            </p>
+            <RichText>{buggyLine?.explanation ?? l.found}</RichText>
           </div>
         </div>
       )}

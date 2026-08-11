@@ -47,9 +47,25 @@ export const X = makeIcon(
   </>,
 );
 
+export const GripVertical = makeIcon(
+  "GripVertical",
+  <>
+    <circle cx="9" cy="5" r="1" fill="currentColor" stroke="none" />
+    <circle cx="9" cy="12" r="1" fill="currentColor" stroke="none" />
+    <circle cx="9" cy="19" r="1" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="5" r="1" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="12" r="1" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="19" r="1" fill="currentColor" stroke="none" />
+  </>,
+);
+
 export const ChevronLeft = makeIcon("ChevronLeft", <path d="m15 18-6-6 6-6" />);
 
 export const ChevronRight = makeIcon("ChevronRight", <path d="m9 18 6-6-6-6" />);
+
+export const ChevronUp = makeIcon("ChevronUp", <path d="m18 15-6-6-6 6" />);
+
+export const ChevronDown = makeIcon("ChevronDown", <path d="m6 9 6 6 6-6" />);
 
 export const ArrowRight = makeIcon(
   "ArrowRight",

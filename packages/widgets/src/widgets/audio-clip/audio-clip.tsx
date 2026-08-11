@@ -4,6 +4,7 @@ import { Play, Pause, RotateCcw, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
+import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 
 /** A single transcript cue. Times are in seconds. */
@@ -137,6 +138,30 @@ export interface AudioClipProps
    * wait dimmed — for fragments where what's said matters line by line.
    */
   transcriptView?: "compact" | "spotlight";
+  /**
+   * Draw a real waveform (via a lazy-loaded `wavesurfer.js`) as a full-width
+   * seek bar / audiogram instead of the plain slider — short clips only. If
+   * `peaks` is given it renders from those (no network, works anywhere);
+   * otherwise it decodes `src` in the browser, which needs the host to allow
+   * CORS. On any failure it falls back to the slider. Default: false.
+   */
+  waveform?: boolean;
+  /**
+   * Precomputed, normalized (0–1) amplitude peaks — the real audio shape,
+   * extracted server-side (e.g. with ffmpeg) so no cross-origin decode is
+   * needed. Turns `waveform` into a CORS-proof audiogram.
+   */
+  peaks?: number[];
+  /** Wave/audiogram height in px (the "size" knob). Default: 40. */
+  waveHeight?: number;
+  /** Bar thickness in px (the "grosor" knob). Default: 2. */
+  barWidth?: number;
+  /** Gap between bars in px. Default: 2. */
+  barGap?: number;
+  /** Unplayed-wave color — any CSS color or `var(--token)`. Default: a muted token. */
+  waveColor?: string;
+  /** Played (progress) color — any CSS color or `var(--token)`. Default: `--primary`. */
+  progressColor?: string;
   labels?: Partial<AudioClipLabels>;
 }
 
@@ -340,6 +365,47 @@ export function useTranscriptCues(
     () => (transcript && transcript.length > 0 ? transcript : fetchedCues),
     [transcript, fetchedCues],
   );
+}
+
+/** The slice of the lazy `wavesurfer.js` API this widget actually uses. */
+type WaveSurferInstance = {
+  on: (event: string, cb: (...args: unknown[]) => void) => void;
+  getDecodedData?: () => unknown;
+  setTime?: (time: number) => void;
+  setOptions: (options: Record<string, unknown>) => void;
+  destroy: () => void;
+};
+
+/**
+ * Resolve the aseptic wave colors to concrete rgb(a) strings — `wavesurfer`
+ * paints on a `<canvas>`, which can't read CSS custom properties. A throwaway
+ * probe resolves each token through the live theme cascade, so the waveform
+ * tracks light/dark and the opt-in brand theme instead of hard-coding a colour.
+ */
+function resolveWaveColors(
+  root: HTMLElement,
+  overrides?: { wave?: string; progress?: string },
+) {
+  const probe = document.createElement("span");
+  probe.style.cssText =
+    "position:absolute;width:0;height:0;opacity:0;pointer-events:none;";
+  root.appendChild(probe);
+  const read = (expr: string, fallback: string) => {
+    probe.style.color = fallback;
+    probe.style.color = expr; // no-op if the browser rejects it → stays fallback
+    return getComputedStyle(probe).color || fallback;
+  };
+  const colors = {
+    wave: read(
+      overrides?.wave ??
+        "color-mix(in oklab, var(--muted-foreground) 40%, transparent)",
+      "rgba(148,163,184,0.5)",
+    ),
+    progress: read(overrides?.progress ?? "var(--primary)", "#3b82f6"),
+    cursor: read(overrides?.progress ?? "var(--primary)", "#3b82f6"),
+  };
+  root.removeChild(probe);
+  return colors;
 }
 
 /** Latest cue whose start <= currentTime. -1 before the first cue. */
@@ -609,6 +675,13 @@ export function AudioClip({
   sticky = true,
   context = false,
   transcriptView = "compact",
+  waveform = false,
+  peaks,
+  waveHeight = 40,
+  barWidth = 2,
+  barGap = 2,
+  waveColor,
+  progressColor,
   labels,
   className,
   ...props
@@ -618,6 +691,8 @@ export function AudioClip({
   const rootRef = React.useRef<HTMLDivElement>(null);
   const scrollBoxRef = React.useRef<HTMLDivElement>(null);
   const activeCueRef = React.useRef<HTMLButtonElement>(null);
+  const waveContainerRef = React.useRef<HTMLDivElement>(null);
+  const wsRef = React.useRef<WaveSurferInstance | null>(null);
 
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
@@ -631,6 +706,10 @@ export function AudioClip({
   const [isActive, setIsActive] = React.useState(false); // driving playback / the sticky?
   const [inView, setInView] = React.useState(true); // is the main player visible?
   const [dismissed, setDismissed] = React.useState(false); // mini closed by reader
+
+  // Optional real waveform. Opt-in (`waveform`), lazy-loaded, short clips only.
+  const [waveReady, setWaveReady] = React.useState(false);
+  const [waveFailed, setWaveFailed] = React.useState(false);
 
   // Keep the latest values available to <audio> event handlers without
   // re-subscribing (the events effect runs once).
@@ -772,6 +851,140 @@ export function AudioClip({
     return () => observer.disconnect();
   }, [sticky]);
 
+  // Optional waveform (lazy `wavesurfer.js`) as the seek bar for short clips.
+  // It attaches to the SAME <audio> element, so every existing control, the
+  // fragment window, transcript sync and resume keep working — wavesurfer only
+  // draws the wave and adds click/drag-to-seek. Any failure (no CORS on the
+  // host, decode error, package absent) falls back to the slider.
+  React.useEffect(() => {
+    if (!waveform) return;
+    const audio = audioRef.current;
+    const container = waveContainerRef.current;
+    const root = rootRef.current;
+    if (!audio || !container || !root) return;
+
+    let cancelled = false;
+    let cleanupTheme = () => {};
+    let stallGuard: ReturnType<typeof setTimeout> | undefined;
+
+    void (async () => {
+      try {
+        const WaveSurfer = (await import("wavesurfer.js"))
+          .default as unknown as {
+          create: (options: Record<string, unknown>) => WaveSurferInstance;
+        };
+        if (cancelled) return;
+        const c = resolveWaveColors(root, {
+          wave: waveColor,
+          progress: progressColor,
+        });
+        const hasPeaks = Array.isArray(peaks) && peaks.length > 0;
+        const ws = WaveSurfer.create({
+          container,
+          // With peaks: render statically (NO media → no network fetch,
+          // CORS-proof) and drive progress/seek ourselves. Without peaks:
+          // attach to the media element so wavesurfer decodes and tracks it.
+          ...(hasPeaks
+            ? {
+                peaks: [peaks],
+                duration: (end != null ? end : 0) - clipStart || undefined,
+              }
+            : { media: audio }),
+          height: waveHeight,
+          waveColor: c.wave,
+          progressColor: c.progress,
+          cursorColor: c.cursor,
+          cursorWidth: 2,
+          barWidth,
+          barGap,
+          barRadius: Math.max(1, Math.round(barWidth / 2)),
+          normalize: true,
+          interact: true,
+          dragToSeek: true,
+        });
+        wsRef.current = ws;
+        let settled = false;
+        ws.on("ready", () => {
+          if (cancelled) return;
+          settled = true;
+          // With precomputed peaks the wave is already drawn (no decoded
+          // buffer exists). Only in decode mode does an empty buffer mean a
+          // blocked cross-origin fetch — fall back to the slider then.
+          if (hasPeaks) {
+            setWaveReady(true);
+            return;
+          }
+          const decoded = ws.getDecodedData ? ws.getDecodedData() : true;
+          if (decoded) setWaveReady(true);
+          else setWaveFailed(true);
+        });
+        ws.on("error", () => {
+          if (cancelled) return;
+          settled = true;
+          setWaveFailed(true);
+        });
+        if (hasPeaks) {
+          // No media element drives the cursor — seek on click/drag ourselves.
+          ws.on("interaction", (t) => {
+            if (typeof t !== "number") return;
+            audio.currentTime = clipStartRef.current + t;
+            setCurrentTime(t);
+          });
+        }
+        // Hang guard: if neither event settles it (silent stall), fall back.
+        stallGuard = setTimeout(() => {
+          if (!cancelled && !settled) setWaveFailed(true);
+        }, 10000);
+        // Repaint on theme change (light/dark toggle, brand swap).
+        const applyColors = () => {
+          const next = resolveWaveColors(root);
+          ws.setOptions({
+            waveColor: next.wave,
+            progressColor: next.progress,
+            cursorColor: next.cursor,
+          });
+        };
+        const mo = new MutationObserver(applyColors);
+        mo.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["class", "data-theme", "style"],
+        });
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        mq.addEventListener("change", applyColors);
+        cleanupTheme = () => {
+          mo.disconnect();
+          mq.removeEventListener("change", applyColors);
+        };
+      } catch {
+        if (!cancelled) setWaveFailed(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      if (stallGuard) clearTimeout(stallGuard);
+      cleanupTheme();
+      const ws = wsRef.current;
+      wsRef.current = null;
+      setWaveReady(false);
+      if (ws) {
+        try {
+          ws.destroy();
+        } catch {
+          /* the element may already be gone — nothing to clean up */
+        }
+      }
+    };
+  }, [waveform, src, waveHeight, barWidth, barGap, waveColor, progressColor]);
+
+  // In peaks mode there is no media element driving the wave's progress, so
+  // push the current playback position into it on every tick.
+  React.useEffect(() => {
+    if (!waveform) return;
+    if (!Array.isArray(peaks) || peaks.length === 0) return;
+    wsRef.current?.setTime?.(currentTime);
+  }, [currentTime, waveform, peaks]);
+
   // Single-active-clip coordination: only the active clip plays and shows a
   // sticky. When another clip takes over, pause this one and step aside.
   React.useEffect(() => {
@@ -906,54 +1119,126 @@ export function AudioClip({
 
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           {title != null && (
-            <p className="truncate font-semibold leading-tight">{title}</p>
+            <p className="truncate font-semibold leading-tight">
+              <RichText>{title}</RichText>
+            </p>
           )}
 
-          <div className="flex items-center gap-3">
-            <Button
-              type="button"
-              size="icon"
-              aria-label={isPlaying ? l.pause : l.play}
-              onClick={togglePlay}
-            >
-              {isPlaying ? <Pause /> : <Play />}
-            </Button>
+          {(() => {
+            const playButton = (
+              <Button
+                type="button"
+                size="icon"
+                aria-label={isPlaying ? l.pause : l.play}
+                onClick={togglePlay}
+              >
+                {isPlaying ? <Pause /> : <Play />}
+              </Button>
+            );
+            const timeLabel = (
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
+            );
+            const volumeControl = (
+              <VolumeControl
+                volume={volume}
+                muted={effectiveMuted}
+                onToggle={toggleMute}
+                onChange={onVolume}
+                toggleLabel={volumeToggleLabel}
+                volumeLabel={l.volume}
+              />
+            );
+            const speedButton = (
+              <SpeedButton rate={rate} onCycle={cycleRate} label={l.speed} />
+            );
+            const restartButton = (
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                aria-label={l.restart}
+                onClick={restart}
+              >
+                <RotateCcw />
+              </Button>
+            );
+            // The waveform doubles as the seek bar — keyboard-operable slider.
+            const waveScrubber = (
+              <div
+                role="slider"
+                tabIndex={0}
+                aria-label={l.seek}
+                aria-valuemin={0}
+                aria-valuemax={Math.round(duration) || 1}
+                aria-valuenow={Math.round(currentTime)}
+                aria-valuetext={`${formatTime(currentTime)} / ${formatTime(duration)}`}
+                onKeyDown={(event) => {
+                  const step = event.shiftKey ? 10 : 5;
+                  if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+                    event.preventDefault();
+                    seekTo(currentTime - step);
+                  } else if (
+                    event.key === "ArrowRight" ||
+                    event.key === "ArrowUp"
+                  ) {
+                    event.preventDefault();
+                    seekTo(currentTime + step);
+                  } else if (event.key === "Home") {
+                    event.preventDefault();
+                    seekTo(0);
+                  } else if (event.key === "End") {
+                    event.preventDefault();
+                    seekTo(duration);
+                  }
+                }}
+                className="relative w-full cursor-pointer rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                style={{ height: waveHeight }}
+              >
+                <div ref={waveContainerRef} className="size-full" />
+                {!waveReady && (
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-muted"
+                  />
+                )}
+              </div>
+            );
 
-            <FilledRange
-              value={currentTime}
-              max={duration > 0 ? duration : 1}
-              step="any"
-              onChange={onSeek}
-              label={l.seek}
-              valueText={`${formatTime(currentTime)} / ${formatTime(duration)}`}
-              className="h-6 min-w-0 flex-1"
-            />
-
-            <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </span>
-
-            <VolumeControl
-              volume={volume}
-              muted={effectiveMuted}
-              onToggle={toggleMute}
-              onChange={onVolume}
-              toggleLabel={volumeToggleLabel}
-              volumeLabel={l.volume}
-            />
-
-            <SpeedButton rate={rate} onCycle={cycleRate} label={l.speed} />
-
-            <Button
-              type="button"
-              size="icon"
-              variant="outline"
-              aria-label={l.restart}
-              onClick={restart}
-            >
-              <RotateCcw />
-            </Button>
-          </div>
+            return waveform && !waveFailed ? (
+              // Audiogram layout: full-width wave on top, controls beneath.
+              <div className="flex flex-col gap-3">
+                {waveScrubber}
+                <div className="flex items-center gap-2">
+                  {playButton}
+                  {timeLabel}
+                  <span className="flex-1" />
+                  {volumeControl}
+                  {speedButton}
+                  {restartButton}
+                </div>
+              </div>
+            ) : (
+              // Compact layout: inline slider seek bar.
+              <div className="flex items-center gap-3">
+                {playButton}
+                <FilledRange
+                  value={currentTime}
+                  max={duration > 0 ? duration : 1}
+                  step="any"
+                  onChange={onSeek}
+                  label={l.seek}
+                  valueText={`${formatTime(currentTime)} / ${formatTime(duration)}`}
+                  className="h-6 min-w-0 flex-1"
+                />
+                {timeLabel}
+                {volumeControl}
+                {speedButton}
+                {restartButton}
+              </div>
+            );
+          })()}
         </div>
       </div>
 

@@ -49,6 +49,19 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | widget | checklist | `completed` | `{ total }` — once per mount |
 | widget | flashcards | `graded` | `{ index, knew, graded, total }` |
 | widget | flashcards | `completed` | `{ known, total }` |
+| widget | predict-output | `answered` | `{ index, correct }` |
+| widget | spot-the-bug | `guessed` | `{ index, correct: false }` — reader clicked a non-buggy line |
+| widget | spot-the-bug | `solved` | `{ attempts }` — reader found the bug (once) |
+| widget | fill-in-the-blanks | `checked` | `{ correct: false }` — reader checked with wrong blanks |
+| widget | fill-in-the-blanks | `completed` | `{ blanks }` — every blank correct (once) |
+| widget | drag-and-drop | `checked` | `{ correct }` — reader pressed Check |
+| widget | drag-and-drop | `completed` | `{ items }` — board fully correct (once per solve) |
+| widget | sort-steps | `reordered` | `{ from, to }` — reader moved a step |
+| widget | sort-steps | `checked` | `{ correct, misplaced }` — reader pressed Check |
+| widget | sort-steps | `completed` | `{ steps }` — the whole sequence is right (once per solve) |
+| widget | estimate-slider | `estimated` | `{ guess, answer, offBy, close }` — reader committed a guess |
+| widget | reflection | `saved` | `{ length }` — **never the answer's text**, which stays on the device |
+| widget | tabs | `tab_changed` | `{ index }` — reader opened another variant |
 | widget | cta | `clicked` | `{ variant: "link", url }` |
 | widget | cta | `submitted` | `{ ok }` — **never the email** |
 | widget | resource-list | `resource_opened` | `{ kind, href, index }` |
@@ -76,7 +89,7 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | storyline | storyline | `life_restored` | `{ livesLeft, total }` — game mode: a correct answer won a life back |
 | storyline | storyline | `game_over` | `{ total }` — game mode: lives hit 0, the finale reward is withheld |
 
-More widgets (decision-tree, scrubber, drag-and-drop…) will join in v2 — each
+More widgets (decision-tree, scrubber…) will join in v2 — each
 is a ~3-line addition via the internal `useWidgetEvents` hook.
 
 ## Host adapters (copy-paste)
