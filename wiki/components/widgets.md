@@ -5,7 +5,7 @@ responsibility: The interactive learning widgets — how each is structured, the
 sources:
   - packages/widgets/src/widgets
   - packages/widgets/src/lib/registry.tsx
-synced: d12fb89
+synced: b2bee94
 related:
   - ./widgets/quiz.md
   - ./widgets/code-diff.md
@@ -95,6 +95,18 @@ measurement needs a browser, and a screen reader gets neither — so the graph
 also writes its structure out as a server-rendered visually-hidden list
 ("Browser → API: GET /product/42"). The drawing is `aria-hidden`; it is the same
 information twice, and only one of the two survives without JavaScript.
+
+`code-lab` carries the other lesson from the same browser pass, and it is the
+one most likely to bite again: **a widget cannot assume it runs in the realm its
+DOM lives in.** A host may render it into another document — the playground puts
+every demo inside a device-frame iframe — and then the component's code executes
+in the parent realm while its elements belong to the frame's. Anything reaching
+for the ambient `window` (a `message` listener, `matchMedia`, `localStorage`,
+`getComputedStyle`) is then looking at the wrong one. `code-lab` resolves the
+view from its root element's `ownerDocument` for exactly this reason
+(`b2bee94`); before that fix every run in the playground hung on "Running…"
+with no error anywhere. jsdom collapses the two realms, so only a real browser —
+or the deliberately two-document test beside it — catches it.
 
 ## Deterministic initial state
 

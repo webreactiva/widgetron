@@ -8,10 +8,11 @@ sources:
   - packages/widgets/src/lib/use-widget-events.ts
   - docs/analytics.md
   - packages/widgets/src/widgets/storyline/storyline.tsx
-synced: a065d0a
+synced: b2bee94
 related:
   - ./i18n-labels.md
   - ./pedagogy.md
+  - ./rich-text.md
 ---
 
 Interactive widgets emit a native `widgetron:event` `CustomEvent` (bubbling,
@@ -49,6 +50,12 @@ confident-and-wrong tally, and takes the shaky module straight off the emitting
 element's `closest("[data-module-index]")` (`storyline.tsx`, `a065d0a`). A check
 dropped anywhere in a guide participates in the ending without knowing the
 storyline exists.
+
+The payload is also a place markdown leaks: `storyline` reports a module title
+as an analytics dimension, and until `b2bee94` it sent the author's raw string,
+so a title with any formatting arrived in the dashboard with its markers. Any
+event field carrying author text goes through `plainRich` — see
+[RichText](./rich-text.md).
 
 `calibration` is the payload worth a dashboard: `confident-wrong` marks a belief
 the reader actively trusts and that does not hold. If one check produces it

@@ -187,3 +187,21 @@ supposed to catch and this one had just repeated.
   are validated *and* rendered by the suite).
 - checkpoint advanced.
 
+## 2026-09-05 · wiki-ingest (reconcile, browser pass)
+The five new widgets were finally opened in a real browser, which is a step the
+tests had explicitly deferred ("that is a browser job") and nobody had taken.
+node-graph held up. code-lab did not, and the reason generalises.
+
+- **components/widgets.md**: a widget cannot assume it runs in the realm its DOM
+  lives in. A host may render it into another document — the playground puts
+  every demo inside a device-frame iframe — and then the component's code runs
+  in the parent realm while its elements belong to the frame's, so anything
+  reaching for the ambient `window` is looking at the wrong one. code-lab's
+  `message` listener was; every run in the playground hung on "Running…" with
+  no error anywhere. jsdom collapses the two realms, which is why nothing
+  caught it.
+- **concepts/analytics-events.md**: the event payload is a markdown leak site
+  too — a module title reported as an analytics dimension arrived with its raw
+  markers until `b2bee94`.
+- checkpoint advanced.
+
