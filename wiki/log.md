@@ -246,3 +246,22 @@ A high-effort review of the whole branch produced seven findings, all fixed in
   police what it can measure), components/widgets/quiz (nested label pack).
 - checkpoint advanced.
 
+## 2026-09-05 · wiki-ingest (reconcile, eli5 doctrine)
+A question — "is the 'big pictures and few words' thing from eli5 already in?" —
+turned out to be answerable with no, and neither is it in make-it-learnable.
+Absorbed the applicable half in `f571f65`.
+
+- **concepts/pedagogy.md**: a new section on the `condescension` rule as the
+  repo's clearest case of a check narrowed by evidence rather than taste. Its
+  first draft produced five findings over the existing guides and all five were
+  the rule being wrong; the words were polysemous ("simplemente" = merely,
+  "basta con" quoted and negated, "es fácil confundirlos" = empathy). The
+  general lesson is worth more than the rule: run a new lint rule over the real
+  content first, and read every finding as a question about the rule.
+- **concepts/pedagogy.md** also records the second provenance — the writing
+  doctrine came from the two eli5 skills, and the half about editing existing
+  prose was deliberately left out.
+- **flows/story-pipeline.md**: `condescension` is the first lint rule to read
+  prose rather than tree shape, hence its excluded-props list.
+- checkpoint advanced.
+

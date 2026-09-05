@@ -7,7 +7,7 @@ sources:
   - packages/widgets/src/lib/authoring.ts
   - packages/widgets/src/primitives/confidence.tsx
   - docs/pedagogy.md
-synced: d12fb89
+synced: f571f65
 related:
   - ./ai-generation-surface.md
   - ../decisions/assessment.md
@@ -132,10 +132,37 @@ The lesson generalises past that one widget and is now a library rule: **text in
 HTML, geometry in SVG**, with `plainRich()` for the seam where a rich string has
 to become a plain one. See [RichText](./rich-text.md).
 
+## A rule is only as good as its false positives
+
+The `condescension` rule is the clearest case the repo has of a check being
+narrowed by evidence rather than by taste, and it is worth keeping.
+
+Its first draft flagged `simplemente`, `basta con` and `es fácil`. Run over the
+fourteen existing guides it produced five findings, and **all five were the rule
+being wrong**: `simplemente` usually means "merely"; `basta con` appears quoted
+("el hype insiste en que basta con gastar más tokens") and negated ("no basta
+con que parezca que va bien") far more often than dismissively; and "es fácil
+confundirlos porque uno viene del otro" is empathy — it acknowledges the
+difficulty rather than denying it. The condescending form is "easy to [task the
+reader must do]", not "easy to [get this wrong]", and no regex separates those.
+
+So the list is now only phrases nobody writes innocently, it finds nothing in
+the corpus, and `test/lint.test.ts` both proves it still fires and pins the five
+false positives so they cannot creep back. The general lesson: run a new lint
+rule over the real content before shipping it, and treat every finding as a
+question about the rule first and the content second.
+
 ## Provenance
 
-The doctrine is not original to widgetron: it is the `make-it-learnable` skill's,
-absorbed in `683985b` rather than vendored. Its 21 primitives were mapped onto
+The doctrine is not original to widgetron. Most of it is the `make-it-learnable`
+skill's, absorbed in `683985b` rather than vendored; the writing half — why
+before what, metaphors that name their limit, the intelligent-and-unfamiliar
+reader, no condescension — came later from the two **`eli5`** skills
+(`f571f65`), after a question about whether "big pictures and few words" was
+already covered turned out to be answerable with "no, and it is not in
+make-it-learnable either". The half of Cloudflare's eli5 about editing existing
+prose is deliberately absent: this layer generates guides rather than reviewing
+someone else's writing. Its 21 primitives were mapped onto
 the catalog, the four with no equivalent were built (`contrast`, `checkpoint`,
 `anatomy`, `code-lab`), and the two deliberately left unported are named with
 their reasons in `docs/pedagogy.md`. The mapping table there is meant to be

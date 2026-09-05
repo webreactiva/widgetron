@@ -9,7 +9,7 @@ sources:
   - apps/story-studio/src/engine/validate.ts
   - apps/story-studio/src/engine/lint.ts
   - apps/story-studio/src/render/build.ts
-synced: d2f4037
+synced: f571f65
 related:
   - ../components/story-studio.md
   - ./render-widget.md
@@ -75,6 +75,11 @@ schema and pass the pacing rules and still be a document with quizzes bolted on
 (`mechanic-variety`, `prediction`, `checkpoint`, `option-shape`,
 `confidence-budget`, `honest-model`, `contrast-stacking`, and
 `wrong-answer-teaches`).
+
+One of them, `condescension`, reads the author's prose rather than the tree's
+shape — the first rule here to do so — which is why it carries a list of
+excluded props (`code`, `chart`, ids, URLs) and why its word list is as short as
+it is. See [the pedagogy layer](../concepts/pedagogy.md).
 
 Only the last one is an **error**: a wrong option with no feedback. That
 asymmetry is deliberate — the rest are judgement calls an author may have a
