@@ -595,3 +595,48 @@ describe("option-shape only measures what it can count", () => {
     expect(rulesOf(doc).has("option-shape")).toBe(false);
   });
 });
+
+describe("condescension", () => {
+  const withProse = (text: string) =>
+    wrap([
+      screen("prose"),
+      { type: "callout-box", props: { children: text } },
+      screen("mermaid-diagram"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("timeline"),
+      screen("checklist"),
+    ]);
+
+  it("flags a word that tells the reader this should have felt easy", () => {
+    expect(
+      rulesOf(withProse("Obviously the cache has to be invalidated first.")).has(
+        "condescension",
+      ),
+    ).toBe(true);
+    expect(
+      rulesOf(withProse("Como todo el mundo sabe, el TTL caduca solo.")).has(
+        "condescension",
+      ),
+    ).toBe(true);
+  });
+
+  /**
+   * These four are why the rule is as short as it is: every one was a real
+   * finding against the existing guides, and every one was the rule being
+   * wrong. `simplemente` means "merely"; `basta con` shows up quoted and
+   * negated far more than dismissively; and "es fácil confundirlos" is empathy
+   * — it acknowledges the difficulty rather than denying it. Re-adding any of
+   * these words should fail here.
+   */
+  it.each([
+    ["merely, not dismissively", "Puede que te cambien la vida o que simplemente te sirvan de vez en cuando."],
+    ["quoting the claim it rejects", "El hype insiste en que basta con gastar más tokens, y se equivoca."],
+    ["negated", "En la parte crítica no basta con que parezca que va bien."],
+    ["empathy about a real confusion", "Es fácil confundirlos porque uno viene del otro."],
+  ])("stays quiet on %s", (_why, text) => {
+    expect(rulesOf(withProse(text)).has("condescension")).toBe(false);
+  });
+});

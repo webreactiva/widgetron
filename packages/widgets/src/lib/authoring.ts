@@ -72,6 +72,7 @@ export interface AuthoringGuide {
     checks: string;
     perModule: string;
     minutes: string;
+    words: string;
     test: string;
   };
   sequencing: AuthoringRule[];
@@ -273,6 +274,8 @@ export const authoringGuide: AuthoringGuide = {
       "The default number of widgets in a module is ONE, plus the prose that carries it. A module using six is almost always three modules.",
     minutes:
       "8–12 minutes. A 12-minute guide that teaches three things beats a 40-minute one that mentions twelve. Say what you left out.",
+    words:
+      "Say it in the fewest words that stay accurate. The reader is on a screen, and every sentence they skim is one that taught nothing — but brevity is a budget, not a virtue: cutting a qualifier that was carrying a condition makes the sentence shorter and wrong. Cut adjectives, hedges and restatements; never cut the qualifier.",
     test: "For every widget ask: what would the reader fail to understand if this were a paragraph? No answer means make it a paragraph. Interactivity costs attention the argument needs, and it has to buy something back.",
   },
 
@@ -281,6 +284,16 @@ export const authoringGuide: AuthoringGuide = {
       id: "spine-first",
       rule: "Write the modules as plain sentences — each with its goal and the check that ends it — before emitting a single widget.",
       why: "If that list does not read like an argument, no amount of interactivity will rescue it, and markup is the most expensive place to discover it. Fix the sequence here, where fixing is cheap. If you cannot write a module's goal in one sentence, it is doing two things and it is two modules.",
+    },
+    {
+      id: "why-before-what",
+      rule: "Open a module with what the thing is FOR and what breaks without it, before what it is or how it works.",
+      why: "A reader who does not know why a thing exists has nowhere to put the details, so they memorise instead of understanding and it is gone by the next module. This is the one place a guide should give away the shape of the whole before any of its parts — the opposite of the reveal-one-at-a-time rule below, which governs a diagram the reader is already oriented in.",
+    },
+    {
+      id: "dont-explain-what-they-can-infer",
+      rule: "Do not spell out a consequence the reader can derive from what you just said.",
+      why: "Telling a networking audience that blocked health checks make a tunnel look unhealthy states the obvious, and paying that cost twice is how a guide gets long and stops being read. The test is 'would a reasonable reader of THIS guide already know this?' — it is the same judgement as the difficulty budget, applied to prose instead of to checks.",
     },
     {
       id: "concrete-first",
@@ -332,8 +345,23 @@ export const authoringGuide: AuthoringGuide = {
     },
     {
       id: "never-fabricate-a-model",
-      rule: "A `tangle-text` or `scrubber` formula must be defensible; cite where the numbers come from.",
-      why: "A reader who discovers a relationship by moving a number believes it far more strongly than anything you wrote in a paragraph, so an invented formula teaches a falsehood efficiently. Simplify all you like; do not fake it. If you cannot defend the formula, use `comparison-table` instead.",
+      rule: "A `tangle-text` or `scrubber` formula must be defensible; cite where the numbers come from. The same goes for any 'how it works' you write: verify the mechanism, do not reconstruct a plausible one.",
+      why: "A reader who discovers a relationship by moving a number believes it far more strongly than anything you wrote in a paragraph, so an invented formula teaches a falsehood efficiently. The prose version is the same failure and easier to commit: a simplification that describes the WRONG mechanism is worse than the jargon it replaced, because the jargon at least did not mislead. Simplify all you like; do not fake it. If you cannot defend it, use `comparison-table` instead.",
+    },
+    {
+      id: "metaphors-name-their-limit",
+      rule: "Every analogy states where it stops holding, in the same breath.",
+      why: "A metaphor is a loan against the reader's existing knowledge, and the interest comes due at the edge — they will carry it past the point it is true, and the wrong prediction they make later is your fault, not theirs. Two rules keep it honest: draw from something ADJACENT (a queue, a cache, a phone book) rather than from a toybox, because a childish analogy insults the reader and maps badly; and say what it gets wrong ('unlike a phone book, DNS answers can differ per caller'). An analogy whose limit you cannot name is one you do not understand well enough to use.",
+    },
+    {
+      id: "assume-a-smart-stranger",
+      rule: "The reader is intelligent and unfamiliar. Never write for the lowest common denominator.",
+      why: "Those are different things, and conflating them produces the two worst registers a guide can have: explaining `==` to someone writing filter expressions, or hiding a real constraint because it looked hard. Unfamiliar means they lack THIS context, not that they lack the capacity for it. So: define the domain's jargon, and trust everything else.",
+    },
+    {
+      id: "no-condescension",
+      rule: "Ban `simply`, `just`, `obviously`, `clearly`, `as everyone knows`, `it's easy to` — and their Spanish counterparts.",
+      why: "Every one of them makes the same bet: that the reader will find this easy. When they don't, the word has told them the failure is theirs, and that is the point at which people close a guide. It also does nothing — delete `simply` from any sentence and the sentence is unchanged, which is the tell that it was never carrying meaning. `story lint` flags these.",
     },
     {
       id: "build-from-the-source",

@@ -130,6 +130,11 @@ library rather than an argument.
 The default number of widgets in a module is **one**, plus the prose that carries
 it. A module using six is almost always three modules.
 
+**Few words.** Say it in the fewest that stay accurate. Every sentence the
+reader skims is one that taught nothing — but brevity is a budget, not a virtue:
+cutting a qualifier that was carrying a condition makes the sentence shorter and
+*wrong*. Cut adjectives, hedges and restatements; never cut the qualifier.
+
 The test for every single one:
 
 > *What would the reader fail to understand if this were a paragraph instead?*
@@ -141,6 +146,16 @@ needs, and it has to buy something back.
 
 ## Sequencing
 
+- **Why before what.** Open a module with what the thing is *for* and what breaks
+  without it, before what it is or how it works. A reader who does not know why
+  something exists has nowhere to put the details, so they memorise instead of
+  understanding. This is the one place to give away the shape of the whole
+  before its parts — the "reveal one at a time" rule below governs a diagram the
+  reader is *already oriented in*.
+- **Don't explain what they can infer.** Telling a networking audience that
+  blocked health checks make a tunnel look unhealthy states the obvious, and
+  paying that cost twice is how a guide gets long and stops being read. Same
+  judgement as the difficulty budget, applied to prose.
 - **Concrete before abstract.** One real trace before the general diagram. An
   abstraction the reader has no instance for is not an abstraction, it is a
   definition.
@@ -280,6 +295,34 @@ gap. Naming the source costs one line and lets the reader go further.
 defensible, and its `note` should say where the numbers come from — the lint
 asks for one. If you cannot defend the formula, use `comparison-table` instead.
 
+The same applies to every *"how it works"* you write, and that version is easier
+to commit: a simplification describing the **wrong mechanism** is worse than the
+jargon it replaced, because the jargon at least did not mislead. Verify the
+mechanism; do not reconstruct a plausible one.
+
+**Every metaphor names its limit.** An analogy is a loan against what the reader
+already knows, and the interest comes due at the edge: they will carry it past
+the point it holds, and the wrong prediction they make later is your fault. Two
+rules keep it honest. Draw from something **adjacent** — a queue, a cache, a
+phone book — not from a toybox; a childish analogy insults the reader and maps
+badly. And say what it gets wrong, in the same breath: *"unlike a phone book,
+DNS answers can differ per caller."* An analogy whose limit you cannot name is
+one you do not understand well enough to use.
+
+**The reader is intelligent and unfamiliar.** Those are different things, and
+conflating them produces the two worst registers a guide can have: explaining
+`==` to someone writing filter expressions, or hiding a real constraint because
+it looked hard. Unfamiliar means they lack *this* context, not the capacity for
+it. Define the domain's jargon; trust everything else. Never write for the
+lowest common denominator.
+
+**No condescension.** `simply`, `just`, `obviously`, `clearly`, `as everyone
+knows`, `it's easy to` — and the Spanish equivalents. Each makes the same bet,
+that the reader will find this easy; when they don't, the word has told them the
+failure is theirs, and that is where people close a guide. They also do nothing:
+delete `simply` from any sentence and the sentence is unchanged. `story lint`
+flags the unambiguous ones (see below for why that list is short).
+
 **Honest scope.** Say what the guide does not cover. A guide that pretends to be
 complete is worse than a short one that knows it is short, because the reader
 stops looking for the part you left out.
@@ -336,15 +379,27 @@ are advice you should have a reason to ignore.
 | `confidence-budget` | warning | the confidence slider asked too often to mean anything |
 | `honest-model` | warning | a movable model that never says where its formula came from |
 | `contrast-stacking` | warning | a `contrast` re-revealing a gap the check before it just produced |
+| `condescension` | warning | a word telling the reader this should have felt easy |
 
 The rest of the rules — variety, cadence, prose quota, module length — police
 rhythm, and predate this document. Both halves have to pass.
+
+`condescension` is deliberately the shortest list in the file, and the trimming
+is worth knowing about. The first draft flagged `simplemente`, `basta con` and
+`es fácil`; run over the fourteen existing guides it produced five findings and
+**all five were the rule being wrong** — `simplemente` usually means "merely",
+`basta con` turns up quoted and negated far more than dismissively, and *"es
+fácil confundirlos porque uno viene del otro"* is empathy, not condescension. A
+polysemous word cannot be judged without the sentence around it, and a rule that
+cries wolf is one authors learn to scroll past. Only phrases nobody writes
+innocently survive; the false positives are pinned as test cases so they cannot
+creep back.
 
 ---
 
 ## Where the primitives came from
 
-This doctrine is the `make-it-learnable` skill's, absorbed into Widgetron rather
+Most of this doctrine is the `make-it-learnable` skill's, absorbed into Widgetron rather
 than bolted onto it: its 21 primitives were mapped onto the catalog, the four
 with no equivalent were built (`contrast`, `checkpoint`, `anatomy`, `code-lab`),
 the pedagogical affordances the catalog was missing were added to the widgets
@@ -416,6 +471,20 @@ rather than leaving a silent gap:
   diagram on and off). Widgetron has no stage-parts protocol for a diagram to
   opt elements into named layers. `frame-stepper` covers the common case, one
   question per frame, and `hotspots` covers the rest.
+A second, smaller graft comes from the **`eli5`** skills — Cloudflare's
+(`.agents/skills/eli5`) and the one-line one in `claude-plugins-community`,
+whose whole content is *"big pictures and few words"*. Widgetron was already
+stricter than that first half (the lint caps the prose quota and requires a
+diagram), so what it contributed is the writing doctrine: **why before what**,
+**metaphors that name their limit**, **the reader is intelligent and
+unfamiliar**, **no condescension**, **don't explain what they can infer**, and
+the brevity budget. The half of that skill about *editing existing docs* —
+before/after comparisons, a terminology index, an adversarial fact-check pass —
+is deliberately not here: this doctrine is for generating a guide, not for
+reviewing prose someone else wrote. The adversarial pass is the one worth
+revisiting, since a guide asserts confidently and gives the reader no way to
+check.
+
 - **`l-sandbox`** (the reader edits and runs their own code). `code-lab` covers
   the pedagogically stronger half — fixed variants the author chose, which is
   what makes the comparison teach — without shipping an editor. Where a reader

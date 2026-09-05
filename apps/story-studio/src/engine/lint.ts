@@ -166,6 +166,69 @@ function optionsOf(node: WidgetNode): OptionLike[] {
   return Array.isArray(raw) ? (raw as OptionLike[]) : [];
 }
 
+/**
+ * Words that tell the reader this should have been easy.
+ *
+ * Every one makes the same bet — that what follows will feel simple — and when
+ * it doesn't, the word has quietly informed the reader that the failure is
+ * theirs. That is the point at which people close a guide.
+ *
+ * The list is short because the first draft was not, and running it over the
+ * existing guides produced four findings that were all the rule being wrong:
+ * `simplemente` usually means "merely" ("o que simplemente te sirvan"), and
+ * `basta con` is a neutral quantifier that turns up quoted ("el hype insiste en
+ * que basta con gastar más tokens") and negated ("no basta con que parezca que
+ * va bien") far more often than it turns up dismissive. English `simply` and
+ * `just` have the same problem. A polysemous word cannot be judged without the
+ * sentence around it, and a rule that cries wolf is one authors learn to scroll
+ * past. `es fácil` / `it's easy to` went the same way on the second pass: the
+ * corpus's only hit was "es fácil confundirlos porque uno viene del otro",
+ * which is empathy — it acknowledges the difficulty rather than denying it.
+ * The condescending form is "easy to [task the reader must do]", not "easy to
+ * [get this wrong]", and no regex tells those apart.
+ *
+ * What survives is the handful nobody writes innocently. Zero of them appear in
+ * the fourteen guides, which is the right result for a rule about a thing good
+ * writing does not do; `test/lint.test.ts` proves it still fires, and pins the
+ * shapes that must NOT.
+ */
+const CONDESCENDING = [
+  /\bobviously\b/i,
+  /\btrivially\b/i,
+  /\bas everyone knows\b/i,
+  /\bobviamente\b/i,
+  /\bcomo todo el mundo sabe\b/i,
+];
+
+/**
+ * Props that hold literal material rather than author prose — code, charts,
+ * ids, URLs. A `simply` inside a code sample is the sample's business.
+ */
+const NOT_PROSE = new Set([
+  "code", "setup", "chart", "command", "match", "src", "href", "url", "id",
+  "storageKey", "icon", "emoji", "type", "locale", "format", "layout", "variant",
+]);
+
+/** Every author-written string inside a node, prose only. */
+function proseStrings(node: WidgetNode): string[] {
+  const out: string[] = [];
+  const walk = (value: unknown, key: string) => {
+    if (typeof value === "string") {
+      if (!NOT_PROSE.has(key) && value.length > 12) out.push(value);
+      return;
+    }
+    if (Array.isArray(value)) {
+      for (const v of value) walk(v, key);
+      return;
+    }
+    if (value && typeof value === "object") {
+      for (const [k, v] of Object.entries(value)) walk(v, k);
+    }
+  };
+  walk(node.props ?? {}, "");
+  return out;
+}
+
 interface StoryModule {
   title?: unknown;
   subtitle?: unknown;
@@ -585,6 +648,22 @@ export function lintStoryDocument(input: unknown): StoryLint {
         "contrast-stacking",
         `screen ${i + 1}: a contrast right after a ${flat[i - 1].type} — the check already produced the gap from the reader's own answer; put the explanation in the check's feedback instead`,
       );
+    }
+  }
+
+  // --- condescension: a word that tells the reader this should have been easy
+  // is the point at which people close a guide, and none of them carry meaning.
+  for (const f of flat) {
+    for (const text of proseStrings(f.node)) {
+      for (const pattern of CONDESCENDING) {
+        const hit = pattern.exec(text);
+        if (!hit) continue;
+        warn(
+          "condescension",
+          `module ${f.moduleIndex + 1} (${f.type}): "${hit[0]}" — it tells the reader this should have felt easy, and deleting it leaves the sentence unchanged`,
+        );
+        break; // one finding per string is enough to act on
+      }
     }
   }
 

@@ -152,6 +152,26 @@ in [`docs/pedagogy.md`](../../../../docs/pedagogy.md) and, as data, in
   A relationship discovered by dragging a number is believed far harder than one
   asserted in a paragraph, so an invented formula teaches a falsehood
   efficiently. If you cannot defend it, use `comparison-table`.
+- **Escribe para alguien inteligente que no conoce ESTE dominio.** No es lo
+  mismo que escribir para el mínimo común denominador, y confundirlo da los dos
+  peores registros posibles: explicar `==` a quien escribe expresiones de
+  filtro, o esconder una restricción real porque parecía dura. Define la jerga
+  del dominio; confía en todo lo demás. Y nada de `simplemente`, `obviamente`,
+  `basta con`, `es fácil`: cada uno apuesta a que al lector le resultará
+  sencillo, y cuando no, le ha dicho que el fallo es suyo. `story lint` marca
+  los inequívocos (`condescension`).
+- **Toda metáfora dice dónde se rompe**, en la misma frase. Sácala de algo
+  ADYACENTE (una cola, una caché, una guía telefónica), no de una caja de
+  juguetes — una analogía infantil insulta al lector y encaja mal. Y di qué
+  parte no vale: *"a diferencia de una guía telefónica, el DNS puede responder
+  distinto según quién pregunte"*. Si no sabes nombrar su límite, no la
+  entiendes lo bastante para usarla.
+- **El «para qué» antes del «qué».** Abre cada módulo con para qué sirve la cosa
+  y qué se rompe sin ella, antes de qué es o cómo funciona. Sin eso el lector no
+  tiene dónde colocar los detalles y los memoriza en vez de entenderlos.
+- **No expliques lo que puede deducir.** Contarle a una audiencia de redes que
+  bloquear los health checks deja el túnel en unhealthy es decir lo obvio, y
+  pagar dos veces ese coste es cómo una guía se alarga y deja de leerse.
 - **Difficulty is a budget and the setting changes.** Installing a fact should be
   frictionless — spend the reader's working memory on the idea. Building a skill
   should cost them something — make them produce an answer rather than pick one.
