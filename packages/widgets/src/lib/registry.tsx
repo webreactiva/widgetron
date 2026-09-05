@@ -27,6 +27,10 @@ import { dragAndDropMeta } from "@/widgets/drag-and-drop/drag-and-drop.meta";
 import { sortStepsMeta } from "@/widgets/sort-steps/sort-steps.meta";
 import { estimateSliderMeta } from "@/widgets/estimate-slider/estimate-slider.meta";
 import { reflectionMeta } from "@/widgets/reflection/reflection.meta";
+import { contrastMeta } from "@/widgets/contrast/contrast.meta";
+import { checkpointMeta } from "@/widgets/checkpoint/checkpoint.meta";
+import { anatomyMeta } from "@/widgets/anatomy/anatomy.meta";
+import { codeLabMeta } from "@/widgets/code-lab/code-lab.meta";
 import { codeDiffMeta } from "@/widgets/code-diff/code-diff.meta";
 import { tabsMeta } from "@/widgets/tabs/tabs.meta";
 import { comparisonTableMeta } from "@/widgets/comparison-table/comparison-table.meta";
@@ -71,6 +75,10 @@ import { scrollytellingMeta } from "@/widgets/scrollytelling/scrollytelling.meta
 import { Quiz } from "@/widgets/quiz";
 import { Flashcards } from "@/widgets/flashcards";
 import { Checklist } from "@/widgets/checklist";
+import { Contrast } from "@/widgets/contrast";
+import { Checkpoint } from "@/widgets/checkpoint";
+import { Anatomy } from "@/widgets/anatomy";
+import { CodeLab } from "@/widgets/code-lab";
 import { CalloutBox } from "@/widgets/callout-box";
 import { Surprise } from "@/widgets/surprise";
 import { KeywordGate } from "@/widgets/keyword-gate";
@@ -223,6 +231,78 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
   quiz: { ...quizMeta, component: Quiz },
   flashcards: { ...flashcardsMeta, component: Flashcards },
   checklist: { ...checklistMeta, component: Checklist },
+  contrast: {
+    ...contrastMeta,
+    component: Contrast,
+    adapt: (p) => ({
+      ...p,
+      expected: asContent(p.expected),
+      actual: asContent(p.actual),
+      why: asContent(p.why),
+      expectedLabel: asContent(p.expectedLabel),
+      actualLabel: asContent(p.actualLabel),
+      source: asContent(p.source),
+    }),
+  },
+  checkpoint: {
+    ...checkpointMeta,
+    component: Checkpoint,
+    adapt: (p) => ({
+      ...p,
+      title: asContent(p.title),
+      hint: asContent(p.hint),
+      items: Array.isArray(p.items)
+        ? p.items.map((item) =>
+            item && typeof item === "object"
+              ? {
+                  ...item,
+                  text: asContent((item as { text?: unknown }).text),
+                  revisit: asContent((item as { revisit?: unknown }).revisit),
+                }
+              : item,
+          )
+        : p.items,
+    }),
+  },
+  anatomy: {
+    ...anatomyMeta,
+    component: Anatomy,
+    adapt: (p) => ({
+      ...p,
+      label: asContent(p.label),
+      hint: asContent(p.hint),
+      parts: Array.isArray(p.parts)
+        ? p.parts.map((part) =>
+            part && typeof part === "object"
+              ? {
+                  ...part,
+                  label: asContent((part as { label?: unknown }).label),
+                  note: asContent((part as { note?: unknown }).note),
+                }
+              : part,
+          )
+        : p.parts,
+    }),
+  },
+  "code-lab": {
+    ...codeLabMeta,
+    component: CodeLab,
+    adapt: (p) => ({
+      ...p,
+      question: asContent(p.question),
+      variants: Array.isArray(p.variants)
+        ? p.variants.map((v) =>
+            v && typeof v === "object"
+              ? {
+                  ...v,
+                  label: asContent((v as { label?: unknown }).label),
+                  note: asContent((v as { note?: unknown }).note),
+                }
+              : v,
+          )
+        : p.variants,
+    }),
+  },
   "callout-box": { ...calloutBoxMeta, component: CalloutBox },
   surprise: {
     ...surpriseMeta,
@@ -393,12 +473,19 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
   },
   "fill-in-the-blanks": { ...fillInTheBlanksMeta, component: FillInTheBlanks },
   "predict-output": { ...predictOutputMeta, component: PredictOutput },
-  "drag-and-drop": { ...dragAndDropMeta, component: DragAndDrop },
+  "drag-and-drop": {
+    ...dragAndDropMeta,
+    component: DragAndDrop,
+    adapt: (p) => ({ ...p, explanation: asContent(p.explanation) }),
+  },
   "sort-steps": {
     ...sortStepsMeta,
     component: SortSteps,
     adapt: (p) => ({
       ...p,
+      low: asContent(p.low),
+      high: asContent(p.high),
+      explanation: asContent(p.explanation),
       items: Array.isArray(p.items)
         ? p.items.map((item) =>
             item && typeof item === "object"
@@ -430,6 +517,13 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
       prompt: asContent(p.prompt),
       hint: asContent(p.hint),
       modelAnswer: asContent(p.modelAnswer),
+      keys: Array.isArray(p.keys)
+        ? p.keys.map((key) =>
+            key && typeof key === "object"
+              ? { ...key, idea: asContent((key as { idea?: unknown }).idea) }
+              : key,
+          )
+        : p.keys,
     }),
   },
   "code-diff": {

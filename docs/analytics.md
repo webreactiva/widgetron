@@ -40,16 +40,33 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 `WindowEventMap`/`DocumentEventMap` are augmented, so
 `document.addEventListener("widgetron:event", …)` is fully typed in TS hosts.
 
+### Calibration
+
+Three scored widgets (`quiz`, `predict-output`, `estimate-slider`) take an
+opt-in `confidence` prop. When it is on, the reader stakes how sure they are
+*before* answering, and the event carries two extra fields:
+
+- `confidence` — `1` guessing · `2` fairly sure · `3` certain.
+- `calibration` — the quadrant: `"confident-right"`, `"confident-wrong"`,
+  `"unsure-right"` or `"unsure-wrong"`.
+
+`confident-wrong` is the one worth a dashboard of its own. A wrong answer the
+reader was unsure of is expected and cheap; a wrong answer they *trusted* marks
+a belief that is actively in use and does not hold, which is the most valuable
+thing a check can tell you about a guide. If one check produces it across many
+readers, the guide has found a real misconception — and if the section before it
+was supposed to prevent that, the section is what needs rewriting.
+
 ### Actions (v1)
 
 | source | widget | action | data |
 | --- | --- | --- | --- |
-| widget | quiz | `answered` | `{ index, correct }` |
+| widget | quiz | `answered` | `{ index, correct }`, plus `{ confidence, calibration }` when the check asks for confidence |
 | widget | checklist | `item_toggled` | `{ index, checked, completed, total }` |
 | widget | checklist | `completed` | `{ total }` — once per mount |
 | widget | flashcards | `graded` | `{ index, knew, graded, total }` |
 | widget | flashcards | `completed` | `{ known, total }` |
-| widget | predict-output | `answered` | `{ index, correct }` |
+| widget | predict-output | `answered` | `{ index, correct }`, plus `{ confidence, calibration }` when the check asks for confidence |
 | widget | spot-the-bug | `guessed` | `{ index, correct: false }` — reader clicked a non-buggy line |
 | widget | spot-the-bug | `solved` | `{ attempts }` — reader found the bug (once) |
 | widget | fill-in-the-blanks | `checked` | `{ correct: false }` — reader checked with wrong blanks |
@@ -59,8 +76,12 @@ Every event carries a typed `detail` (`WidgetronEventDetail`):
 | widget | sort-steps | `reordered` | `{ from, to }` — reader moved a step |
 | widget | sort-steps | `checked` | `{ correct, misplaced }` — reader pressed Check |
 | widget | sort-steps | `completed` | `{ steps }` — the whole sequence is right (once per solve) |
-| widget | estimate-slider | `estimated` | `{ guess, answer, offBy, close }` — reader committed a guess |
-| widget | reflection | `saved` | `{ length }` — **never the answer's text**, which stays on the device |
+| widget | estimate-slider | `estimated` | `{ guess, answer, offBy, close }` — reader committed a guess; plus `{ confidence, calibration }` when the check asks for confidence |
+| widget | reflection | `saved` | `{ length }`, plus `{ ideasTouched, ideasTotal }` when `keys` are declared — **never the answer's text**, which stays on the device |
+| widget | contrast | `revealed` | `{}` — reader committed to the expectation and asked for reality |
+| widget | checkpoint | `rated` | `{ index, verdict, rated, open, total }` — `verdict` is `"can"` or `"not-yet"` |
+| widget | anatomy | `part_inspected` | `{ index }` — reader opened a part of the artifact |
+| widget | code-lab | `variant_run` | `{ index }` — reader ran one variant |
 | widget | tabs | `tab_changed` | `{ index }` — reader opened another variant |
 | widget | cta | `clicked` | `{ variant: "link", url }` |
 | widget | cta | `submitted` | `{ ok }` — **never the email** |

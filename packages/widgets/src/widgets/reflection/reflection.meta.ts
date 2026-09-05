@@ -26,8 +26,25 @@ export const reflectionMeta: WidgetMeta = {
       .optional()
       .describe("Characters needed before the answer can be saved. Default: 20."),
     modelAnswer: optionalContent().describe(
-      "A perspective revealed only AFTER the reader saves — not 'the' answer.",
+      "A perspective revealed only AFTER the reader saves — not 'the' answer. Its value is the reader seeing which pieces they left out, so make it concrete enough to compare against.",
     ),
+    keys: z
+      .array(
+        z.object({
+          idea: content().describe(
+            "The idea, named for the reader — 'a low hit rate wastes the cache', not 'hit rate'.",
+          ),
+          match: z
+            .string()
+            .describe(
+              "Case-insensitive regular expression deciding whether the answer touched the idea. Keep it GENEROUS and simple ('stale|invalidat|wrong') — you are checking whether an idea is present, not marking spelling, and an over-tight pattern tells an author's-eye-correct answer it missed the point.",
+            ),
+        }),
+      )
+      .optional()
+      .describe(
+        "Ideas the answer should touch. After the reader commits, each is shown hit or missed — that read-back is the whole value of writing an answer instead of recognising one. It never blocks, never scores and never leaves the device. 2–4 ideas; more turns a reflection into an exam.",
+      ),
     persist: z
       .boolean()
       .optional()

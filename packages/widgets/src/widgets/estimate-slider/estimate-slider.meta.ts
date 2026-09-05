@@ -45,6 +45,12 @@ export const estimateSliderMeta: WidgetMeta = {
       .boolean()
       .optional()
       .describe("Fire confetti when the guess lands inside the tolerance. Default: true."),
+    confidence: z
+      .boolean()
+      .optional()
+      .describe(
+        "Ask the reader how sure they are BEFORE they answer, then read the calibration back. Turn it on for the two or three checks in a guide where a misconception is likely — never on all of them (asked constantly it becomes a tic). Confident-and-wrong is the one outcome a plain check cannot surface, and the one an explanation exists to repair.",
+      ),
   }),
   example: {
     type: "estimate-slider",

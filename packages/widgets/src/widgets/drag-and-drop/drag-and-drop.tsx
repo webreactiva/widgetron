@@ -32,6 +32,8 @@ export interface DragAndDropLabels {
   instructions: React.ReactNode;
   /** Hint shown inside an empty zone once a chip is picked up. */
   dropHere: React.ReactNode;
+  /** Eyebrow over the explanation panel. */
+  why: React.ReactNode;
 }
 
 export const DEFAULT_DRAG_AND_DROP_LABELS: DragAndDropLabels = {
@@ -41,6 +43,7 @@ export const DEFAULT_DRAG_AND_DROP_LABELS: DragAndDropLabels = {
   reset: "Reset",
   instructions: "Tap an item, then tap its match — or drag it.",
   dropHere: "Drop here",
+  why: "What separates them",
 };
 
 export interface DragAndDropProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -48,6 +51,12 @@ export interface DragAndDropProps extends React.HTMLAttributes<HTMLDivElement> {
   items: DragItem[];
   /** The drop zones items get placed into. */
   targets: DropTarget[];
+  /**
+   * The rule that separates the zones, shown after checking — the payoff. A
+   * board that turns green and says nothing has tested the reader's sorting
+   * and taught them no criterion to sort by next time.
+   */
+  explanation?: React.ReactNode;
   /** Customizable / translatable strings. */
   labels?: Partial<DragAndDropLabels>;
   /** Fire confetti the moment the board becomes fully correct. Default: true. */
@@ -84,6 +93,7 @@ const TILE_IDLE =
 export function DragAndDrop({
   items,
   targets,
+  explanation,
   labels,
   celebrate = true,
   className,
@@ -355,6 +365,17 @@ export function DragAndDrop({
           )}
         >
           {allCorrect ? l.correct : l.incorrect}
+        </div>
+      )}
+
+      {checked && explanation != null && (
+        <div className="mt-3 rounded-md border border-info/30 bg-[color-mix(in_oklab,var(--info)_8%,var(--card))] p-3 text-sm motion-safe:animate-wgt-fade-up">
+          <p className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-info">
+            {l.why}
+          </p>
+          <div className="text-card-foreground/90">
+            <RichText>{explanation}</RichText>
+          </div>
         </div>
       )}
 

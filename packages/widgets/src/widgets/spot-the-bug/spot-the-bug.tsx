@@ -14,7 +14,12 @@ export interface BugLine {
   code: React.ReactNode;
   /** Whether this line contains the bug. Exactly one line should set this. */
   buggy?: boolean;
-  /** Explanation revealed when the learner finds this (buggy) line. */
+  /**
+   * Explanation revealed when the learner clicks this line. On the buggy line
+   * it is the payoff; on a plausible-but-innocent line it is where most of the
+   * teaching happens — a reader who suspects a line deserves to be told why it
+   * is fine, not just "keep looking".
+   */
   explanation?: React.ReactNode;
 }
 
@@ -23,8 +28,10 @@ export interface SpotTheBugLabels {
   prompt: React.ReactNode;
   /** Heading for the success panel (used when the buggy line has no explanation). */
   found: React.ReactNode;
-  /** Transient hint shown when the learner clicks a non-buggy line. */
+  /** Transient hint shown when the learner clicks a non-buggy line that carries no explanation of its own. */
   notHere: React.ReactNode;
+  /** Heading above a clean line's own explanation. */
+  notHereBecause: React.ReactNode;
   /** Label for the reset control shown after solving. */
   tryAgain: React.ReactNode;
   /** Success caption showing how many tries it took. */
@@ -35,6 +42,7 @@ export const DEFAULT_SPOT_THE_BUG_LABELS: SpotTheBugLabels = {
   prompt: "Click the line you think has the bug.",
   found: "You found it!",
   notHere: "Not this line — keep looking.",
+  notHereBecause: "This line is fine",
   tryAgain: "Try again",
   foundInTries: (n) => `Found it in ${n} ${n === 1 ? "try" : "tries"}`,
 };
@@ -97,6 +105,9 @@ export function SpotTheBug({
   }
 
   const buggyLine = lines.find((line) => line.buggy);
+  // A wrong click on a line the author bothered to explain teaches more than
+  // "keep looking" — the reader's suspicion is a belief worth answering.
+  const wrongExplanation = wrong !== null ? lines[wrong]?.explanation : null;
 
   return (
     <div
@@ -181,10 +192,19 @@ export function SpotTheBug({
       {!solved && wrong !== null && (
         <div
           role="status"
-          className="flex items-center gap-2 border-t border-destructive/40 bg-[color-mix(in_oklab,var(--destructive)_8%,var(--card))] p-3 text-sm text-card-foreground/90"
+          className="flex items-start gap-2 border-t border-destructive/40 bg-[color-mix(in_oklab,var(--destructive)_8%,var(--card))] p-3 text-sm text-card-foreground/90"
         >
-          <X className="size-4 shrink-0 text-destructive" />
-          <span>{l.notHere}</span>
+          <X className="mt-0.5 size-4 shrink-0 text-destructive" />
+          {wrongExplanation != null ? (
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-destructive">
+                {l.notHereBecause}
+              </p>
+              <RichText>{wrongExplanation}</RichText>
+            </div>
+          ) : (
+            <span>{l.notHere}</span>
+          )}
         </div>
       )}
 

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import type { WidgetMeta } from "@/lib/widget-meta";
-import { content } from "@/lib/widget-meta";
+import { content, optionalContent } from "@/lib/widget-meta";
 
 export const dragAndDropMeta: WidgetMeta = {
   version: 1,
@@ -30,6 +30,9 @@ export const dragAndDropMeta: WidgetMeta = {
       )
       .min(2)
       .describe("The drop zones items get placed into."),
+    explanation: optionalContent().describe(
+      "The RULE that separates the zones, revealed after checking. Effectively required: a board that turns green and says nothing has tested the reader's sorting and left them no criterion to sort by next time. Name the dimension ('whether staleness is acceptable'), not the answers.",
+    ),
     celebrate: z
       .boolean()
       .optional()

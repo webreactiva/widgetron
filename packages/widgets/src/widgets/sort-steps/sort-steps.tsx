@@ -19,6 +19,10 @@ export interface SortStepsItem {
 
 export interface SortStepsLabels {
   instructions: React.ReactNode;
+  /** Instruction used instead when `low`/`high` turn this into a ranking. */
+  rankInstructions: React.ReactNode;
+  /** Eyebrow over the explanation panel. */
+  why: React.ReactNode;
   check: React.ReactNode;
   correct: React.ReactNode;
   incorrect: React.ReactNode;
@@ -29,6 +33,8 @@ export interface SortStepsLabels {
 
 export const DEFAULT_SORT_STEPS_LABELS: SortStepsLabels = {
   instructions: "Put the steps in the right order, then check.",
+  rankInstructions: "Order them along the scale, then check.",
+  why: "Why this order",
   check: "Check order",
   correct: "That's the right order!",
   incorrect: "Not yet — the highlighted steps are out of place.",
@@ -43,6 +49,20 @@ export interface SortStepsProps extends React.HTMLAttributes<HTMLDivElement> {
    * reader, so authors always write the answer.
    */
   items: SortStepsItem[];
+  /**
+   * Turns the exercise into a RANKING: the items are ordered along a property
+   * rather than through time. `low` names the top of the list, `high` the
+   * bottom, so `items` still reads low → high in the correct order.
+   */
+  low?: React.ReactNode;
+  /** The bottom-of-the-list end of the ranking scale. See `low`. */
+  high?: React.ReactNode;
+  /**
+   * Why this order is the right one, shown after checking — the payoff. A
+   * check that says "not yet" and stops has spent the reader's attention and
+   * returned nothing.
+   */
+  explanation?: React.ReactNode;
   /** Fire confetti the moment the order becomes correct. Default: true. */
   celebrate?: boolean;
   /** Customizable / translatable strings. */
@@ -89,6 +109,9 @@ function scramble<T>(items: T[]): T[] {
  */
 export function SortSteps({
   items,
+  low,
+  high,
+  explanation,
   celebrate = true,
   labels,
   className,
@@ -106,6 +129,9 @@ export function SortSteps({
   const dragIndex = React.useRef<number | null>(null);
   const [dragOver, setDragOver] = React.useState<number | null>(null);
 
+  // A ranking orders items by a property (coupling, cost, risk) instead of by
+  // time; same mechanic, different question, so it only changes the framing.
+  const ranking = low != null || high != null;
   const isCorrect = order.every((item, i) => item.id === items[i]?.id);
   const misplaced = order.filter((item, i) => item.id !== items[i]?.id).length;
 
@@ -152,10 +178,17 @@ export function SortSteps({
       {...props}
     >
       <p className="text-sm text-muted-foreground">
-        <RichText>{l.instructions}</RichText>
+        <RichText>{ranking ? l.rankInstructions : l.instructions}</RichText>
       </p>
 
-      <ol className="mt-3 flex flex-col gap-2">
+      {ranking && low != null && (
+        <p className="mt-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <ChevronUp aria-hidden className="size-3.5" />
+          <RichText>{low}</RichText>
+        </p>
+      )}
+
+      <ol className={cn("flex flex-col gap-2", ranking ? "mt-1.5" : "mt-3")}>
         {order.map((item, index) => {
           const settled = checked && item.id === items[index]?.id;
           const wrong = checked && item.id !== items[index]?.id;
@@ -253,6 +286,13 @@ export function SortSteps({
         })}
       </ol>
 
+      {ranking && high != null && (
+        <p className="mt-1.5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <ChevronDown aria-hidden className="size-3.5" />
+          <RichText>{high}</RichText>
+        </p>
+      )}
+
       {checked && (
         <div
           role="status"
@@ -264,6 +304,17 @@ export function SortSteps({
           )}
         >
           <RichText>{isCorrect ? l.correct : l.incorrect}</RichText>
+        </div>
+      )}
+
+      {checked && explanation != null && (
+        <div className="mt-3 rounded-md border border-info/30 bg-[color-mix(in_oklab,var(--info)_8%,var(--card))] p-3 text-sm motion-safe:animate-wgt-fade-up">
+          <p className="mb-0.5 text-xs font-semibold uppercase tracking-wide text-info">
+            {l.why}
+          </p>
+          <div className="text-card-foreground/90">
+            <RichText>{explanation}</RichText>
+          </div>
         </div>
       )}
 

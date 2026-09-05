@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, Lightbulb } from "@/lib/icons";
+import { Check, Lightbulb, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { fireConfetti } from "@/lib/confetti";
@@ -8,12 +8,27 @@ import { useWidgetEvents } from "@/lib/use-widget-events";
 import { Button } from "@/primitives/button";
 import { RichText } from "@/primitives/rich-text";
 
+export interface ReflectionKey {
+  /** The idea, named for the reader — "a low hit rate wastes the cache". */
+  idea: React.ReactNode;
+  /**
+   * Case-insensitive regular expression that decides whether the answer
+   * touched the idea. Keep it generous and simple (`"stale|invalidat"`): you
+   * are checking whether an idea is present, not marking spelling.
+   */
+  match: string;
+}
+
 export interface ReflectionLabels {
   save: React.ReactNode;
   /** Button state once the answer is committed. */
   committed: React.ReactNode;
   saved: React.ReactNode;
   modelAnswer: React.ReactNode;
+  /** Eyebrow over the ideas panel. */
+  ideasTitle: React.ReactNode;
+  /** Note under the ideas panel, framing it as a mirror rather than a grade. */
+  ideasNote: React.ReactNode;
   placeholder: string;
   /** Accessible name for the answer box. */
   answer: string;
@@ -24,6 +39,8 @@ export const DEFAULT_REFLECTION_LABELS: ReflectionLabels = {
   committed: "Answer saved",
   saved: "Saved on this device — keep writing to change it.",
   modelAnswer: "One way to look at it",
+  ideasTitle: "Ideas your answer touched",
+  ideasNote: "Not a grade — a mirror. A missed idea is worth a second pass, not a lower score.",
   placeholder: "Write it in your own words…",
   answer: "Your answer",
 };
@@ -45,6 +62,13 @@ export interface ReflectionProps
    * compare theirs against.
    */
   modelAnswer?: React.ReactNode;
+  /**
+   * Ideas the answer should touch. After the reader commits, each one is shown
+   * as hit or missed, so they see WHICH pieces they left out — which is the
+   * whole value of writing an answer instead of recognising one. Deliberately
+   * loose: it never blocks, never scores, and a miss is an invitation.
+   */
+  keys?: ReflectionKey[];
   /** Persist the answer across visits. Default: true. */
   persist?: boolean;
   /** Fire confetti the first time the reader commits an answer. Default: true. */
@@ -72,6 +96,7 @@ export function Reflection({
   placeholder,
   minLength = 20,
   modelAnswer,
+  keys,
   persist = true,
   celebrate = true,
   labels,
@@ -105,6 +130,23 @@ export function Reflection({
 
   const ready = text.trim().length >= minLength;
 
+  /**
+   * Which ideas the answer touched. Evaluated only on commit (never per
+   * keystroke), against a bounded slice of the text, and an unparseable
+   * pattern simply counts as "not matched" rather than throwing the widget.
+   */
+  const hits = React.useMemo(() => {
+    if (!keys?.length || !committed) return [];
+    const haystack = text.slice(0, 4000);
+    return keys.map((key) => {
+      try {
+        return new RegExp(key.match, "i").test(haystack);
+      } catch {
+        return false;
+      }
+    });
+  }, [keys, committed, text]);
+
   function handleSave() {
     if (!ready) return;
     setCommitted(true);
@@ -115,8 +157,23 @@ export function Reflection({
         /* storage may be unavailable (private mode) */
       }
     }
-    // Length only — the answer itself never leaves the device.
-    emit("saved", { length: text.trim().length });
+    // Length and idea COUNTS only — the answer itself never leaves the device.
+    const touched = keys?.length
+      ? keys.filter((key) => {
+          try {
+            return new RegExp(key.match, "i").test(text.slice(0, 4000));
+          } catch {
+            return false;
+          }
+        }).length
+      : undefined;
+    emit("saved", {
+      length: text.trim().length,
+      ...(touched !== undefined && {
+        ideasTouched: touched,
+        ideasTotal: keys?.length ?? 0,
+      }),
+    });
     if (!celebratedRef.current) {
       celebratedRef.current = true;
       if (celebrate) void fireConfetti();
@@ -183,6 +240,51 @@ export function Reflection({
             >
               <RichText>{l.saved}</RichText>
             </p>
+          )}
+
+          {keys != null && keys.length > 0 && (
+            <div className="mt-3 rounded-md border border-input bg-[color-mix(in_oklab,var(--muted)_40%,var(--card))] p-3 text-sm motion-safe:animate-wgt-fade-up">
+              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <RichText>{l.ideasTitle}</RichText>
+              </p>
+              <ul className="flex flex-col gap-1.5">
+                {keys.map((key, index) => (
+                  <li
+                    key={index}
+                    data-hit={hits[index] || undefined}
+                    className="flex items-start gap-2"
+                  >
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "mt-0.5 grid size-4 shrink-0 place-items-center rounded-full",
+                        hits[index]
+                          ? "bg-success text-success-foreground"
+                          : "border border-muted-foreground/40 text-muted-foreground",
+                      )}
+                    >
+                      {hits[index] ? (
+                        <Check className="size-3" />
+                      ) : (
+                        <X className="size-3" />
+                      )}
+                    </span>
+                    <span
+                      className={cn(
+                        hits[index]
+                          ? "text-card-foreground/90"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      <RichText>{key.idea}</RichText>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <RichText>{l.ideasNote}</RichText>
+              </p>
+            </div>
           )}
 
           {modelAnswer != null && (

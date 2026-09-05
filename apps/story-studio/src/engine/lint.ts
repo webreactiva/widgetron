@@ -96,18 +96,74 @@ group(
   "checklist", "decision-tree", "drag-and-drop", "fill-in-the-blanks",
   "flashcards", "predict-output", "quiz", "spot-the-bug", "surprise",
   "sort-steps", "estimate-slider", "reflection",
+  "contrast", "checkpoint",
 );
 group(
   "Diagrams & data",
+  "anatomy",
   "compare-slider", "data-chart", "flow-diagram", "hotspots",
   "infographic", "mermaid-diagram", "draw-diagram", "scroll-stat",
   "comparison-table",
 );
-group("Reactive", "frame-stepper", "group-chat", "scrubber", "tangle-text", "terminal-sim");
+group("Reactive", "code-lab", "frame-stepper", "group-chat", "scrubber", "tangle-text", "terminal-sim");
 group("AI & personalization", "profile-gate", "profile-provider", "profile-quiz", "prompt-template");
 group("Media", "audio-clip", "figure", "video-clip", "map", "unmask-strip");
 group("Compositions", "scrollytelling", "storyline", "sticky-pan", "story-map");
 group("Conversion", "cta");
+
+
+/* -------------------------------------------------------------------------- */
+/* Pedagogy                                                                    */
+/*                                                                             */
+/* The rules above police RHYTHM — variety, cadence, prose quota. These police */
+/* whether the guide actually teaches: whether a wrong answer returns anything */
+/* to the reader, whether the checks were chosen or defaulted to, whether the  */
+/* guide ever asks for a commitment before explaining, and whether a model the */
+/* reader can move is one the author can defend. They are the machine-readable */
+/* half of `authoringGuide` in the widgets package (docs/pedagogy.md).         */
+/* -------------------------------------------------------------------------- */
+
+/** Widgets that grade a reader's answer — the "checks" of a guide. */
+const CHECK_TYPES = new Set([
+  "quiz",
+  "predict-output",
+  "estimate-slider",
+  "spot-the-bug",
+  "sort-steps",
+  "drag-and-drop",
+  "fill-in-the-blanks",
+]);
+
+/**
+ * Checks that make the reader COMMIT to an outcome before it is revealed.
+ * `contrast` counts: it gates reality behind the reader's own expectation.
+ */
+const PREDICTION_TYPES = new Set([
+  "predict-output",
+  "estimate-slider",
+  "contrast",
+]);
+
+/** Widgets that let the reader move a number and infer a relationship. */
+const MODEL_TYPES = new Set(["scrubber", "tangle-text"]);
+
+/** Rough word count of an option label, which may be a string or a node. */
+function wordsIn(value: unknown): number {
+  if (typeof value === "string") return value.trim().split(/\s+/).filter(Boolean).length;
+  return 0;
+}
+
+interface OptionLike {
+  text?: unknown;
+  correct?: unknown;
+  feedback?: unknown;
+}
+
+/** The `options` array of a quiz / predict-output screen, if it has one. */
+function optionsOf(node: WidgetNode): OptionLike[] {
+  const raw = (node.props ?? {}).options;
+  return Array.isArray(raw) ? (raw as OptionLike[]) : [];
+}
 
 interface StoryModule {
   title?: unknown;
@@ -419,6 +475,110 @@ export function lintStoryDocument(input: unknown): StoryLint {
       err(
         "persistence-collision",
         `${count} widgets share the localStorage key "${key}" — they overwrite each other's saved state`,
+      );
+    }
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Pedagogy rules                                                          */
+  /* ---------------------------------------------------------------------- */
+
+  const checks = flat.filter((f) => CHECK_TYPES.has(f.type));
+
+  // --- a wrong answer must teach. "Not quite" and nothing else spends the
+  // reader's attention and returns nothing for it, which makes the check worse
+  // than no check at all. This is the most expensive failure in the format, so
+  // it is an error, not advice. ---
+  for (const f of flat) {
+    if (f.type !== "quiz" && f.type !== "predict-output") continue;
+    const silent = optionsOf(f.node).filter(
+      (o) => o.correct !== true && o.feedback == null,
+    ).length;
+    if (silent > 0) {
+      err(
+        "wrong-answer-teaches",
+        `module ${f.moduleIndex + 1}: ${f.type} has ${silent} wrong option(s) with no feedback — name the belief behind each one ("you read [] as empty, therefore falsy"), never leave the reader with just "not quite"`,
+      );
+    }
+  }
+
+  // --- the correct option must not be identifiable by shape. When the right
+  // answer is the long hedged one and the decoys are curt, readers pick on
+  // length rather than meaning and the check stops measuring anything. ---
+  for (const f of flat) {
+    const options = optionsOf(f.node);
+    if (options.length < 2) continue;
+    const correct = options.find((o) => o.correct === true);
+    if (!correct) continue;
+    const others = options.filter((o) => o !== correct).map((o) => wordsIn(o.text));
+    const longestOther = Math.max(0, ...others);
+    const correctWords = wordsIn(correct.text);
+    if (correctWords >= 2 * longestOther && correctWords - longestOther >= 5) {
+      warn(
+        "option-shape",
+        `module ${f.moduleIndex + 1}: the correct ${f.type} option is ${correctWords} words against ${longestOther} for the longest decoy — the reader can pick it on shape; match them in word count`,
+      );
+    }
+  }
+
+  // --- mechanic variety: what you want to know about the reader picks the
+  // check. One type across the whole guide means the choice was never made. ---
+  const checkTypes = new Set(checks.map((f) => f.type));
+  if (checks.length >= 3 && checkTypes.size === 1) {
+    warn(
+      "mechanic-variety",
+      `all ${checks.length} checks are "${[...checkTypes][0]}" — pick the mechanic from what you want to know: predict-output for "does their model produce the right output", drag-and-drop for "can they tell two confusable things apart", sort-steps for "do they understand the order", reflection for "can they generate it"`,
+    );
+  }
+
+  // --- prediction before explanation: the strongest move in the format, and
+  // the one a generator most often skips. ---
+  if (checks.length >= 3 && !types.some((t) => PREDICTION_TYPES.has(t))) {
+    warn(
+      "prediction",
+      "no check asks the reader to COMMIT before the reveal (predict-output / estimate-slider / contrast) — reading an explanation feels like understanding right up until you have to predict something",
+    );
+  }
+
+  // --- consolidation: long guides need a pause, or the reader stacks new
+  // concepts on a base nobody ever checked. ---
+  if (modules.length >= 4 && !types.includes("checkpoint")) {
+    warn(
+      "checkpoint",
+      `${modules.length} modules and no checkpoint — put one every three or four modules, and make it reach BACK: a check under the thing it tests measures working memory, not retrieval`,
+    );
+  }
+
+  // --- confidence is for the two or three checks where a misconception is
+  // likely. Asked constantly it becomes a tic and readers stop reading it. ---
+  const withConfidence = flat.filter((f) => f.node.props?.confidence === true);
+  if (withConfidence.length > 3) {
+    warn(
+      "confidence-budget",
+      `${withConfidence.length} checks ask for confidence — keep it to the two or three where a misconception is likely, or the question becomes a tic`,
+    );
+  }
+
+  // --- never fabricate a model. A relationship discovered by dragging a number
+  // is believed far harder than one asserted in a paragraph, so an undefended
+  // formula teaches a falsehood efficiently. ---
+  for (const f of flat) {
+    if (!MODEL_TYPES.has(f.type)) continue;
+    if (f.node.props?.note == null) {
+      warn(
+        "honest-model",
+        `module ${f.moduleIndex + 1}: ${f.type} has no note — say where the formula comes from, or use a comparison-table instead; a model the reader can move must be one you can defend`,
+      );
+    }
+  }
+
+  // --- a contrast straight after a scored check re-reveals a gap the reader
+  // just discovered themselves, which is the weaker version of the same move. ---
+  for (let i = 1; i < flat.length; i++) {
+    if (flat[i].type === "contrast" && CHECK_TYPES.has(flat[i - 1].type)) {
+      warn(
+        "contrast-stacking",
+        `screen ${i + 1}: a contrast right after a ${flat[i - 1].type} — the check already produced the gap from the reader's own answer; put the explanation in the check's feedback instead`,
       );
     }
   }

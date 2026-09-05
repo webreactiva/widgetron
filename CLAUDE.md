@@ -21,8 +21,8 @@ pnpm workspace · Node ≥22.12 · pnpm 10.30.
 ## Library structure (`packages/widgets/src`)
 
 - `widgets/<name>/` — each widget: `<name>.tsx`, `index.ts`, `<name>.meta.ts`.
-- `primitives/` — shadcn-compatible building blocks: `button`, `icon` (universal, Iconify), `tooltip`, `rich-text` (`RichText`/`renderRich` — the markdown-agnostic text layer).
-- `lib/` — `utils` (`cn`), `i18n` (provider + `useLabels`), `formula`, `icons` (inline dependency-free control SVGs), `registry` (JSON layer), `widget-meta` (zod metadata).
+- `primitives/` — shadcn-compatible building blocks: `button`, `icon` (universal, Iconify), `tooltip`, `rich-text` (`RichText`/`renderRich` — the markdown-agnostic text layer), `confidence` (the calibration layer behind every scored widget's `confidence` prop).
+- `lib/` — `utils` (`cn`), `i18n` (provider + `useLabels`), `formula`, `icons` (inline dependency-free control SVGs), `registry` (JSON layer), `widget-meta` (zod metadata), `authoring` (the pedagogy the AI surface reasons with).
 - `styles/` — `tokens.css` (aseptic tokens + Web Reactiva brand), `theme.css` (`@theme inline` bridge + animations).
 - `locales/` — translation packs (e.g. `es.ts`).
 - `index.ts` — the public entry point (everything is exported from here).
@@ -47,7 +47,10 @@ Every widget is also addressable as a serializable node `{ type, version?, props
 Each widget carries metadata in `<name>.meta.ts` (`WidgetMeta`): `category`, `summary`, **`whenToUse`** (AI-oriented: when to pick this widget vs siblings), a zod `schema`, and a valid `example`. The registry assembles these into the MCP-ready surface:
 
 - `getWidgetManifestJSON()` — every type with `whenToUse` + JSON Schema (zod→JSON Schema) + example.
+- `getAuthoringGuideJSON()` — the **judgement** layer: source-shape → widgets, check-intent → mechanic, the composition budget, sequencing and the non-negotiables. The manifest says what you *can* emit; this says what this material actually wants. Serve both.
 - `validateWidgetNode(node)` / `validateWidgetTree(node)` — validate generated JSON (recursive, with error paths for self-correction).
+
+**Pedagogy is a first-class layer, not documentation.** The doctrine lives three ways and they must stay in sync: prose in `docs/pedagogy.md`, data in `lib/authoring.ts` (so an agent reasons with it), and a gate in `apps/story-studio/src/engine/lint.ts` (so CI enforces the checkable half). The load-bearing rules: a check's wrong options must name the belief behind them (a lint **error** — "not quite" and nothing else is worse than no check); prediction goes before explanation; the mechanic is picked by what you want to know about the reader, not defaulted to `quiz`; a model the reader can move must be one you can defend; and 4–7 distinct widgets, not a tour of the catalog.
 
 ## Adding a widget (the recipe)
 

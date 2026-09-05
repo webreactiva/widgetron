@@ -21,7 +21,9 @@ export const spotTheBugMeta: WidgetMeta = {
             .describe("Marks the line that contains the bug. Exactly one line should set this true."),
           explanation: content()
             .optional()
-            .describe("Explanation revealed when the learner clicks the buggy line."),
+            .describe(
+              "Explanation revealed when the learner clicks this line. Put one on the PLAUSIBLE WRONG lines too — a line someone would reasonably suspect deserves to be told why it is fine, and that is where most of the teaching in a spot check happens.",
+            ),
         }),
       )
       .min(2)

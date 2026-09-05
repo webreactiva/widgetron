@@ -116,6 +116,10 @@ widget edits.
 | Hotspots | annotated figure (clickable points) | ✅ |
 | GroupChat | reader-paced animated dialogue | ✅ |
 | Scrollytelling | **composition** (sticky-graphic) | ✅ |
+| Contrast | interactive (expectation → reality → why) | ✅ |
+| Checkpoint | interactive (consolidation, self-rated) | ✅ |
+| Anatomy | an artifact decomposed into clickable parts | ✅ |
+| CodeLab | reactive (runs fixed variants in a sandbox) | ✅ |
 
 > **Compositional patterns** orchestrate other widgets rather than being atomic.
 > **Scrollytelling** (sticky graphic + scroll-driven steps, IntersectionObserver,
@@ -158,6 +162,13 @@ renderWidget(node); // → <Quiz … />
   and a `sticky` node — the whole `requestScrolly` demo in the playground is one
   JSON tree.
 - `widgetManifest` lists every `{ type, version }` for tooling/prompts.
+- `getAuthoringGuideJSON()` ships the **judgement** an agent needs next to the
+  schemas: which widgets a given shape of source material wants (and which are
+  usually wrong for it), which check mechanic answers which question about the
+  reader, the composition budget, and the non-negotiables — chief among them
+  that a wrong answer has to name the belief behind it. See
+  [`docs/pedagogy.md`](docs/pedagogy.md); `story lint` enforces the checkable
+  half.
 
 The playground groups widgets by category, has a **language switch** (EN/ES)
 that toggles the i18n labels live (ready-made `esLabels` pack ships in the

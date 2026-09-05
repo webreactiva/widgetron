@@ -24,7 +24,9 @@ export const predictOutputMeta: WidgetMeta = {
             .boolean()
             .optional()
             .describe("Marks the correct prediction. Exactly one option should set this true."),
-          feedback: content().optional().describe("Per-option explanation shown after answering."),
+          feedback: content().optional().describe(
+            "Per-option explanation shown after answering. On a wrong prediction, name the model that produced it — the reader's rule is what needs rewriting, not their answer.",
+          ),
         }),
       )
       .optional()
@@ -33,6 +35,12 @@ export const predictOutputMeta: WidgetMeta = {
       .boolean()
       .optional()
       .describe("Fire confetti on a correct answer. Default: true."),
+    confidence: z
+      .boolean()
+      .optional()
+      .describe(
+        "Ask the reader how sure they are BEFORE they answer, then read the calibration back. Turn it on for the two or three checks in a guide where a misconception is likely — never on all of them (asked constantly it becomes a tic). Confident-and-wrong is the one outcome a plain check cannot surface, and the one an explanation exists to repair.",
+      ),
   }),
   example: {
     type: "predict-output",

@@ -352,3 +352,216 @@ describe("story pacing lint", () => {
     expect(result.findings[0]?.rule).toBe("root");
   });
 });
+
+/* -------------------------------------------------------------------------- */
+/* Pedagogy                                                                    */
+/* -------------------------------------------------------------------------- */
+
+const wrap = (screens: object[]) => ({
+  version: 1,
+  meta,
+  story: {
+    type: "storyline",
+    props: {
+      modules: [
+        { title: "One", screens: screens.slice(0, 3) },
+        { title: "Two", screens: screens.slice(3, 6) },
+        { title: "Three", screens: screens.slice(6) },
+      ],
+    },
+  },
+});
+
+const rulesOf = (doc: unknown) =>
+  new Set(lintStoryDocument(doc).findings.map((f) => f.rule));
+
+const quiz = (props: object) => ({ type: "quiz", props });
+
+describe("story pedagogy lint", () => {
+  it("errors when a wrong option has no feedback — 'not quite' teaches nothing", () => {
+    const doc = wrap([
+      screen("prose"),
+      quiz({
+        question: "Q?",
+        options: [
+          { text: "wrong one" },
+          { text: "right one", correct: true, feedback: "because…" },
+        ],
+      }),
+      screen("mermaid-diagram"),
+      screen("callout-box"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("checklist"),
+    ]);
+    const result = lintStoryDocument(doc);
+    expect(result.ok).toBe(false);
+    const finding = result.findings.find((f) => f.rule === "wrong-answer-teaches");
+    expect(finding?.severity).toBe("error");
+    expect(finding?.message).toMatch(/1 wrong option/);
+  });
+
+  it("accepts a quiz whose every wrong option names the belief behind it", () => {
+    const doc = wrap([
+      screen("prose"),
+      quiz({
+        question: "Q?",
+        options: [
+          { text: "wrong one", feedback: "you're thinking of X" },
+          { text: "right one", correct: true, feedback: "because…" },
+        ],
+      }),
+      screen("mermaid-diagram"),
+      screen("callout-box"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("checklist"),
+    ]);
+    expect(rulesOf(doc).has("wrong-answer-teaches")).toBe(false);
+  });
+
+  it("flags the correct option when it is visibly the longest one", () => {
+    const doc = wrap([
+      screen("prose"),
+      quiz({
+        question: "Q?",
+        options: [
+          { text: "CSS", feedback: "rarely" },
+          { text: "DNS", feedback: "rarely" },
+          {
+            text: "Backend latency, because every uncached read costs a full round trip to the database and back again",
+            correct: true,
+            feedback: "yes",
+          },
+        ],
+      }),
+      screen("mermaid-diagram"),
+      screen("callout-box"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("checklist"),
+    ]);
+    expect(rulesOf(doc).has("option-shape")).toBe(true);
+  });
+
+  it("says so when every check is the same mechanic, and when none asks for a commitment", () => {
+    const doc = wrap([
+      screen("prose"),
+      screen("quiz"),
+      screen("mermaid-diagram"),
+      screen("quiz"),
+      screen("callout-box"),
+      screen("quiz"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("checklist"),
+    ]);
+    const rules = rulesOf(doc);
+    expect(rules.has("mechanic-variety")).toBe(true);
+    expect(rules.has("prediction")).toBe(true);
+  });
+
+  it("stops asking for variety once the mechanics are actually chosen", () => {
+    const doc = wrap([
+      screen("prose"),
+      screen("quiz"),
+      screen("mermaid-diagram"),
+      screen("predict-output"),
+      screen("callout-box"),
+      screen("drag-and-drop"),
+      screen("data-chart"),
+      screen("sort-steps"),
+      screen("checklist"),
+    ]);
+    const rules = rulesOf(doc);
+    expect(rules.has("mechanic-variety")).toBe(false);
+    expect(rules.has("prediction")).toBe(false);
+  });
+
+  it("asks for a checkpoint once a guide runs long, and stops once it has one", () => {
+    const long = (extra: object[]) => ({
+      version: 1,
+      meta,
+      story: {
+        type: "storyline",
+        props: {
+          modules: [
+            { title: "One", screens: ["prose", "mermaid-diagram", "quiz"].map(screen) },
+            { title: "Two", screens: ["callout-box", "flashcards"].map(screen) },
+            { title: "Three", screens: ["data-chart", "quiz"].map(screen) },
+            { title: "Four", screens: [screen("group-chat"), ...extra] },
+          ],
+        },
+      },
+    });
+    expect(rulesOf(long([screen("checklist")])).has("checkpoint")).toBe(true);
+    expect(
+      rulesOf(long([screen("checkpoint"), screen("checklist")])).has("checkpoint"),
+    ).toBe(false);
+  });
+
+  it("keeps the confidence slider rare enough to stay meaningful", () => {
+    const sure = () => quiz({ question: "Q?", options: [], confidence: true });
+    const doc = wrap([
+      screen("prose"),
+      sure(),
+      screen("mermaid-diagram"),
+      sure(),
+      screen("callout-box"),
+      sure(),
+      screen("data-chart"),
+      sure(),
+      screen("checklist"),
+    ]);
+    expect(rulesOf(doc).has("confidence-budget")).toBe(true);
+  });
+
+  it("asks a movable model to say where its formula comes from", () => {
+    const doc = wrap([
+      screen("prose"),
+      screen("scrubber"),
+      screen("mermaid-diagram"),
+      screen("callout-box"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("checklist"),
+    ]);
+    expect(rulesOf(doc).has("honest-model")).toBe(true);
+
+    const cited = wrap([
+      screen("prose"),
+      { type: "scrubber", props: { note: "Latencies measured on the staging cluster." } },
+      screen("mermaid-diagram"),
+      screen("callout-box"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("checklist"),
+    ]);
+    expect(rulesOf(cited).has("honest-model")).toBe(false);
+  });
+
+  it("catches a contrast stacked straight onto the check that already made the point", () => {
+    const doc = wrap([
+      screen("prose"),
+      screen("quiz"),
+      screen("contrast"),
+      screen("callout-box"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("mermaid-diagram"),
+      screen("checklist"),
+    ]);
+    expect(rulesOf(doc).has("contrast-stacking")).toBe(true);
+  });
+});

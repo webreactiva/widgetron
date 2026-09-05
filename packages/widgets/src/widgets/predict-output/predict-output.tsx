@@ -6,6 +6,14 @@ import { Button } from "@/primitives/button";
 import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 import { useWidgetEvents } from "@/lib/use-widget-events";
+import {
+  CalibrationNote,
+  ConfidenceRequired,
+  ConfidenceScale,
+  calibrationOf,
+  type ConfidenceLabels,
+  type ConfidenceLevel,
+} from "@/primitives/confidence";
 import { fireConfetti } from "@/lib/confetti";
 
 export interface PredictOption {
@@ -53,8 +61,16 @@ export interface PredictOutputProps
    * shown. Exactly one option should set `correct: true`.
    */
   options?: PredictOption[];
+  /**
+   * Ask the reader how sure they are BEFORE they commit a prediction, and read
+   * the calibration back afterwards. Only meaningful with `options` (without
+   * them there is no correctness signal to calibrate against). Reach for it on
+   * the prediction that targets the misconception the guide exists to fix:
+   * confident-and-wrong is the outcome worth surfacing.
+   */
+  confidence?: boolean;
   /** Customizable / translatable strings. */
-  labels?: Partial<PredictOutputLabels>;
+  labels?: Partial<PredictOutputLabels> & Partial<ConfidenceLabels>;
   /** Fire confetti on a correct answer. Default: true. */
   celebrate?: boolean;
 }
@@ -87,6 +103,7 @@ export function PredictOutput({
   output,
   question,
   options,
+  confidence = false,
   labels,
   celebrate = true,
   className,
@@ -96,19 +113,31 @@ export function PredictOutput({
   const { ref, emit } = useWidgetEvents("predict-output");
   const [selected, setSelected] = React.useState<number | null>(null);
   const [revealed, setRevealed] = React.useState(false);
+  const [sureness, setSureness] = React.useState<ConfidenceLevel | null>(null);
 
   const hasOptions = options != null && options.length > 0;
+  // Calibration needs a right/wrong signal, so it rides on the option form
+  // only; and the confidence is staked BEFORE the prediction, never after.
+  const asksConfidence = confidence && hasOptions;
+  const locked = asksConfidence && sureness === null;
   const selectedOption =
     selected !== null && options ? options[selected] : null;
   const isCorrect = Boolean(selectedOption?.correct);
   const answered = revealed || selected !== null;
 
   function handleSelect(index: number) {
-    if (selected !== null) return;
+    if (selected !== null || locked) return;
     setSelected(index);
     setRevealed(true);
     const correct = Boolean(options?.[index]?.correct);
-    emit("answered", { index, correct });
+    emit("answered", {
+      index,
+      correct,
+      ...(sureness !== null && {
+        confidence: sureness,
+        calibration: calibrationOf(sureness, correct),
+      }),
+    });
     if (correct && celebrate) void fireConfetti();
   }
 
@@ -119,6 +148,7 @@ export function PredictOutput({
   function handleReset() {
     setSelected(null);
     setRevealed(false);
+    setSureness(null);
   }
 
   const prompt = question ?? l.question;
@@ -142,6 +172,16 @@ export function PredictOutput({
         <RichText>{prompt}</RichText>
       </p>
 
+      {asksConfidence && (
+        <ConfidenceScale
+          className="mt-4"
+          value={sureness}
+          onChange={setSureness}
+          disabled={selected !== null}
+          labels={labels}
+        />
+      )}
+
       {hasOptions ? (
         <div role="group" className="mt-4 flex flex-col gap-2">
           {options.map((option, index) => {
@@ -150,14 +190,16 @@ export function PredictOutput({
               <button
                 key={index}
                 type="button"
-                disabled={selected !== null}
+                disabled={selected !== null || locked}
                 aria-pressed={index === selected}
                 onClick={() => handleSelect(index)}
                 className={cn(
                   "group flex min-h-11 w-full items-center gap-3 rounded-md border px-4 py-2.5 text-left text-sm transition-colors",
                   "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                   status === "idle" &&
-                    "cursor-pointer border-input bg-background hover:border-ring hover:bg-accent",
+                    (locked
+                      ? "cursor-not-allowed border-input bg-background opacity-60"
+                      : "cursor-pointer border-input bg-background hover:border-ring hover:bg-accent"),
                   status === "correct" &&
                     "animate-wgt-glow border-success bg-[color-mix(in_oklab,var(--success)_12%,var(--card))] text-foreground",
                   status === "selected-wrong" &&
@@ -191,6 +233,12 @@ export function PredictOutput({
             <Button onClick={handleReveal}>{l.reveal}</Button>
           </div>
         )
+      )}
+
+      {locked && <ConfidenceRequired className="mt-2" labels={labels} />}
+
+      {selected !== null && sureness !== null && (
+        <CalibrationNote level={sureness} correct={isCorrect} labels={labels} />
       )}
 
       {hasOptions && selectedOption?.feedback && (

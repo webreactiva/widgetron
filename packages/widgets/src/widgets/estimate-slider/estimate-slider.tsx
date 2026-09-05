@@ -6,6 +6,14 @@ import { formatValue } from "@/lib/formula";
 import { useLabels, useLocale } from "@/lib/i18n";
 import { useWidgetEvents } from "@/lib/use-widget-events";
 import { Button } from "@/primitives/button";
+import {
+  CalibrationNote,
+  ConfidenceRequired,
+  ConfidenceScale,
+  calibrationOf,
+  type ConfidenceLabels,
+  type ConfidenceLevel,
+} from "@/primitives/confidence";
 import { RichText } from "@/primitives/rich-text";
 
 export interface EstimateSliderLabels {
@@ -60,8 +68,15 @@ export interface EstimateSliderProps
   source?: React.ReactNode;
   /** Fire confetti when the guess lands inside the tolerance. Default: true. */
   celebrate?: boolean;
+  /**
+   * Ask the reader how sure they are BEFORE they lock the guess in, and read
+   * the calibration back afterwards. Landing outside the tolerance counts as
+   * wrong, so a confident reader whose sense of scale is off gets told exactly
+   * that — which is the whole reason to ask for a number.
+   */
+  confidence?: boolean;
   /** Customizable / translatable strings. */
-  labels?: Partial<EstimateSliderLabels>;
+  labels?: Partial<EstimateSliderLabels> & Partial<ConfidenceLabels>;
 }
 
 /** Position of `value` along the track, clamped to 0–100 %. */
@@ -95,6 +110,7 @@ export function EstimateSlider({
   reveal,
   source,
   celebrate = true,
+  confidence = false,
   labels,
   className,
   ...props
@@ -108,6 +124,10 @@ export function EstimateSlider({
     () => initial ?? Math.round((min + max) / 2),
   );
   const [locked, setLocked] = React.useState(false);
+  const [sureness, setSureness] = React.useState<ConfidenceLevel | null>(null);
+  // The confidence is staked before the guess is committed — afterwards it is
+  // hindsight, not calibration.
+  const awaitingConfidence = confidence && sureness === null;
 
   const margin = tolerance ?? (max - min) * 0.1;
   const offBy = Math.abs(answer - guess);
@@ -117,8 +137,18 @@ export function EstimateSlider({
     `${formatValue(value, format, activeLocale)}${unit}`;
 
   function handleSubmit() {
+    if (awaitingConfidence) return;
     setLocked(true);
-    emit("estimated", { guess, answer, offBy, close: isClose });
+    emit("estimated", {
+      guess,
+      answer,
+      offBy,
+      close: isClose,
+      ...(sureness !== null && {
+        confidence: sureness,
+        calibration: calibrationOf(sureness, isClose),
+      }),
+    });
     if (isClose && celebrate) void fireConfetti();
   }
 
@@ -136,6 +166,16 @@ export function EstimateSlider({
       <p className="font-display text-lg font-semibold leading-snug @md/est:text-xl">
         <RichText>{question}</RichText>
       </p>
+
+      {confidence && (
+        <ConfidenceScale
+          className="mt-4"
+          value={sureness}
+          onChange={setSureness}
+          disabled={locked}
+          labels={labels}
+        />
+      )}
 
       {/* The guess */}
       <div className="mt-4">
@@ -223,16 +263,34 @@ export function EstimateSlider({
               <RichText>{source}</RichText>
             </p>
           )}
+
+          {sureness !== null && (
+            <CalibrationNote
+              level={sureness}
+              correct={isClose}
+              labels={labels}
+            />
+          )}
         </div>
       )}
 
-      <div className="mt-4 flex justify-end">
+      <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
+        {awaitingConfidence && !locked && (
+          <ConfidenceRequired className="mr-auto" labels={labels} />
+        )}
         {locked ? (
-          <Button variant="outline" size="sm" onClick={() => setLocked(false)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setLocked(false);
+              setSureness(null);
+            }}
+          >
             {l.tryAgain}
           </Button>
         ) : (
-          <Button size="sm" onClick={handleSubmit}>
+          <Button size="sm" onClick={handleSubmit} disabled={awaitingConfidence}>
             {l.submit}
           </Button>
         )}

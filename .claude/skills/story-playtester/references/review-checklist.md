@@ -50,6 +50,49 @@ cite it. Judge against the READER's experience, not the JSON's intent.
   content's own metaphor, not a generic score.
 - Widget set-up (cold-reader smell): the idea a quiz tests must appear on a
   PRIOR screen. A quiz answerable only by guessing = finding.
+- **The wrong answer's feedback must name the belief behind that option**, not
+  restate the right answer. "Casi, la respuesta es B" is a finding: the reader
+  learns they failed and nothing else, and the check has spent their attention
+  for nothing. `story lint` catches a *missing* feedback; only a human reading
+  it catches an *empty* one.
+- **Options readable on shape**: if the correct one is visibly the longest or
+  the only hedged one, a reader can pick it without reading. Finding.
+- If a check sets `confidence`, take the "certain + wrong" path deliberately —
+  it is the one the whole feature exists for. The calibration note must land as
+  useful ("this is the belief worth rewriting"), never as a scold. And count
+  them: more than three confidence prompts in a guide is a tic.
+- If a `code-lab` is present, RUN both variants. The outputs must actually
+  differ, and the difference must be the point the module is making — two
+  variants that print the same thing is a finding.
+- A `contrast` must be reached with its reality still hidden. If the same gap
+  was already revealed by the check just before it, that is a finding: the
+  second telling is the weaker one.
+
+## Does it teach? (the pedagogy pass)
+
+Judged over the whole read, not at one stop. The lint checks what is
+mechanical; these need a person who just read it. Full reasoning:
+`docs/pedagogy.md`.
+
+- **Was I ever wrong?** A guide the reader finishes without a single wrong
+  answer had checks too easy to be worth their attention. At least one should
+  target a belief a reader plausibly holds.
+- **Did I commit to anything before being told?** Find the first
+  `predict-output` / `estimate-slider` / `contrast` and note how far in it is.
+  If every explanation lands before any commitment, the guide is a document.
+- **Did any check reach back?** If every check sits directly under the module
+  that taught it, the guide measured working memory, not retention. One should
+  need something from two modules earlier — the `checkpoint` is the usual place.
+- **Could a widget have been a paragraph?** For each one, ask what the reader
+  would have failed to understand otherwise. No answer = finding. The reverse
+  is a finding too: a paragraph doing work a widget would do better.
+- **Is any movable model undefended?** For `tangle-text` / `scrubber`, does the
+  note say where the numbers come from? A relationship the reader discovers by
+  dragging is believed harder than one asserted in prose, so an invented one is
+  the most expensive error in the guide.
+- **Would the guide be worse with the progress chrome removed?** Hide the
+  meter, stamps and lives in your head and reread. If the reason to keep going
+  was the score, the content is the problem.
 
 ## ✱ Finale (the payoff — M1/M6/M9)
 

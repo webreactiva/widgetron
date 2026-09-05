@@ -10,8 +10,12 @@ import {
   GuestReel,
   BackdropSection,
   Storyline,
+  Anatomy,
   CalloutBox,
   Checklist,
+  Checkpoint,
+  CodeLab,
+  Contrast,
   CodeDiff,
   CodeTranslation,
   ComparisonTable,
@@ -232,6 +236,8 @@ export const categories: { title: string; ids: string[] }[] = [
       "quiz",
       "flashcards",
       "checklist",
+      "checkpoint",
+      "contrast",
       "spot-the-bug",
       "decision-tree",
       "fill-in-the-blanks",
@@ -249,6 +255,7 @@ export const categories: { title: string; ids: string[] }[] = [
     ids: [
       "tangle-text",
       "scrubber",
+      "code-lab",
       "frame-stepper",
       "terminal-sim",
       "group-chat",
@@ -266,6 +273,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "compare-slider",
       "comparison-table",
       "hotspots",
+      "anatomy",
     ],
   },
   {
@@ -942,6 +950,66 @@ export const catalog: CatalogEntry[] = [
               { text: "Point the domain at the host" },
               { text: "Verify the health-check endpoint" },
             ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "checkpoint",
+    name: "Checkpoint",
+    summary:
+      "The consolidation pause: things the reader should now be able to say out loud, each self-rated. Not a to-do list (that's Checklist) and not an exam — an honest 'not yet' with somewhere to go back to is the useful answer.",
+    demos: [
+      {
+        label: "Mid-guide consolidation",
+        node: (
+          <Checkpoint
+            items={[
+              {
+                text: "Why a **low hit rate** makes a cache nearly worthless — you pay the lookup on every read and get the benefit on almost none.",
+                revisit: "Module 2, the miss path",
+              },
+              {
+                text: "What a TTL actually buys you, and what it costs in correctness.",
+                revisit: "Module 3",
+              },
+              {
+                text: "Which of your own reads tolerate stale data, and which never can.",
+              },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "contrast",
+    name: "Contrast",
+    summary:
+      "Expectation → reality → why. The move an explorable explanation rests on: a reader who never stated an expectation has nothing for reality to correct. Gated by default, so the belief is committed to before it breaks.",
+    demos: [
+      {
+        label: "What the profiler said",
+        node: (
+          <Contrast
+            expectedLabel="What the team assumed"
+            expected="The JSON parsing is what makes the endpoint slow."
+            actualLabel="What the profiler said"
+            actual="**94% of the time** was in N+1 queries. Parsing was 3 ms."
+            why="Parsing is CPU work on data already in memory; each query is a round trip. Sixty round trips beat any amount of CPU — which is why *profile before you optimize* is not a slogan, it's the only way to find this."
+            source="Measured on the product listing endpoint, 2024."
+          />
+        ),
+      },
+      {
+        label: "Ungated (after a check already made the point)",
+        node: (
+          <Contrast
+            gate={false}
+            expected="Adding people to a late project makes it ship sooner."
+            actual="It ships later — the new people cost the team more in ramp-up than they return."
+            why="Brooks's law. Communication paths grow quadratically with headcount, and the ramp-up is paid by exactly the people who were already the bottleneck."
           />
         ),
       },
@@ -1851,6 +1919,35 @@ export const catalog: CatalogEntry[] = [
     ],
   },
   {
+    id: "code-lab",
+    name: "CodeLab",
+    summary:
+      "Run the author's fixed variants and watch them differ. The reader presses Run, they can't edit — each variant executes in its own sandboxed iframe (allow-scripts only, no DOM, no same-origin, hard time budget). Prefer it to one more diagram when the mechanism can be executed faithfully.",
+    demos: [
+      {
+        label: "forEach + async, beside the fix",
+        node: (
+          <CodeLab
+            question="Why does the total come out as 0?"
+            setup={"const items = [1, 2, 3];\nconst price = async (n) => n * 10;"}
+            variants={[
+              {
+                label: "As shipped",
+                note: "Watch the value, not the error — there isn't one.",
+                code: "let total = 0;\nitems.forEach(async (i) => {\n  total += await price(i);\n});\nconsole.log(total);",
+              },
+              {
+                label: "Fixed",
+                note: "Same work, sequenced.",
+                code: "let total = 0;\nfor (const i of items) {\n  total += await price(i);\n}\nconsole.log(total);",
+              },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
     id: "scrubber",
     name: "Scrubber",
     summary:
@@ -2376,6 +2473,75 @@ console.log("C");`}
               { label: "Workspaces", cells: [true, true, true] },
               { label: "Strict dependencies", cells: [false, true, false] },
               { label: "Plug'n'Play", cells: [false, null, true] },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "anatomy",
+    name: "Anatomy",
+    summary:
+      "One text artifact decomposed into named, clickable parts — a prompt, a URL, a JSON payload, a config, a command. Hotspots does this over an image; Anatomy does it over text the reader can select and search. Put one early in nomenclature-heavy material, then never drift from the words it taught.",
+    demos: [
+      {
+        label: "A request URL (inline)",
+        node: (
+          <Anatomy
+            label="One request URL"
+            layout="inline"
+            parts={[
+              {
+                label: "Scheme",
+                text: "https://",
+                note: "Not decoration: it decides whether the query string below is encrypted in transit. On `http://` every part to the right is readable by anything on the path.",
+              },
+              {
+                label: "Host",
+                text: "api.example.com",
+                note: "What DNS resolves and what the TLS certificate must match. A mismatch here is the error people misread as 'the API is down'.",
+              },
+              {
+                label: "Path",
+                text: "/v2/products/42",
+                note: "The resource. `v2` is in the path rather than a header because it has to be cacheable — a CDN keys on the URL, not on your headers.",
+              },
+              {
+                label: "Query string",
+                text: "?fields=price,stock",
+                note: "Changes the response body, so it is part of the cache key. This is where a well-meaning `?t=1699` cache-buster quietly gives every reader their own cache entry.",
+              },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "A system prompt (lines)",
+        node: (
+          <Anatomy
+            label="A production system prompt"
+            parts={[
+              {
+                label: "Role",
+                text: "You are a release engineer for a Node monorepo.",
+                note: "Sets the frame. Vague roles ('you are a helpful assistant') buy nothing — the specific one is what makes the model reject work outside it.",
+              },
+              {
+                label: "Constraints",
+                text: "Never touch package-lock.json by hand. Never push to main.",
+                note: "Written as **nevers**, not preferences. A constraint the model can weigh against other goals is a suggestion.",
+              },
+              {
+                label: "Examples",
+                text: "GOOD: `pnpm -w up -L`  ·  BAD: editing the lockfile",
+                note: "Does most of the real work. One contrasting pair usually beats three paragraphs of description.",
+              },
+              {
+                label: "Output contract",
+                text: "Reply with the commands only, one per line.",
+                note: "The part people leave out, and the reason they end up parsing prose downstream.",
+              },
             ]}
           />
         ),

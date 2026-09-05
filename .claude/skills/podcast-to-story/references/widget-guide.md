@@ -5,6 +5,14 @@ come from `pnpm story manifest` (always dump it — it is the source of truth);
 this file is the *judgment* layer: what signal in a transcript maps to which
 widget, and how to keep a guide varied.
 
+Two companions, both machine-readable, both worth dumping before you write:
+
+- `pnpm story guide` — the library's own pedagogy as data (`getAuthoringGuideJSON()`):
+  source-shape → widgets, check-intent → mechanic, the composition budget, the
+  sequencing rules and the non-negotiables. Prose version: [`docs/pedagogy.md`](../../../../docs/pedagogy.md).
+- `pnpm story lint` — enforces the checkable half. Its pedagogy rules are listed
+  under [Teaching rules](#teaching-rules-what-the-lint-enforces) below.
+
 ## Signal → widget map
 
 Scan the transcript for these signals. Every match is a candidate screen — the
@@ -18,16 +26,20 @@ guide should convert MOST of them into their matching widget, not into prose.
 | Real numbers compared or a trend | `data-chart` | Only with numbers actually said in the episode |
 | Code explained piece by piece | `code-translation` | THE widget for demystifying a snippet |
 | A CHANGE to code: refactor, fix, before/after | `code-diff` | Pass both full versions — it computes the diff. `notes` carry the plain-language why |
-| "What does this print/do?" | `predict-output` | Code is correct; skill = tracing |
+| "What does this print/do?" | `predict-output` | Code is correct; skill = tracing. It must come BEFORE the explanation — once the reader has read the answer, asking them to predict it is theatre. Pair it with a `code-lab` right after so they can run it |
 | "There's a mistake here" | `spot-the-bug` | Skill = finding the flawed line. Exactly ONE line sets `buggy: true` (with its `explanation` on that line) — validation rejects it otherwise |
 | A sequence of shell commands | `terminal-sim` | Literal commands + output, one per click |
 | A dialogue / two sides arguing / client-server exchange | `group-chat` | Great for dramatized moments of the episode |
-| A misconception worth confronting | `quiz` | Per-option feedback quoting the episode's reasoning |
+| A misconception worth confronting | `quiz` | Per-option feedback quoting the episode's reasoning. On the two or three where the belief runs deepest, add `confidence: true` — confident-and-wrong is the one outcome a plain check cannot surface |
+| A belief the episode BREAKS — "everyone thinks X, actually Y" | `contrast` | expected → actual → why, gated so the reader commits first. `why` is not optional: without it you have a fun fact. Never right after a quiz that already made the same point |
+| An artifact with named parts (a prompt, a URL, a config, a JSON payload, a command) | `anatomy` | The parts assemble into the real artifact, clickable, one note each. Quote it VERBATIM. Put it early in jargon-heavy material, then never drift from the words it taught |
+| A bug beside its fix, or two strategies over the same input | `code-lab` | The reader RUNS both and compares the output — sandboxed iframe, no DOM, no network. Prefer it to one more diagram when the mechanism can be executed in a few lines. `setup` holds everything the variants share |
+| The end of a stretch where several ideas have stacked up | `checkpoint` | Things the reader should now be able to SAY, self-rated, each with somewhere to go back to. One every three or four modules; make at least one item reach back two modules |
 | Recall of a sentence/definition with exact wording | `fill-in-the-blanks` | Blanks inside the real sentence |
-| Items that belong to categories | `drag-and-drop` | Classification as the lesson |
-| An ordered procedure whose ORDER is the lesson | `sort-steps` | The reader rebuilds the sequence; author writes `items` already correct |
-| A counter-intuitive NUMBER the reader will get wrong | `estimate-slider` | They guess on a slider, commit, then see the real value. Only with a number actually said |
-| A question only the reader can answer (their code, their week) | `reflection` | Open answer, saved on their device; `modelAnswer` appears only after they commit. One or two per guide, at a module's close |
+| Items that belong to categories | `drag-and-drop` | Classification as the lesson. `explanation` must name the DIMENSION that separates the zones — a board that turns green and says nothing leaves no criterion for next time |
+| An ordered procedure whose ORDER is the lesson | `sort-steps` | The reader rebuilds the sequence; author writes `items` already correct. `explanation` carries the why. With `low`/`high` it becomes a RANKING — ordering by a property (coupling, cost, risk) instead of by time |
+| A counter-intuitive NUMBER the reader will get wrong | `estimate-slider` | They guess on a slider, commit, then see the real value. Only with a number actually said. `confidence: true` when their sense of scale is the thing being corrected |
+| A question only the reader can answer (their code, their week) | `reflection` | Open answer, saved on their device; `modelAnswer` appears only after they commit. One or two per guide, at a module's close. Add `keys` (2–4 ideas + a generous regex each) so they see which pieces they left out — that read-back is the point |
 | "It depends" advice | `decision-tree` | Different paths → different recommendations |
 | Several options weighed across the same criteria | `comparison-table` | Booleans → check/cross, values verbatim; `highlight` the recommended column |
 | The same lesson in several equivalent forms (npm/pnpm/yarn, JS/TS) | `tabs` | Panels hold any widget. Never for content everyone must read — what is closed is invisible |
@@ -101,6 +113,48 @@ elsewhere), `frame-stepper` boxes, and the standalone `icon` widget.
   are occasional beats (a couple across a whole guide, at most one `decode`).
   Reach for `section-header` for a normal titled heading — a guide where every
   module opens with an animated headline reads as a gimmick.
+
+## Teaching rules (what the lint enforces)
+
+Variety keeps a guide readable; these decide whether it teaches. Full reasoning
+in [`docs/pedagogy.md`](../../../../docs/pedagogy.md) and, as data, in
+`pnpm story guide`.
+
+- **A wrong answer must teach — this is a lint ERROR.** Every wrong option needs
+  `feedback` that names the belief behind it ("estás leyendo `[]` como vacío y
+  por tanto falsy…"), not a restatement of the right answer. A check that says
+  "casi" and stops has spent the reader's attention and returned nothing; it is
+  worse than no check. Write the feedback FIRST, then the question — if the
+  explanation is thin, the question is not worth asking.
+- **Three real options beat four with a decoy.** If you cannot name why someone
+  would pick an option, delete it. And keep the options within a few words of
+  the same length: when the right answer is the long hedged one, readers pick on
+  shape rather than meaning (`option-shape`).
+- **Pick the mechanic from what you want to know**, not from the content's
+  shape: `predict-output` for "does their model produce the right output",
+  `drag-and-drop` for "can they tell two confusable things apart", `sort-steps`
+  for "do they understand the order", `estimate-slider` for "is their sense of
+  scale right", `reflection` for "can they generate it". A guide where every
+  check is a `quiz` defaulted rather than chose (`mechanic-variety`).
+- **At least one check asks for a commitment before the reveal** —
+  `predict-output`, `estimate-slider` or `contrast`, placed EARLY (`prediction`).
+  If the audience already believes they know the topic, open cold with one,
+  before the first explanation: start by breaking a belief, not building one.
+- **A `checkpoint` every three or four modules** (`checkpoint`), and make at
+  least one of its items reach BACK two modules. A check sitting directly under
+  what it taught measures working memory, not retrieval.
+- **`confidence: true` on two or three checks at most** (`confidence-budget`).
+  Asked constantly it becomes a tic; used sparingly it surfaces the
+  confident-and-wrong reader, which is the most useful thing a check can find.
+- **A model the reader can move must be one you can defend.** `tangle-text` and
+  `scrubber` need a `note` saying where the numbers come from (`honest-model`).
+  A relationship discovered by dragging a number is believed far harder than one
+  asserted in a paragraph, so an invented formula teaches a falsehood
+  efficiently. If you cannot defend it, use `comparison-table`.
+- **Difficulty is a budget and the setting changes.** Installing a fact should be
+  frictionless — spend the reader's working memory on the idea. Building a skill
+  should cost them something — make them produce an answer rather than pick one.
+  Same guide, opposite settings.
 
 ## Media & real-world rule (hard)
 

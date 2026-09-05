@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
  *       [--swetrix <projectId>] [--dark] [--text-scale <ratio>]
  *   pnpm --filter @webreactiva/story-studio story theme <design.md> [outDir]
  *   pnpm --filter @webreactiva/story-studio story manifest [outFile]
+ *   pnpm --filter @webreactiva/story-studio story guide [outFile]
  */
 const appRoot = fileURLToPath(new URL("..", import.meta.url));
 const [command, target, extra] = process.argv.slice(2);
@@ -136,8 +137,24 @@ async function main(): Promise<void> {
       return;
     }
 
+    case "guide": {
+      // The judgement half of the generation contract: which widgets a shape of
+      // source material wants, which check answers which question about the
+      // reader, the budget and the non-negotiables. The manifest says what CAN
+      // be emitted; this says what the material actually wants. Feed both.
+      const { getAuthoringGuideJSON } = await import("@webreactiva/widgetron");
+      const json = JSON.stringify(getAuthoringGuideJSON(), null, 2);
+      if (target) {
+        fs.writeFileSync(path.resolve(target), `${json}\n`);
+        console.log(`✔ Authoring guide → ${target}`);
+      } else {
+        console.log(json);
+      }
+      return;
+    }
+
     default:
-      usage("validate|lint|render|theme|manifest …");
+      usage("validate|lint|render|theme|manifest|guide …");
   }
 }
 

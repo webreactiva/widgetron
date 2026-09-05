@@ -7,6 +7,14 @@ import { Button } from "@/primitives/button";
 import { RichText } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 import { useWidgetEvents } from "@/lib/use-widget-events";
+import {
+  CalibrationNote,
+  ConfidenceRequired,
+  ConfidenceScale,
+  calibrationOf,
+  type ConfidenceLabels,
+  type ConfidenceLevel,
+} from "@/primitives/confidence";
 
 export interface QuizOption {
   /** The answer text shown to the learner. */
@@ -45,8 +53,15 @@ export interface QuizProps extends React.HTMLAttributes<HTMLDivElement> {
   celebrate?: boolean;
   /** Allow retrying after answering. Default: true. */
   allowRetry?: boolean;
+  /**
+   * Ask the reader how sure they are BEFORE they answer, and read the
+   * calibration back afterwards. Turn it on for the two or three checks where
+   * a misconception is likely: confident-and-wrong is the one outcome a plain
+   * check cannot surface, and the one worth the reader's attention.
+   */
+  confidence?: boolean;
   /** Customizable / translatable strings. */
-  labels?: Partial<QuizLabels>;
+  labels?: Partial<QuizLabels> & Partial<ConfidenceLabels>;
   /** Called once the learner picks an option. */
   onAnswered?: (option: QuizOption, index: number, correct: boolean) => void;
 }
@@ -77,6 +92,7 @@ export function Quiz({
   scenario,
   celebrate = true,
   allowRetry = true,
+  confidence = false,
   labels,
   onAnswered,
   className,
@@ -85,17 +101,29 @@ export function Quiz({
   const l = useLabels("quiz", DEFAULT_QUIZ_LABELS, labels);
   const { ref, emit } = useWidgetEvents("quiz");
   const [selected, setSelected] = React.useState<number | null>(null);
+  const [sureness, setSureness] = React.useState<ConfidenceLevel | null>(null);
   const answered = selected !== null;
+  // With `confidence` on, the answer path stays locked until the reader has
+  // staked a confidence — asked afterwards it is hindsight, not calibration.
+  const locked = confidence && sureness === null;
   const selectedOption = selected !== null ? options[selected] : null;
   const isCorrect = Boolean(selectedOption?.correct);
 
   function handleSelect(index: number) {
-    if (answered) return;
+    if (answered || locked) return;
     const option = options[index];
+    const correct = Boolean(option.correct);
     setSelected(index);
-    if (option.correct && celebrate) void fireConfetti();
-    emit("answered", { index, correct: Boolean(option.correct) });
-    onAnswered?.(option, index, Boolean(option.correct));
+    if (correct && celebrate) void fireConfetti();
+    emit("answered", {
+      index,
+      correct,
+      ...(sureness !== null && {
+        confidence: sureness,
+        calibration: calibrationOf(sureness, correct),
+      }),
+    });
+    onAnswered?.(option, index, correct);
   }
 
   return (
@@ -122,6 +150,16 @@ export function Quiz({
         <RichText>{question}</RichText>
       </p>
 
+      {confidence && (
+        <ConfidenceScale
+          className="mt-4"
+          value={sureness}
+          onChange={setSureness}
+          disabled={answered}
+          labels={labels}
+        />
+      )}
+
       <div role="group" aria-label={l.options} className="mt-4 flex flex-col gap-2">
         {options.map((option, index) => {
           const status = optionStatus(option, index, selected);
@@ -129,14 +167,16 @@ export function Quiz({
             <button
               key={index}
               type="button"
-              disabled={answered}
+              disabled={answered || locked}
               aria-pressed={index === selected}
               onClick={() => handleSelect(index)}
               className={cn(
                 "group flex min-h-11 w-full items-center gap-3 rounded-md border px-4 py-2.5 text-left text-sm transition-colors",
                 "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                 status === "idle" &&
-                  "cursor-pointer border-input bg-background hover:border-ring hover:bg-accent",
+                  (locked
+                    ? "cursor-not-allowed border-input bg-background opacity-60"
+                    : "cursor-pointer border-input bg-background hover:border-ring hover:bg-accent"),
                 status === "correct" &&
                   "animate-wgt-glow border-success bg-[color-mix(in_oklab,var(--success)_12%,var(--card))] text-foreground",
                 status === "selected-wrong" &&
@@ -167,6 +207,16 @@ export function Quiz({
         })}
       </div>
 
+      {locked && <ConfidenceRequired className="mt-2" labels={labels} />}
+
+      {answered && sureness !== null && (
+        <CalibrationNote
+          level={sureness}
+          correct={isCorrect}
+          labels={labels}
+        />
+      )}
+
       {answered && selectedOption?.feedback && (
         <div
           role="status"
@@ -188,7 +238,14 @@ export function Quiz({
 
       {answered && allowRetry && (
         <div className="mt-4 flex justify-end">
-          <Button variant="outline" size="sm" onClick={() => setSelected(null)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSelected(null);
+              setSureness(null);
+            }}
+          >
             <RotateCcw />
             {l.tryAgain}
           </Button>

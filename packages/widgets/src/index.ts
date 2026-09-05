@@ -17,6 +17,18 @@ export {
 } from "@/lib/i18n";
 export { esLabels } from "@/locales/es";
 
+// Authoring guide (the judgement layer of the AI surface — see docs/pedagogy.md)
+export {
+  authoringGuide,
+  getAuthoringGuideJSON,
+  authoringGuideWidgetTypes,
+  type AuthoringGuide,
+  type SourceShape,
+  type CheckMechanic,
+  type AuthoringRule,
+  type FailureMode,
+} from "@/lib/authoring";
+
 // Analytics (decoupled CustomEvent layer — see docs/analytics.md)
 export {
   WIDGETRON_EVENT,
@@ -33,6 +45,10 @@ export * from "@/primitives";
 export * from "@/widgets/quiz";
 export * from "@/widgets/flashcards";
 export * from "@/widgets/checklist";
+export * from "@/widgets/contrast";
+export * from "@/widgets/checkpoint";
+export * from "@/widgets/anatomy";
+export * from "@/widgets/code-lab";
 export * from "@/widgets/callout-box";
 export * from "@/widgets/quote";
 export * from "@/widgets/surprise";

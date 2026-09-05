@@ -12,18 +12,34 @@ Turns an episode's transcripts into a **Story Studio document**: the envelope
 `storyline` node tree. The output is a draft the user reviews in the studio
 editor (`pnpm dev:studio` → `/s/<slug>/editar`) — never publish without review.
 
-## The contract: the widget manifest
+## The contract: the manifest and the guide
 
-Before writing ANY node, dump the generation contract and keep it open:
+Before writing ANY node, dump both halves of the generation contract and keep
+them open:
 
 ```bash
 pnpm --filter @webreactiva/story-studio story manifest /tmp/widget-manifest.json
+pnpm --filter @webreactiva/story-studio story guide    /tmp/authoring-guide.json
 ```
 
-Every widget type there carries `whenToUse` (when to pick it vs siblings), its
-props as JSON Schema, and a valid `example` to imitate. Only emit types present
-in the manifest. The envelope schema lives in
+The **manifest** says what you can emit: every widget type with `whenToUse`
+(when to pick it vs siblings), its props as JSON Schema, and a valid `example`
+to imitate. Only emit types present in it. The envelope schema lives in
 `apps/story-studio/src/engine/schema.ts` (zod, documented).
+
+The **guide** says what this material actually wants: which widgets a given
+shape of source calls for (and which are usually wrong for it), which check
+mechanic answers which question about the reader, the composition budget, the
+sequencing rules and the non-negotiables. The manifest keeps a guide valid; the
+guide keeps it worth reading. Prose version: `docs/pedagogy.md`.
+
+Two of its rules decide more than the rest, so they are here too:
+
+- **A wrong answer must teach.** Every wrong option's `feedback` names the
+  belief behind it, never just "casi". `story lint` fails the build otherwise.
+- **Prediction before explanation.** At least one check makes the reader commit
+  before the reveal, early. Once they have read the answer, asking them to
+  predict it is theatre.
 
 ## Inputs
 
@@ -342,7 +358,7 @@ a real claim instead of transcribing its wrapper.)
   skips the question — gate the optional depth, never the spine.
 - **Prefer interaction over prose — and spread the catalog.** Read
   [references/widget-guide.md](references/widget-guide.md) (signal → widget
-  map + variety rules) alongside the manifest. Hard minimums: screens from at
+  map, variety rules, and the teaching rules) alongside the manifest. Hard minimums: screens from at
   least 4 widget groups; **at least one diagram widget** (`mermaid-diagram`,
   `flow-diagram`, `infographic` or `data-chart`) when the episode describes
   any structure, process or comparison; `prose`/`glossary-text` under a third
@@ -382,8 +398,9 @@ a real claim instead of transcribing its wrapper.)
 3. **Confirm the calibration**: one AskUserQuestion for whatever the brief left
    open (its picks are the recommended defaults); read the chosen format preset
    now, plus `references/writing-styles.md` when a non-default style was chosen.
-4. **Read the manifest** (command above), the envelope schema,
-   `references/widget-guide.md` (includes the icon rules), and when relevant
+4. **Read the manifest and the authoring guide** (commands above), the envelope
+   schema, `references/widget-guide.md` (includes the icon rules and the
+   teaching rules the lint enforces), and when relevant
    `references/mermaid-styles.md` (pick the right diagram style, not always a
    flowchart).
 5. **Outline** from the confirmed brief: modules with titles/subtitles + the

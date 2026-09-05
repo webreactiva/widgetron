@@ -4,6 +4,53 @@
  * pack for any language by mirroring these widget keys.
  */
 export const esLabels: Record<string, Record<string, unknown>> = {
+  confidence: {
+    question: "Antes de responder, ¿cómo de seguro estás?",
+    guessing: "Adivinando",
+    fairly: "Bastante seguro",
+    certain: "Seguro",
+    required: "Elige primero cómo de seguro estás.",
+    confidentRight: "Seguro y acertado. Dalo por sabido.",
+    confidentWrong:
+      "Estabas seguro, y no se sostiene. Esta es la creencia que merece reescribirse — lee dos veces la explicación de abajo.",
+    unsureRight: "Acertaste, pero no te fiabas. Ahora sabes que puedes.",
+    unsureWrong:
+      "Fallaste, y ya sabías que iba flojo. No hay nada que desaprender: solo esto que aprender.",
+    group: "¿Cómo de seguro estás?",
+  },
+  contrast: {
+    expected: "Lo que casi todo el mundo supone",
+    actual: "Lo que pasa en realidad",
+    why: "Por qué",
+    reveal: "Ver qué pasa en realidad",
+    gap: "Expectativa frente a realidad",
+  },
+  checkpoint: {
+    title: "Antes de seguir, deberías saber explicar",
+    hint: "Dilo en voz alta. Si no te sale en una frase, todavía no está.",
+    can: "Sé decirlo",
+    notYet: "Todavía no",
+    revisit: "Vuelve a",
+    allClear: "Todo se sostiene. Sigue.",
+    summary: (open: number, total: number) =>
+      `${open} de ${total} sin cerrar — merecen otra pasada antes del siguiente módulo.`,
+    group: "Cosas que deberías saber explicar",
+  },
+  anatomy: {
+    hint: "Toca una parte para inspeccionarla.",
+    part: "Parte",
+    empty: "Todavía no has elegido ninguna.",
+    group: "Partes de este artefacto",
+  },
+  codeLab: {
+    run: "Ejecutar",
+    rerun: "Ejecutar otra vez",
+    running: "Ejecutando…",
+    output: "Salida",
+    idle: "Ejecútalo y compruébalo.",
+    silent: "Se ejecutó sin errores — y no imprimió nada.",
+    timedOut: "Detenido: esta variante superó el tiempo permitido.",
+  },
   quiz: {
     scenario: "Escenario",
     correct: "Correcto",
@@ -100,6 +147,7 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     prompt: "Toca la línea donde crees que está el bug.",
     found: "¡Lo encontraste!",
     notHere: "En esta línea no es — sigue buscando.",
+    notHereBecause: "Esta línea está bien",
     tryAgain: "Probar de nuevo",
     foundInTries: (n: number) =>
       `Lo encontraste en ${n} ${n === 1 ? "intento" : "intentos"}`,
@@ -111,9 +159,12 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     reset: "Reiniciar",
     instructions: "Toca un elemento y luego su pareja — o arrástralo.",
     dropHere: "Suéltalo aquí",
+    why: "Qué las separa",
   },
   sortSteps: {
     instructions: "Ordena los pasos y luego comprueba.",
+    rankInstructions: "Colócalos en la escala y luego comprueba.",
+    why: "Por qué este orden",
     check: "Comprobar orden",
     correct: "¡Ese es el orden correcto!",
     incorrect: "Todavía no — los pasos marcados están fuera de sitio.",
@@ -135,6 +186,9 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     committed: "Respuesta guardada",
     saved: "Guardada en este dispositivo — sigue escribiendo para cambiarla.",
     modelAnswer: "Una forma de verlo",
+    ideasTitle: "Ideas que ha tocado tu respuesta",
+    ideasNote:
+      "No es una nota — es un espejo. Una idea que falta merece una segunda pasada, no una puntuación más baja.",
     placeholder: "Escríbelo con tus palabras…",
     answer: "Tu respuesta",
   },

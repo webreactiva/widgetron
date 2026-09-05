@@ -23,8 +23,17 @@ export const sortStepsMeta: WidgetMeta = {
       )
       .min(2)
       .describe(
-        "The steps IN THEIR CORRECT ORDER — the widget scrambles them for the reader.",
+        "The steps IN THEIR CORRECT ORDER — the widget scrambles them for the reader. With `low`/`high` this reads low → high instead of first → last.",
       ),
+    low: optionalContent().describe(
+      "Turns the exercise into a RANKING: names the property's low end, shown above the list. Use it when the items are ordered by a property (coupling, cost, risk, blast radius) rather than through time — 'which of these is most coupled' is a different and often harder question than 'what happens first'.",
+    ),
+    high: optionalContent().describe(
+      "The high end of the ranking scale, shown below the list. Set it together with `low`.",
+    ),
+    explanation: optionalContent().describe(
+      "Why this order is the right one, revealed after checking. Effectively required: a check that says 'not yet' and stops has spent the reader's attention and returned nothing. Name what decides the order, not just the order.",
+    ),
     celebrate: z
       .boolean()
       .optional()
