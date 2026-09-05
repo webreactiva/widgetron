@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render } from "@testing-library/react";
 
-import { RichText, renderRich } from "@/primitives/rich-text";
+import { RichText, renderRich, plainRich } from "@/primitives/rich-text";
 import { GlossaryProvider } from "@/widgets/glossary";
 
 describe("RichText", () => {
@@ -81,5 +81,35 @@ describe("RichText", () => {
   it("keeps [[term]] literal inside a code span", () => {
     const { container } = render(<RichText>{"use `[[term]]` syntax"}</RichText>);
     expect(container.querySelector("code")?.textContent).toBe("[[term]]");
+  });
+});
+
+describe("plainRich", () => {
+  it("strips the markers a screen reader would otherwise announce", () => {
+    expect(plainRich("**API** gateway")).toBe("API gateway");
+    expect(plainRich("run `pnpm check` first")).toBe("run pnpm check first");
+    expect(plainRich("*maybe* not")).toBe("maybe not");
+  });
+
+  it("keeps a link's text and drops its href", () => {
+    expect(plainRich("see [the docs](https://example.com)")).toBe("see the docs");
+  });
+
+  it("reduces a glossary term to the term itself", () => {
+    expect(plainRich("the [[cache]] in front")).toBe("the cache in front");
+  });
+
+  it("flattens nesting and collapses the whitespace a break would have made", () => {
+    expect(plainRich("**bold with `code`**")).toBe("bold with code");
+    expect(plainRich("one\ntwo")).toBe("one two");
+  });
+
+  it("returns the fallback for a node it cannot flatten", () => {
+    expect(plainRich(<span>hi</span>, "fallback")).toBe("fallback");
+    expect(plainRich(undefined)).toBe("");
+  });
+
+  it("joins an array of parts", () => {
+    expect(plainRich(["**a**", " and ", "`b`"])).toBe("a and b");
   });
 });

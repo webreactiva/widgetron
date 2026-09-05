@@ -10,5 +10,5 @@ export {
   type Calibration,
 } from "./confidence";
 export { Icon, type IconProps } from "./icon";
-export { RichText, renderRich, type RichTextProps } from "./rich-text";
+export { RichText, renderRich, plainRich, type RichTextProps } from "./rich-text";
 export { Tooltip, type TooltipProps } from "./tooltip";

@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useLabels } from "@/lib/i18n";
 import { useWidgetEvents } from "@/lib/use-widget-events";
-import { RichText } from "@/primitives/rich-text";
+import { RichText, plainRich } from "@/primitives/rich-text";
 
 export interface AnatomyPart {
   /** The part's NAME — the word you will keep using for it afterwards. */
@@ -141,12 +141,12 @@ export function Anatomy({
               onClick={() => select(index)}
               // The visible text is the raw fragment ("https://"), which on its
               // own tells a screen-reader user nothing about which part it is.
+              // Flattened, because an aria-label is a string: markdown markers
+              // would be announced literally.
               aria-label={
-                typeof part.label === "string" && part.text != null
-                  ? part.label
-                  : undefined
+                part.text != null ? plainRich(part.label) || undefined : undefined
               }
-              title={typeof part.label === "string" ? part.label : undefined}
+              title={plainRich(part.label) || undefined}
               className={cn(
                 "cursor-pointer rounded border border-transparent text-left transition-all",
                 "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-card",

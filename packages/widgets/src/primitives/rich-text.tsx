@@ -133,6 +133,49 @@ export function renderRich(value: React.ReactNode): React.ReactNode {
   return value;
 }
 
+/** Flatten one value, keeping whitespace intact — normalization is the caller's. */
+function flattenRich(value: React.ReactNode): string {
+  if (typeof value === "number") return String(value);
+  if (Array.isArray(value)) return value.map(flattenRich).join("");
+  if (typeof value !== "string") return "";
+
+  let rest = value;
+  let out = "";
+  while (rest.length > 0) {
+    const m = INLINE.exec(rest);
+    if (!m) {
+      out += rest;
+      break;
+    }
+    out += rest.slice(0, m.index);
+    // Groups mirror INLINE: bold · link text · href · code · italic · term.
+    const inner = m[1] ?? m[2] ?? m[4] ?? m[5] ?? m[6];
+    // Bold and italic can nest; the rest are already literal.
+    out += m[1] != null || m[5] != null ? flattenRich(inner) : (inner ?? "");
+    rest = rest.slice(m.index + m[0].length);
+  }
+  return out;
+}
+
+/**
+ * The same inline syntax as `renderRich`, flattened to plain text: markers
+ * stripped, link text kept over its href, `[[term]]` reduced to the term, and
+ * newlines collapsed to single spaces.
+ *
+ * Every place a rich string has to become a *string* needs this — an
+ * `aria-label`, a `title`, an `sr-only` description, clipboard text. Doing it
+ * by hand (`typeof x === "string" ? x : undefined`) leaks the markers, and a
+ * screen reader then announces "star star API star star", which is worse than
+ * the plain word the author meant.
+ *
+ * A node that cannot be flattened yields `fallback`; inside an array it simply
+ * contributes nothing, so one React element among strings does not discard the
+ * rest.
+ */
+export function plainRich(value: React.ReactNode, fallback = ""): string {
+  return flattenRich(value).replace(/\s+/g, " ").trim() || fallback;
+}
+
 export interface RichTextProps {
   children?: React.ReactNode;
 }

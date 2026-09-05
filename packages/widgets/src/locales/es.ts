@@ -51,6 +51,12 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     silent: "Se ejecutó sin errores — y no imprimió nada.",
     timedOut: "Detenido: esta variante superó el tiempo permitido.",
   },
+  nodeGraph: {
+    hint: "Toca un nodo para ver qué hace.",
+    structure: "Qué conecta con qué",
+    edge: (from: string, to: string, label: string) =>
+      label ? `${from} → ${to}: ${label}` : `${from} → ${to}`,
+  },
   quiz: {
     scenario: "Escenario",
     correct: "Correcto",

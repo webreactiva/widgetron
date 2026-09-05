@@ -16,6 +16,7 @@ import {
   Checkpoint,
   CodeLab,
   Contrast,
+  NodeGraph,
   CodeDiff,
   CodeTranslation,
   ComparisonTable,
@@ -274,6 +275,7 @@ export const categories: { title: string; ids: string[] }[] = [
       "comparison-table",
       "hotspots",
       "anatomy",
+      "node-graph",
     ],
   },
   {
@@ -2542,6 +2544,65 @@ console.log("C");`}
                 text: "Reply with the commands only, one per line.",
                 note: "The part people leave out, and the reason they end up parsing prose downstream.",
               },
+            ]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "node-graph",
+    name: "NodeGraph",
+    summary:
+      "A real graph: HTML boxes on a CSS grid joined by SVG arrows measured from the boxes themselves, so a wording change moves the boxes and the arrows follow. Unlike a Mermaid diagram the labels are HTML, so markdown, `code` and [[glossary]] terms survive; unlike FlowDiagram it can draw a back-edge.",
+    demos: [
+      {
+        label: "One request, with the miss path",
+        node: (
+          <NodeGraph
+            caption="One product-page request, with the cache miss drawn in."
+            cols={3}
+            nodes={[
+              { id: "browser", label: "Browser", note: "the reader", row: 1, col: 1 },
+              {
+                id: "api",
+                label: "**API**",
+                note: "your code",
+                row: 1,
+                col: 2,
+                active: true,
+                detail:
+                  "Where auth runs, and the only box that talks to both of the others. Everything downstream assumes the request got past here.",
+              },
+              { id: "cache", label: "Redis", note: "the cache", row: 1, col: 3 },
+              { id: "db", label: "Database", note: "the truth", row: 2, col: 2 },
+            ]}
+            edges={[
+              { from: "browser", to: "api", label: "GET `/product/42`" },
+              { from: "api", to: "cache", label: "GET product:42" },
+              { from: "cache", to: "db", label: "miss", dashed: true },
+              { from: "db", to: "api", label: "90 ms", active: true },
+            ]}
+          />
+        ),
+      },
+      {
+        label: "A module map (edges both ways)",
+        node: (
+          <NodeGraph
+            cols={2}
+            caption="Read off the real imports — a guessed dependency is a diagram nobody recognises."
+            nodes={[
+              { id: "registry", label: "`lib/registry`", note: "JSON → React", row: 1, col: 1, active: true },
+              { id: "widgets", label: "`widgets/*`", note: "the components", row: 1, col: 2 },
+              { id: "meta", label: "`*.meta.ts`", note: "zod + whenToUse", row: 2, col: 2 },
+              { id: "authoring", label: "`lib/authoring`", note: "the judgement", row: 2, col: 1 },
+            ]}
+            edges={[
+              { from: "registry", to: "widgets", label: "renders" },
+              { from: "widgets", to: "meta", label: "declares" },
+              { from: "meta", to: "registry", label: "assembled into" },
+              { from: "authoring", to: "registry", label: "served beside", dashed: true },
             ]}
           />
         ),

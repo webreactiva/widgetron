@@ -36,6 +36,7 @@ export interface StoryLint {
 const DIAGRAM_TYPES = new Set([
   "mermaid-diagram",
   "flow-diagram",
+  "node-graph",
   "infographic",
   "data-chart",
 ]);
@@ -100,7 +101,7 @@ group(
 );
 group(
   "Diagrams & data",
-  "anatomy",
+  "anatomy", "node-graph",
   "compare-slider", "data-chart", "flow-diagram", "hotspots",
   "infographic", "mermaid-diagram", "draw-diagram", "scroll-stat",
   "comparison-table",
@@ -268,7 +269,7 @@ export function lintStoryDocument(input: unknown): StoryLint {
   if (n > 0 && !types.some((t) => DIAGRAM_TYPES.has(t))) {
     err(
       "diagram",
-      "no diagram widget (mermaid-diagram / flow-diagram / infographic / data-chart) — add one when describing structure, process or comparison",
+      "no diagram widget (mermaid-diagram / flow-diagram / node-graph / infographic / data-chart) — add one when describing structure, process or comparison",
     );
   }
 

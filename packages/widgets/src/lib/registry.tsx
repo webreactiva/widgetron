@@ -40,6 +40,7 @@ import { frameStepperMeta } from "@/widgets/frame-stepper/frame-stepper.meta";
 import { terminalSimMeta } from "@/widgets/terminal-sim/terminal-sim.meta";
 import { groupChatMeta } from "@/widgets/group-chat/group-chat.meta";
 import { flowDiagramMeta } from "@/widgets/flow-diagram/flow-diagram.meta";
+import { nodeGraphMeta } from "@/widgets/node-graph/node-graph.meta";
 import { dataChartMeta } from "@/widgets/data-chart/data-chart.meta";
 import { infographicMeta } from "@/widgets/infographic/infographic.meta";
 import { kineticHeadlineMeta } from "@/widgets/kinetic-headline/kinetic-headline.meta";
@@ -78,6 +79,7 @@ import { Checklist } from "@/widgets/checklist";
 import { Contrast } from "@/widgets/contrast";
 import { Checkpoint } from "@/widgets/checkpoint";
 import { Anatomy } from "@/widgets/anatomy";
+import { NodeGraph } from "@/widgets/node-graph";
 import { CodeLab } from "@/widgets/code-lab";
 import { CalloutBox } from "@/widgets/callout-box";
 import { Surprise } from "@/widgets/surprise";
@@ -413,6 +415,33 @@ export const widgetRegistry: Record<string, RegistryEntry> = {
     adapt: adaptIconList("cards"),
   },
   "flow-diagram": { ...flowDiagramMeta, component: FlowDiagram },
+  "node-graph": {
+    ...nodeGraphMeta,
+    component: NodeGraph,
+    adapt: (p) => ({
+      ...p,
+      caption: asContent(p.caption),
+      nodes: Array.isArray(p.nodes)
+        ? p.nodes.map((n) =>
+            n && typeof n === "object"
+              ? {
+                  ...n,
+                  label: asContent((n as { label?: unknown }).label),
+                  note: asContent((n as { note?: unknown }).note),
+                  detail: asContent((n as { detail?: unknown }).detail),
+                }
+              : n,
+          )
+        : p.nodes,
+      edges: Array.isArray(p.edges)
+        ? p.edges.map((e) =>
+            e && typeof e === "object"
+              ? { ...e, label: asContent((e as { label?: unknown }).label) }
+              : e,
+          )
+        : p.edges,
+    }),
+  },
   "code-translation": { ...codeTranslationMeta, component: CodeTranslation },
   "tangle-text": { ...tangleTextMeta, component: TangleText },
   "frame-stepper": {

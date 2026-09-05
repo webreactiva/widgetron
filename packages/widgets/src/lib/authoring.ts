@@ -109,7 +109,7 @@ export const authoringGuide: AuthoringGuide = {
         "A request lifecycle, a CI/CD pipeline, an algorithm, a protocol, an agent loop. Ordered, with causality between the steps.",
       because:
         "The lesson is the ORDER and what each step depends on, so the reader has to reconstruct it rather than read it. Give them one concrete run before the abstract diagram — an abstraction they have no instance for is a definition, not an abstraction.",
-      reach: ["flow-diagram", "frame-stepper", "step-cards", "terminal-sim", "timeline"],
+      reach: ["flow-diagram", "node-graph", "frame-stepper", "step-cards", "terminal-sim"],
       checks: ["sort-steps", "predict-output", "quiz"],
       avoid: ["anatomy", "comparison-table", "compare-slider"],
     },
@@ -156,8 +156,8 @@ export const authoringGuide: AuthoringGuide = {
       shape: "A whole codebase",
       recognise: "A repo the reader has to be able to work in.",
       because:
-        "Their goal is to open the repo and not be lost, which makes the code the subject — not the project's history, not its test suite. Cover the module map, the core data structure everything passes around, one real execution with the actual function names, and the one or two places it could have gone another way (that is where prediction belongs). Show real code, quoted verbatim.",
-      reach: ["flow-diagram", "anatomy", "code-translation", "frame-stepper", "mermaid-diagram"],
+        "Their goal is to open the repo and not be lost, which makes the code the subject. The module map is a `node-graph` — read the edges off the real imports, both directions, rather than flattening them into a line — not the project's history, not its test suite. Cover the module map, the core data structure everything passes around, one real execution with the actual function names, and the one or two places it could have gone another way (that is where prediction belongs). Show real code, quoted verbatim.",
+      reach: ["node-graph", "anatomy", "code-translation", "frame-stepper", "mermaid-diagram"],
       checks: ["predict-output", "spot-the-bug", "sort-steps"],
       avoid: ["infographic", "scroll-stat"],
     },
@@ -165,8 +165,8 @@ export const authoringGuide: AuthoringGuide = {
       shape: "A system architecture",
       recognise: "Boxes, arrows and layers — what talks to what, and through what.",
       because:
-        "Six nodes revealed at once is a picture the reader skims. Reveal them one at a time and let each answer one question, so the diagram is built rather than shown.",
-      reach: ["scrollytelling", "flow-diagram", "mermaid-diagram", "sticky-pan", "hotspots"],
+        "Six nodes revealed at once is a picture the reader skims. Reveal them one at a time and let each answer one question, so the diagram is built rather than shown. Use `node-graph` rather than `flow-diagram` the moment the picture stops being one straight line — an architecture almost always has a back-edge, and `flow-diagram` cannot draw one.",
+      reach: ["scrollytelling", "node-graph", "mermaid-diagram", "sticky-pan", "hotspots"],
       checks: ["quiz", "sort-steps", "drag-and-drop"],
       avoid: ["code-lab", "tangle-text"],
     },

@@ -48,6 +48,7 @@ export * from "@/widgets/checklist";
 export * from "@/widgets/contrast";
 export * from "@/widgets/checkpoint";
 export * from "@/widgets/anatomy";
+export * from "@/widgets/node-graph";
 export * from "@/widgets/code-lab";
 export * from "@/widgets/callout-box";
 export * from "@/widgets/quote";

@@ -99,13 +99,13 @@ shape, which is the half people skip). The short version:
 
 | the source is… | reach for | check with |
 | --- | --- | --- |
-| a **process** — request lifecycle, CI/CD, an algorithm | `flow-diagram`, `frame-stepper`, `step-cards` | `sort-steps`, `predict-output` |
+| a **process** — request lifecycle, CI/CD, an algorithm | `flow-diagram` (straight), `node-graph` (branches/loops), `frame-stepper` | `sort-steps`, `predict-output` |
 | a **structure** — a prompt, a URL, a JSON payload, a config | `anatomy`, `hotspots`, `code-translation` | `spot-the-bug`, `drag-and-drop` |
 | a **trade-off** — REST vs GraphQL, buy vs build | `comparison-table`, `decision-tree`, `contrast` | `quiz`, `reflection` |
 | a **quantitative relationship** — latency, cost, scaling | `tangle-text`, `scrubber`, `data-chart` | `estimate-slider` |
 | a **piece of code** | `code-translation`, `code-diff`, `code-lab` | `predict-output`, `spot-the-bug` |
-| a **whole codebase** | `flow-diagram` (module map), `anatomy` (core type), `frame-stepper` (one real run) | `predict-output`, `spot-the-bug` |
-| an **architecture** | `scrollytelling`, `flow-diagram`, `mermaid-diagram` | `quiz`, `sort-steps` |
+| a **whole codebase** | `node-graph` (module map), `anatomy` (core type), `frame-stepper` (one real run) | `predict-output`, `spot-the-bug` |
+| an **architecture** | `scrollytelling`, `node-graph`, `mermaid-diagram` | `quiz`, `sort-steps` |
 | a **transformation** — source→AST, spec→code | `code-diff`, `compare-slider` | `predict-output` |
 | a **conceptual distinction** — state vs derived | `contrast`, `comparison-table` | `drag-and-drop` |
 | a **belief that does not hold** | `contrast`, `surprise` | `predict-output`, `estimate-slider` |
@@ -370,8 +370,9 @@ The mapping is below so the claim is auditable rather than asserted.
 | `l-anatomy` | **`anatomy`** | new |
 | `l-compare` | `comparison-table` | criteria × options |
 | `l-transform` | `code-diff`, `compare-slider` | A becomes B |
-| `l-flow` | `flow-diagram`, `mermaid-diagram` | movement between entities |
+| `l-flow` | **`node-graph`** | new — boxes in HTML, arrows in measured SVG |
 | `l-trace` | `frame-stepper`, `terminal-sim` | one concrete execution |
+| — | `flow-diagram` | a straight line with no real edges; not what `l-flow` is |
 | `l-state` | `frame-stepper` per-frame `badges` | make the invisible visible |
 | `l-whatif inline` | `tangle-text` | Bret Victor's *Tangle* |
 | `l-whatif` panel | `scrubber` | sliders → live outputs |
@@ -382,6 +383,31 @@ The mapping is below so the claim is auditable rather than asserted.
 | `l-checkpoint` | **`checkpoint`** | new |
 | `l-finish` | `storyline` finale | stamps, meter, outro node |
 | `confidence` | `confidence` prop on the three scored widgets | new |
+
+### One row of this table used to be wrong
+
+It first read `l-flow → flow-diagram, mermaid-diagram`, and that mapping does not
+hold. `flow-diagram` is a flex row of boxes with an arrow *icon* between them:
+no real edges, no second dimension, no way to draw the miss path back from the
+cache to the API. `mermaid-diagram` can draw the graph, but it renders every
+label inside SVG `<text>` — and SVG cannot render HTML, so those labels lose
+markdown, `code`, `[[glossary]]` tooltips, links, the theme's typography, and
+the reflow a longer translation needs. Neither is `l-flow`.
+
+What `l-flow` actually does is a **hybrid**, and that is the part worth taking:
+the nodes stay HTML on a CSS grid and only the geometry joining them is SVG,
+computed from the boxes' measured positions after layout. Wording changes move
+the boxes and the arrows follow. `node-graph` is that, with two changes —
+edge labels are HTML chips on the curve rather than SVG `<text>` (so they keep
+RichText too), and the structure is also written out as a server-rendered
+visually-hidden list, because geometry needs measurement and a screen reader
+never gets any.
+
+The general lesson, which is now a rule in the library: **put text in HTML and
+geometry in SVG.** `plainRich()` exists for the seam between them — the places
+where a rich string must become a plain one (an `aria-label`, an `sr-only`
+description) and shipping the raw markers would have a screen reader announce
+"star star API star star".
 
 Two primitives were deliberately **not** ported, and it is worth saying why
 rather than leaving a silent gap:

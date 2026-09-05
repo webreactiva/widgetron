@@ -120,6 +120,7 @@ widget edits.
 | Checkpoint | interactive (consolidation, self-rated) | ✅ |
 | Anatomy | an artifact decomposed into clickable parts | ✅ |
 | CodeLab | reactive (runs fixed variants in a sandbox) | ✅ |
+| NodeGraph | a real graph — HTML boxes, measured SVG arrows | ✅ |
 
 > **Compositional patterns** orchestrate other widgets rather than being atomic.
 > **Scrollytelling** (sticky graphic + scroll-driven steps, IntersectionObserver,
