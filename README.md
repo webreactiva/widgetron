@@ -122,6 +122,7 @@ widget edits.
 | CodeLab | reactive (runs fixed variants in a sandbox) | ✅ |
 | NodeGraph | a real graph — HTML boxes, measured SVG arrows | ✅ |
 
+
 > **Compositional patterns** orchestrate other widgets rather than being atomic.
 > **Scrollytelling** (sticky graphic + scroll-driven steps, IntersectionObserver,
 > no scroll-snap) is built. A guided **Tour** is the next composition.

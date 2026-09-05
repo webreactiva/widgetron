@@ -1,12 +1,24 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "react", "react-dom", "vite/client"],
+    "types": [
+      "node",
+      "react",
+      "react-dom",
+      "vite/client"
+    ],
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["../../packages/widgets/src/*"]
+      "@/*": [
+        "../../packages/widgets/src/*"
+      ]
     }
   },
-  "include": ["src", "vite.config.ts"]
+  "include": [
+    "src",
+    "e2e",
+    "vite.config.ts",
+    "playwright.config.ts"
+  ]
 }

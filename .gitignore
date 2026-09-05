@@ -8,3 +8,7 @@ dist
 coverage
 .vite
 .tmp-render
+
+# Playwright browser pass
+apps/playground/test-results/
+apps/playground/playwright-report/

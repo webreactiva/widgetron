@@ -17,6 +17,7 @@ pnpm workspace · Node ≥22.12 · pnpm 10.30.
 - `pnpm --filter @webreactiva/widgetron test` — run the Vitest suite.
 - `pnpm build` — build the library with tsup (ESM + d.ts into `dist/`, styles copied; published `exports` point at `dist/` via `publishConfig`, dev `exports` stay on `src/`).
 - `pnpm check` — the full guarantee: typecheck all + every test suite (widgets + story-studio, including the `story render` e2e) + library build. Run it before calling any change done.
+- `pnpm e2e` — **the browser pass**: Playwright against the real built playground (`apps/playground/e2e/`). Deliberately NOT part of `pnpm check`, because it needs a browser binary and a contributor without one would see the whole guarantee fail for a reason unrelated to their change. Run it when you touch **measurement** (anything reading `getBoundingClientRect` / `ResizeObserver`), **realms** (iframes, portals, `postMessage`, the ambient `window`), **sandboxes**, or a lazy dependency — jsdom fakes all of those, so the unit suite will happily pass on code that is broken in every browser. It has already caught two: `code-lab` hanging forever on a listener in the wrong realm, and every Mermaid diagram failing to render because the theme's `oklch()` tokens reach a colour parser that predates CSS Color 4. Set `PLAYWRIGHT_CHROMIUM_PATH` if your Chromium is not the version-pinned one.
 
 ## Library structure (`packages/widgets/src`)
 
@@ -61,4 +62,4 @@ Each widget carries metadata in `<name>.meta.ts` (`WidgetMeta`): `category`, `su
 5. `index.ts` — `export * from "@/widgets/<name>"`.
 6. `locales/es.ts` — Spanish labels (if it has UI chrome).
 7. `apps/playground/src/catalog.tsx` — add a catalog entry + demo; slot its id into a category.
-8. Verify: `pnpm -r typecheck` + `pnpm --filter @webreactiva/widgetron test`.
+8. Verify: `pnpm -r typecheck` + `pnpm --filter @webreactiva/widgetron test`. If the widget measures its own layout, owns an iframe, or lazy-loads a dependency, add a spec to `apps/playground/e2e/` and run `pnpm e2e` — those are exactly the behaviours jsdom pretends to have.

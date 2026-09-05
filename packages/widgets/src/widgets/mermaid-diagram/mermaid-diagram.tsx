@@ -110,7 +110,7 @@ function ResetIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-/** Read a resolved color from the container's computed style, with a fallback. */
+/** Read a resolved value from the container's computed style, with a fallback. */
 function readVar(
   styles: CSSStyleDeclaration,
   name: string,
@@ -118,6 +118,54 @@ function readVar(
 ): string {
   const value = styles.getPropertyValue(name).trim();
   return value || fallback;
+}
+
+/**
+ * Normalize any CSS color to `rgb()` by painting one pixel and reading it back.
+ *
+ * Mermaid's color parser predates CSS Color 4, so a token written as
+ * `oklch(94% .008 90)` — what Tailwind v4 emits and what this repo's themes are
+ * built from — makes it throw `Unsupported color format` and the whole diagram
+ * fails to render. The browser can already paint every color it understands, so
+ * it is the converter: no color library, no per-format parsing to keep current
+ * as CSS grows `lab()`, `color()` and whatever follows.
+ *
+ * Anything the browser rejects, or any environment without a 2D context, falls
+ * back — a diagram in slightly wrong colors beats no diagram at all.
+ */
+function toRenderableColor(value: string, fallback: string): string {
+  if (!value) return fallback;
+  // Formats mermaid already handles; skip the canvas round trip.
+  if (/^(#|rgb|hsl)/i.test(value)) return value;
+  if (typeof document === "undefined") return fallback;
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return fallback;
+    // An unparseable value leaves fillStyle untouched, so a sentinel says so.
+    const sentinel = "#010203";
+    ctx.fillStyle = sentinel;
+    ctx.fillStyle = value;
+    if (ctx.fillStyle === sentinel) return fallback;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+    return a === 255
+      ? `rgb(${r}, ${g}, ${b})`
+      : `rgba(${r}, ${g}, ${b}, ${(a / 255).toFixed(3)})`;
+  } catch {
+    return fallback;
+  }
+}
+
+/** Read a theme color, in a format mermaid can actually parse. */
+function readColor(
+  styles: CSSStyleDeclaration,
+  name: string,
+  fallback: string,
+): string {
+  return toRenderableColor(readVar(styles, name, fallback), fallback);
 }
 
 /**
@@ -215,12 +263,12 @@ export function MermaidDiagram({
       // Resolve theme colors from the live CSS variables on the container so
       // mermaid (which needs concrete colors, not CSS vars) matches the theme.
       const styles = getComputedStyle(container);
-      const primary = readVar(styles, "--primary", "#18181b");
-      const secondary = readVar(styles, "--secondary", "#f4f4f5");
-      const card = readVar(styles, "--card", "#ffffff");
-      const foreground = readVar(styles, "--foreground", "#18181b");
-      const border = readVar(styles, "--border", "#e4e4e7");
-      const muted = readVar(styles, "--muted", "#f4f4f5");
+      const primary = readColor(styles, "--primary", "#18181b");
+      const secondary = readColor(styles, "--secondary", "#f4f4f5");
+      const card = readColor(styles, "--card", "#ffffff");
+      const foreground = readColor(styles, "--foreground", "#18181b");
+      const border = readColor(styles, "--border", "#e4e4e7");
+      const muted = readColor(styles, "--muted", "#f4f4f5");
       const fontFamily =
         readVar(styles, "--font-sans", "") ||
         "ui-sans-serif, system-ui, -apple-system, sans-serif";
