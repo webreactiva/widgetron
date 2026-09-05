@@ -4,7 +4,7 @@ type: entity
 responsibility: The Vite app that previews every widget in a truthful device frame — the place a new widget is verified by eye.
 sources:
   - apps/playground/src
-synced: 763c574
+synced: a065d0a
 related:
   - ./widgets.md
   - ../architecture.md
@@ -31,6 +31,10 @@ its tests pass, and it is invisible here until someone adds the entry. Nothing
 enforces it — `catalog.tsx` is a hand-maintained list, not derived from the
 registry, so a widget can exist in the library and be missing from the
 playground without any check failing.
+
+`code-lab` is the demo that most needs this frame rather than a screenshot: it
+only proves anything when someone actually presses Run on both variants and
+watches the outputs differ.
 
 `openspec-peaks.ts` supplies sample data for the data-driven demos so the
 previews show something plausible instead of empty states.

@@ -5,12 +5,13 @@ responsibility: The monorepo map, the library's layers, and how a JSON node beco
 sources:
   - packages/widgets/src/index.ts
   - package.json
-synced: 763c574
+synced: a065d0a
 related:
   - ./flows/render-widget.md
   - ./concepts/ai-generation-surface.md
   - ./concepts/aseptic-tokens.md
   - ./components/lib.md
+  - ./concepts/pedagogy.md
 ---
 
 Widgetron is a library of interactive learning widgets for building "explorable
@@ -54,6 +55,12 @@ Every widget is addressable as a serializable node `{ type, version?, props }`.
 [the render flow](./flows/render-widget.md). A whole `storyline` is one node
 tree, which is the AI-generation target. The metadata that makes this legible to
 an agent is the [AI generation surface](./concepts/ai-generation-surface.md).
+
+That surface has two halves, and the second one arrived late (`683985b`). The
+manifest says what an agent *can* emit; `lib/authoring.ts` says what a given
+piece of source material actually *wants* — which widgets its shape calls for,
+which check answers which question about the reader, and what a wrong answer
+owes them. See [the pedagogy layer](./concepts/pedagogy.md).
 
 ## Build & commands (from repo root)
 

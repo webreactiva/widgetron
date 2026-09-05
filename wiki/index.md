@@ -25,18 +25,19 @@ open a page.
 - [RichText](./concepts/rich-text.md) — plain strings → formatted inline content, no markdown dependency.
 - [Analytics events](./concepts/analytics-events.md) — the decoupled `widgetron:event` CustomEvent layer.
 - [i18n & labels](./concepts/i18n-labels.md) — customizable, translatable strings across three merge layers.
+- [The pedagogy layer](./concepts/pedagogy.md) — why teaching judgement ships as data, prose and a gate, and what keeps the three in sync.
 
 ## Components
 
-- [Widgets](./components/widgets.md) — the ~61 widgets: anatomy, families, authoritative list.
+- [Widgets](./components/widgets.md) — the ~65 widgets: anatomy, families, authoritative list.
   - [Quiz](./components/widgets/quiz.md) — single-question multiple-choice with per-option feedback.
   - [CodeDiff](./components/widgets/code-diff.md) — before/after code in one unified block; the widget computes the line diff itself.
-- [Primitives](./components/primitives.md) — button, universal icon, tooltip, RichText.
-- [lib](./components/lib.md) — registry, meta, i18n, analytics, formula, icons, utils.
+- [Primitives](./components/primitives.md) — button, universal icon, tooltip, RichText, confidence calibration.
+- [lib](./components/lib.md) — registry, meta, authoring guide, i18n, analytics, formula, icons, utils.
 - [registry (shadcn distribution)](./components/registry.md) — generates a shadcn registry from the widget source so widgets install via `npx shadcn add`.
 - [Story Studio](./components/story-studio.md) — the app that turns a `.story.json` into a publishable interactive guide: engine, CLI, local editor.
 - [Playground](./components/playground.md) — previews every widget in a truthful device frame; where a new widget is verified by eye.
 
 ## Decisions
 
-- [Which assessment widget?](./decisions/assessment.md) — quiz vs flashcards vs fill-in-the-blanks vs predict-output vs spot-the-bug vs drag-and-drop vs sort-steps vs estimate-slider vs reflection vs profile-quiz.
+- [Which assessment widget?](./decisions/assessment.md) — which "check the reader" widget to reach for, and what a check owes the reader whatever the mechanic.

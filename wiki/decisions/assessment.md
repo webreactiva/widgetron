@@ -1,7 +1,7 @@
 ---
 title: Which assessment widget?
 type: decision
-options: [quiz, flashcards, fill-in-the-blanks, predict-output, spot-the-bug, sort-steps, estimate-slider, reflection, drag-and-drop, profile-quiz]
+options: [quiz, flashcards, fill-in-the-blanks, predict-output, spot-the-bug, sort-steps, estimate-slider, reflection, drag-and-drop, checkpoint, contrast, profile-quiz]
 responsibility: Which "check the reader" widget to reach for, distilled from each widget's whenToUse.
 sources:
   - packages/widgets/src/widgets/quiz/quiz.meta.ts
@@ -14,14 +14,24 @@ sources:
   - packages/widgets/src/widgets/reflection/reflection.meta.ts
   - packages/widgets/src/widgets/drag-and-drop/drag-and-drop.meta.ts
   - packages/widgets/src/widgets/profile-quiz/profile-quiz.meta.ts
-synced: 763c574
+  - packages/widgets/src/widgets/checkpoint/checkpoint.meta.ts
+  - packages/widgets/src/widgets/contrast/contrast.meta.ts
+synced: a065d0a
 related:
   - ../components/widgets/quiz.md
   - ../concepts/ai-generation-surface.md
+  - ../concepts/pedagogy.md
 ---
 
-Ten widgets check the reader; they differ by *what skill* they test. Distilled
-from each meta's `whenToUse` (the source of truth for these calls).
+Twelve widgets check the reader; they differ by *what skill* they test.
+Distilled from each meta's `whenToUse` (the source of truth for these calls).
+
+The framing matters more than the table: **the mechanic is picked by what you
+want to know about the reader**, not by the shape of the content. Ask the
+question first — "does their model produce the right output?", "can they tell
+these two apart?" — and the widget follows. A guide where every check is a
+`quiz` defaulted rather than chose, and `story lint` says so
+(`mechanic-variety`).
 
 | Widget                | Use it when…                                                        |
 | --------------------- | ------------------------------------------------------------------- |
@@ -34,6 +44,8 @@ from each meta's `whenToUse` (the source of truth for these calls).
 | **sort-steps**        | the skill is **sequence** — which step comes before which            |
 | **estimate-slider**   | the reader's **intuition about a number** is the thing to correct    |
 | **reflection**        | only the reader knows the answer — **their** codebase, their week    |
+| **checkpoint**        | consolidating — can they still **say** it, three modules later       |
+| **contrast**          | there is no question to ask, only a **belief to break**              |
 | **profile-quiz**      | you're **segmenting the reader** (level/role/goal), not grading     |
 
 ## Quick rules
@@ -47,6 +59,23 @@ from each meta's `whenToUse` (the source of truth for these calls).
   laid out in one line whose order matters → **sort-steps**.
 - Not a test at all — personalize the page → **profile-quiz** (the writer half of
   the profile family; `ProfileGate` reads what it writes).
+
+## What a check owes the reader, whatever the mechanic
+
+Being told "not quite" and nothing else spends the reader's attention and returns
+nothing for it, which makes such a check worse than no check at all. So every
+wrong option carries `feedback` that names **the belief behind it** — not a
+restatement of the right answer — and `story lint` fails the build when one does
+not (`wrong-answer-teaches`, the family's only error-level rule). The
+corresponding slots elsewhere: `explanation` on `sort-steps` and
+`drag-and-drop`, `keys` on `reflection`, and an explanation on the *innocent*
+lines of `spot-the-bug`, which is where most of that check's teaching happens.
+
+Three of them (`quiz`, `predict-output`, `estimate-slider`) also take an opt-in
+`confidence`: the reader stakes how sure they are before answering, and
+confident-and-wrong — the one quadrant worth naming — is read back at the
+finale. Two or three per guide, never all of them. See
+[the pedagogy layer](../concepts/pedagogy.md).
 
 ## The two that grade nothing
 

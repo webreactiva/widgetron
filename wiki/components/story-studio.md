@@ -10,11 +10,12 @@ sources:
   - apps/story-studio/src/engine/theme.ts
   - apps/story-studio/src/engine/srt.ts
   - apps/story-studio/src/themes
-synced: f5cb894
+synced: a065d0a
 related:
   - ../flows/story-pipeline.md
   - ../architecture.md
   - ../concepts/ai-generation-surface.md
+  - ../concepts/pedagogy.md
 ---
 
 `@webreactiva/story-studio` is where a widget library becomes a *product*: it
@@ -53,8 +54,9 @@ stops booting, with an error that points nowhere near the cause.
 
 - **`validate <slug>`** — envelope + the resolved tree against every widget's
   schema.
-- **`lint <slug> [--score]`** — the *pacing* gate: rhythm, repetition, variety.
-  See [the pipeline](../flows/story-pipeline.md) for why it is separate.
+- **`lint <slug> [--score]`** — the pacing gate (rhythm, repetition, variety)
+  **and** the pedagogy gate. See [the pipeline](../flows/story-pipeline.md) for
+  why it is separate from `validate`.
 - **`render <slug>`** — emits `dist/<slug>/`, a self-contained folder ready to
   upload anywhere.
 - **`theme <design.md>`** — compiles a design document into theme CSS
@@ -62,6 +64,10 @@ stops booting, with an error that points nowhere near the cause.
   in prose and become tokens, instead of being hand-maintained twice.
 - **`manifest`** — dumps the widget manifest, the generation contract the
   authoring skills consume.
+- **`guide`** — dumps `getAuthoringGuideJSON()`, the other half of that
+  contract: the judgement about which widgets a shape of source material wants
+  and what a check owes the reader. The skills read both, and
+  [the pedagogy layer](../concepts/pedagogy.md) says why they are separate.
 
 ## The write path is dev-only, by decision
 

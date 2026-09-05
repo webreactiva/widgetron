@@ -5,7 +5,7 @@ trigger: renderWidget(node) is called with a { type, version?, props } node — 
 responsibility: How a serializable JSON node becomes a rendered React element — registry lookup, migrate, adapt, render.
 sources:
   - packages/widgets/src/lib/registry.tsx
-synced: 763c574
+synced: a065d0a
 related:
   - ../concepts/ai-generation-surface.md
   - ../concepts/rich-text.md
@@ -50,6 +50,13 @@ adapt(props)                  icon-name → <Icon>  ·  nested node → renderWi
 Because most props are plain data and a string *is* a `ReactNode`, the JSON shape
 mirrors each widget's TypeScript props almost exactly — that is what makes the
 library authorable by hand or by an LLM.
+
+Step 3 is the step that quietly grows: `adapt` is per-entry and hand-written, so
+every prop that can hold rich content needs its own `asContent` line. A prop
+added to a widget's schema but forgotten in its `adapt` renders as raw JSON
+rather than as a widget, and nothing fails — the four widgets added in `683985b`
+each carry an `adapt` for exactly this reason, as do the new `explanation` /
+`keys` / `low` / `high` props on the widgets that already existed.
 
 ## Related surface
 

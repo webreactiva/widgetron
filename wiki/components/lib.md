@@ -4,12 +4,13 @@ type: entity
 responsibility: The non-visual core — the JSON registry, metadata, i18n, analytics, formula, icons and utilities that widgets share.
 sources:
   - packages/widgets/src/lib
-synced: 763c574
+synced: a065d0a
 related:
   - ../flows/render-widget.md
   - ../concepts/ai-generation-surface.md
   - ../concepts/analytics-events.md
   - ../concepts/i18n-labels.md
+  - ../concepts/pedagogy.md
 ---
 
 Everything under `lib/` that isn't a visible component.
@@ -19,6 +20,9 @@ Everything under `lib/` that isn't a visible component.
   the [AI generation surface](../concepts/ai-generation-surface.md).
 - **`widget-meta.ts`** — the `WidgetMeta` type plus `nodeSchema` / `content()`
   helpers for props that nest widgets.
+- **`authoring.ts`** — the teaching judgement as data (`authoringGuide`,
+  `getAuthoringGuideJSON`), served beside the manifest. Pure data, no imports:
+  see [the pedagogy layer](../concepts/pedagogy.md).
 - **`i18n.tsx`** — the labels/locale/icon-set provider. See
   [i18n & labels](../concepts/i18n-labels.md).
 - **`analytics.ts`** + **`use-widget-events.ts`** — the CustomEvent layer. See

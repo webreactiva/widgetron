@@ -122,3 +122,41 @@ comparison-table). The other three were the wiki's own toolchain.
   CONVENTIONS §Wiring the signal.
 - no CI check yet — the repo has no `.github/workflows/`; `pnpm wiki --strict` is
   the hook to hang it on when it does.
+
+## 2026-09-05 · wiki-ingest (reconcile)
+Five commits since the checkpoint; only two carried code (`683985b`, `a065d0a`)
+— the make-it-learnable pedagogy landing in the library. Thirteen pages were
+stale against it, plus one gap the wiki had no page for at all.
+
+- **new: concepts/pedagogy.md** — the load-bearing one. Why teaching judgement
+  ships in three forms (prose in `docs/`, data in `lib/authoring.ts`, a gate in
+  the story lint), why each alone fails, and the obligation that they move
+  together. Also the one guard the data has: `authoringGuideWidgetTypes()` +
+  its test, because a widget rename would otherwise leave an agent emitting a
+  type that no longer resolves and nothing would fail.
+- **flows/story-pipeline.md contradicted the code.** It said the lint checks
+  "pacing · repetition · variety (advisory)". Since `683985b` it also carries
+  eight pedagogy rules, one of which (`wrong-answer-teaches`) is an **error** and
+  fails the gate. Corrected, with why that one is the exception.
+- **decisions/assessment.md**: ten widgets → twelve (`checkpoint`, `contrast`),
+  and a new section on what a check owes the reader whatever the mechanic —
+  the wiki previously documented *which* widget to pick and nothing about the
+  feedback that makes any of them worth using.
+- **components/widgets.md**: ~61 → ~65, plus a section on the four widgets that
+  came from a gap rather than a content need, and the note that `code-lab` is
+  the only widget in the library that executes code (sandboxed iframe, parent-
+  side time budget) — a risk profile no other widget has.
+- **components/widgets/quiz.md**: the `confidence` prop, and why the options
+  stay locked until the reader stakes a level (after the answer it would be
+  hindsight, not calibration).
+- **concepts/analytics-events.md**: the layer consumes its own events —
+  `storyline` reads `calibration` and `data-module-index` off its children's
+  bubbling events, which is why the finale needed no wiring.
+- **concepts/ai-generation-surface.md**: `getAuthoringGuideJSON()` as the second
+  half of the surface. **components/story-studio.md**: the `story guide` command.
+- **components/primitives.md**: `confidence.tsx`, and the observation that a
+  primitive here is not only a visual atom.
+- reconciled with smaller additions: architecture, components/lib,
+  components/playground, concepts/i18n-labels, flows/render-widget.
+- checkpoint advanced to a065d0a.
+

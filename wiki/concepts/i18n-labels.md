@@ -6,7 +6,7 @@ responsibility: How every user-facing widget string is customizable and translat
 sources:
   - packages/widgets/src/lib/i18n.tsx
   - packages/widgets/src/locales/es.ts
-synced: 763c574
+synced: a065d0a
 related:
   - ./analytics-events.md
 ---
@@ -25,6 +25,12 @@ Label values may be strings, React nodes, or **functions** (for interpolation /
 pluralization), so a single dictionary can localize the whole library.
 
 ## Locale & icon set
+
+The three-layer merge is also what let the pedagogy chrome ship translated on
+day one: `confidence`, `contrast`, `checkpoint`, `anatomy` and `codeLab` are just
+five more namespaces in `esLabels`, and the storyline's confidence read-out is a
+label function like any other (`a065d0a`). A widget that bakes a string inline
+would have been the one gap in a Spanish guide.
 
 `WidgetronProvider` also sets a BCP-47 `locale` (used for number formatting, see
 `lib/formula`) and an `iconSet` — the default Iconify collection for bare icon

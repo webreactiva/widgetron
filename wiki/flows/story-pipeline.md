@@ -9,11 +9,12 @@ sources:
   - apps/story-studio/src/engine/validate.ts
   - apps/story-studio/src/engine/lint.ts
   - apps/story-studio/src/render/build.ts
-synced: 763c574
+synced: a065d0a
 related:
   - ../components/story-studio.md
   - ./render-widget.md
   - ../concepts/ai-generation-surface.md
+  - ../concepts/pedagogy.md
 ---
 
 Four stages, and the order is the whole point: nothing reaches a reader that was
@@ -32,7 +33,8 @@ resolveStory()             INJECT surprises + CTA into the tree    (D-004)
 validateWidgetTree()       every node against its real widget schema
       │                    ← needs the registry, so it lives in validate.ts
       ▼
-lintStoryDocument()        pacing · repetition · variety            (advisory)
+lintStoryDocument()        pacing · variety  (advisory)
+      │                    + pedagogy        (one rule fails the gate)
       │
       ▼
 story render → dist/<slug>/   static shell + hydration + theme CSS  (D-002)
@@ -63,6 +65,26 @@ authoring skill — a promise the generator made to itself. `engine/lint.ts` tur
 that promise into a check that runs in the CLI and in CI. Its categories come
 from the **live widget manifest**, so the taxonomy cannot drift away from the
 library. Errors fail the gate; warnings are advisory.
+
+## The second half: does it teach?
+
+Rhythm was not enough either. A story can pass the envelope, pass every widget
+schema and pass the pacing rules and still be a document with quizzes bolted on
+— which is exactly what a generator produces when nothing holds an opinion. Since
+`683985b` the lint carries eight pedagogy rules alongside the pacing ones
+(`mechanic-variety`, `prediction`, `checkpoint`, `option-shape`,
+`confidence-budget`, `honest-model`, `contrast-stacking`, and
+`wrong-answer-teaches`).
+
+Only the last one is an **error**: a wrong option with no feedback. That
+asymmetry is deliberate — the rest are judgement calls an author may have a
+reason to override, while a check that says "not quite" and stops has cost the
+reader attention and returned nothing. It could be an error safely because the
+existing content already satisfied it across 33 quizzes.
+
+The rules are the machine-checkable half of `authoringGuide` in the widgets
+package; the two are meant to move together. See
+[the pedagogy layer](../concepts/pedagogy.md).
 
 ## The build
 
