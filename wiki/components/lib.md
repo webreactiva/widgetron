@@ -4,7 +4,7 @@ type: entity
 responsibility: The non-visual core — the JSON registry, metadata, i18n, analytics, formula, icons and utilities that widgets share.
 sources:
   - packages/widgets/src/lib
-synced: a065d0a
+synced: d12fb89
 related:
   - ../flows/render-widget.md
   - ../concepts/ai-generation-surface.md
@@ -34,3 +34,7 @@ Everything under `lib/` that isn't a visible component.
 - **`confetti.ts`** — lazy `canvas-confetti` for completion rewards.
 - **`leaflet.ts`** — lazy Leaflet loader for the `map` widget.
 - **`utils.ts`** — `cn` (clsx + tailwind-merge).
+
+Nothing here imports a widget, and `authoring.ts` imports nothing at all — which
+is what lets the CLI dump the manifest and the authoring guide from a plain node
+process without pulling in React.

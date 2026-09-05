@@ -5,7 +5,7 @@ responsibility: The interactive learning widgets — how each is structured, the
 sources:
   - packages/widgets/src/widgets
   - packages/widgets/src/lib/registry.tsx
-synced: a065d0a
+synced: d12fb89
 related:
   - ./widgets/quiz.md
   - ./widgets/code-diff.md
@@ -14,7 +14,7 @@ related:
   - ../concepts/pedagogy.md
 ---
 
-The bulk of the library: ~65 widgets, each a self-contained folder. This is a
+The bulk of the library: ~66 widgets, each a self-contained folder. This is a
 **module** page — component pages under `widgets/` document individual units.
 
 ## Anatomy of a widget
@@ -41,8 +41,9 @@ list** of what exists.
   sticky-pan, story-map, frame-stepper, scroll-stat.
 - **Media** — audio-clip, radial-audiogram, karaoke-stage, episode-player,
   video-clip, figure.
-- **Diagrams & data** — flow-diagram, mermaid-diagram, draw-diagram,
-  decision-tree, data-chart, infographic, timeline, comparison-table.
+- **Diagrams & data** — flow-diagram, node-graph, mermaid-diagram,
+  draw-diagram, decision-tree, data-chart, infographic, timeline,
+  comparison-table.
 - **Text & motion** — kinetic-headline, decode-headline, tangle-text,
   unmask-strip, prose, section-header, callout-box, quote, code-translation,
   [code-diff](./widgets/code-diff.md), tabs.
@@ -68,6 +69,32 @@ frame, which is the only way to interrupt script in a frame we do not own
 (`code-lab.tsx`). The upstream skill ran the same mechanic inline because
 browsers block sandboxed frames on `file://`; a guide served over HTTP has no
 such constraint, so widgetron took the isolation.
+
+## Text in HTML, geometry in SVG
+
+Three diagram widgets sit on a spectrum, and the axis is *where the text lives*.
+`mermaid-diagram` is SVG all the way down: it can lay out a large graph
+automatically, and it pays for that by rendering every label inside `<text>`,
+where [RichText](../concepts/rich-text.md) does not work — no bold, no `code`,
+no `[[glossary]]` term, no link, and no reflow when a translation runs long.
+`flow-diagram` is HTML all the way down, which keeps all of that and buys it by
+being a straight line: the "arrow" between its boxes is an icon, so it cannot
+draw a back-edge at all.
+
+`node-graph` (`d12fb89`) is the hybrid, and it is the one to reach
+for when a picture has a loop or a branch and its labels matter. HTML boxes on a
+CSS grid, SVG for the arrows only, their paths computed from the boxes' measured
+positions via `ResizeObserver` — so a wording change moves the boxes and the
+arrows follow, with nothing to keep in sync by hand. Edge labels are HTML chips
+positioned on the curve rather than SVG `<text>`, and the arrowhead `<marker>`
+id is per-instance because marker ids are document-global and two graphs on one
+page would otherwise share one.
+
+Its accessibility story is the part worth copying: geometry needs measurement,
+measurement needs a browser, and a screen reader gets neither — so the graph
+also writes its structure out as a server-rendered visually-hidden list
+("Browser → API: GET /product/42"). The drawing is `aria-hidden`; it is the same
+information twice, and only one of the two survives without JavaScript.
 
 ## Deterministic initial state
 

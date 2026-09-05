@@ -160,3 +160,30 @@ stale against it, plus one gap the wiki had no page for at all.
   components/playground, concepts/i18n-labels, flows/render-widget.
 - checkpoint advanced to a065d0a.
 
+## 2026-09-05 · wiki-ingest (reconcile, follow-up)
+A review question — "and the SVG angle?" — found a wrong row in the mapping
+table the previous pass had shipped, which is the kind of error a wiki is
+supposed to catch and this one had just repeated.
+
+- **components/widgets.md**: a new section on the three diagram widgets as a
+  spectrum, where the axis is *where the text lives*. `mermaid-diagram` is SVG
+  throughout and therefore cannot hold a bold word, a `code` span or a
+  `[[glossary]]` term anywhere; `flow-diagram` is HTML throughout and therefore
+  cannot draw a back-edge; `node-graph` is the hybrid. Also its a11y pattern,
+  which is worth copying: geometry needs measurement, measurement needs a
+  browser, a screen reader gets neither — so the graph writes its structure out
+  as a server-rendered hidden list and marks the drawing `aria-hidden`.
+- **concepts/rich-text.md**: the "do NOT wrap … SVG `<text>`" exclusion was
+  documented as a footnote. It is a real cost, and it now says what the cost is
+  and what the way out is (text in HTML, geometry in SVG). Plus `plainRich`,
+  the seam helper for slots that are strings by definition.
+- **concepts/pedagogy.md**: records that the primitive mapping had `l-flow`
+  wrong, and why — a table meant to be audited should say when the audit found
+  something.
+- smaller additions: flows/render-widget (measurement happens after paint, never
+  during render), flows/story-pipeline (`node-graph` counts for the diagram
+  rule), concepts/i18n-labels (a label may be a function — how the graph's
+  screen-reader sentence localises), concepts/ai-generation-surface (examples
+  are validated *and* rendered by the suite).
+- checkpoint advanced.
+

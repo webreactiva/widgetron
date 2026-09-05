@@ -22,14 +22,14 @@ open a page.
 
 - [Aseptic tokens & theming](./concepts/aseptic-tokens.md) — semantic tokens only; the opt-in brand theme layers on top.
 - [AI generation surface](./concepts/ai-generation-surface.md) — per-widget zod meta, the manifest, recursive JSON validation.
-- [RichText](./concepts/rich-text.md) — plain strings → formatted inline content, no markdown dependency.
+- [RichText](./concepts/rich-text.md) — plain strings → formatted inline content, no markdown dependency; `plainRich` for the string seam.
 - [Analytics events](./concepts/analytics-events.md) — the decoupled `widgetron:event` CustomEvent layer.
 - [i18n & labels](./concepts/i18n-labels.md) — customizable, translatable strings across three merge layers.
 - [The pedagogy layer](./concepts/pedagogy.md) — why teaching judgement ships as data, prose and a gate, and what keeps the three in sync.
 
 ## Components
 
-- [Widgets](./components/widgets.md) — the ~65 widgets: anatomy, families, authoritative list.
+- [Widgets](./components/widgets.md) — the ~66 widgets: anatomy, families, authoritative list.
   - [Quiz](./components/widgets/quiz.md) — single-question multiple-choice with per-option feedback.
   - [CodeDiff](./components/widgets/code-diff.md) — before/after code in one unified block; the widget computes the line diff itself.
 - [Primitives](./components/primitives.md) — button, universal icon, tooltip, RichText, confidence calibration.

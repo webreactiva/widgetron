@@ -6,7 +6,7 @@ responsibility: How every user-facing widget string is customizable and translat
 sources:
   - packages/widgets/src/lib/i18n.tsx
   - packages/widgets/src/locales/es.ts
-synced: a065d0a
+synced: d12fb89
 related:
   - ./analytics-events.md
 ---
@@ -25,6 +25,10 @@ Label values may be strings, React nodes, or **functions** (for interpolation /
 pluralization), so a single dictionary can localize the whole library.
 
 ## Locale & icon set
+
+A label may also be a **function**, which is how a graph's screen-reader
+sentence localises: `nodeGraph.edge(from, to, label)` builds "Browser → API: …"
+per language rather than concatenating fragments in the component.
 
 The three-layer merge is also what let the pedagogy chrome ship translated on
 day one: `confidence`, `contrast`, `checkpoint`, `anatomy` and `codeLab` are just

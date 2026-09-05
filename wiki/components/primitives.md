@@ -4,7 +4,7 @@ type: entity
 responsibility: The shadcn-compatible building blocks every widget composes on — button, universal icon, tooltip, and the RichText text layer.
 sources:
   - packages/widgets/src/primitives
-synced: a065d0a
+synced: d12fb89
 related:
   - ../concepts/rich-text.md
   - ../concepts/pedagogy.md
@@ -19,8 +19,9 @@ conventions as the widgets (cva, `cn`, `data-slot`, Radix `Slot`/`asChild`).
   [i18n & labels](../concepts/i18n-labels.md)). Registered for the JSON layer via
   `icon.meta.ts`.
 - **`tooltip.tsx`** — Radix-based tooltip.
-- **`rich-text.tsx`** — `RichText` / `renderRich`, the markdown-agnostic text
-  layer. Its own page: [RichText](../concepts/rich-text.md).
+- **`rich-text.tsx`** — `RichText` / `renderRich` / `plainRich`, the
+  markdown-agnostic text layer and its plain-text flattener. Its own page:
+  [RichText](../concepts/rich-text.md).
 - **`confidence.tsx`** — the calibration layer behind every scored widget's
   opt-in `confidence` prop (`ConfidenceScale`, `CalibrationNote`,
   `calibrationOf`). It is here rather than in a widget because three of them

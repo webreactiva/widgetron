@@ -7,11 +7,12 @@ sources:
   - packages/widgets/src/lib/authoring.ts
   - packages/widgets/src/primitives/confidence.tsx
   - docs/pedagogy.md
-synced: a065d0a
+synced: d12fb89
 related:
   - ./ai-generation-surface.md
   - ../decisions/assessment.md
   - ../flows/story-pipeline.md
+  - ./rich-text.md
 ---
 
 The library can render sixty-odd widgets and validate every prop of every one of
@@ -117,6 +118,19 @@ The seven warnings deliberately fire on real content today (23 findings across
 those same guides: no checkpoints, no commitment before a reveal, one guide whose
 five checks are all the same mechanic). A pedagogy gate that reported clean on
 its first run would only mean it was measuring nothing.
+
+## One row of the mapping was wrong
+
+The map from the skill's 21 primitives onto the catalog claimed `l-flow` was
+covered by `flow-diagram` and `mermaid-diagram`. It was not, and the correction
+is instructive rather than clerical: `l-flow` is a **hybrid** — HTML boxes, SVG
+arrows measured from them — and neither existing widget is that. `node-graph`
+was built to close it, and `docs/pedagogy.md` now carries the corrected row plus
+why the two candidates each fail.
+
+The lesson generalises past that one widget and is now a library rule: **text in
+HTML, geometry in SVG**, with `plainRich()` for the seam where a rich string has
+to become a plain one. See [RichText](./rich-text.md).
 
 ## Provenance
 

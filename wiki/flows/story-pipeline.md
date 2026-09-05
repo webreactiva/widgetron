@@ -9,7 +9,7 @@ sources:
   - apps/story-studio/src/engine/validate.ts
   - apps/story-studio/src/engine/lint.ts
   - apps/story-studio/src/render/build.ts
-synced: a065d0a
+synced: d12fb89
 related:
   - ../components/story-studio.md
   - ./render-widget.md
@@ -85,6 +85,10 @@ existing content already satisfied it across 33 quizzes.
 The rules are the machine-checkable half of `authoringGuide` in the widgets
 package; the two are meant to move together. See
 [the pedagogy layer](../concepts/pedagogy.md).
+
+The diagram rule counts `node-graph` too — it is a diagram in the sense the rule
+means (structure made visible), and a guide that draws its architecture as a
+real graph should not be told it has no diagram.
 
 ## The build
 

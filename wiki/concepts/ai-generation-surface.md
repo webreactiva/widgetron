@@ -6,7 +6,7 @@ responsibility: How the library exposes itself to an AI agent — per-widget zod
 sources:
   - packages/widgets/src/lib/registry.tsx
   - packages/widgets/src/lib/widget-meta.ts
-synced: a065d0a
+synced: d12fb89
 related:
   - ../flows/render-widget.md
   - ../decisions/assessment.md
@@ -40,6 +40,10 @@ other widgets (a `ReactNode` in JSON form: string, node, or a list of both).
   generated JSON against the zod schema, recursively, with error paths so the
   agent can self-correct. Unknown types are flagged; types without a schema pass
   leniently.
+
+The `example` is not decoration either: `test/manifest.test.ts` validates every
+one against its own schema *and* renders it, so an example that drifts from its
+widget fails the suite rather than misleading an agent.
 
 ## The half the schemas cannot carry
 

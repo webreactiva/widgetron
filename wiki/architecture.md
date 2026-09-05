@@ -5,7 +5,7 @@ responsibility: The monorepo map, the library's layers, and how a JSON node beco
 sources:
   - packages/widgets/src/index.ts
   - package.json
-synced: a065d0a
+synced: d12fb89
 related:
   - ./flows/render-widget.md
   - ./concepts/ai-generation-surface.md
@@ -39,7 +39,8 @@ pnpm workspace, Node ≥22.12.
 
 - **`widgets/<name>/`** — each widget: `<name>.tsx`, `index.ts`, `<name>.meta.ts`.
   See [components/widgets](./components/widgets.md).
-- **`primitives/`** — shadcn-compatible building blocks. See
+- **`primitives/`** — shadcn-compatible building blocks, plus two small
+  mechanics several widgets share and none owns (RichText, confidence). See
   [components/primitives](./components/primitives.md).
 - **`lib/`** — the non-visual core (registry, i18n, analytics, formula…). See
   [components/lib](./components/lib.md).

@@ -5,7 +5,7 @@ trigger: renderWidget(node) is called with a { type, version?, props } node — 
 responsibility: How a serializable JSON node becomes a rendered React element — registry lookup, migrate, adapt, render.
 sources:
   - packages/widgets/src/lib/registry.tsx
-synced: a065d0a
+synced: d12fb89
 related:
   - ../concepts/ai-generation-surface.md
   - ../concepts/rich-text.md
@@ -57,6 +57,13 @@ added to a widget's schema but forgotten in its `adapt` renders as raw JSON
 rather than as a widget, and nothing fails — the four widgets added in `683985b`
 each carry an `adapt` for exactly this reason, as do the new `explanation` /
 `keys` / `low` / `high` props on the widgets that already existed.
+
+Some widgets need the DOM before they can finish rendering — `node-graph` cannot
+place an arrow until the boxes it joins have been laid out and measured. That
+work happens in an effect after paint, never during render, which keeps the
+render path pure and SSR-safe; the price is that the geometry appears one frame
+late, and the reason the same widget also emits a text description that does not
+depend on measurement at all.
 
 ## Related surface
 
