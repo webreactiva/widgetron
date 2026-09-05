@@ -205,3 +205,22 @@ node-graph held up. code-lab did not, and the reason generalises.
   markers until `b2bee94`.
 - checkpoint advanced.
 
+## 2026-09-05 · wiki-ingest (reconcile, the browser pass lands)
+The browser verification stopped being a thing done by hand in /tmp and became
+`pnpm e2e` in the repo. Its first run found a silent outage.
+
+- **components/playground.md**: the suite's home, and why it is here — the
+  playground was already the honest host (it builds the library and renders
+  every demo in a device-frame iframe, which is the shipping configuration, not
+  a testing trick). Names the two failure classes jsdom structurally cannot
+  reach: zero-sized boxes and a single collapsed realm. Records why `pnpm e2e`
+  sits outside `pnpm check`, and why `reuseExistingServer` is off.
+- **components/widgets.md**: every Mermaid diagram in the playground was
+  rendering nothing — `oklch()` theme tokens into a pre-Color-4 parser. The
+  widget caught the error and fell back, jsdom never fed it colours at all, so
+  no gate ever mentioned it. Noted next to mermaid's known label limitation,
+  because the two are different in kind: one is a design trade, this was an
+  outage.
+- **architecture.md**: `pnpm e2e` in the command list.
+- checkpoint advanced.
+

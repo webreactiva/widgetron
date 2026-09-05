@@ -4,7 +4,9 @@ type: entity
 responsibility: The Vite app that previews every widget in a truthful device frame — the place a new widget is verified by eye.
 sources:
   - apps/playground/src
-synced: d12fb89
+  - apps/playground/e2e
+  - apps/playground/playwright.config.ts
+synced: 5b079c2
 related:
   - ./widgets.md
   - ../architecture.md
@@ -38,6 +40,33 @@ watches the outputs differ. `node-graph` is the one that most needs the *real
 width*: its arrows are computed from the boxes' measured positions, so a
 transform-scaled preview would draw them against the wrong geometry — the same
 class of lie the iframe exists to prevent.
+
+## The browser pass lives here too
+
+`e2e/` is the suite for the checks jsdom **structurally** cannot make, and the
+playground hosts it because the playground is already the honest host: it builds
+the library, renders every widget, and puts each demo in a device-frame iframe.
+That last part is not a testing trick — it is the shipping configuration, and it
+is the only place the library's second-realm behaviour is exercised at all.
+
+Two failure classes live behind that wall, and both shipped before the suite
+existed. jsdom reports **every element as 0×0 at 0,0**, so a widget that draws
+from its own measured layout (`node-graph`) can pass its whole unit file with
+the geometry unverified. And jsdom **collapses every document into one realm**,
+so a widget that talks to a frame it owns (`code-lab`) can attach its listener
+to the wrong window and nothing anywhere says so — the run just never finishes.
+
+Its first green run also found what nothing was watching: every Mermaid diagram
+in the playground was failing to render. See
+[the widgets module page](./widgets.md) for that one.
+
+`pnpm e2e` is deliberately **outside `pnpm check`**: it needs a browser binary,
+and a contributor without one would watch the entire guarantee go red for a
+reason unrelated to their change. The trade is that it has to be reached for
+deliberately — CLAUDE.md names the triggers (measurement, realms, sandboxes,
+lazy dependencies). `PLAYWRIGHT_CHROMIUM_PATH` points it at a system Chromium;
+`reuseExistingServer` is off on purpose, because a suite that tests a build will
+otherwise happily report on the previous one.
 
 `openspec-peaks.ts` supplies sample data for the data-driven demos so the
 previews show something plausible instead of empty states.

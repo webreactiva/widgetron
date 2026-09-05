@@ -5,7 +5,7 @@ responsibility: The interactive learning widgets — how each is structured, the
 sources:
   - packages/widgets/src/widgets
   - packages/widgets/src/lib/registry.tsx
-synced: b2bee94
+synced: 5b079c2
 related:
   - ./widgets/quiz.md
   - ./widgets/code-diff.md
@@ -80,6 +80,17 @@ no `[[glossary]]` term, no link, and no reflow when a translation runs long.
 `flow-diagram` is HTML all the way down, which keeps all of that and buys it by
 being a straight line: the "arrow" between its boxes is an icon, so it cannot
 draw a back-edge at all.
+
+`mermaid-diagram` carries a second, sharper cost that went unnoticed for as long
+as nobody opened the playground: its colour parser predates CSS Color 4, and the
+themes here resolve their tokens to `oklch()` — so it threw `Unsupported color
+format` and **rendered nothing at all**. The widget caught the error and showed
+its fallback, jsdom reports no computed colours so nothing ever reached mermaid
+in the unit suite, and the result was a broken diagram that no gate mentioned
+(fixed in `5b079c2`; theme colours are now normalised by painting one pixel and
+reading the bytes back, which converts every format the browser understands
+without shipping a colour library). Worth remembering when weighing it: the
+label limitation is by design, this one was a silent outage.
 
 `node-graph` (`d12fb89`) is the hybrid, and it is the one to reach
 for when a picture has a loop or a branch and its labels matter. HTML boxes on a

@@ -5,7 +5,7 @@ responsibility: The monorepo map, the library's layers, and how a JSON node beco
 sources:
   - packages/widgets/src/index.ts
   - package.json
-synced: d12fb89
+synced: 5b079c2
 related:
   - ./flows/render-widget.md
   - ./concepts/ai-generation-surface.md
@@ -70,6 +70,10 @@ owes them. See [the pedagogy layer](./concepts/pedagogy.md).
   here are often stale).
 - `pnpm check` — typecheck all + every test suite + library build. Run before
   calling a change done.
+- `pnpm e2e` — the browser pass (Playwright, `apps/playground/e2e/`), outside
+  `check` because it needs a browser binary. It covers what jsdom fakes rather
+  than provides: measurement, realms, sandboxes, lazy deps. See
+  [components/playground](./components/playground.md).
 - `pnpm build` — tsup emits ESM + d.ts into `dist/`; published `exports` point at
   `dist/` via `publishConfig`, dev `exports` stay on `src/`.
 - `pnpm wiki` — the wiki's own health checks (`drift` · `coverage` · `lint`),
