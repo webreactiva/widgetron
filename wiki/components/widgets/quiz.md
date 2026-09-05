@@ -7,7 +7,7 @@ sources:
   - packages/widgets/src/widgets/quiz/quiz.tsx
   - packages/widgets/src/widgets/quiz/quiz.meta.ts
   - packages/widgets/src/widgets/quiz/index.ts
-synced: a065d0a
+synced: d2f4037
 related:
   - ../../decisions/assessment.md
   - ../../concepts/analytics-events.md
@@ -48,6 +48,9 @@ right answer. A check that says "not quite" and stops has spent the reader's
 attention and returned nothing.
 
 ## Confidence
+
+Its strings nest: `labels={{ confidence: {…} }}`, not merged into the quiz's own
+bag — see [i18n & labels](../../concepts/i18n-labels.md) for why.
 
 With `confidence`, the options stay **locked** until the reader picks a level.
 That ordering is the whole feature: a confidence given after the answer is

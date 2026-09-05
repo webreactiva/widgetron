@@ -16,7 +16,7 @@ sources:
   - packages/widgets/src/widgets/profile-quiz/profile-quiz.meta.ts
   - packages/widgets/src/widgets/checkpoint/checkpoint.meta.ts
   - packages/widgets/src/widgets/contrast/contrast.meta.ts
-synced: a065d0a
+synced: d2f4037
 related:
   - ../components/widgets/quiz.md
   - ../concepts/ai-generation-surface.md
@@ -70,6 +70,12 @@ not (`wrong-answer-teaches`, the family's only error-level rule). The
 corresponding slots elsewhere: `explanation` on `sort-steps` and
 `drag-and-drop`, `keys` on `reflection`, and an explanation on the *innocent*
 lines of `spot-the-bug`, which is where most of that check's teaching happens.
+
+`reflection`'s `keys` are regular expressions written by an author or a
+generator and run against the reader's own text. JavaScript cannot time a regex
+out, so a nested quantifier would freeze the tab mid-guide with no error: over-
+long patterns and that shape are refused and count as a miss, exactly as an
+unparseable one already did (`d2f4037`). A plain alternation is all a key needs.
 
 Three of them (`quiz`, `predict-output`, `estimate-slider`) also take an opt-in
 `confidence`: the reader stakes how sure they are before answering, and

@@ -9,7 +9,7 @@ sources:
   - apps/story-studio/src/engine/validate.ts
   - apps/story-studio/src/engine/lint.ts
   - apps/story-studio/src/render/build.ts
-synced: d12fb89
+synced: d2f4037
 related:
   - ../components/story-studio.md
   - ./render-widget.md
@@ -81,6 +81,12 @@ asymmetry is deliberate — the rest are judgement calls an author may have a
 reason to override, while a check that says "not quite" and stops has cost the
 reader attention and returned nothing. It could be an error safely because the
 existing content already satisfied it across 33 quizzes.
+
+A rule can only police what it can measure, and `content()` lets an option's
+text be a node with no word count — `option-shape` compared anyway and told
+authors their answer was "17 words against 0". It now skips what it cannot
+count, which is the general shape of the fix for any rule reading a `content()`
+field.
 
 The rules are the machine-checkable half of `authoringGuide` in the widgets
 package; the two are meant to move together. See

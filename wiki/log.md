@@ -224,3 +224,25 @@ The browser verification stopped being a thing done by hand in /tmp and became
 - **architecture.md**: `pnpm e2e` in the command list.
 - checkpoint advanced.
 
+## 2026-09-05 · wiki-ingest (reconcile, post-review)
+A high-effort review of the whole branch produced seven findings, all fixed in
+`d2f4037`. Three carry a lesson past the line that had it.
+
+- **concepts/i18n-labels.md**: the per-instance `labels` prop is one flat bag,
+  and that is fine only while one widget owns one pack. `confidence` is shared
+  by three widgets, and forwarding the host's whole bag let
+  `PredictOutputLabels.question` overwrite `ConfidenceLabels.question` — the
+  scale asked "What will this print?" with nothing failing. Composed packs nest
+  now. The provider path never had the bug, which is the tell that the flat bag
+  was the odd one out.
+- **components/widgets.md**: code-lab compiles rather than inlines the author's
+  code, so a syntax error reads as a syntax error instead of as a five-second
+  timeout.
+- **components/playground.md**: the e2e suite gates on same-origin failures. The
+  host allowlist it started with grew every run, and each entry was something
+  the suite had stopped watching.
+- smaller: decisions/assessment (a reflection key is a regex run against reader
+  text, and JS cannot time one out), flows/story-pipeline (a lint rule can only
+  police what it can measure), components/widgets/quiz (nested label pack).
+- checkpoint advanced.
+

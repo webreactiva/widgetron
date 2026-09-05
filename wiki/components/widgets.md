@@ -5,7 +5,7 @@ responsibility: The interactive learning widgets — how each is structured, the
 sources:
   - packages/widgets/src/widgets
   - packages/widgets/src/lib/registry.tsx
-synced: 5b079c2
+synced: d2f4037
 related:
   - ./widgets/quiz.md
   - ./widgets/code-diff.md
@@ -106,6 +106,14 @@ measurement needs a browser, and a screen reader gets neither — so the graph
 also writes its structure out as a server-rendered visually-hidden list
 ("Browser → API: GET /product/42"). The drawing is `aria-hidden`; it is the same
 information twice, and only one of the two survives without JavaScript.
+
+`code-lab` compiles the author's code from a JSON string through the
+AsyncFunction constructor rather than inlining it into the runner's `<script>`.
+Inlined, unbalanced source killed the whole script before the console patch was
+installed — so a plain typo produced no output, no error, and a five-second wait
+ending in "timed out" (`d2f4037`). Compiled, a `SyntaxError` is an ordinary
+catch with a message. It also makes `</script>` in a code sample inert text
+instead of something to escape.
 
 `code-lab` carries the other lesson from the same browser pass, and it is the
 one most likely to bite again: **a widget cannot assume it runs in the realm its

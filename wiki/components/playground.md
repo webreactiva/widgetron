@@ -6,7 +6,7 @@ sources:
   - apps/playground/src
   - apps/playground/e2e
   - apps/playground/playwright.config.ts
-synced: 5b079c2
+synced: d2f4037
 related:
   - ./widgets.md
   - ../architecture.md
@@ -59,6 +59,12 @@ to the wrong window and nothing anywhere says so — the run just never finishes
 Its first green run also found what nothing was watching: every Mermaid diagram
 in the playground was failing to render. See
 [the widgets module page](./widgets.md) for that one.
+
+What the suite gates on is **same-origin** failures. The first version kept an
+allowlist of third-party hosts to ignore, and it grew on every run — each entry
+being something the suite had quietly stopped watching. Origin is the line that
+does not move: a webfont, an icon API, a basemap tile or a demo image is a
+dependency rather than code under test, so those are reported and never fatal.
 
 `pnpm e2e` is deliberately **outside `pnpm check`**: it needs a browser binary,
 and a contributor without one would watch the entire guarantee go red for a
