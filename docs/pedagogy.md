@@ -252,6 +252,19 @@ Use it on the **two or three** checks where a misconception is likely, not on
 every check — asked constantly it becomes a tic and people stop reading it. The
 lint warns past three.
 
+The `storyline` finale reads the pattern back: if any answer was wrong while the
+reader said they were certain, it says so by name. That is the most useful line
+on the page — far more than the score, which is a mirror.
+
+### The ending is the last teaching move
+
+Not a scoreboard. Beside the stamps and the challenge count, the finale names
+the confidence pattern and lists **the modules where an answer went wrong**, as
+buttons that scroll back to them. A guide that ends on a number tells the reader
+how they did; one that ends on "these two are worth a second pass" tells them
+what to do next. Say what the guide does not cover in the `outro` node while you
+are there.
+
 ---
 
 ## The non-negotiables

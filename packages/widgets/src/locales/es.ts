@@ -286,6 +286,10 @@ export const esLabels: Record<string, Record<string, unknown>> = {
     finaleChallenges: (earned: number, total: number) =>
       `Retos superados: ${earned}/${total}`,
     finaleTime: (minutes: number) => `~${minutes} min de lectura`,
+    finaleOverconfident: (count: number) =>
+      `${count} respuesta${count === 1 ? "" : "s"} ${count === 1 ? "falló" : "fallaron"} cuando estabas seguro. Esa combinación es la valiosa: apunta a una regla en la que confías y que tiene un borde que aún no habías tocado.`,
+    finaleRevisit: "Merece una segunda pasada",
+    finaleRevisitNone: "No falló nada por el camino.",
     livesLabel: (left: number, total: number) =>
       `Te quedan ${left} de ${total} vidas`,
     finaleGameOverTitle: "¡Te quedaste sin vidas!",

@@ -50,6 +50,17 @@ export interface StorylineLabels {
   finaleChallenges: (earned: number, total: number) => React.ReactNode;
   /** Finale: session reading time, in whole minutes. */
   finaleTime: (minutes: number) => React.ReactNode;
+  /**
+   * Finale: the read-out on the reader's confidence pattern. `count` scored
+   * answers were wrong while the reader said they were certain — the one
+   * outcome worth naming, because it points at a rule they trust that has an
+   * edge they have not met.
+   */
+  finaleOverconfident: (count: number) => React.ReactNode;
+  /** Finale: heading over the list of modules worth a second pass. */
+  finaleRevisit: React.ReactNode;
+  /** Finale: shown in place of the revisit list when nothing went wrong. */
+  finaleRevisitNone: React.ReactNode;
   /** Game mode: accessible label for the lives HUD ("2 of 3 lives left"). */
   livesLabel: (left: number, total: number) => string;
   /** Game mode: finale heading shown when the reader ran out of lives. */
@@ -122,6 +133,10 @@ export const DEFAULT_STORYLINE_LABELS: StorylineLabels = {
   finaleTitle: "You've completed the guide!",
   finaleChallenges: (earned, total) => `Challenges passed: ${earned}/${total}`,
   finaleTime: (minutes) => `~${minutes} min of reading`,
+  finaleOverconfident: (count) =>
+    `${count} answer${count === 1 ? " was" : "s were"} wrong while you felt sure. That combination is the valuable one — it points at a rule you trust that has an edge you hadn't met.`,
+  finaleRevisit: "Worth a second pass",
+  finaleRevisitNone: "Nothing went wrong on the way through.",
   livesLabel: (left, total) => `${left} of ${total} lives left`,
   finaleGameOverTitle: "Out of lives!",
   finaleGameOverHint:
@@ -549,7 +564,14 @@ function StorylineScroll({
     answered: 0,
     correct: 0,
     completed: 0,
+    /** Wrong answers the reader had staked "certain" on — see `confidence`. */
+    overconfident: 0,
   });
+  /**
+   * Modules where a scored answer went wrong. The ending is the last teaching
+   * move, not a scoreboard: what it owes the reader is somewhere to go back to.
+   */
+  const [shaky, setShaky] = React.useState<number[]>([]);
   // Game mode (opt-in via `lives`): session-scoped hearts. `livesRef`/`gameOverRef`
   // mirror the state so the scroll effect's confetti gate (a stale closure that
   // never re-runs on life changes) and the event listener can read them
@@ -771,7 +793,22 @@ function StorylineScroll({
           ...s,
           answered: s.answered + 1,
           correct: s.correct + (data?.correct === true ? 1 : 0),
+          overconfident:
+            s.overconfident +
+            (data?.calibration === "confident-wrong" ? 1 : 0),
         }));
+        // A wrong answer marks its module as worth revisiting. The emitting
+        // widget sits inside its module section, so the index comes straight
+        // from the DOM — no per-check wiring needed.
+        if (data?.correct === false) {
+          const host = (e.target as HTMLElement | null)?.closest?.(
+            "[data-module-index]",
+          ) as HTMLElement | null;
+          const m = host ? Number(host.dataset.moduleIndex) : NaN;
+          if (!Number.isNaN(m)) {
+            setShaky((prev) => (prev.includes(m) ? prev : [...prev, m].sort((a, b) => a - b)));
+          }
+        }
         // Gated progression: answering a scored question in module m unlocks
         // module m+1 (the "final reto of the previous module" gate). The
         // emitting quiz sits inside its module section, so the module index
@@ -1440,6 +1477,41 @@ function StorylineScroll({
                 </li>
               ))}
             </ul>
+          )}
+          {/* The last teaching move, not a scoreboard: what the reader's
+              confidence pattern says, and exactly where to go back to.
+              Confident-and-wrong gets the loud treatment because it is the one
+              outcome that names a belief actively in use that doesn't hold. */}
+          {score.overconfident > 0 && (
+            <p className="mx-auto mt-6 max-w-prose rounded-md border border-warning/50 bg-[color-mix(in_oklab,var(--warning)_12%,var(--card))] p-3 text-sm font-medium text-card-foreground">
+              <RichText>{l.finaleOverconfident(score.overconfident)}</RichText>
+            </p>
+          )}
+          {score.answered > 0 && (
+            <div className="mx-auto mt-6 max-w-prose text-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <RichText>{l.finaleRevisit}</RichText>
+              </p>
+              {shaky.length > 0 ? (
+                <ul className="mt-2 flex flex-wrap justify-center gap-2">
+                  {shaky.map((i) => (
+                    <li key={i}>
+                      <button
+                        type="button"
+                        onClick={() => jumpToModule(i)}
+                        className="cursor-pointer rounded-md border border-input bg-background px-3 py-1.5 text-left text-sm transition-colors hover:border-ring hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <RichText>{modules[i]?.title}</RichText>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-1 text-muted-foreground">
+                  <RichText>{l.finaleRevisitNone}</RichText>
+                </p>
+              )}
+            </div>
           )}
           {challengeEarned > 0 && (
             <Button variant="outline" className="mt-6" onClick={copyResult}>

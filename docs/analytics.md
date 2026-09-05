@@ -57,6 +57,11 @@ thing a check can tell you about a guide. If one check produces it across many
 readers, the guide has found a real misconception — and if the section before it
 was supposed to prevent that, the section is what needs rewriting.
 
+`storyline` consumes this itself: its finale counts `confident-wrong` answers and
+names them for the reader, and lists the modules where any answer went wrong as
+links back. Nothing extra to wire — the checks' events bubble to the storyline
+root on their own.
+
 ### Actions (v1)
 
 | source | widget | action | data |
