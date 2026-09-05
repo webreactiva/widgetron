@@ -192,7 +192,17 @@ export function CodeLab({
   // Only messages from one of THIS widget's own frames are accepted; the frames
   // are sandboxed without allow-same-origin, so identity is the source window,
   // not the origin (which is "null" for every one of them).
+  //
+  // Listening on the DOCUMENT THAT OWNS the frames, not on `window`, is
+  // load-bearing. A host may portal a widget into another document — the
+  // playground renders every demo inside a device-frame iframe — and then the
+  // component's code still runs in the parent realm while its DOM lives in the
+  // frame's. The sandbox posts to `parent`, which is the owning document's
+  // view; a listener on `window` is in a different realm and never hears it.
+  // That failure is silent: the run stays on "Running…" forever.
   React.useEffect(() => {
+    const view = ref.current?.ownerDocument?.defaultView ?? window;
+
     function onMessage(event: MessageEvent) {
       const index = frames.current.findIndex(
         (frame) => frame != null && event.source === frame.contentWindow,
@@ -220,9 +230,9 @@ export function CodeLab({
         delete timers.current[index];
       }
     }
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, []);
+    view.addEventListener("message", onMessage);
+    return () => view.removeEventListener("message", onMessage);
+  }, [ref]);
 
   React.useEffect(() => {
     const pending = timers.current;

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { RichText } from "@/primitives/rich-text";
+import { RichText, plainRich } from "@/primitives/rich-text";
 import { useLabels } from "@/lib/i18n";
 import { RotateCcw } from "@/lib/icons";
 
@@ -191,7 +191,7 @@ function choiceLabels(questions: ProfileQuestion[], profile: Profile): string {
   return questions
     .map((q) => {
       const opt = q.options.find((o) => o.value === profile[q.id]);
-      return opt && typeof opt.label === "string" ? opt.label : undefined;
+      return opt ? plainRich(opt.label) || undefined : undefined;
     })
     .filter(Boolean)
     .join(" · ");

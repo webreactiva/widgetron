@@ -7,7 +7,7 @@ import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Button } from "@/primitives/button";
 import { Icon } from "@/primitives/icon";
-import { RichText } from "@/primitives/rich-text";
+import { RichText, plainRich } from "@/primitives/rich-text";
 import { Tooltip } from "@/primitives/tooltip";
 import { GlossaryProvider, type GlossaryMap } from "@/widgets/glossary";
 import { ProfileProvider } from "@/widgets/profile-quiz";
@@ -712,7 +712,7 @@ function StorylineScroll({
           emitStoryline("section_viewed", {
             index: idx,
             total: modules.length,
-            title: typeof title === "string" ? title : undefined,
+            title: plainRich(title) || undefined,
           });
         }
         for (const m of [25, 50, 75, 100]) {
@@ -918,7 +918,7 @@ function StorylineScroll({
     const text = l.shareText(
       challengeEarned,
       challenges,
-      typeof title === "string" ? title : "",
+      plainRich(title),
       window.location.href,
     );
     void navigator.clipboard.writeText(text).then(() => {
@@ -1157,7 +1157,7 @@ function StorylineScroll({
                     <span className="font-mono text-xs text-muted-foreground">
                       {i + 1}
                     </span>
-                    {typeof m.title === "string" ? m.title : l.module(i + 1)}
+                    {plainRich(m.title, l.module(i + 1))}
                   </span>
                 }
               >
@@ -1166,9 +1166,7 @@ function StorylineScroll({
                     dotRefs.current[i] = el;
                   }}
                   type="button"
-                  aria-label={
-                    typeof m.title === "string" ? m.title : l.module(i + 1)
-                  }
+                  aria-label={plainRich(m.title, l.module(i + 1))}
                   aria-current={i === active || undefined}
                   // Roving tabindex: one Tab stop enters the nav at the active
                   // module; ArrowUp/Down then walk between modules.
@@ -1272,7 +1270,7 @@ function StorylineScroll({
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className="truncate">
-                        {typeof m.title === "string" ? m.title : eyebrow(i)}
+                        {plainRich(m.title) || eyebrow(i)}
                       </span>
                     </button>
                   </li>
@@ -1604,7 +1602,7 @@ function StorylineScroll({
                       </span>
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-medium">
-                          {typeof m.title === "string" ? m.title : eyebrow(i)}
+                          {plainRich(m.title) || eyebrow(i)}
                         </span>
                         {m.subtitle != null && (
                           <span className="block truncate text-xs text-muted-foreground">

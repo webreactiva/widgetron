@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { useLabels } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { RichText } from "@/primitives/rich-text";
+import { RichText, plainRich } from "@/primitives/rich-text";
 
 export interface HotspotsLabels {
   /** Shown in the detail panel while nothing is selected. */
@@ -108,9 +108,7 @@ export function Hotspots({
               ref={(el) => {
                 btnRefs.current[index] = el;
               }}
-              aria-label={
-                typeof hotspot.title === "string" ? hotspot.title : undefined
-              }
+              aria-label={plainRich(hotspot.title) || undefined}
               aria-pressed={isSelected}
               aria-expanded={isSelected}
               onClick={() => setSelected((s) => (s === index ? null : index))}

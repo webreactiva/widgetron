@@ -322,3 +322,49 @@ describe("CodeLab sandboxing", () => {
     expect(doc).toContain("console.log(items[0]);");
   });
 });
+
+describe("CodeLab listens in the right realm", () => {
+  /**
+   * Regression, found only in a real browser. A host may render a widget into
+   * ANOTHER document — the playground puts every demo inside a device-frame
+   * iframe — and then the component's code runs in the parent realm while its
+   * DOM lives in the frame's. The sandbox posts to `parent`, which is the
+   * owning document's view, so a listener on the ambient `window` sits in a
+   * different realm and never hears it. The failure is silent: every run hangs
+   * on "Running…" forever.
+   *
+   * So the setup here is the real one — a second document with its own window.
+   */
+  it("subscribes to the document that owns its frames, not the ambient window", () => {
+    const host = document.createElement("iframe");
+    document.body.appendChild(host);
+    const otherDoc = host.contentDocument!;
+    const otherView = host.contentWindow!;
+    const mount = otherDoc.createElement("div");
+    otherDoc.body.appendChild(mount);
+
+    const other = vi.spyOn(otherView, "addEventListener");
+    const ambient = vi.spyOn(window, "addEventListener");
+
+    const { unmount } = render(
+      <CodeLab
+        variants={[
+          { label: "A", code: "console.log(1);" },
+          { label: "B", code: "console.log(2);" },
+        ]}
+      />,
+      { container: mount },
+    );
+
+    const listensOn = (spy: ReturnType<typeof vi.spyOn>) =>
+      spy.mock.calls.some(([type]) => type === "message");
+
+    expect(listensOn(other), "the owning document's view").toBe(true);
+    expect(listensOn(ambient), "the ambient window").toBe(false);
+
+    unmount();
+    host.remove();
+    other.mockRestore();
+    ambient.mockRestore();
+  });
+});

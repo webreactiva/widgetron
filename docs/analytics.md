@@ -86,6 +86,7 @@ root on their own.
 | widget | contrast | `revealed` | `{}` — reader committed to the expectation and asked for reality |
 | widget | checkpoint | `rated` | `{ index, verdict, rated, open, total }` — `verdict` is `"can"` or `"not-yet"` |
 | widget | anatomy | `part_inspected` | `{ index }` — reader opened a part of the artifact |
+| widget | node-graph | `node_inspected` | `{ id }` — reader opened a node of the graph |
 | widget | code-lab | `variant_run` | `{ index }` — reader ran one variant |
 | widget | tabs | `tab_changed` | `{ index }` — reader opened another variant |
 | widget | cta | `clicked` | `{ variant: "link", url }` |

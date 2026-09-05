@@ -6,7 +6,7 @@ import { Button } from "@/primitives/button";
 import { useLabels } from "@/lib/i18n";
 import { useWidgetEvents } from "@/lib/use-widget-events";
 import { fireConfetti } from "@/lib/confetti";
-import { RichText } from "@/primitives/rich-text";
+import { RichText, plainRich } from "@/primitives/rich-text";
 
 export interface DragItem {
   /** Unique id for this item. */
@@ -250,9 +250,9 @@ export function DragAndDrop({
             <button
               key={target.id}
               type="button"
-              aria-label={
-                typeof target.label === "string" ? target.label : undefined
-              }
+              // An aria-label is a string, so the markers have to go: a zone
+              // called `**Safe to cache**` is otherwise announced with them.
+              aria-label={plainRich(target.label) || undefined}
               data-armed={armed || undefined}
               data-over={isOver || undefined}
               onClick={() => handleZoneClick(target.id)}

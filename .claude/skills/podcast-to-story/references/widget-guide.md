@@ -21,6 +21,7 @@ guide should convert MOST of them into their matching widget, not into prose.
 | Signal in the episode | Widget | Notes |
 |---|---|---|
 | A process/pipeline in one straight line | `flow-diagram` | Add `detail` per node → interactive walkthrough |
+| A system with parts that talk to each other — an architecture, a request lifecycle with a miss path, a module map | `node-graph` | A REAL graph: boxes on a grid, arrows between any two of them, back-edges included. Labels stay HTML so markdown, `code` and `[[terms]]` work (a mermaid diagram loses all three). `row`/`col` when the position means something; `dashed` for the failing path; `detail` per node for click-to-explain. Under ~8 nodes |
 | Structure that branches, nests or references (trees, configs, architectures) | `mermaid-diagram` | Pick the style per [mermaid-styles.md](mermaid-styles.md) — flowchart, sequence, state, ER, mindmap…; `details` keyed by node id for click-to-explain |
 | A conceptual relationship (center+spokes, layers, trade-off, hidden depth…) | `infographic` | Pick the `layout` metaphor: hub, pyramid, iceberg, balance, funnel, cycle, venn, matrix, target — or the napkin-style ones with an `icon` per item: `stairs`, `milestones`, `chevrons` (process ribbon), `roadmap` (winding journey), `pillars` |
 | Real numbers compared or a trend | `data-chart` | Only with numbers actually said in the episode |
