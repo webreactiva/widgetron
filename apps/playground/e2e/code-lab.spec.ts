@@ -30,7 +30,7 @@ test.describe("CodeLab actually executes", () => {
     await expect(consoles.nth(0)).toHaveText(/^0$/, { timeout: 15_000 });
     await expect(consoles.nth(1)).toHaveText(/^60$/, { timeout: 15_000 });
 
-    expect(errors()).toEqual([]);
+    expect(errors.ours()).toEqual([]);
   });
 
   test("never leaves a run hanging on its 'running' state", async ({ page }) => {

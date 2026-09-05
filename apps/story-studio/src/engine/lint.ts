@@ -511,6 +511,10 @@ export function lintStoryDocument(input: unknown): StoryLint {
     if (options.length < 2) continue;
     const correct = options.find((o) => o.correct === true);
     if (!correct) continue;
+    // `content()` lets an option's text be a node or a list, which has no word
+    // count. Comparing anyway made every decoy measure 0 and the rule shouted
+    // "against 0 for the longest decoy" — advice no author could act on.
+    if (!options.every((o) => typeof o.text === "string")) continue;
     const others = options.filter((o) => o !== correct).map((o) => wordsIn(o.text));
     const longestOther = Math.max(0, ...others);
     const correctWords = wordsIn(correct.text);

@@ -41,7 +41,7 @@ test.describe("NodeGraph geometry", () => {
       expect(marker).toMatch(/^url\(#wgt-arrow-/);
     }
 
-    expect(errors()).toEqual([]);
+    expect(errors.ours()).toEqual([]);
   });
 
   test("the arrows follow when the wording changes", async ({ page }) => {

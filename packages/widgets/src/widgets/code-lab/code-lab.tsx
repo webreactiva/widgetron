@@ -54,6 +54,13 @@ interface RunState {
   lines: OutputLine[];
   running: boolean;
   timedOut?: boolean;
+  /**
+   * Whether Run was ever pressed. Derived state cannot answer this: a variant
+   * that completes having printed nothing has no lines, is not running and did
+   * not time out, so inferring it from those three said "never run" and the
+   * reader was shown the pre-run prompt for a run that had already finished.
+   */
+  ran?: boolean;
 }
 
 export interface CodeLabProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -91,7 +98,14 @@ function isLabMessage(value: unknown): value is LabMessage {
  * containing one cannot close the tag it lives in.
  */
 function buildDocument(setup: string, code: string, nonce: number): string {
-  const body = `${setup}\n;\n${code}`.replace(/<\/script/gi, "<\\/script");
+  // The author's code travels as a JSON STRING, not as inlined source, for two
+  // reasons. It cannot break out of the tag it lives in (with `<` escaped, a
+  // `</script>` in a code sample is just characters). And compiling it through
+  // the AsyncFunction constructor turns a syntax error into a catchable
+  // exception — inlined, it would kill the whole script before the console
+  // patch was installed, and the reader would sit through the full time budget
+  // and be told the run "timed out".
+  const source = JSON.stringify(`${setup}\n;\n${code}`).replace(/</g, "\\u003c");
   return `<!doctype html><meta charset="utf-8"><!--${nonce}--><script>
 (function () {
   var send = function (kind, text) {
@@ -134,17 +148,21 @@ function buildDocument(setup: string, code: string, nonce: number): string {
     send("error", "Unhandled rejection: " + fmt(e.reason));
   };
   var done = function () { send("done"); };
+  var AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+  var result = null;
   try {
-    var result = (async function () {
-${body}
-    })();
+    // Compiling and calling are separate steps on purpose: a SyntaxError lands
+    // here, with the message the author needs, instead of silently.
+    result = new AsyncFunction(${source})();
+  } catch (e) {
+    send("error", fmt(e));
+    done();
+  }
+  if (result) {
     Promise.resolve(result).then(
       function () { setTimeout(done, 150); },
       function (e) { send("error", fmt(e)); setTimeout(done, 0); }
     );
-  } catch (e) {
-    send("error", fmt(e));
-    done();
   }
 })();
 </script>`;
@@ -245,7 +263,10 @@ export function CodeLab({
     const variant = variants[index];
     if (!variant) return;
     clearTimeout(timers.current[index]);
-    setRuns((prev) => ({ ...prev, [index]: { lines: [], running: true } }));
+    setRuns((prev) => ({
+      ...prev,
+      [index]: { lines: [], running: true, ran: true },
+    }));
     setDocs((prev) => ({
       ...prev,
       [index]: buildDocument(setup, variant.code, Date.now()),
@@ -282,7 +303,7 @@ export function CodeLab({
       <div className="grid gap-4 @2xl/lab:grid-cols-2">
         {variants.map((variant, index) => {
           const state = runs[index] ?? EMPTY;
-          const hasRun = state.lines.length > 0 || state.running || state.timedOut;
+          const hasRun = Boolean(state.ran);
           return (
             <div
               key={index}

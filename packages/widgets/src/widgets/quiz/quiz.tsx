@@ -61,7 +61,15 @@ export interface QuizProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   confidence?: boolean;
   /** Customizable / translatable strings. */
-  labels?: Partial<QuizLabels> & Partial<ConfidenceLabels>;
+  labels?: Partial<QuizLabels> & {
+    /**
+     * The confidence layer's own strings, NESTED rather than merged in. Both
+     * packs would otherwise share one flat bag, and a key present in both (this
+     * widget family already collides on `question`) would silently overwrite
+     * the other — the scale ended up asking "What will this print?".
+     */
+    confidence?: Partial<ConfidenceLabels>;
+  };
   /** Called once the learner picks an option. */
   onAnswered?: (option: QuizOption, index: number, correct: boolean) => void;
 }
@@ -156,7 +164,7 @@ export function Quiz({
           value={sureness}
           onChange={setSureness}
           disabled={answered}
-          labels={labels}
+          labels={labels?.confidence}
         />
       )}
 
@@ -207,13 +215,13 @@ export function Quiz({
         })}
       </div>
 
-      {locked && <ConfidenceRequired className="mt-2" labels={labels} />}
+      {locked && <ConfidenceRequired className="mt-2" labels={labels?.confidence} />}
 
       {answered && sureness !== null && (
         <CalibrationNote
           level={sureness}
           correct={isCorrect}
-          labels={labels}
+          labels={labels?.confidence}
         />
       )}
 

@@ -19,36 +19,45 @@ export async function openWidget(page: Page, id: string): Promise<Frame> {
 }
 
 /**
- * Console noise this sandbox produces no matter what the widgets do: the
- * environment's proxy refuses Google Fonts and the Iconify icon API. Filtering
- * by host rather than by message keeps a real same-origin failure loud.
+ * Is this failure the library's, or the network's?
+ *
+ * The suite gates on the first and only reports the second. Anything fetched
+ * from another ORIGIN — webfonts, the Iconify API, basemap tiles, demo imagery —
+ * is a dependency, not code under test, and in a sandbox with no egress every
+ * one of them fails. An allowlist of hosts was the first attempt and it grew on
+ * every run, which is the tell: each entry is a thing the suite quietly stopped
+ * watching. Same-origin is the line that does not move.
+ *
+ * The browser logs a generic "Failed to load resource" whatever the host, so
+ * this reads the resource URL rather than the message.
  */
-const EXTERNAL = [
-  "fonts.googleapis.com",
-  "fonts.gstatic.com",
-  "api.iconify.design",
-  "api.simplesvg.com",
-  "api.unisvg.com",
-];
-
-export function isOurProblem(text: string): boolean {
-  return !EXTERNAL.some((host) => text.includes(host));
+export function isSameOrigin(url: string, origin: string): boolean {
+  if (!url) return true; // no URL to place it — assume it is ours and be loud
+  try {
+    return new URL(url).origin === origin;
+  } catch {
+    return true;
+  }
 }
 
-/**
- * Collect page errors and console errors that are actually ours. Returns a
- * getter rather than an array so a test reads it after the interactions.
- */
-export function watchErrors(page: Page): () => string[] {
-  const seen: string[] = [];
-  page.on("pageerror", (e) => seen.push(`pageerror: ${e.message}`));
+export interface ErrorWatch {
+  /** Failures in code served by the app itself. The suite fails on these. */
+  ours: () => string[];
+  /** Cross-origin fetch failures. Reported, never fatal. */
+  external: () => string[];
+}
+
+/** Split what the page logs into what we own and what we merely depend on. */
+export function watchErrors(page: Page, origin = "http://localhost:4173"): ErrorWatch {
+  const ours: string[] = [];
+  const external: string[] = [];
+  page.on("pageerror", (e) => ours.push(`pageerror: ${e.message}`));
   page.on("console", (m) => {
     if (m.type() !== "error") return;
-    const text = m.text();
-    // A failed request logs a generic "Failed to load resource"; the URL is on
-    // the message's location, so check both.
-    const where = m.location()?.url ?? "";
-    if (isOurProblem(text) && isOurProblem(where)) seen.push(`${text} @ ${where}`);
+    const url = m.location()?.url ?? "";
+    (isSameOrigin(url, origin) ? ours : external).push(
+      `${m.text()}${url ? ` @ ${url}` : ""}`,
+    );
   });
-  return () => seen;
+  return { ours: () => ours, external: () => external };
 }

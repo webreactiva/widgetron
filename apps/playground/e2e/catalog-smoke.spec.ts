@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { isOurProblem } from "./helpers";
+import { watchErrors } from "./helpers";
 
 /**
  * "Open it and use it" for the whole catalog.
@@ -17,19 +17,7 @@ import { isOurProblem } from "./helpers";
 test("every widget in the catalog renders without errors", async ({ page }) => {
   test.setTimeout(180_000);
 
-  const problems: string[] = [];
-  let current = "(startup)";
-
-  page.on("pageerror", (e) => problems.push(`${current}: ${e.message}`));
-  page.on("console", (m) => {
-    if (m.type() !== "error") return;
-    const text = m.text();
-    const where = m.location()?.url ?? "";
-    if (isOurProblem(text) && isOurProblem(where)) {
-      problems.push(`${current}: ${text}`);
-    }
-  });
-
+  const errors = watchErrors(page);
   await page.goto("/");
   const ids = await page
     .locator("[data-widget-id]")
@@ -42,20 +30,37 @@ test("every widget in the catalog renders without errors", async ({ page }) => {
 
   const empty: string[] = [];
   for (const id of ids) {
-    current = id;
     await page.click(`[data-widget-id="${id}"]`);
     const handle = await page.waitForSelector("iframe");
     const frame = await handle.contentFrame();
     if (!frame) throw new Error(`no device frame for "${id}"`);
 
-    // Something with real ink on it — a demo that renders to nothing is a
-    // broken demo even when it throws nothing.
-    const painted = await frame
-      .evaluate(() => document.body?.getBoundingClientRect().height ?? 0)
-      .catch(() => 0);
-    if (painted < 20) empty.push(id);
+    // Every widget roots itself on a `data-slot`, so waiting for one is both
+    // the "it rendered" assertion and the wait the next iteration needs.
+    //
+    // Measuring the frame's HEIGHT instead — which is what this did first —
+    // asserts nothing: ViewportFrame gives the demo `min-h-64`, so the body is
+    // never shorter than 256px and the check could not fail on any input. If a
+    // widget throws while rendering, React unmounts its tree and no data-slot
+    // ever appears; that is the case this has to catch.
+    const rendered = await frame
+      .waitForFunction(
+        () => document.querySelectorAll("[data-slot]").length > 0,
+        { timeout: 5000 },
+      )
+      .then(() => true)
+      .catch(() => false);
+    if (!rendered) empty.push(id);
+  }
+
+  // Reported, not gated: with no egress every third-party fetch fails, and a
+  // broken demo image is a content problem rather than a library one.
+  const external = errors.external();
+  if (external.length > 0) {
+    console.log(`${external.length} cross-origin fetch(es) failed (not gated):`);
+    for (const line of [...new Set(external)].slice(0, 5)) console.log(`  ${line}`);
   }
 
   expect(empty, "widgets whose demo rendered nothing").toEqual([]);
-  expect(problems, "errors the library is responsible for").toEqual([]);
+  expect(errors.ours(), "errors in code the app itself serves").toEqual([]);
 });

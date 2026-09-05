@@ -70,7 +70,15 @@ export interface PredictOutputProps
    */
   confidence?: boolean;
   /** Customizable / translatable strings. */
-  labels?: Partial<PredictOutputLabels> & Partial<ConfidenceLabels>;
+  labels?: Partial<PredictOutputLabels> & {
+    /**
+     * The confidence layer's own strings, NESTED rather than merged in. Both
+     * packs would otherwise share one flat bag, and a key present in both (this
+     * widget family already collides on `question`) would silently overwrite
+     * the other — the scale ended up asking "What will this print?".
+     */
+    confidence?: Partial<ConfidenceLabels>;
+  };
   /** Fire confetti on a correct answer. Default: true. */
   celebrate?: boolean;
 }
@@ -178,7 +186,7 @@ export function PredictOutput({
           value={sureness}
           onChange={setSureness}
           disabled={selected !== null}
-          labels={labels}
+          labels={labels?.confidence}
         />
       )}
 
@@ -235,10 +243,10 @@ export function PredictOutput({
         )
       )}
 
-      {locked && <ConfidenceRequired className="mt-2" labels={labels} />}
+      {locked && <ConfidenceRequired className="mt-2" labels={labels?.confidence} />}
 
       {selected !== null && sureness !== null && (
-        <CalibrationNote level={sureness} correct={isCorrect} labels={labels} />
+        <CalibrationNote level={sureness} correct={isCorrect} labels={labels?.confidence} />
       )}
 
       {hasOptions && selectedOption?.feedback && (

@@ -565,3 +565,33 @@ describe("story pedagogy lint", () => {
     expect(rulesOf(doc).has("contrast-stacking")).toBe(true);
   });
 });
+
+describe("option-shape only measures what it can count", () => {
+  it("stays quiet when an option's text is a node rather than a string", () => {
+    // `content()` allows a node or a list. Counting words in those returned 0,
+    // so every decoy measured zero and the rule told authors their correct
+    // option was "17 words against 0" — advice nobody could act on.
+    const doc = wrap([
+      screen("prose"),
+      quiz({
+        question: "Q?",
+        options: [
+          { text: { type: "prose", props: { children: "CSS" } }, feedback: "no" },
+          {
+            text: "Backend latency, because every uncached read costs a full round trip",
+            correct: true,
+            feedback: "yes",
+          },
+        ],
+      }),
+      screen("mermaid-diagram"),
+      screen("callout-box"),
+      screen("flashcards"),
+      screen("group-chat"),
+      screen("data-chart"),
+      screen("quiz"),
+      screen("checklist"),
+    ]);
+    expect(rulesOf(doc).has("option-shape")).toBe(false);
+  });
+});

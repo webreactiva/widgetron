@@ -76,7 +76,15 @@ export interface EstimateSliderProps
    */
   confidence?: boolean;
   /** Customizable / translatable strings. */
-  labels?: Partial<EstimateSliderLabels> & Partial<ConfidenceLabels>;
+  labels?: Partial<EstimateSliderLabels> & {
+    /**
+     * The confidence layer's own strings, NESTED rather than merged in. Both
+     * packs would otherwise share one flat bag, and a key present in both (this
+     * widget family already collides on `question`) would silently overwrite
+     * the other — the scale ended up asking "What will this print?".
+     */
+    confidence?: Partial<ConfidenceLabels>;
+  };
 }
 
 /** Position of `value` along the track, clamped to 0–100 %. */
@@ -173,7 +181,7 @@ export function EstimateSlider({
           value={sureness}
           onChange={setSureness}
           disabled={locked}
-          labels={labels}
+          labels={labels?.confidence}
         />
       )}
 
@@ -268,7 +276,7 @@ export function EstimateSlider({
             <CalibrationNote
               level={sureness}
               correct={isClose}
-              labels={labels}
+              labels={labels?.confidence}
             />
           )}
         </div>
@@ -276,7 +284,7 @@ export function EstimateSlider({
 
       <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
         {awaitingConfidence && !locked && (
-          <ConfidenceRequired className="mr-auto" labels={labels} />
+          <ConfidenceRequired className="mr-auto" labels={labels?.confidence} />
         )}
         {locked ? (
           <Button

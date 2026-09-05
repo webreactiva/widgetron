@@ -163,11 +163,11 @@ export function Anatomy({
                   layout === "inline" && "whitespace-pre",
                 )}
               >
-                {part.text ?? (typeof part.label === "string" ? part.label : null)}
+                {/* `text` is a literal fragment of the artifact and must stay
+                    verbatim; the label standing in for it is author copy, so it
+                    formats — as it already did in the detail panel below. */}
+                {part.text ?? <RichText>{part.label}</RichText>}
               </span>
-              {part.text == null && typeof part.label !== "string" && (
-                <RichText>{part.label}</RichText>
-              )}
             </button>
           );
         })}

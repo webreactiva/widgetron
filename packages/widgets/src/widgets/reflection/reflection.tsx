@@ -80,6 +80,28 @@ export interface ReflectionProps
 const STORAGE_PREFIX = "widgetron-reflection:";
 
 /**
+ * Nested quantifiers — `(a+)+`, `(x*)*`, `(a|a)+` — are the shape that makes a
+ * regex take exponential time on a string that nearly matches. `key.match` is
+ * author (or generator) supplied and runs against the reader's own text, and
+ * JavaScript gives no way to time a regex out: a pathological one freezes the
+ * tab, in the middle of a guide, with no error. Cheaper to refuse the shape.
+ */
+const NESTED_QUANTIFIER = /\([^)]*[+*][^)]*\)\s*[+*{]/;
+
+/** Characters of the reader's answer considered. Bounds the linear cost. */
+const MATCH_LIMIT = 4000;
+
+/** Compile a key's pattern, or null if it is unusable or unsafe to run. */
+function safePattern(source: string): RegExp | null {
+  if (source.length > 200 || NESTED_QUANTIFIER.test(source)) return null;
+  try {
+    return new RegExp(source, "i");
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Reflection — the reader answers in their own words before being told
  * anything. Retrieval that has to be *composed* (not recognized from options)
  * is what makes an idea stick, and the optional `modelAnswer` only appears
@@ -137,14 +159,8 @@ export function Reflection({
    */
   const hits = React.useMemo(() => {
     if (!keys?.length || !committed) return [];
-    const haystack = text.slice(0, 4000);
-    return keys.map((key) => {
-      try {
-        return new RegExp(key.match, "i").test(haystack);
-      } catch {
-        return false;
-      }
-    });
+    const haystack = text.slice(0, MATCH_LIMIT);
+    return keys.map((key) => safePattern(key.match)?.test(haystack) ?? false);
   }, [keys, committed, text]);
 
   function handleSave() {
@@ -159,13 +175,9 @@ export function Reflection({
     }
     // Length and idea COUNTS only — the answer itself never leaves the device.
     const touched = keys?.length
-      ? keys.filter((key) => {
-          try {
-            return new RegExp(key.match, "i").test(text.slice(0, 4000));
-          } catch {
-            return false;
-          }
-        }).length
+      ? keys.filter(
+          (key) => safePattern(key.match)?.test(text.slice(0, MATCH_LIMIT)) ?? false,
+        ).length
       : undefined;
     emit("saved", {
       length: text.trim().length,

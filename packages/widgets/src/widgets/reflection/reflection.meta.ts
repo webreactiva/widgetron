@@ -37,7 +37,7 @@ export const reflectionMeta: WidgetMeta = {
           match: z
             .string()
             .describe(
-              "Case-insensitive regular expression deciding whether the answer touched the idea. Keep it GENEROUS and simple ('stale|invalidat|wrong') — you are checking whether an idea is present, not marking spelling, and an over-tight pattern tells an author's-eye-correct answer it missed the point.",
+              "Case-insensitive regular expression deciding whether the answer touched the idea. Keep it GENEROUS and simple ('stale|invalidat|wrong') — you are checking whether an idea is present, not marking spelling, and an over-tight pattern tells an author's-eye-correct answer it missed the point. A plain alternation is all this needs: patterns over 200 characters, and any with nested quantifiers like '(a+)+', are refused and count as a miss, because a regex that backtracks exponentially would freeze the reader's tab mid-guide with no error.",
             ),
         }),
       )

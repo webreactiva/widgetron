@@ -6,6 +6,7 @@ import { Anatomy } from "@/widgets/anatomy";
 import { Checkpoint } from "@/widgets/checkpoint";
 import { CodeLab } from "@/widgets/code-lab";
 import { Contrast } from "@/widgets/contrast";
+import { PredictOutput } from "@/widgets/predict-output";
 import { Quiz } from "@/widgets/quiz";
 import { Reflection } from "@/widgets/reflection";
 import { SortSteps } from "@/widgets/sort-steps";
@@ -291,7 +292,7 @@ describe("CodeLab sandboxing", () => {
     }
   });
 
-  it("neutralizes a closing script tag inside the author's code", () => {
+  it("gives the author's code no way to close the tag it travels in", () => {
     const { container } = render(
       <CodeLab
         variants={[
@@ -302,8 +303,36 @@ describe("CodeLab sandboxing", () => {
     );
     fireEvent.click(screen.getAllByRole("button", { name: /^Run$/ })[0]);
     const doc = container.querySelector("iframe")?.getAttribute("srcdoc") ?? "";
-    expect(doc).toContain("<\\/script>");
-    expect(doc).not.toMatch(/[^\\]<\/script><img/);
+
+    // The property, not the mechanism: the document has exactly one closing
+    // script tag — the runner's own. Anything the author wrote that looks like
+    // one is inert text by the time it gets here. (It used to be a `<\/script`
+    // string replace; the code now travels as a JSON string with `<` escaped,
+    // which also turns a syntax error into something catchable.)
+    expect(doc.match(/<\/script>/g)).toHaveLength(1);
+    expect(doc.endsWith("</script>")).toBe(true);
+    expect(doc).toContain("onerror=alert(1)");
+  });
+
+  it("compiles the author's code rather than inlining it, so a syntax error is catchable", () => {
+    const { container } = render(
+      <CodeLab
+        variants={[
+          { label: "A", code: "const broken = (" },
+          { label: "B", code: "console.log(2);" },
+        ]}
+      />,
+    );
+    fireEvent.click(screen.getAllByRole("button", { name: /^Run$/ })[0]);
+    const doc = container.querySelector("iframe")?.getAttribute("srcdoc") ?? "";
+
+    // Inlined, unbalanced source would kill the whole script before the console
+    // patch was installed — no output, no error, and the reader waiting out the
+    // full time budget to be told it "timed out". Compiled from a string, the
+    // SyntaxError lands in the runner's own catch with a message.
+    expect(doc).toContain("new AsyncFunction(");
+    // The whole body — shared setup and all — travels as one JSON string.
+    expect(doc).toMatch(/new AsyncFunction\("[^"]*const broken = \("\)/);
   });
 
   it("prepends the shared setup to every variant, so only the difference differs", () => {
@@ -366,5 +395,86 @@ describe("CodeLab listens in the right realm", () => {
     host.remove();
     other.mockRestore();
     ambient.mockRestore();
+  });
+});
+
+describe("regressions from the code review", () => {
+  it("keeps the confidence prompt out of the host widget's label bag", () => {
+    // Both packs define `question`. Merged into one flat bag, PredictOutput's
+    // won and the scale asked "What will this print, really?" instead of how
+    // sure the reader was.
+    render(
+      <PredictOutput
+        confidence
+        code="console.log([] == false)"
+        output="true"
+        labels={{ question: "What will this print, really?" }}
+        options={[
+          { text: "true", correct: true, feedback: "yes" },
+          { text: "false", feedback: "no" },
+        ]}
+      />,
+    );
+    const scale = document.querySelector('[data-slot="confidence-scale"]')!;
+    expect(scale.textContent).toMatch(/how sure are you/i);
+    expect(scale.textContent).not.toMatch(/What will this print/);
+  });
+
+  it("still lets a host translate the confidence pack, now nested", () => {
+    render(
+      <PredictOutput
+        confidence
+        code="x"
+        output="y"
+        labels={{ confidence: { question: "¿Cómo de seguro estás?" } }}
+        options={[
+          { text: "a", correct: true, feedback: "yes" },
+          { text: "b", feedback: "no" },
+        ]}
+      />,
+    );
+    expect(
+      document.querySelector('[data-slot="confidence-scale"]')!.textContent,
+    ).toMatch(/Cómo de seguro/);
+  });
+
+  it("formats a stand-in anatomy label instead of showing its markers", () => {
+    // With no `text`, the label stands in for the fragment — and it was the one
+    // place in the widget that skipped RichText.
+    const { container } = render(
+      <Anatomy
+        parts={[
+          { label: "**Role**", note: "Sets the frame." },
+          { label: "**Constraints**", note: "Written as nevers." },
+        ]}
+      />,
+    );
+    expect(container.querySelectorAll("button strong").length).toBe(2);
+    expect(container.textContent).not.toMatch(/\*\*/);
+  });
+
+  it("refuses a reflection pattern that could hang the reader's tab", () => {
+    render(
+      <Reflection
+        id="test-redos"
+        persist={false}
+        prompt="Anything."
+        keys={[
+          { idea: "safe", match: "cache" },
+          // The classic exponential shape.
+          { idea: "unsafe", match: "(a+)+b" },
+        ]}
+      />,
+    );
+    fireEvent.change(screen.getByRole("textbox"), {
+      target: { value: "a cache and " + "a".repeat(60) },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Save my answer/ }));
+
+    const hits = [...document.querySelectorAll("li[data-hit]")];
+    // The safe one matched; the dangerous one was never run, so it reads as a
+    // miss rather than freezing the page.
+    expect(hits).toHaveLength(1);
+    expect(hits[0].textContent).toMatch(/safe/);
   });
 });
